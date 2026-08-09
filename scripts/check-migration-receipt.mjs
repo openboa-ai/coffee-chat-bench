@@ -20,6 +20,11 @@ function sha256(value) {
   return createHash("sha256").update(value).digest("hex");
 }
 
+function gitBlobOid(bytes) {
+  const header = Buffer.from(`blob ${bytes.length}\0`);
+  return createHash("sha1").update(header).update(bytes).digest("hex");
+}
+
 function canonicalJson(value) {
   return `${JSON.stringify(value, null, 2)}\n`;
 }
@@ -123,41 +128,21 @@ function assertSchemaShape(value, expectedSchema, label) {
   );
 }
 
-async function fetchPinnedSource(row) {
-  const encodedPath = row.source_path
-    .split("/")
-    .map((segment) => encodeURIComponent(segment))
-    .join("/");
-  const url =
-    `https://api.github.com/repos/${row.source_repository}/contents/` +
-    `${encodedPath}?ref=${encodeURIComponent(row.source_commit)}`;
-  const response = await fetch(url, {
-    headers: {
-      Accept: "application/vnd.github+json",
-      "User-Agent": "openboa-ai-coffee-chat-bench-migration-check",
-      "X-GitHub-Api-Version": "2022-11-28",
-    },
-  });
-  if (!response.ok) {
-    fail(`pinned source fetch failed: HTTP ${response.status}`);
+function assertExternalVerification(verification) {
+  for (const field of [
+    "same_repository_ci",
+    "exact_head_review",
+    "squash_merge",
+    "control_plane",
+  ]) {
+    const status = verification[field];
+    if (status === "failed" || status === "unavailable") {
+      fail(`verification ${field} is ${status}`);
+    }
   }
-  const payload = await response.json();
-  if (
-    !payload ||
-    Array.isArray(payload) ||
-    payload.type !== "file" ||
-    payload.encoding !== "base64" ||
-    typeof payload.content !== "string"
-  ) {
-    fail("pinned source response is not one base64 file");
-  }
-  if (payload.sha !== row.source_blob_oid) {
-    fail(`pinned source blob mismatch for ${row.source_path}`);
-  }
-  return Buffer.from(payload.content.replace(/\s/gu, ""), "base64");
 }
 
-async function verifyMigrateEvidence(root, rows, evidence) {
+function verifyMigrateEvidence(root, rows, evidence) {
   const byIdentity = new Map(
     evidence.map((entry) => [identityKey(entry), entry]),
   );
@@ -168,21 +153,25 @@ async function verifyMigrateEvidence(root, rows, evidence) {
     assert.ok(entry, `missing migrate evidence: ${row.source_path}`);
     assert.equal(entry.status, "passed", `migrate status: ${row.source_path}`);
     assert.equal(entry.target_path, row.target_path_or_surface);
-    assert.equal(entry.source_sha256, row.content_sha256);
     if (entry.source_blob_oid !== row.source_blob_oid) {
       fail(`source blob mismatch: ${row.source_path}`);
     }
-    const sourceBytes = await fetchPinnedSource(row);
-    assert.equal(
-      sha256(sourceBytes),
-      row.content_sha256,
-      `pinned source digest: ${row.source_path}`,
-    );
-    assert.equal(
-      sha256(readFileSync(resolve(root, entry.target_path))),
-      entry.target_sha256,
-    );
-    assert.equal(entry.target_sha256, entry.source_sha256);
+    if (entry.source_sha256 !== row.content_sha256) {
+      fail(`receipt source digest mismatch: ${row.source_path}`);
+    }
+    if (entry.target_sha256 !== row.content_sha256) {
+      fail(`receipt target digest mismatch: ${entry.target_path}`);
+    }
+
+    const targetBytes = readFileSync(resolve(root, entry.target_path));
+    const targetBlobOid = gitBlobOid(targetBytes);
+    const targetSha256 = sha256(targetBytes);
+    if (targetBlobOid !== row.source_blob_oid) {
+      fail(`target Git blob mismatch: ${entry.target_path}`);
+    }
+    if (targetSha256 !== row.content_sha256) {
+      fail(`target digest mismatch: ${entry.target_path}`);
+    }
   }
 }
 
@@ -269,7 +258,7 @@ function runOracle(root) {
   assert.equal(result.status, 0, result.stderr || result.stdout);
 }
 
-async function main() {
+function main() {
   const args = parseArguments(process.argv.slice(2));
   const projection = readJson(args.root, paths.projection);
   const equality = readJson(args.root, paths.equality);
@@ -301,6 +290,8 @@ async function main() {
   );
   assertSchemaShape(receipt.value, "coffee-chat/migration-receipt", "receipt");
   assertReviewedAuthority(projection, equality, receipt, policy);
+  assert.equal(receipt.value.verification.local_deterministic, "passed");
+  assertExternalVerification(receipt.value.verification);
   for (const field of ["target_owner", "task", "objective", "ledger_sha256"]) {
     assert.equal(
       equality.value[field],
@@ -442,7 +433,7 @@ async function main() {
     "empty base committer email",
   );
 
-  await verifyMigrateEvidence(
+  verifyMigrateEvidence(
     args.root,
     projection.value.selected_rows.filter((row) => row.action === "migrate"),
     receipt.value.migrate_evidence,
@@ -452,7 +443,6 @@ async function main() {
     receipt.value.rewrite_evidence,
   );
   assert.deepEqual(receipt.value.exclude_evidence, []);
-  assert.equal(receipt.value.verification.local_deterministic, "passed");
   runOracle(args.root);
 
   process.stdout.write(
@@ -460,9 +450,11 @@ async function main() {
   );
 }
 
-main().catch((error) => {
+try {
+  main();
+} catch (error) {
   process.stderr.write(
     `${error instanceof Error ? error.stack : String(error)}\n`,
   );
   process.exitCode = 1;
-});
+}

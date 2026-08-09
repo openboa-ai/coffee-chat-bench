@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 import { spawnSync } from "node:child_process";
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { readdirSync, readFileSync } from "node:fs";
 import { relative, resolve } from "node:path";
 
 const migrationEvidencePaths = new Set([
@@ -60,6 +61,10 @@ function fail(message) {
   throw new Error(message);
 }
 
+function sha256(bytes) {
+  return createHash("sha256").update(bytes).digest("hex");
+}
+
 function parseRoot(argv) {
   if (argv.length !== 2 || argv[0] !== "--root" || !argv[1]) {
     fail("usage: check-inactive-boundary.mjs --root <repository>");
@@ -83,8 +88,43 @@ function trackedPaths(root) {
   const result = spawnSync("git", ["-C", root, "ls-files", "-z"], {
     encoding: "utf8",
   });
-  if (result.status !== 0) return [];
+  if (result.error || result.status !== 0) {
+    const detail = result.error?.message || result.stderr.trim() || "unknown";
+    fail(`tracked-path evidence unavailable: ${detail}`);
+  }
   return result.stdout.split("\0").filter(Boolean);
+}
+
+function isExecutableControlPath(path) {
+  return (
+    path === "package.json" ||
+    path.endsWith(".mjs") ||
+    path.startsWith(".github/workflows/")
+  );
+}
+
+function verifyExecutableControlSurface(root, paths) {
+  const policy = JSON.parse(
+    readFileSync(resolve(root, ".github/merge-policy.json"), "utf8"),
+  );
+  const declared = policy.inactive_control_surface;
+  if (!declared || typeof declared !== "object" || Array.isArray(declared)) {
+    fail("executable control surface declaration unavailable");
+  }
+  const actualPaths = paths.filter(isExecutableControlPath).sort();
+  const declaredPaths = Object.keys(declared).sort();
+  if (JSON.stringify(actualPaths) !== JSON.stringify(declaredPaths)) {
+    fail("executable control surface path mismatch");
+  }
+  for (const path of actualPaths) {
+    const expected = declared[path];
+    if (!/^[0-9a-f]{64}$/u.test(expected)) {
+      fail(`invalid executable control surface digest: ${path}`);
+    }
+    if (sha256(readFileSync(resolve(root, path))) !== expected) {
+      fail(`executable control surface digest mismatch: ${path}`);
+    }
+  }
 }
 
 function isAllowedPath(path) {
@@ -120,6 +160,7 @@ function main() {
       fail(`forbidden content outside docs/validity: ${path}`);
     }
   }
+  verifyExecutableControlSurface(root, paths);
 
   process.stdout.write(
     `${JSON.stringify({ status: "passed", repository_status: "not_active", files: paths.length })}\n`,

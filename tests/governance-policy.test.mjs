@@ -28,6 +28,18 @@ function fixture() {
   return { directory, repository };
 }
 
+function noNetworkEnvironment(directory) {
+  const importPath = join(directory, "forbid-network.mjs");
+  writeFileSync(
+    importPath,
+    'globalThis.fetch = () => { throw new Error("network access forbidden in deterministic Bench tests"); };\n',
+  );
+  return {
+    ...process.env,
+    NODE_OPTIONS: `--import=${importPath}`,
+  };
+}
+
 function runMigration(repository) {
   return spawnSync(
     process.execPath,
@@ -38,17 +50,36 @@ function runMigration(repository) {
       "--base",
       emptyBase,
     ],
-    { encoding: "utf8" },
+    {
+      encoding: "utf8",
+      env: noNetworkEnvironment(resolve(repository, "..")),
+    },
   );
 }
 
 test("governance policy accepts the inactive benchmark trust base", () => {
-  const result = spawnSync(process.execPath, [".github/ci-policy.mjs"], {
-    cwd: root,
-    encoding: "utf8",
-  });
+  const directory = mkdtempSync(join(tmpdir(), "bench-no-network-"));
+  try {
+    const result = spawnSync(process.execPath, [".github/ci-policy.mjs"], {
+      cwd: root,
+      encoding: "utf8",
+      env: noNetworkEnvironment(directory),
+    });
 
-  assert.equal(result.status, 0, result.stderr || result.stdout);
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+  } finally {
+    rmSync(directory, { force: true, recursive: true });
+  }
+});
+
+test("migration checker validates frozen source identity without network", () => {
+  const temp = fixture();
+  try {
+    const result = runMigration(temp.repository);
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+  } finally {
+    rmSync(temp.directory, { force: true, recursive: true });
+  }
 });
 
 test("migration policy derives the immutable target from the checked head", () => {
@@ -64,6 +95,31 @@ test("coverage CI uploads same-repository Cobertura evidence to GitHub", () => {
     join(root, ".github", "workflows", "github-coverage.yml"),
     "utf8",
   );
+  const document = parse(workflow);
+  const authorGate = document.jobs.coverage.steps[0];
+
+  assert.equal(authorGate.name, "Verify trusted pull request author");
+  assert.equal(authorGate.if, "github.event_name == 'pull_request'");
+  assert.deepEqual(authorGate.env, {
+    AUTHOR_ASSOCIATION: "${{ github.event.pull_request.author_association }}",
+    AUTHOR_LOGIN: "${{ github.event.pull_request.user.login }}",
+  });
+  for (const scenario of [
+    { association: "OWNER", login: "outside", accepted: true },
+    { association: "MEMBER", login: "outside", accepted: true },
+    { association: "NONE", login: "openboa", accepted: true },
+    { association: "CONTRIBUTOR", login: "outside", accepted: false },
+  ]) {
+    const result = spawnSync("bash", ["-c", authorGate.run], {
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        AUTHOR_ASSOCIATION: scenario.association,
+        AUTHOR_LOGIN: scenario.login,
+      },
+    });
+    assert.equal(result.status === 0, scenario.accepted, scenario.login);
+  }
 
   assert.match(workflow, /^name: Bench code coverage$/mu);
   assert.match(workflow, /pull_request:/u);
@@ -160,5 +216,77 @@ test("migration checker rejects a migrate receipt with a different pinned blob",
     assert.match(result.stderr, /source blob/i);
   } finally {
     rmSync(temp.directory, { force: true, recursive: true });
+  }
+});
+
+test("migration checker rejects migrated target-byte tampering", () => {
+  const temp = fixture();
+  try {
+    writeFileSync(join(temp.repository, ".gitignore"), "tampered\n");
+
+    const result = runMigration(temp.repository);
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /target (?:Git )?blob mismatch/u);
+  } finally {
+    rmSync(temp.directory, { force: true, recursive: true });
+  }
+});
+
+test("migration checker rejects receipt digest tampering", () => {
+  for (const field of ["source_sha256", "target_sha256"]) {
+    const temp = fixture();
+    try {
+      const receiptPath = join(
+        temp.repository,
+        "docs",
+        "migration",
+        "receipts",
+        "task-4-inactive-benchmark-trust-base.json",
+      );
+      const receipt = JSON.parse(readFileSync(receiptPath, "utf8"));
+      receipt.migrate_evidence[0][field] = "0".repeat(64);
+      writeFileSync(receiptPath, `${JSON.stringify(receipt, null, 2)}\n`);
+
+      const result = runMigration(temp.repository);
+      assert.notEqual(result.status, 0, field);
+      assert.match(result.stderr, /receipt (?:source|target) digest mismatch/u);
+    } finally {
+      rmSync(temp.directory, { force: true, recursive: true });
+    }
+  }
+});
+
+test("migration checker rejects failed or unavailable external evidence", () => {
+  for (const field of [
+    "same_repository_ci",
+    "exact_head_review",
+    "squash_merge",
+    "control_plane",
+  ]) {
+    for (const status of ["failed", "unavailable"]) {
+      const temp = fixture();
+      try {
+        const receiptPath = join(
+          temp.repository,
+          "docs",
+          "migration",
+          "receipts",
+          "task-4-inactive-benchmark-trust-base.json",
+        );
+        const receipt = JSON.parse(readFileSync(receiptPath, "utf8"));
+        receipt.verification[field] = status;
+        writeFileSync(receiptPath, `${JSON.stringify(receipt, null, 2)}\n`);
+
+        const result = runMigration(temp.repository);
+        assert.notEqual(result.status, 0, `${field}/${status}`);
+        assert.match(
+          result.stderr,
+          new RegExp(`verification ${field} is ${status}`, "u"),
+          `${field}/${status}`,
+        );
+      } finally {
+        rmSync(temp.directory, { force: true, recursive: true });
+      }
+    }
   }
 });
