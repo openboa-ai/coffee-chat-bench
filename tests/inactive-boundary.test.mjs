@@ -259,20 +259,30 @@ test("inactive boundary rejects an exported tree without Git tracking evidence",
   }
 });
 
-test("inactive boundary rejects a force-added node_modules file", () => {
-  const temp = fixture();
-  try {
-    const hidden = join(temp.repository, "node_modules", "scorer.mjs");
-    mkdirSync(join(temp.repository, "node_modules"), { recursive: true });
-    writeFileSync(hidden, ["export const ", "score", " = () => 1;\n"].join(""));
-    execFileSync("git", ["add", "-f", "node_modules/scorer.mjs"], {
-      cwd: temp.repository,
-    });
+test("inactive boundary rejects force-added node_modules files at every depth", () => {
+  for (const path of [
+    "node_modules/scorer.mjs",
+    "docs/node_modules/scorer.mjs",
+  ]) {
+    const temp = fixture();
+    try {
+      updateControlSurfaceDigest(
+        temp.repository,
+        "tests/inactive-boundary.test.mjs",
+      );
+      const hidden = join(temp.repository, path);
+      mkdirSync(join(hidden, ".."), { recursive: true });
+      writeFileSync(
+        hidden,
+        ["export const ", "score", " = () => 1;\n"].join(""),
+      );
+      execFileSync("git", ["add", "-f", path], { cwd: temp.repository });
 
-    const result = check(temp.repository);
-    assert.notEqual(result.status, 0);
-    assert.match(result.stderr, /forbidden tracked path/u);
-  } finally {
-    rmSync(temp.directory, { force: true, recursive: true });
+      const result = check(temp.repository);
+      assert.notEqual(result.status, 0, path);
+      assert.match(result.stderr, /forbidden tracked path/u, path);
+    } finally {
+      rmSync(temp.directory, { force: true, recursive: true });
+    }
   }
 });

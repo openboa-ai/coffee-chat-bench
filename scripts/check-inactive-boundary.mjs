@@ -445,7 +445,7 @@ function main() {
   const root = parseRoot(process.argv.slice(2));
   const paths = filesUnder(root).sort();
   for (const path of trackedPaths(root)) {
-    if (path === "node_modules" || path.startsWith("node_modules/")) {
+    if (path.split("/").includes("node_modules")) {
       fail(`forbidden tracked path: ${path}`);
     }
   }
