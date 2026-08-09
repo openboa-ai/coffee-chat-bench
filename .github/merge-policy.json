@@ -1,0 +1,72 @@
+{
+  "repository_role": "bench",
+  "merge_method": "squash",
+  "required_events": ["merge_group", "pull_request"],
+  "auto_merge": {
+    "required_checks": true,
+    "verified_members_only": true
+  },
+  "eligible_author_associations": ["OWNER", "MEMBER"],
+  "inactive_control_surface": {
+    ".github/ci-policy.mjs": "10289ab80f3e95f00fd00c5d4cfccebe894ff2d98c9e746e1ce99c0c753ea5ed",
+    ".github/workflows/codeql.yml": "b176852485d0bac66d486320856d45af7a07b5503bd89e5646a5a9865b8be2ef",
+    ".github/workflows/github-coverage.yml": "44c6d7248d48efc3878edfe7b5a573070a0848140d2105b208b3afb3ad4057f6",
+    ".github/workflows/policy.yml": "2ff44e67c4bff6a3073448fdb201b8e69805c7c8775fd355e110ee117a2fb06c",
+    ".github/workflows/quality.yml": "b517a6fa3f18a812d222fad6417722fe12eb8f52d28d3383463b5e6f40bcb6b8",
+    "package.json": "69d1687ab731ce9e7ceea2e6061129ce5e21c64a09c33e5645f3a41014f788ab",
+    "prettier.config.mjs": "26dbf99266950b23fc51d678aa17b93a74b2298eb4e3589ba5a92c3d5173d3b7",
+    "scripts/check-inactive-boundary.mjs": "1badd18ce3970da2367cb9d8ad1a8db1f8ad2570d504dbeb893ef0e5b486f22d",
+    "scripts/check-migration-receipt.mjs": "c59c8a48ce9554fbba42018229ff6e2e7fe4a92fd4a231408a0fc39544ee155c",
+    "tests/governance-policy.test.mjs": "3d31b0206354b500470fd5ef80453aa5c8a6c723bfb492514e31518a0ae1d005",
+    "tests/inactive-boundary.test.mjs": "d810a5075de2344c0cfb64d0baa8f0b269b83aa8e86c3c57ef856cf975fb1088"
+  },
+  "required_checks": [
+    {
+      "context": "Bench required",
+      "integration_id": 15368
+    },
+    {
+      "context": "Bench dependency review",
+      "integration_id": 15368
+    }
+  ],
+  "protected_paths": [
+    "/.editorconfig",
+    "/.github/**",
+    "/AGENTS.md",
+    "/CODEOWNERS",
+    "/LICENSE",
+    "/SECURITY.md",
+    "/package.json",
+    "/package-lock.json",
+    "/prettier.config.mjs",
+    "/scripts/**",
+    "/tests/**",
+    "/tsconfig.json",
+    "/docs/migration/**",
+    "/docs/validity/**",
+    "/docs/quality-map.md"
+  ],
+  "migration": {
+    "base_commit": "50e4887218de9d1856bbc13afd632bc6eddf08c7",
+    "trust_base_source": "checked_head",
+    "checker": "scripts/check-migration-receipt.mjs",
+    "oracle_commands": ["inactive:check"],
+    "reviewed_authority": {
+      "target_owner": "openboa-ai/coffee-chat-bench",
+      "task": "task-4",
+      "objective": "inactive-benchmark-trust-base",
+      "ledger_sha256": "a2717ed0750c11081e09933703d256b971235fd1a5bb73f91476f04badf1b8eb",
+      "generator_sha256": "110f1a2a00d8cd7095e79f6c090ffc833f62e3c39adf71790bf29b1e9d7338c7",
+      "objective_selection_sha256": "985dedb67037762d09b0e80bd3aba8c317cd8cc6c001cc4e896e897d2235345a",
+      "projection_sha256": "03d0338f0c05bb254b57e9f648cb4d6f9eb5249af4f7f13a540043b67ad13c7b",
+      "changed_surface_classification_sha256": "418d0b9008eb6c88d8a207d2ae152d6f189d0ed3e1158936c5e9e9449e634c90",
+      "equality_receipt_sha256": "4ee7c8177c329ccefde97e4237d0d052bdcb4c4a6ad98fae577e62d50b5e3fc7",
+      "execution_identity_receipt_sha256": "fb333f7675a0252d60d9b1f1dc12bb98565da73cabd1d270ef20f2aee01015b0",
+      "target_bootstrap_receipt_sha256": "c642392f5b51b20f955d50da4e67ea16d5f25485c29714a893608b2d1da1b4d1",
+      "changed_surfaces_sha256": "65c40604a1e21aec680f40844cd55ff8674d14365cb22d382ef743aef70b444e",
+      "selected_rows": 5,
+      "changed_surfaces": 33
+    }
+  }
+}
