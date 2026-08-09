@@ -1,0 +1,310 @@
+{
+  "schema": "coffee-chat/migration-selection-projection",
+  "target_owner": "openboa-ai/coffee-chat-bench",
+  "task": "task-4",
+  "objective": "inactive-benchmark-trust-base",
+  "ledger_sha256": "a2717ed0750c11081e09933703d256b971235fd1a5bb73f91476f04badf1b8eb",
+  "selected_rows": [
+    {
+      "source_repository": "SonSangjoon/coffee-chat-bench",
+      "source_ref": "origin/main",
+      "source_commit": "93a5b9b66b7c8387e47452d9714669e71ec36daf",
+      "source_path": ".gitignore",
+      "source_blob_oid": "047173c335575f06865d57706f94ba5bcba15c23",
+      "content_sha256": "e09f9a37c893e1e73066a4f87e6f071f852ce4f48f3245343fa7ae4fd1bb65fe",
+      "action": "migrate",
+      "target_owner": "openboa-ai/coffee-chat-bench",
+      "target_path_or_surface": ".gitignore",
+      "rationale_code": "BYTE_STABLE_PRIMITIVE",
+      "oracle_code": "SHA256_MATCH",
+      "confidence": "high",
+      "migration_state": "planned"
+    },
+    {
+      "source_repository": "SonSangjoon/coffee-chat-bench",
+      "source_ref": "origin/main",
+      "source_commit": "93a5b9b66b7c8387e47452d9714669e71ec36daf",
+      "source_path": "README.md",
+      "source_blob_oid": "db22c3f211398e09608b673e0dfb7e5e6b62c015",
+      "content_sha256": "-",
+      "action": "rewrite",
+      "target_owner": "openboa-ai/coffee-chat-bench",
+      "target_path_or_surface": "README.md",
+      "rationale_code": "INACTIVE_BENCH_AUTHORITY_REAUTHOR",
+      "oracle_code": "PLACEHOLDER_BOUNDARY_REVIEW",
+      "confidence": "high",
+      "migration_state": "planned",
+      "source_objective_or_failure_mode": "Make the benchmark repository's inactive status and activation boundary explicit without retaining provisional executable claims.",
+      "replacement_observable_oracle": "The inactive-boundary check and repository documentation retain not_active and reject unapproved executable or claim-bearing surfaces."
+    },
+    {
+      "source_repository": "SonSangjoon/coffee-chat-bench",
+      "source_ref": "origin/main",
+      "source_commit": "93a5b9b66b7c8387e47452d9714669e71ec36daf",
+      "source_path": "SECURITY.md",
+      "source_blob_oid": "66b1a0f9b263163bdf6370886a94c827c70d3b25",
+      "content_sha256": "-",
+      "action": "rewrite",
+      "target_owner": "openboa-ai/coffee-chat-bench",
+      "target_path_or_surface": "SECURITY.md",
+      "rationale_code": "INACTIVE_BENCH_AUTHORITY_REAUTHOR",
+      "oracle_code": "PLACEHOLDER_BOUNDARY_REVIEW",
+      "confidence": "high",
+      "migration_state": "planned",
+      "source_objective_or_failure_mode": "Preserve a private reporting route while constraining support claims to the inactive trust base.",
+      "replacement_observable_oracle": "SECURITY.md directs private reporting and names the not_active support boundary."
+    },
+    {
+      "source_repository": "SonSangjoon/coffee-chat-bench",
+      "source_ref": "origin/main",
+      "source_commit": "93a5b9b66b7c8387e47452d9714669e71ec36daf",
+      "source_path": "docs/quality-map.md",
+      "source_blob_oid": "4583f2d932f7daecd29a6b4d23e9ba411b404dba",
+      "content_sha256": "-",
+      "action": "rewrite",
+      "target_owner": "openboa-ai/coffee-chat-bench",
+      "target_path_or_surface": "docs/quality-map.md",
+      "rationale_code": "INACTIVE_BENCH_AUTHORITY_REAUTHOR",
+      "oracle_code": "PLACEHOLDER_BOUNDARY_REVIEW",
+      "confidence": "high",
+      "migration_state": "planned",
+      "source_objective_or_failure_mode": "Preserve an owner quality contract without treating local checks as benchmark validity evidence.",
+      "replacement_observable_oracle": "The Quality Map maps governance and absence failure modes to deterministic commands and states that they do not establish validity."
+    },
+    {
+      "source_repository": "SonSangjoon/coffee-chat-bench",
+      "source_ref": "origin/main",
+      "source_commit": "93a5b9b66b7c8387e47452d9714669e71ec36daf",
+      "source_path": "test/merge-policy.test.ts",
+      "source_blob_oid": "67bc516c02acd1907a2fe6fe3e9bf44c444f7696",
+      "content_sha256": "-",
+      "action": "rewrite",
+      "target_owner": "openboa-ai/coffee-chat-bench",
+      "target_path_or_surface": "tests/governance-contracts",
+      "rationale_code": "GOVERNANCE_ORACLE_PRESERVATION",
+      "oracle_code": "PROTECTED_POLICY_TEST",
+      "confidence": "high",
+      "migration_state": "planned",
+      "source_objective_or_failure_mode": "Preserve protected governance and least-privilege CI verification without carrying forward the legacy harness.",
+      "replacement_observable_oracle": "The governance policy test accepts only the repository's inactive trust-base CI contract."
+    }
+  ],
+  "changed_surface_classification": [
+    {
+      "target_path_or_surface": ".editorconfig",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Set target formatting defaults.",
+      "observable_oracle": "Formatting check reads this target-owned configuration."
+    },
+    {
+      "target_path_or_surface": ".gitattributes",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Set target text normalization.",
+      "observable_oracle": "The tracked target file declares LF normalization."
+    },
+    {
+      "target_path_or_surface": ".github/PULL_REQUEST_TEMPLATE.md",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Require scoped evidence and protected-path review declarations.",
+      "observable_oracle": "The target pull request template lists required deterministic commands."
+    },
+    {
+      "target_path_or_surface": ".github/ci-policy.mjs",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Verify the target's role-specific CI policy.",
+      "observable_oracle": "npm run ci:policy fails closed on an invalid workflow or inactive boundary."
+    },
+    {
+      "target_path_or_surface": ".github/dependabot.yml",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Declare dependency maintenance for target-owned dependencies and Actions.",
+      "observable_oracle": "The committed Dependabot configuration has weekly npm and github-actions entries."
+    },
+    {
+      "target_path_or_surface": ".github/merge-policy.json",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Bind the target role, protected paths, required contexts, and reviewed migration authority.",
+      "observable_oracle": "The migration checker recomputes and verifies the protected authority values."
+    },
+    {
+      "target_path_or_surface": ".github/migration-equality-receipt.schema.json",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Define the target equality receipt shape.",
+      "observable_oracle": "The receipt is parsed before policy evidence is accepted."
+    },
+    {
+      "target_path_or_surface": ".github/migration-receipt.schema.json",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Define the target migration execution receipt shape.",
+      "observable_oracle": "The receipt is parsed before policy evidence is accepted."
+    },
+    {
+      "target_path_or_surface": ".github/migration-selection.schema.json",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Define the target scoped selection projection shape.",
+      "observable_oracle": "The projection is parsed before policy evidence is accepted."
+    },
+    {
+      "target_path_or_surface": ".github/workflows/codeql.yml",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Provide advanced CodeQL with its dedicated least-privilege exception.",
+      "observable_oracle": "The CI policy verifies the exact CodeQL permissions and SHA-pinned actions."
+    },
+    {
+      "target_path_or_surface": ".github/workflows/policy.yml",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Provide policy and dependency review evidence for pull requests and merge groups.",
+      "observable_oracle": "The CI policy verifies both events and exact action pins."
+    },
+    {
+      "target_path_or_surface": ".github/workflows/quality.yml",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Provide deterministic checks and an always-created aggregate context.",
+      "observable_oracle": "The CI policy verifies the aggregate job and deterministic commands."
+    },
+    {
+      "target_path_or_surface": ".gitignore",
+      "classification": "ledger-derived",
+      "selected_rows": [
+        {
+          "source_repository": "SonSangjoon/coffee-chat-bench",
+          "source_ref": "origin/main",
+          "source_commit": "93a5b9b66b7c8387e47452d9714669e71ec36daf",
+          "source_path": ".gitignore"
+        }
+      ]
+    },
+    {
+      "target_path_or_surface": "AGENTS.md",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Declare target role and the inactive boundary.",
+      "observable_oracle": "The boundary checker accepts the controlled target tree."
+    },
+    {
+      "target_path_or_surface": "CODEOWNERS",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Route protected target paths to the required human reviewer.",
+      "observable_oracle": "The merge policy and CODEOWNERS name the protected target surfaces."
+    },
+    {
+      "target_path_or_surface": "LICENSE",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Establish the official MIT license scope.",
+      "observable_oracle": "LICENSE contains Copyright (c) 2026 Openboa AI."
+    },
+    {
+      "target_path_or_surface": "README.md",
+      "classification": "ledger-derived",
+      "selected_rows": [
+        {
+          "source_repository": "SonSangjoon/coffee-chat-bench",
+          "source_ref": "origin/main",
+          "source_commit": "93a5b9b66b7c8387e47452d9714669e71ec36daf",
+          "source_path": "README.md"
+        }
+      ]
+    },
+    {
+      "target_path_or_surface": "SECURITY.md",
+      "classification": "ledger-derived",
+      "selected_rows": [
+        {
+          "source_repository": "SonSangjoon/coffee-chat-bench",
+          "source_ref": "origin/main",
+          "source_commit": "93a5b9b66b7c8387e47452d9714669e71ec36daf",
+          "source_path": "SECURITY.md"
+        }
+      ]
+    },
+    {
+      "target_path_or_surface": "docs/migration/equality/task-4-inactive-benchmark-trust-base.json",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Carry the exact workspace equality receipt into the target review surface.",
+      "observable_oracle": "Byte comparison proves equality with the workspace receipt."
+    },
+    {
+      "target_path_or_surface": "docs/migration/receipts/task-4-inactive-benchmark-trust-base.json",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Record target-owned execution evidence for the exact changed surface.",
+      "observable_oracle": "The migration checker recomputes the receipt values."
+    },
+    {
+      "target_path_or_surface": "docs/migration/selections/task-4-inactive-benchmark-trust-base.json",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Carry the protected scoped migration projection into the target review surface.",
+      "observable_oracle": "The migration checker verifies the projection digest and classifications."
+    },
+    {
+      "target_path_or_surface": "docs/quality-map.md",
+      "classification": "ledger-derived",
+      "selected_rows": [
+        {
+          "source_repository": "SonSangjoon/coffee-chat-bench",
+          "source_ref": "origin/main",
+          "source_commit": "93a5b9b66b7c8387e47452d9714669e71ec36daf",
+          "source_path": "docs/quality-map.md"
+        }
+      ]
+    },
+    {
+      "target_path_or_surface": "docs/validity/activation-criteria.md",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Declare pre-activation evidence requirements without defining a concrete construct.",
+      "observable_oracle": "The activation criteria retain not_active and list the required evidence categories."
+    },
+    {
+      "target_path_or_surface": "package-lock.json",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Pin the target's governance tool dependencies.",
+      "observable_oracle": "npm ci installs the committed lockfile."
+    },
+    {
+      "target_path_or_surface": "package.json",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Define target-only deterministic commands and one CalVer.",
+      "observable_oracle": "npm run scripts expose only target governance commands."
+    },
+    {
+      "target_path_or_surface": "prettier.config.mjs",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Define target formatting behavior.",
+      "observable_oracle": "npm run format:check consumes the configuration."
+    },
+    {
+      "target_path_or_surface": "scripts/check-inactive-boundary.mjs",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Reject unapproved executable or claim-bearing surfaces before activation.",
+      "observable_oracle": "The inactive-boundary test injects prohibited content and paths and observes failure."
+    },
+    {
+      "target_path_or_surface": "scripts/check-migration-receipt.mjs",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Recompute protected migration evidence for the exact trust-base surface.",
+      "observable_oracle": "npm run ci:policy recomputes projection, receipt, and changed-surface evidence."
+    },
+    {
+      "target_path_or_surface": "tests/governance-policy.test.mjs",
+      "classification": "ledger-derived",
+      "selected_rows": [
+        {
+          "source_repository": "SonSangjoon/coffee-chat-bench",
+          "source_ref": "origin/main",
+          "source_commit": "93a5b9b66b7c8387e47452d9714669e71ec36daf",
+          "source_path": "test/merge-policy.test.ts"
+        }
+      ]
+    },
+    {
+      "target_path_or_surface": "tests/inactive-boundary.test.mjs",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Prove the inactive boundary rejects injected prohibited paths and content.",
+      "observable_oracle": "The executable test observes controlled boundary failures."
+    },
+    {
+      "target_path_or_surface": "tsconfig.json",
+      "classification": "new-authority",
+      "objective_or_failure_mode": "Type-check target JavaScript policy code.",
+      "observable_oracle": "npm run typecheck completes without errors."
+    }
+  ]
+}
