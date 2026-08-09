@@ -8,14 +8,15 @@ validity claim.
 
 ## Quality objective
 
-Prevent this trust base from acquiring an unapproved benchmark-bearing or
-executable surface before an explicit activation decision.
+Keep the machine-stable inactive boundary observable while assigning semantic
+decisions to exact-head review.
 
-| Failure mode | Observable oracle | Evidence tier |
+| Property | Primary oracle | Honest evidence boundary |
 | --- | --- | --- |
-| A prohibited surface enters the repository. | `node scripts/check-inactive-boundary.mjs --root .` rejects it. | Local contract evidence |
-| The absence boundary stops rejecting a prohibited surface. | `node --test tests/inactive-boundary.test.mjs` fails. | Local contract evidence |
-| CI is mistaken for activation. | Public documentation retains `not_active` and no-claim wording. | Documentation boundary |
+| Tracked-path boundary, canonical `not_active` markers, and bounded syntax tripwires | Deterministic checker and Node tests | Local/PR contract evidence only |
+| Workflow self-change semantics, hidden executable behavior inside approved control modules, and natural-language claim meaning | Exact-head Codex review | Semantic review of the complete changed surface and execution graph |
 
-Passing any listed command proves only the named local contract. It does not
-make the repository active or establish validity.
+Native auto-merge is enabled only after Codex review of the exact current head
+is complete and all material review conversations are resolved. Passing local
+CI does not make the repository active, establish validity, or replace that
+semantic review.

@@ -18,10 +18,9 @@ jobs:
         env:
           AUTHOR_ASSOCIATION:
             ${{ github.event.pull_request.author_association }}
-          PR_AUTHOR_LOGIN: ${{ github.event.pull_request.user.login }}
         run: |
-          case "$AUTHOR_ASSOCIATION:$PR_AUTHOR_LOGIN" in
-            OWNER:*|MEMBER:*|*:openboa)
+          case "$AUTHOR_ASSOCIATION" in
+            OWNER|MEMBER)
               printf '%s\n' 'author=trusted_member'
               ;;
             *)
