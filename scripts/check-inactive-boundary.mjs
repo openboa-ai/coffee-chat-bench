@@ -5,6 +5,8 @@ import { createHash } from "node:crypto";
 import { readdirSync, readFileSync } from "node:fs";
 import { relative, resolve } from "node:path";
 
+import { parsers } from "prettier/plugins/babel";
+
 const migrationEvidencePaths = new Set([
   "docs/migration/equality/task-4-inactive-benchmark-trust-base.json",
   "docs/migration/receipts/task-4-inactive-benchmark-trust-base.json",
@@ -51,6 +53,14 @@ const controlPaths = new Set([
   "scripts/check-inactive-boundary.mjs",
   "tests/inactive-boundary.test.mjs",
 ]);
+const controlModuleContracts = new Map([
+  [".github/ci-policy.mjs", "closed"],
+  ["prettier.config.mjs", "static-default-object"],
+  ["scripts/check-inactive-boundary.mjs", "closed"],
+  ["scripts/check-migration-receipt.mjs", "closed"],
+  ["tests/governance-policy.test.mjs", "closed"],
+  ["tests/inactive-boundary.test.mjs", "closed"],
+]);
 const activationCriteriaPath = "docs/validity/activation-criteria.md";
 const forbiddenActivationContent =
   /\b(?:tasks?|cases?|metrics?|datasets?|scores?|results?)\b/iu;
@@ -63,6 +73,82 @@ function fail(message) {
 
 function sha256(bytes) {
   return createHash("sha256").update(bytes).digest("hex");
+}
+
+function parseControlModule(path, source) {
+  try {
+    // @ts-expect-error Prettier's plugin type exposes full formatter options,
+    // while its runtime parser accepts the filepath-only parse context used here.
+    const parsed = parsers.babel.parse(source, { filepath: path });
+    if (
+      parsed instanceof Promise ||
+      parsed?.type !== "File" ||
+      parsed.program?.type !== "Program" ||
+      !Array.isArray(parsed.program.body)
+    ) {
+      fail(`control module parser contract unavailable: ${path}`);
+    }
+    return parsed.program.body;
+  } catch (error) {
+    fail(
+      `invalid control module syntax: ${path}: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+}
+
+function isStaticDefaultObject(statement) {
+  if (
+    statement?.type !== "ExportDefaultDeclaration" ||
+    statement.declaration?.type !== "ObjectExpression"
+  ) {
+    return false;
+  }
+  return statement.declaration.properties.every(
+    (property) =>
+      property.type === "ObjectProperty" &&
+      property.computed === false &&
+      property.method === false &&
+      property.shorthand === false &&
+      [
+        "BooleanLiteral",
+        "NullLiteral",
+        "NumericLiteral",
+        "StringLiteral",
+      ].includes(property.value.type),
+  );
+}
+
+function verifyControlModuleStructure(root, paths) {
+  const modulePaths = paths.filter((path) => path.endsWith(".mjs")).sort();
+  const declaredPaths = [...controlModuleContracts.keys()].sort();
+  if (JSON.stringify(modulePaths) !== JSON.stringify(declaredPaths)) {
+    fail("control module contract path mismatch");
+  }
+
+  for (const path of modulePaths) {
+    const statements = parseControlModule(
+      path,
+      readFileSync(resolve(root, path), "utf8"),
+    );
+    const contract = controlModuleContracts.get(path);
+    if (contract === "closed") {
+      if (
+        statements.some((statement) =>
+          [
+            "ExportAllDeclaration",
+            "ExportDefaultDeclaration",
+            "ExportNamedDeclaration",
+          ].includes(statement.type),
+        )
+      ) {
+        fail(`closed control module export: ${path}`);
+      }
+      continue;
+    }
+    if (statements.length !== 1 || !isStaticDefaultObject(statements[0])) {
+      fail(`non-static control module export: ${path}`);
+    }
+  }
 }
 
 function parseRoot(argv) {
@@ -160,6 +246,7 @@ function main() {
       fail(`forbidden content outside docs/validity: ${path}`);
     }
   }
+  verifyControlModuleStructure(root, paths);
   verifyExecutableControlSurface(root, paths);
 
   process.stdout.write(
