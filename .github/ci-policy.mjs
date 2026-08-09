@@ -82,9 +82,7 @@ try {
   const coverageWorkflow = workflows[3];
   const coverageJob = coverageWorkflow.jobs.coverage;
   const coverageUpload = coverageWorkflow.jobs["upload-coverage-javascript"];
-  assert.deepEqual(coverageJob.env, {
-    COVERAGE_DIR: "${{ runner.temp }}/coffee-chat-bench-coverage",
-  });
+  assert.equal(coverageJob.env, undefined);
   assert.equal(
     coverageJob.steps.find((step) =>
       String(step.uses).startsWith("actions/checkout@"),
