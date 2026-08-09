@@ -8,6 +8,19 @@
   },
   "eligible_author_associations": ["OWNER", "MEMBER"],
   "eligible_author_logins": ["openboa"],
+  "inactive_control_surface": {
+    ".github/ci-policy.mjs": "9936605490df6f99f20afe6cfe91c0abfc2dc44b9dd1aa15257a7cb7af873ac5",
+    ".github/workflows/codeql.yml": "b176852485d0bac66d486320856d45af7a07b5503bd89e5646a5a9865b8be2ef",
+    ".github/workflows/github-coverage.yml": "5446f97fded87219fea4f716380bbedba69fd6cea22a1bc2e86e08ddd3d40551",
+    ".github/workflows/policy.yml": "2ff44e67c4bff6a3073448fdb201b8e69805c7c8775fd355e110ee117a2fb06c",
+    ".github/workflows/quality.yml": "47c9cf632e6eb7b2375568b411d36a57e80c8f3bea48707ad802b56243e65cf4",
+    "package.json": "69d1687ab731ce9e7ceea2e6061129ce5e21c64a09c33e5645f3a41014f788ab",
+    "prettier.config.mjs": "26dbf99266950b23fc51d678aa17b93a74b2298eb4e3589ba5a92c3d5173d3b7",
+    "scripts/check-inactive-boundary.mjs": "152fac2863001bebf26c086164e1250daa0c32fd9b288f8fa04734cd5f286ce7",
+    "scripts/check-migration-receipt.mjs": "b7f5d44b1ad8767bcf085f9b13063d59d524a30c72f8ec1e9a22da56f32a367e",
+    "tests/governance-policy.test.mjs": "8ef561efb873cce0136a815df70b99f5d21104865af8317a436f8fc1558135b1",
+    "tests/inactive-boundary.test.mjs": "c56cf1ec5bcd6ca328ee01e8a55b0c9647c86823bcc63e4ca83793dbfb35a786"
+  },
   "required_checks": [
     {
       "context": "Bench required",

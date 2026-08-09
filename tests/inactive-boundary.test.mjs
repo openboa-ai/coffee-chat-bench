@@ -26,7 +26,7 @@ function check(repository) {
   );
 }
 
-function fixture() {
+function fixture({ initializeGit = true } = {}) {
   const directory = mkdtempSync(join(tmpdir(), "inactive-benchmark-"));
   const repository = join(directory, "repository");
   cpSync(root, repository, {
@@ -38,6 +38,10 @@ function fixture() {
       );
     },
   });
+  if (initializeGit) {
+    execFileSync("git", ["init", "--quiet"], { cwd: repository });
+    execFileSync("git", ["add", "--all"], { cwd: repository });
+  }
   return { directory, repository };
 }
 
@@ -129,29 +133,42 @@ test("inactive boundary rejects executable material hidden under migration docs"
   }
 });
 
-test("inactive boundary rejects executable benchmark code hidden in a control file", () => {
-  const temp = fixture();
-  try {
-    const checker = join(
-      temp.repository,
-      "scripts",
-      "check-inactive-boundary.mjs",
-    );
-    const hiddenBenchmark = [
-      "export const ",
-      "metrics",
-      " = { ",
-      "score",
-      ": (candidate) => candidate.result };\n",
-    ].join("");
-    writeFileSync(
-      checker,
-      `${readFileSync(checker, "utf8")}\n${hiddenBenchmark}`,
-    );
+test("inactive boundary rejects undeclared executable logic in the control surface", () => {
+  for (const hiddenLogic of [
+    "export function grade(transcript) { return transcript.length; }\n",
+    "const assess = (transcript) => transcript.length; void assess;\n",
+  ]) {
+    const temp = fixture();
+    try {
+      const checker = join(
+        temp.repository,
+        "scripts",
+        "check-inactive-boundary.mjs",
+      );
+      writeFileSync(
+        checker,
+        `${readFileSync(checker, "utf8")}\n${hiddenLogic}`,
+      );
 
+      const result = check(temp.repository);
+      assert.notEqual(result.status, 0, hiddenLogic);
+      assert.match(
+        result.stderr,
+        /executable control surface digest mismatch/u,
+        hiddenLogic,
+      );
+    } finally {
+      rmSync(temp.directory, { force: true, recursive: true });
+    }
+  }
+});
+
+test("inactive boundary rejects an exported tree without Git tracking evidence", () => {
+  const temp = fixture({ initializeGit: false });
+  try {
     const result = check(temp.repository);
     assert.notEqual(result.status, 0);
-    assert.match(result.stderr, /forbidden executable content/u);
+    assert.match(result.stderr, /tracked-path evidence unavailable/u);
   } finally {
     rmSync(temp.directory, { force: true, recursive: true });
   }
@@ -160,13 +177,6 @@ test("inactive boundary rejects executable benchmark code hidden in a control fi
 test("inactive boundary rejects a force-added node_modules file", () => {
   const temp = fixture();
   try {
-    execFileSync("git", ["init", "--quiet"], { cwd: temp.repository });
-    execFileSync("git", ["config", "user.name", "Bench fixture"], {
-      cwd: temp.repository,
-    });
-    execFileSync("git", ["config", "user.email", "bench@example.invalid"], {
-      cwd: temp.repository,
-    });
     const hidden = join(temp.repository, "node_modules", "scorer.mjs");
     mkdirSync(join(temp.repository, "node_modules"), { recursive: true });
     writeFileSync(hidden, ["export const ", "score", " = () => 1;\n"].join(""));
