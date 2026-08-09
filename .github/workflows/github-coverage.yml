@@ -15,6 +15,8 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: read
+    env:
+      COVERAGE_DIR: ${{ runner.temp }}/coffee-chat-bench-coverage
     steps:
       - name: Check out repository without persisted credentials
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -32,11 +34,11 @@ jobs:
         shell: bash
       - name: Run complete deterministic suite with coverage
         run: |
-          mkdir -p coverage
+          mkdir -p "$COVERAGE_DIR"
           node --test \
             --experimental-test-coverage \
             --test-reporter=lcov \
-            --test-reporter-destination=coverage/lcov.info \
+            --test-reporter-destination="$COVERAGE_DIR/lcov.info" \
             tests/*.test.mjs
         shell: bash
       - name: Convert lcov to Cobertura XML
@@ -46,7 +48,9 @@ jobs:
             --no-deps \
             --require-hashes \
             --requirement .github/coverage-requirements.txt
-          python3 -m lcov_cobertura coverage/lcov.info --output coverage/cobertura.xml
+          python3 -m lcov_cobertura \
+            "$COVERAGE_DIR/lcov.info" \
+            --output "$COVERAGE_DIR/cobertura.xml"
         shell: bash
       - name: Upload coverage artifact
         if:
@@ -55,7 +59,7 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: coverage-report-javascript
-          path: coverage/cobertura.xml
+          path: ${{ runner.temp }}/coffee-chat-bench-coverage/cobertura.xml
           if-no-files-found: error
           retention-days: 1
 

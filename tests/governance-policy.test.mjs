@@ -67,7 +67,8 @@ test("coverage CI uploads same-repository Cobertura evidence to GitHub", () => {
   assert.match(workflow, /pull_request:/u);
   assert.match(workflow, /merge_group:/u);
   assert.match(workflow, /--experimental-test-coverage/u);
-  assert.match(workflow, /coverage\/cobertura\.xml/u);
+  assert.match(workflow, /runner\.temp/u);
+  assert.match(workflow, /cobertura\.xml/u);
   assert.match(
     workflow,
     /github\.event\.pull_request\.head\.repo\.full_name == github\.repository/u,
