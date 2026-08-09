@@ -88,11 +88,241 @@ function parseControlModule(path, source) {
     ) {
       fail(`control module parser contract unavailable: ${path}`);
     }
-    return parsed.program.body;
+    return parsed.program;
   } catch (error) {
     fail(
       `invalid control module syntax: ${path}: ${error instanceof Error ? error.message : String(error)}`,
     );
+  }
+}
+
+const astMetadataKeys = new Set([
+  "comments",
+  "end",
+  "errors",
+  "extra",
+  "loc",
+  "start",
+  "tokens",
+]);
+
+function visitAst(value, visitor, ancestors = []) {
+  if (!value || typeof value !== "object") return;
+  if (typeof value.type === "string") visitor(value, ancestors);
+  for (const [key, child] of Object.entries(value)) {
+    if (astMetadataKeys.has(key)) continue;
+    const children = Array.isArray(child) ? child : [child];
+    for (const entry of children) {
+      if (!entry || typeof entry !== "object") continue;
+      visitAst(entry, visitor, [...ancestors, { node: value, key }]);
+    }
+  }
+}
+
+function failClosedModule(path, detail) {
+  fail(`closed control module executable boundary: ${path}: ${detail}`);
+}
+
+function importedBindings(program, source, importedName) {
+  const bindings = new Set();
+  for (const statement of program.body) {
+    if (
+      statement.type !== "ImportDeclaration" ||
+      statement.source.value !== source
+    ) {
+      continue;
+    }
+    for (const specifier of statement.specifiers) {
+      if (
+        (importedName === "default" &&
+          specifier.type === "ImportDefaultSpecifier") ||
+        (specifier.type === "ImportSpecifier" &&
+          specifier.imported?.name === importedName)
+      ) {
+        bindings.add(specifier.local.name);
+      }
+    }
+  }
+  return bindings;
+}
+
+function hasControlExecutionOwner(ancestors, testBindings) {
+  return ancestors.some(
+    ({ node }) =>
+      node.type === "FunctionDeclaration" ||
+      node.type === "TryStatement" ||
+      (node.type === "CallExpression" &&
+        node.callee.type === "Identifier" &&
+        testBindings.has(node.callee.name)),
+  );
+}
+
+function isControlCallback(ancestors, copyBindings, testBindings) {
+  if (!hasControlExecutionOwner(ancestors, testBindings)) return false;
+  let copyFilter = false;
+  for (let index = ancestors.length - 1; index >= 0; index -= 1) {
+    const { node, key } = ancestors[index];
+    if (node.type === "CallExpression" || node.type === "NewExpression") {
+      if (key !== "arguments") return false;
+      if (!copyFilter) return true;
+      return (
+        node.callee.type === "Identifier" && copyBindings.has(node.callee.name)
+      );
+    }
+    if (node.type === "ObjectProperty" && key === "value") {
+      const propertyName =
+        node.key.type === "Identifier" ? node.key.name : node.key.value;
+      if (propertyName !== "filter") return false;
+      copyFilter = true;
+      continue;
+    }
+    if (
+      (node.type === "ObjectExpression" && key === "properties") ||
+      (node.type === "SpreadElement" && key === "argument")
+    ) {
+      continue;
+    }
+    return false;
+  }
+  return false;
+}
+
+function isControlFunctionUse(ancestors) {
+  const relation = ancestors.at(-1);
+  if (!relation) return false;
+  const { node, key } = relation;
+  return (
+    ((node.type === "CallExpression" || node.type === "NewExpression") &&
+      (key === "callee" || key === "arguments")) ||
+    (node.type === "TaggedTemplateExpression" && key === "tag")
+  );
+}
+
+function controlFunctionReferences(value, names) {
+  const references = new Set();
+  visitAst(value, (node, ancestors) => {
+    if (
+      node.type === "Identifier" &&
+      names.has(node.name) &&
+      isControlFunctionUse(ancestors)
+    ) {
+      references.add(node.name);
+    }
+  });
+  return references;
+}
+
+function isTestRegistration(statement, testBindings) {
+  return (
+    statement.type === "ExpressionStatement" &&
+    statement.expression.type === "CallExpression" &&
+    statement.expression.callee.type === "Identifier" &&
+    testBindings.has(statement.expression.callee.name)
+  );
+}
+
+function verifyClosedControlModule(path, program) {
+  const testModule = path.startsWith("tests/");
+  const testBindings = importedBindings(program, "node:test", "default");
+  const copyBindings = importedBindings(program, "node:fs", "cpSync");
+  const functions = new Map();
+  let entrypoints = 0;
+
+  for (const statement of program.body) {
+    if (
+      [
+        "ExportAllDeclaration",
+        "ExportDefaultDeclaration",
+        "ExportNamedDeclaration",
+      ].includes(statement.type)
+    ) {
+      fail(`closed control module export: ${path}`);
+    }
+    if (statement.type === "FunctionDeclaration") {
+      if (!statement.id || statement.async || statement.generator) {
+        failClosedModule(path, "unsupported top-level control function");
+      }
+      functions.set(statement.id.name, statement);
+      continue;
+    }
+    if (
+      statement.type === "ImportDeclaration" ||
+      statement.type === "VariableDeclaration"
+    ) {
+      continue;
+    }
+    if (!testModule && statement.type === "TryStatement") {
+      entrypoints += 1;
+      continue;
+    }
+    if (testModule && isTestRegistration(statement, testBindings)) continue;
+    failClosedModule(path, `unsupported top-level ${statement.type}`);
+  }
+  if (!testModule && entrypoints !== 1) {
+    failClosedModule(path, "expected exactly one control entrypoint");
+  }
+
+  visitAst(program, (node, ancestors) => {
+    if (node.type === "FunctionDeclaration") {
+      const parent = ancestors.at(-1)?.node;
+      if (parent?.type !== "Program") {
+        failClosedModule(path, "nested function declaration");
+      }
+      return;
+    }
+    if (node.type === "ArrowFunctionExpression") {
+      if (
+        node.async ||
+        !isControlCallback(ancestors, copyBindings, testBindings)
+      ) {
+        failClosedModule(path, "callable outside an approved callback role");
+      }
+      return;
+    }
+    if (
+      [
+        "ClassDeclaration",
+        "ClassExpression",
+        "ClassMethod",
+        "ClassPrivateMethod",
+        "FunctionExpression",
+        "ObjectMethod",
+      ].includes(node.type)
+    ) {
+      failClosedModule(path, `unsupported callable ${node.type}`);
+    }
+  });
+
+  const names = new Set(functions.keys());
+  const roots = new Set();
+  for (const statement of program.body) {
+    const controlEntrypoint = testModule
+      ? isTestRegistration(statement, testBindings)
+      : statement.type === "TryStatement";
+    if (!controlEntrypoint) continue;
+    for (const name of controlFunctionReferences(statement, names)) {
+      roots.add(name);
+    }
+  }
+  const reachable = new Set();
+  const pending = [...roots];
+  while (pending.length > 0) {
+    const name = pending.pop();
+    if (reachable.has(name)) continue;
+    reachable.add(name);
+    const declaration = functions.get(name);
+    if (!declaration) continue;
+    for (const dependency of controlFunctionReferences(
+      declaration.body,
+      names,
+    )) {
+      pending.push(dependency);
+    }
+  }
+  for (const name of names) {
+    if (!reachable.has(name)) {
+      failClosedModule(path, "unreachable local control function");
+    }
   }
 }
 
@@ -126,26 +356,16 @@ function verifyControlModuleStructure(root, paths) {
   }
 
   for (const path of modulePaths) {
-    const statements = parseControlModule(
+    const program = parseControlModule(
       path,
       readFileSync(resolve(root, path), "utf8"),
     );
     const contract = controlModuleContracts.get(path);
     if (contract === "closed") {
-      if (
-        statements.some((statement) =>
-          [
-            "ExportAllDeclaration",
-            "ExportDefaultDeclaration",
-            "ExportNamedDeclaration",
-          ].includes(statement.type),
-        )
-      ) {
-        fail(`closed control module export: ${path}`);
-      }
+      verifyClosedControlModule(path, program);
       continue;
     }
-    if (statements.length !== 1 || !isStaticDefaultObject(statements[0])) {
+    if (program.body.length !== 1 || !isStaticDefaultObject(program.body[0])) {
       fail(`non-static control module export: ${path}`);
     }
   }
