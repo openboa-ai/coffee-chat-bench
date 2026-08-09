@@ -1,0 +1,13 @@
+# No wildcard owner: ordinary paths may become eligible for strong-CI auto-merge.
+/.github/** @SonSangjoon
+/AGENTS.md @SonSangjoon
+/CODEOWNERS @SonSangjoon
+/LICENSE @SonSangjoon
+/SECURITY.md @SonSangjoon
+/package.json @SonSangjoon
+/package-lock.json @SonSangjoon
+/scripts/** @SonSangjoon
+/tests/** @SonSangjoon
+/docs/migration/** @SonSangjoon
+/docs/validity/** @SonSangjoon
+/docs/quality-map.md @SonSangjoon
