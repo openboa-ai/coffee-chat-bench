@@ -7,9 +7,8 @@ Coffee Chat.
 
 Repository status: `not_active`.
 
-This initial trust base contains governance, an executable inactive boundary,
-and activation criteria only. Passing CI verifies those local contracts; it does
-not establish benchmark validity or activate this repository.
+This trust base contains governance, an executable no-claim boundary, and
+deferred activation criteria only. It does not provide a benchmark, metric, result, or validity claim. Passing CI verifies those local contracts; it does not establish benchmark validity or activate this repository.
 
 The [activation criteria](docs/validity/activation-criteria.md) define the
 evidence required before this status may change. They do not define a Taste
@@ -22,12 +21,10 @@ evidence after activation. It does not own Coffee Chat implementation tests,
 private product internals, evaluator execution, or a complete Coffee Chat
 report.
 
-## Version and license
+## License
 
-The repository has one CalVer: `2026.8.9`. It has no semantic-version line or
-backward-compatibility commitment. Official software, governance, and reusable
-documentation are licensed under the [MIT License](LICENSE), Copyright (c) 2026
-Openboa AI.
+Governance and reusable documentation are licensed under the
+[MIT License](LICENSE), Copyright (c) 2026 Openboa AI.
 
 ## Security
 
