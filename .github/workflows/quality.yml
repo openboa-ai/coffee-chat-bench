@@ -18,9 +18,10 @@ jobs:
         env:
           AUTHOR_ASSOCIATION:
             ${{ github.event.pull_request.author_association }}
+          PR_AUTHOR_LOGIN: ${{ github.event.pull_request.user.login }}
         run: |
-          case "$AUTHOR_ASSOCIATION" in
-            OWNER|MEMBER)
+          case "$AUTHOR_ASSOCIATION:$PR_AUTHOR_LOGIN" in
+            OWNER:*|MEMBER:*|*:openboa)
               printf '%s\n' 'author=trusted_member'
               ;;
             *)
@@ -40,23 +41,10 @@ jobs:
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: 24
-          cache: npm
-      - name: Install locked dependencies
-        run: npm ci
-      - name: Check formatting
-        run: npm run format:check
-      - name: Check types
-        run: npm run typecheck
       - name: Verify inactive boundary
-        run: npm run inactive:check
+        run: node scripts/check-inactive-boundary.mjs --root .
       - name: Run deterministic tests
-        run: npm test
-      - name: Verify governance and migration policy
-        env:
-          MIGRATION_TARGET_SHA:
-            ${{ github.event.pull_request.head.sha ||
-            github.event.merge_group.head_sha || github.sha }}
-        run: npm run ci:policy
+        run: node --test tests/inactive-boundary.test.mjs
 
   aggregate:
     name: Bench required

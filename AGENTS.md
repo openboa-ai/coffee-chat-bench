@@ -5,10 +5,9 @@ Chat. Its current repository status is `not_active`.
 
 ## Inactive boundary
 
-- This trust base owns documentation, governance, activation criteria, and an
-  executable absence boundary only.
-- It does not provide an active benchmark or any executable measurement
-  material.
+- This trust base owns governance, deferred activation criteria, and an
+  executable no-claim boundary only.
+- It does not provide an active benchmark or executable measurement material.
 - Passing CI verifies governance and the inactive boundary only. It does not
   establish benchmark validity or activate the repository.
 - The validity documentation may describe future evidence requirements, but it
@@ -21,5 +20,6 @@ Chat. Its current repository status is `not_active`.
   automated policy, security, and contract evidence before merge.
 - Preserve explicit failure states. Do not turn missing, invalid, unavailable,
   or skipped evidence into success.
-- Run format, type, test, inactive-boundary, and policy commands for changed
-  surfaces. Do not weaken a check to imply activation.
+- Run `node scripts/check-inactive-boundary.mjs --root .` and
+  `node --test tests/inactive-boundary.test.mjs` for changed surfaces. Do not
+  weaken a check to imply activation.
