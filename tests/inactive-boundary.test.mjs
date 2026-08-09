@@ -44,6 +44,43 @@ const markdownClaimVariants = [
   ["bold heading suffix", "\n## **Results** by model\n"],
   ["bold status", "\nRepository status: **active**.\n"],
 ];
+const qualityWorkflow = join(root, ".github", "workflows", "quality.yml");
+
+function workflowStep(name) {
+  const lines = readFileSync(qualityWorkflow, "utf8").split("\n");
+  const start = lines.indexOf(`      - name: ${name}`);
+  assert.notEqual(start, -1, `missing workflow step: ${name}`);
+  const next = lines.findIndex(
+    (line, index) => index > start && line.startsWith("      - name: "),
+  );
+  const block = lines.slice(start + 1, next === -1 ? lines.length : next);
+  const condition = block
+    .find((line) => line.startsWith("        if: "))
+    ?.slice("        if: ".length);
+  const run = block.indexOf("        run: |");
+  assert.notEqual(run, -1, `missing workflow script: ${name}`);
+  const script = block
+    .slice(run + 1)
+    .filter((line) => line.startsWith("          ") || line === "")
+    .map((line) => line.slice(10))
+    .join("\n");
+  return { condition, script };
+}
+
+function runAuthorGate({ event, association, login }) {
+  const gate = workflowStep("Verify trusted pull request author");
+  assert.equal(gate.condition, "github.event_name == 'pull_request'");
+  if (event !== "pull_request") return { status: 0 };
+  const env = { ...process.env };
+  if (association === undefined) delete env.AUTHOR_ASSOCIATION;
+  else env.AUTHOR_ASSOCIATION = association;
+  if (login === undefined) delete env.PR_AUTHOR_LOGIN;
+  else env.PR_AUTHOR_LOGIN = login;
+  return spawnSync("bash", ["-e", "-o", "pipefail", "-c", gate.script], {
+    encoding: "utf8",
+    env,
+  });
+}
 function check(repository) {
   return spawnSync(
     process.execPath,
@@ -76,6 +113,29 @@ test("accepts the declared not_active repository boundary", () => {
     assert.equal(result.status, 0, result.stderr || result.stdout);
     assert.match(result.stdout, /"repository_status":"not_active"/u);
   });
+});
+
+test("enforces member-only author eligibility for pull requests", () => {
+  const scenarios = [
+    ["owner", { event: "pull_request", association: "OWNER" }, true],
+    ["member", { event: "pull_request", association: "MEMBER" }, true],
+    ["collaborator", { event: "pull_request", association: "COLLABORATOR" }, false],
+    ["contributor", { event: "pull_request", association: "CONTRIBUTOR" }, false],
+    ["none", { event: "pull_request", association: "NONE" }, false],
+    ["missing association", { event: "pull_request" }, false],
+    [
+      "openboa login with none",
+      { event: "pull_request", association: "NONE", login: "openboa" },
+      false,
+    ],
+    ["merge group", { event: "merge_group" }, true],
+  ];
+
+  for (const [name, input, allowed] of scenarios) {
+    const result = runAuthorGate(input);
+    if (allowed) assert.equal(result.status, 0, result.stderr || name);
+    else assert.notEqual(result.status, 0, name);
+  }
 });
 test("requires the public not_active status in each public boundary document", () => {
   for (const path of ["AGENTS.md", "README.md"]) {
