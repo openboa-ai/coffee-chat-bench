@@ -57,6 +57,30 @@ function runMigration(repository) {
   );
 }
 
+function assertMemberOnlyAuthorGate(authorGate) {
+  assert.equal(authorGate.name, "Verify trusted pull request author");
+  assert.equal(authorGate.if, "github.event_name == 'pull_request'");
+  assert.deepEqual(authorGate.env, {
+    AUTHOR_ASSOCIATION: "${{ github.event.pull_request.author_association }}",
+  });
+  for (const scenario of [
+    { association: "OWNER", accepted: true },
+    { association: "MEMBER", accepted: true },
+    { association: "COLLABORATOR", accepted: false },
+    { association: "CONTRIBUTOR", accepted: false },
+    { association: "NONE", accepted: false },
+  ]) {
+    const result = spawnSync("bash", ["-c", authorGate.run], {
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        AUTHOR_ASSOCIATION: scenario.association,
+      },
+    });
+    assert.equal(result.status === 0, scenario.accepted, scenario.association);
+  }
+}
+
 test("governance policy accepts the inactive benchmark trust base", () => {
   const directory = mkdtempSync(join(tmpdir(), "bench-no-network-"));
   try {
@@ -90,6 +114,19 @@ test("migration policy derives the immutable target from the checked head", () =
   assert.equal(policy.migration.trust_base_commit, undefined);
 });
 
+test("merge policy admits only organization owners and members", () => {
+  const policy = JSON.parse(
+    readFileSync(join(root, ".github", "merge-policy.json"), "utf8"),
+  );
+  assert.deepEqual(policy.eligible_author_associations, ["OWNER", "MEMBER"]);
+  assert.deepEqual(
+    Object.keys(policy)
+      .filter((key) => key.startsWith("eligible_author_"))
+      .sort(),
+    ["eligible_author_associations"],
+  );
+});
+
 test("coverage CI uploads same-repository Cobertura evidence to GitHub", () => {
   const workflow = readFileSync(
     join(root, ".github", "workflows", "github-coverage.yml"),
@@ -98,28 +135,7 @@ test("coverage CI uploads same-repository Cobertura evidence to GitHub", () => {
   const document = parse(workflow);
   const authorGate = document.jobs.coverage.steps[0];
 
-  assert.equal(authorGate.name, "Verify trusted pull request author");
-  assert.equal(authorGate.if, "github.event_name == 'pull_request'");
-  assert.deepEqual(authorGate.env, {
-    AUTHOR_ASSOCIATION: "${{ github.event.pull_request.author_association }}",
-    AUTHOR_LOGIN: "${{ github.event.pull_request.user.login }}",
-  });
-  for (const scenario of [
-    { association: "OWNER", login: "outside", accepted: true },
-    { association: "MEMBER", login: "outside", accepted: true },
-    { association: "NONE", login: "openboa", accepted: true },
-    { association: "CONTRIBUTOR", login: "outside", accepted: false },
-  ]) {
-    const result = spawnSync("bash", ["-c", authorGate.run], {
-      encoding: "utf8",
-      env: {
-        ...process.env,
-        AUTHOR_ASSOCIATION: scenario.association,
-        AUTHOR_LOGIN: scenario.login,
-      },
-    });
-    assert.equal(result.status === 0, scenario.accepted, scenario.login);
-  }
+  assertMemberOnlyAuthorGate(authorGate);
 
   assert.match(workflow, /^name: Bench code coverage$/mu);
   assert.match(workflow, /pull_request:/u);
@@ -153,6 +169,7 @@ test("the required aggregate validates the exact immutable head without a duplic
     (step) => step.run === "npm run ci:policy",
   );
 
+  assertMemberOnlyAuthorGate(quality.jobs.quality.steps[0]);
   assert.equal(checkout.with.ref, expectedHead);
   assert.equal(verification.env.MIGRATION_TARGET_SHA, expectedHead);
   assert.equal(policy.jobs.policy, undefined);

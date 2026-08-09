@@ -11,7 +11,7 @@ Describe the repository-owned boundary and why it belongs here.
 - [ ] The inactive status remains explicit unless this is an approved activation
       change.
 
-## Protected-path review
+## Protected-path evidence
 
-- [ ] I identified any CODEOWNERS-protected paths and requested the required
-      review.
+- [ ] I identified any protected paths and ran their applicable automated
+      policy, security, and contract checks.
