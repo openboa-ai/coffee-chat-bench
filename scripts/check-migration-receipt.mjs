@@ -80,7 +80,16 @@ function gitPaths(root, base, target) {
     ? ""
     : git(root, ["ls-files", "--others", "--exclude-standard"]);
   return [
-    ...new Set(`${changed}\n${untracked}`.split("\n").filter(Boolean)),
+    ...new Set(
+      `${changed}\n${untracked}`
+        .split("\n")
+        .filter(
+          (path) =>
+            path &&
+            path !== "node_modules" &&
+            !path.startsWith("node_modules/"),
+        ),
+    ),
   ].sort();
 }
 
@@ -392,11 +401,29 @@ async function main() {
       git(args.root, ["rev-parse", `${args.target}^{commit}`]),
       args.target,
     );
-    assert.equal(
-      git(args.root, ["show", "-s", "--format=%P", args.target]),
-      args.base,
-      "trust-base target must have only the empty base as its parent",
+    const commits = git(args.root, [
+      "rev-list",
+      "--parents",
+      "--reverse",
+      `${args.base}..${args.target}`,
+    ])
+      .split("\n")
+      .filter(Boolean);
+    assert.ok(
+      commits.length > 0,
+      "trust-base target must advance the empty base",
     );
+    let expectedParent = args.base;
+    for (const entry of commits) {
+      const [commit, ...parents] = entry.split(" ");
+      assert.deepEqual(
+        parents,
+        [expectedParent],
+        "trust-base history must be linear and rooted at the empty base",
+      );
+      expectedParent = commit;
+    }
+    assert.equal(expectedParent, args.target, "trust-base head mismatch");
   }
   assert.equal(
     git(args.root, ["show", "-s", "--format=%an", args.base]),

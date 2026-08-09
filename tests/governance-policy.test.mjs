@@ -14,7 +14,6 @@ import test from "node:test";
 
 const root = resolve(import.meta.dirname, "..");
 const emptyBase = "50e4887218de9d1856bbc13afd632bc6eddf08c7";
-const localTrustBase = "45c1fb39d06e8de94afa1d63b22768fb66fbe6c3";
 
 function fixture() {
   const directory = mkdtempSync(join(tmpdir(), "bench-policy-"));
@@ -36,8 +35,6 @@ function runMigration(repository) {
       repository,
       "--base",
       emptyBase,
-      "--target",
-      localTrustBase,
     ],
     { encoding: "utf8" },
   );
@@ -58,6 +55,26 @@ test("migration policy derives the immutable target from the checked head", () =
   );
   assert.equal(policy.migration.trust_base_source, "checked_head");
   assert.equal(policy.migration.trust_base_commit, undefined);
+});
+
+test("coverage CI uploads same-repository Cobertura evidence to GitHub", () => {
+  const workflow = readFileSync(
+    join(root, ".github", "workflows", "github-coverage.yml"),
+    "utf8",
+  );
+
+  assert.match(workflow, /^name: Bench code coverage$/mu);
+  assert.match(workflow, /pull_request:/u);
+  assert.match(workflow, /merge_group:/u);
+  assert.match(workflow, /--experimental-test-coverage/u);
+  assert.match(workflow, /coverage\/cobertura\.xml/u);
+  assert.match(
+    workflow,
+    /github\.event\.pull_request\.head\.repo\.full_name == github\.repository/u,
+  );
+  assert.match(workflow, /code-quality: write/u);
+  assert.match(workflow, /actions\/upload-code-coverage@[0-9a-f]{40}/u);
+  assert.match(workflow, /label: bench-javascript/u);
 });
 
 test("migration checker rejects a modified reviewed workspace ledger authority", () => {
