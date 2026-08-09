@@ -81,9 +81,34 @@ try {
   assert.equal(trustedAuthorStep.if, "github.event_name == 'pull_request'");
   assert.deepEqual(trustedAuthorStep.env, {
     AUTHOR_ASSOCIATION: "${{ github.event.pull_request.author_association }}",
+    AUTHOR_LOGIN: "${{ github.event.pull_request.user.login }}",
   });
   assert.match(trustedAuthorStep.run, /OWNER\|MEMBER/u);
   assert.doesNotMatch(trustedAuthorStep.run, /COLLABORATOR/u);
+  assert.match(trustedAuthorStep.run, /AUTHOR_LOGIN/u);
+  const authorEligibilityCases = [
+    { association: "OWNER", login: "another-owner", expectedStatus: 0 },
+    { association: "MEMBER", login: "another-member", expectedStatus: 0 },
+    { association: "CONTRIBUTOR", login: "openboa", expectedStatus: 0 },
+    { association: "NONE", login: "openboa", expectedStatus: 0 },
+    { association: "CONTRIBUTOR", login: "outside", expectedStatus: 1 },
+    { association: "NONE", login: "Openboa", expectedStatus: 1 },
+  ];
+  for (const testCase of authorEligibilityCases) {
+    const result = spawnSync("bash", ["-c", trustedAuthorStep.run], {
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        AUTHOR_ASSOCIATION: testCase.association,
+        AUTHOR_LOGIN: testCase.login,
+      },
+    });
+    assert.equal(
+      result.status,
+      testCase.expectedStatus,
+      `${testCase.association}/${testCase.login}: ${result.stderr || result.stdout}`,
+    );
+  }
   assert.match(trustedAuthorStep.run, /exit 1/u);
   const mergePolicy = JSON.parse(read(".github/merge-policy.json"));
   assert.equal(mergePolicy.repository_role, "bench");
@@ -95,6 +120,7 @@ try {
     "OWNER",
     "MEMBER",
   ]);
+  assert.deepEqual(mergePolicy.eligible_author_logins, ["openboa"]);
   assert.match(read("README.md"), /Repository status: `not_active`/u);
 
   const coverageWorkflow = workflows[3];
