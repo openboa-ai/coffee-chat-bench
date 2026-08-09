@@ -1,0 +1,11 @@
+{
+  "schema": "coffee-chat/migration-equality-inputs",
+  "target_owner": "openboa-ai/coffee-chat-bench",
+  "task": "task-4",
+  "objective": "inactive-benchmark-trust-base",
+  "ledger_sha256": "a2717ed0750c11081e09933703d256b971235fd1a5bb73f91476f04badf1b8eb",
+  "generator_sha256": "110f1a2a00d8cd7095e79f6c090ffc833f62e3c39adf71790bf29b1e9d7338c7",
+  "objective_selection_sha256": "c40ca2654378e720a51f52ee13e2915e3aff7c74f148f8d0b90ae710836599c1",
+  "projection_sha256": "27debd1e491f66b2f00dea9b88a467bd4ad02178968cf5466438aff3d7a3e2fc",
+  "changed_surface_classification_sha256": "b98e6a61a376a19926f40086a4e2f358ce766f29f0822e712663363d0528c14e"
+}
