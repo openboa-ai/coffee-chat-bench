@@ -3,9 +3,10 @@
   "merge_method": "squash",
   "required_events": ["merge_group", "pull_request"],
   "auto_merge": {
-    "ordinary": true,
-    "protected_after_code_owner_approval": true
+    "required_checks": true,
+    "verified_members_only": true
   },
+  "eligible_author_associations": ["OWNER", "MEMBER"],
   "required_checks": [
     {
       "context": "Bench required",
@@ -14,13 +15,10 @@
     {
       "context": "Bench dependency review",
       "integration_id": 15368
-    },
-    {
-      "context": "Bench CodeQL JavaScript-TypeScript",
-      "integration_id": 15368
     }
   ],
   "protected_paths": [
+    "/.editorconfig",
     "/.github/**",
     "/AGENTS.md",
     "/CODEOWNERS",
@@ -28,8 +26,10 @@
     "/SECURITY.md",
     "/package.json",
     "/package-lock.json",
+    "/prettier.config.mjs",
     "/scripts/**",
     "/tests/**",
+    "/tsconfig.json",
     "/docs/migration/**",
     "/docs/validity/**",
     "/docs/quality-map.md"

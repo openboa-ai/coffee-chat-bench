@@ -12,6 +12,8 @@ import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
 
+import { parse } from "yaml";
+
 const root = resolve(import.meta.dirname, "..");
 const emptyBase = "50e4887218de9d1856bbc13afd632bc6eddf08c7";
 
@@ -77,6 +79,44 @@ test("coverage CI uploads same-repository Cobertura evidence to GitHub", () => {
   assert.match(workflow, /code-quality: write/u);
   assert.match(workflow, /actions\/upload-code-coverage@[0-9a-f]{40}/u);
   assert.match(workflow, /label: bench-javascript/u);
+});
+
+test("the required aggregate validates the exact immutable head without a duplicate policy job", () => {
+  const quality = parse(
+    readFileSync(join(root, ".github", "workflows", "quality.yml"), "utf8"),
+  );
+  const policy = parse(
+    readFileSync(join(root, ".github", "workflows", "policy.yml"), "utf8"),
+  );
+  const expectedHead =
+    "${{ github.event.pull_request.head.sha || github.event.merge_group.head_sha || github.sha }}";
+  const checkout = quality.jobs.quality.steps.find((step) =>
+    String(step.uses).startsWith("actions/checkout@"),
+  );
+  const verification = quality.jobs.quality.steps.find(
+    (step) => step.run === "npm run ci:policy",
+  );
+
+  assert.equal(checkout.with.ref, expectedHead);
+  assert.equal(verification.env.MIGRATION_TARGET_SHA, expectedHead);
+  assert.equal(policy.jobs.policy, undefined);
+  assert.ok(policy.jobs["dependency-review"]);
+});
+
+test("quality configuration is included in the protected control surface", () => {
+  const policy = JSON.parse(
+    readFileSync(join(root, ".github", "merge-policy.json"), "utf8"),
+  );
+  const codeowners = readFileSync(join(root, "CODEOWNERS"), "utf8");
+
+  for (const path of [
+    "/.editorconfig",
+    "/prettier.config.mjs",
+    "/tsconfig.json",
+  ]) {
+    assert.ok(policy.protected_paths.includes(path), path);
+    assert.match(codeowners, new RegExp(`^${path}\\s+@openboa$`, "mu"), path);
+  }
 });
 
 test("migration checker rejects a modified reviewed workspace ledger authority", () => {

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { spawnSync } from "node:child_process";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { relative, resolve } from "node:path";
 
@@ -52,6 +53,8 @@ const controlPaths = new Set([
 const activationCriteriaPath = "docs/validity/activation-criteria.md";
 const forbiddenActivationContent =
   /\b(?:tasks?|cases?|metrics?|datasets?|scores?|results?)\b/iu;
+const forbiddenExecutableContent =
+  /\b(?:export\s+)?(?:const|let|var|function|class)\s+(?:tasks?|datasets?|cases?|metrics?|scores?|scorers?|verifiers?|runners?|pilots?|candidates?)\b|\b(?:tasks?|datasets?|cases?|metrics?|scores?|scorers?|verifiers?|runners?|pilots?|candidates?)\s*[:=]\s*(?:\{|\[|\(?[^;\n]*=>|function\b)/iu;
 
 function fail(message) {
   throw new Error(message);
@@ -76,6 +79,14 @@ function filesUnder(root, directory = root) {
   });
 }
 
+function trackedPaths(root) {
+  const result = spawnSync("git", ["-C", root, "ls-files", "-z"], {
+    encoding: "utf8",
+  });
+  if (result.status !== 0) return [];
+  return result.stdout.split("\0").filter(Boolean);
+}
+
 function isAllowedPath(path) {
   return allowedStaticPaths.has(path) || path === activationCriteriaPath;
 }
@@ -87,12 +98,20 @@ function isSubjectToBoundary(path) {
 function main() {
   const root = parseRoot(process.argv.slice(2));
   const paths = filesUnder(root).sort();
+  for (const path of trackedPaths(root)) {
+    if (path === "node_modules" || path.startsWith("node_modules/")) {
+      fail(`forbidden tracked path: ${path}`);
+    }
+  }
 
   for (const path of paths) {
     if (forbiddenDirectory.test(path)) fail(`forbidden path: ${path}`);
     if (!isAllowedPath(path)) fail(`unapproved path: ${path}`);
-    if (!isSubjectToBoundary(path)) continue;
     const content = readFileSync(resolve(root, path), "utf8");
+    if (forbiddenExecutableContent.test(content)) {
+      fail(`forbidden executable content: ${path}`);
+    }
+    if (!isSubjectToBoundary(path)) continue;
     if (
       forbiddenContent.test(content) ||
       (path === activationCriteriaPath &&

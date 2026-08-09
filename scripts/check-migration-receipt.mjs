@@ -79,18 +79,14 @@ function gitPaths(root, base, target) {
   const untracked = target
     ? ""
     : git(root, ["ls-files", "--others", "--exclude-standard"]);
-  return [
-    ...new Set(
-      `${changed}\n${untracked}`
-        .split("\n")
-        .filter(
-          (path) =>
-            path &&
-            path !== "node_modules" &&
-            !path.startsWith("node_modules/"),
-        ),
-    ),
-  ].sort();
+  const changedPaths = changed.split("\n").filter(Boolean);
+  const untrackedPaths = untracked
+    .split("\n")
+    .filter(
+      (path) =>
+        path && path !== "node_modules" && !path.startsWith("node_modules/"),
+    );
+  return [...new Set([...changedPaths, ...untrackedPaths])].sort();
 }
 
 function identityKey(row) {

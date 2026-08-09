@@ -56,27 +56,45 @@ function checkWorkflow(path) {
 
 try {
   const workflows = workflowPaths.map(checkWorkflow);
-  const policyCheckout = workflows[0].jobs.policy.steps.find((step) =>
+  const qualityCheckout = workflows[1].jobs.quality.steps.find((step) =>
     String(step.uses).startsWith("actions/checkout@"),
   );
   assert.equal(
-    policyCheckout.with.ref,
+    qualityCheckout.with.ref,
     "${{ github.event.pull_request.head.sha || github.event.merge_group.head_sha || github.sha }}",
   );
-  const policyVerification = workflows[0].jobs.policy.steps.find(
+  const qualityVerification = workflows[1].jobs.quality.steps.find(
     (step) => step.run === "npm run ci:policy",
   );
   assert.equal(
-    policyVerification.env.MIGRATION_TARGET_SHA,
+    qualityVerification.env.MIGRATION_TARGET_SHA,
     "${{ github.event.pull_request.head.sha || github.event.merge_group.head_sha || github.sha }}",
   );
+  assert.equal(workflows[0].jobs.policy, undefined);
+  assert.ok(workflows[0].jobs["dependency-review"]);
   const aggregate = workflows[1].jobs.aggregate;
   assert.equal(aggregate.if, "always()");
   assert.deepEqual(aggregate.needs, ["quality"]);
-  assert.equal(
-    JSON.parse(read(".github/merge-policy.json")).repository_role,
-    "bench",
+  const trustedAuthorStep = workflows[1].jobs.quality.steps.find(
+    (step) => step.name === "Verify trusted pull request author",
   );
+  assert.equal(trustedAuthorStep.if, "github.event_name == 'pull_request'");
+  assert.deepEqual(trustedAuthorStep.env, {
+    AUTHOR_ASSOCIATION: "${{ github.event.pull_request.author_association }}",
+  });
+  assert.match(trustedAuthorStep.run, /OWNER\|MEMBER/u);
+  assert.doesNotMatch(trustedAuthorStep.run, /COLLABORATOR/u);
+  assert.match(trustedAuthorStep.run, /exit 1/u);
+  const mergePolicy = JSON.parse(read(".github/merge-policy.json"));
+  assert.equal(mergePolicy.repository_role, "bench");
+  assert.deepEqual(mergePolicy.auto_merge, {
+    required_checks: true,
+    verified_members_only: true,
+  });
+  assert.deepEqual(mergePolicy.eligible_author_associations, [
+    "OWNER",
+    "MEMBER",
+  ]);
   assert.match(read("README.md"), /Repository status: `not_active`/u);
 
   const coverageWorkflow = workflows[3];
