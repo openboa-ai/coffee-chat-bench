@@ -176,12 +176,24 @@ function verifyMigrateEvidence(root, rows, evidence) {
 }
 
 function verifyRewriteEvidence(rows, evidence) {
+  const byIdentity = new Map(
+    evidence.map((entry) => [identityKey(entry), entry]),
+  );
+  if (byIdentity.size !== evidence.length) {
+    fail("rewrite evidence identity duplicate");
+  }
   assert.equal(rows.length, evidence.length, "rewrite evidence cardinality");
   for (const row of rows) {
-    const entry = evidence.find(
-      (value) => value.source_path === row.source_path,
-    );
-    assert.ok(entry, `missing rewrite evidence: ${row.source_path}`);
+    const entry = byIdentity.get(identityKey(row));
+    assert.ok(entry, `rewrite evidence identity missing: ${row.source_path}`);
+    for (const field of [
+      "source_repository",
+      "source_ref",
+      "source_commit",
+      "source_path",
+    ]) {
+      assert.equal(entry[field], row[field], `${row.source_path}: ${field}`);
+    }
     assert.equal(entry.status, "passed", `rewrite status: ${row.source_path}`);
     for (const field of [
       "rationale_code",

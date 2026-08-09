@@ -256,6 +256,34 @@ test("migration checker rejects receipt digest tampering", () => {
   }
 });
 
+test("migration checker rejects forged rewrite source identity", () => {
+  for (const { field, value } of [
+    { field: "source_repository", value: "forged/example" },
+    { field: "source_ref", value: "refs/heads/forged" },
+    { field: "source_commit", value: "0".repeat(40) },
+  ]) {
+    const temp = fixture();
+    try {
+      const receiptPath = join(
+        temp.repository,
+        "docs",
+        "migration",
+        "receipts",
+        "task-4-inactive-benchmark-trust-base.json",
+      );
+      const receipt = JSON.parse(readFileSync(receiptPath, "utf8"));
+      receipt.rewrite_evidence[0][field] = value;
+      writeFileSync(receiptPath, `${JSON.stringify(receipt, null, 2)}\n`);
+
+      const result = runMigration(temp.repository);
+      assert.notEqual(result.status, 0, field);
+      assert.match(result.stderr, /rewrite evidence identity/u, field);
+    } finally {
+      rmSync(temp.directory, { force: true, recursive: true });
+    }
+  }
+});
+
 test("migration checker rejects failed or unavailable external evidence", () => {
   for (const field of [
     "same_repository_ci",

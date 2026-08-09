@@ -1,11 +1,13 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import {
   cpSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
   rmSync,
+  symlinkSync,
   writeFileSync,
 } from "node:fs";
 import { join, resolve } from "node:path";
@@ -26,6 +28,16 @@ function check(repository) {
   );
 }
 
+function updateControlSurfaceDigest(repository, path) {
+  const policyPath = join(repository, ".github", "merge-policy.json");
+  const policy = JSON.parse(readFileSync(policyPath, "utf8"));
+  const bytes = readFileSync(join(repository, path));
+  policy.inactive_control_surface[path] = createHash("sha256")
+    .update(bytes)
+    .digest("hex");
+  writeFileSync(policyPath, `${JSON.stringify(policy, null, 2)}\n`);
+}
+
 function fixture({ initializeGit = true } = {}) {
   const directory = mkdtempSync(join(tmpdir(), "inactive-benchmark-"));
   const repository = join(directory, "repository");
@@ -42,6 +54,11 @@ function fixture({ initializeGit = true } = {}) {
     execFileSync("git", ["init", "--quiet"], { cwd: repository });
     execFileSync("git", ["add", "--all"], { cwd: repository });
   }
+  mkdirSync(join(repository, "node_modules"));
+  symlinkSync(
+    join(root, "node_modules", "prettier"),
+    join(repository, "node_modules", "prettier"),
+  );
   return { directory, repository };
 }
 
@@ -134,32 +151,42 @@ test("inactive boundary rejects executable material hidden under migration docs"
 });
 
 test("inactive boundary rejects undeclared executable logic in the control surface", () => {
-  for (const hiddenLogic of [
-    "export function grade(transcript) { return transcript.length; }\n",
-    "const assess = (transcript) => transcript.length; void assess;\n",
-  ]) {
-    const temp = fixture();
-    try {
-      const checker = join(
-        temp.repository,
-        "scripts",
-        "check-inactive-boundary.mjs",
-      );
-      writeFileSync(
-        checker,
-        `${readFileSync(checker, "utf8")}\n${hiddenLogic}`,
-      );
+  const temp = fixture();
+  try {
+    const checker = join(
+      temp.repository,
+      "scripts",
+      "check-inactive-boundary.mjs",
+    );
+    writeFileSync(
+      checker,
+      `${readFileSync(checker, "utf8")}\nconst assess = (transcript) => transcript.length; void assess;\n`,
+    );
 
-      const result = check(temp.repository);
-      assert.notEqual(result.status, 0, hiddenLogic);
-      assert.match(
-        result.stderr,
-        /executable control surface digest mismatch/u,
-        hiddenLogic,
-      );
-    } finally {
-      rmSync(temp.directory, { force: true, recursive: true });
-    }
+    const result = check(temp.repository);
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /executable control surface digest mismatch/u);
+  } finally {
+    rmSync(temp.directory, { force: true, recursive: true });
+  }
+});
+
+test("inactive boundary rejects an exported control function after its mutable digest is updated", () => {
+  const temp = fixture();
+  try {
+    const path = "scripts/check-inactive-boundary.mjs";
+    const checker = join(temp.repository, path);
+    writeFileSync(
+      checker,
+      `${readFileSync(checker, "utf8")}\nexport function grade(transcript) { return transcript.length; }\n`,
+    );
+    updateControlSurfaceDigest(temp.repository, path);
+
+    const result = check(temp.repository);
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /closed control module export/u);
+  } finally {
+    rmSync(temp.directory, { force: true, recursive: true });
   }
 });
 
