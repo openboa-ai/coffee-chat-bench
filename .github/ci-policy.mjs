@@ -12,6 +12,7 @@ const workflowPaths = [
   ".github/workflows/policy.yml",
   ".github/workflows/quality.yml",
   ".github/workflows/codeql.yml",
+  ".github/workflows/github-coverage.yml",
 ];
 
 function read(path) {
@@ -44,7 +45,10 @@ function checkWorkflow(path) {
     const expected =
       path.endsWith("codeql.yml") && jobId === "analyze"
         ? { actions: "read", contents: "read", "security-events": "write" }
-        : { contents: "read" };
+        : path.endsWith("github-coverage.yml") &&
+            jobId === "upload-coverage-javascript"
+          ? { contents: "read", "code-quality": "write" }
+          : { contents: "read" };
     assert.deepEqual(job.permissions, expected, `${path}:${jobId}`);
   }
   return workflow;
@@ -74,6 +78,37 @@ try {
     "bench",
   );
   assert.match(read("README.md"), /Repository status: `not_active`/u);
+
+  const coverageWorkflow = workflows[3];
+  const coverageJob = coverageWorkflow.jobs.coverage;
+  const coverageUpload = coverageWorkflow.jobs["upload-coverage-javascript"];
+  assert.equal(
+    coverageJob.steps.find((step) =>
+      String(step.uses).startsWith("actions/checkout@"),
+    ).with.ref,
+    "${{ github.event.pull_request.head.sha || github.sha }}",
+  );
+  assert.ok(
+    coverageJob.steps.some(
+      (step) =>
+        typeof step.run === "string" &&
+        step.run.includes("--experimental-test-coverage") &&
+        step.run.includes("tests/*.test.mjs"),
+    ),
+  );
+  assert.match(
+    read(".github/coverage-requirements.txt"),
+    /^lcov_cobertura==2\.1\.1 --hash=sha256:[0-9a-f]{64}\n$/u,
+  );
+  assert.equal(coverageUpload.needs, "coverage");
+  assert.match(
+    String(coverageUpload.if),
+    /needs\.coverage\.result == 'success'/u,
+  );
+  assert.match(
+    String(coverageUpload.if),
+    /github\.event_name != 'merge_group'/u,
+  );
 
   const boundary = spawnSync(
     process.execPath,

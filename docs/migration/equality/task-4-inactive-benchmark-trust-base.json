@@ -5,7 +5,7 @@
   "objective": "inactive-benchmark-trust-base",
   "ledger_sha256": "a2717ed0750c11081e09933703d256b971235fd1a5bb73f91476f04badf1b8eb",
   "generator_sha256": "110f1a2a00d8cd7095e79f6c090ffc833f62e3c39adf71790bf29b1e9d7338c7",
-  "objective_selection_sha256": "c40ca2654378e720a51f52ee13e2915e3aff7c74f148f8d0b90ae710836599c1",
-  "projection_sha256": "27debd1e491f66b2f00dea9b88a467bd4ad02178968cf5466438aff3d7a3e2fc",
-  "changed_surface_classification_sha256": "b98e6a61a376a19926f40086a4e2f358ce766f29f0822e712663363d0528c14e"
+  "objective_selection_sha256": "985dedb67037762d09b0e80bd3aba8c317cd8cc6c001cc4e896e897d2235345a",
+  "projection_sha256": "03d0338f0c05bb254b57e9f648cb4d6f9eb5249af4f7f13a540043b67ad13c7b",
+  "changed_surface_classification_sha256": "418d0b9008eb6c88d8a207d2ae152d6f189d0ed3e1158936c5e9e9449e634c90"
 }
