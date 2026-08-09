@@ -7,18 +7,17 @@
     "verified_members_only": true
   },
   "eligible_author_associations": ["OWNER", "MEMBER"],
-  "eligible_author_logins": ["openboa"],
   "inactive_control_surface": {
-    ".github/ci-policy.mjs": "9936605490df6f99f20afe6cfe91c0abfc2dc44b9dd1aa15257a7cb7af873ac5",
+    ".github/ci-policy.mjs": "10289ab80f3e95f00fd00c5d4cfccebe894ff2d98c9e746e1ce99c0c753ea5ed",
     ".github/workflows/codeql.yml": "b176852485d0bac66d486320856d45af7a07b5503bd89e5646a5a9865b8be2ef",
-    ".github/workflows/github-coverage.yml": "5446f97fded87219fea4f716380bbedba69fd6cea22a1bc2e86e08ddd3d40551",
+    ".github/workflows/github-coverage.yml": "44c6d7248d48efc3878edfe7b5a573070a0848140d2105b208b3afb3ad4057f6",
     ".github/workflows/policy.yml": "2ff44e67c4bff6a3073448fdb201b8e69805c7c8775fd355e110ee117a2fb06c",
-    ".github/workflows/quality.yml": "47c9cf632e6eb7b2375568b411d36a57e80c8f3bea48707ad802b56243e65cf4",
+    ".github/workflows/quality.yml": "b517a6fa3f18a812d222fad6417722fe12eb8f52d28d3383463b5e6f40bcb6b8",
     "package.json": "69d1687ab731ce9e7ceea2e6061129ce5e21c64a09c33e5645f3a41014f788ab",
     "prettier.config.mjs": "26dbf99266950b23fc51d678aa17b93a74b2298eb4e3589ba5a92c3d5173d3b7",
     "scripts/check-inactive-boundary.mjs": "86f7d2266e6e4e26cbabd0725700f08e920664d99f2d4de340d7b7c1e4c9a0d1",
     "scripts/check-migration-receipt.mjs": "c59c8a48ce9554fbba42018229ff6e2e7fe4a92fd4a231408a0fc39544ee155c",
-    "tests/governance-policy.test.mjs": "e0399037b8eb54b934252c4b5de8865fc19c07b38b7f9af3c61fad98d7fef839",
+    "tests/governance-policy.test.mjs": "3d31b0206354b500470fd5ef80453aa5c8a6c723bfb492514e31518a0ae1d005",
     "tests/inactive-boundary.test.mjs": "9e1a2a94b97542c1e996e0fc4ae20d7f2892b5356b9ee3292095ede2449f1e07"
   },
   "required_checks": [

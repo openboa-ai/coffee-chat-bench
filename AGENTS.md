@@ -17,8 +17,8 @@ Chat. Its current repository status is `not_active`.
 ## Change and security rules
 
 - Every substantive change uses a pull request and squash merge.
-- Control-plane, migration, license, security, activation, and boundary paths
-  require review from `@SonSangjoon`.
+- Human approval is not required. Sensitive paths require their applicable
+  automated policy, security, and contract evidence before merge.
 - Preserve explicit failure states. Do not turn missing, invalid, unavailable,
   or skipped evidence into success.
 - Run format, type, test, inactive-boundary, and policy commands for changed
