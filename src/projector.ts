@@ -322,7 +322,7 @@ function harborFiles(
     {
       file: "tests/Dockerfile",
       content:
-        "FROM python:3.13-alpine\nWORKDIR /app\nWORKDIR /tests\nCOPY verifier.py /tests/verifier.py\nCOPY judgment.json /tests/judgment.json\nCOPY test.sh /tests/test.sh\nRUN chmod 0555 /tests/test.sh\n",
+        "FROM --platform=linux/arm64 python@sha256:ffb752e139c0a19692a43af8d8523b274222dd68eebad5d583b45c2201c6e30a\nWORKDIR /app\nWORKDIR /tests\nCOPY verifier.py /tests/verifier.py\nCOPY judgment.json /tests/judgment.json\nCOPY test.sh /tests/test.sh\nRUN chmod 0555 /tests/test.sh\n",
     },
     {
       file: "tests/test.sh",
