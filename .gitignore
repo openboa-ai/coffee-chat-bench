@@ -4,7 +4,8 @@
 !.env.example
 credentials.json
 secrets.json
-*.pem
+*.private.pem
+private-key.pem
 *.key
 *.p12
 *.pfx
