@@ -661,6 +661,33 @@ test("the real Harbor verifier accepts Oracle and rejects each critical candidat
   });
 });
 
+test("the verifier accepts required evidence with additional declared support", () => {
+  withTemporaryDirectory((root) => {
+    const projectionRoot = join(root, "projection");
+    project(projectionRoot);
+    const artifact = writeProjectedArtifact(
+      root,
+      projectionRoot,
+      "additional-declared-evidence",
+      (value) => {
+        const decisions = (value.manifest as Record<string, unknown>)
+          .decisions as Array<Record<string, unknown>>;
+        decisions[0]!.evidenceRefs = ["calendar", "notes"];
+      },
+    );
+
+    const result = runHarborVerifier(projectionRoot, artifact);
+
+    assert.equal(result.status, 0, result.stderr);
+    assert.deepEqual(JSON.parse(result.stdout), {
+      accepted: true,
+      criticalFailure: false,
+      reasons: [],
+      state: "unmeasured",
+    });
+  });
+});
+
 test("the verifier ignores untrusted Harbor artifact files outside the declared output", () => {
   withTemporaryDirectory((root) => {
     const projectionRoot = join(root, "projection");
