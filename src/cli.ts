@@ -1,6 +1,5 @@
 import { readFileSync } from "node:fs";
-import { spawnSync } from "node:child_process";
-import { join, resolve } from "node:path";
+import { join } from "node:path";
 
 import { validateBank } from "./bank.ts";
 import { calibrateBank } from "./calibration.ts";
@@ -19,6 +18,10 @@ import {
   parsePerspectiveCatalog,
 } from "./materializer.ts";
 import { projectHarborTask } from "./projector.ts";
+import { judgeProjection } from "./judgment.ts";
+import { createOpenAiResponsesTransport } from "./openai-judge.ts";
+
+const EVAL_ATTESTATION_KEY_ENV = "COFFEE_CHAT_EVAL_ATTESTATION_KEY";
 
 function invalidUsage(message: string) {
   const files = [{ file: ".", state: "invalid" as const, errors: [message] }];
@@ -39,30 +42,6 @@ function runProject(caseFile: string, condition: string, destination: string) {
       condition as "a" | "b" | "none" | "irrelevant",
       destination,
     );
-  } catch (error) {
-    return invalidProjection(error);
-  }
-}
-
-function runCalibration(projectionRoot: string, artifact: string) {
-  const root = resolve(projectionRoot);
-  const verifierLogs = join(root, "calibration-logs");
-  const result = spawnSync("sh", [join(root, "harbor", "tests", "test.sh")], {
-    encoding: "utf8",
-    env: {
-      ...process.env,
-      HARBOR_ARTIFACT: artifact,
-      HARBOR_TEST_ROOT: join(root, "harbor", "tests"),
-      HARBOR_VERIFIER_LOGS: verifierLogs,
-    },
-  });
-  if (result.error !== undefined || result.stdout.length === 0) {
-    return invalidProjection(
-      (result.error ?? result.stderr) || "calibration failed",
-    );
-  }
-  try {
-    return JSON.parse(result.stdout) as Record<string, unknown>;
   } catch (error) {
     return invalidProjection(error);
   }
@@ -114,7 +93,27 @@ function runMaterializeBank(
   }
 }
 
-export function runCli(argv: readonly string[]): number {
+async function runJudge(
+  projectionRoot: string,
+  artifact: string,
+  attestation: string,
+) {
+  const capabilityKey = process.env[EVAL_ATTESTATION_KEY_ENV] ?? "";
+  delete process.env[EVAL_ATTESTATION_KEY_ENV];
+  try {
+    return await judgeProjection({
+      projectionRoot,
+      artifactPath: artifact,
+      attestationPath: attestation,
+      capabilityKey,
+      createTransport: createOpenAiResponsesTransport,
+    });
+  } catch (error) {
+    return invalidProjection(error);
+  }
+}
+
+export async function runCli(argv: readonly string[]): Promise<number> {
   const [command, first, second, third] = argv;
   const report =
     argv.length === 7 &&
@@ -143,17 +142,18 @@ export function runCli(argv: readonly string[]): number {
                   first !== undefined &&
                   second !== undefined
                 ? runBankCalibration(first, second)
-                : argv.length === 3 &&
-                    command === "calibrate" &&
+                : argv.length === 4 &&
+                    command === "judge" &&
                     first !== undefined &&
-                    second !== undefined
-                  ? runCalibration(first, second)
+                    second !== undefined &&
+                    third !== undefined
+                  ? await runJudge(first, second, third)
                   : invalidUsage(
-                      "usage: materialize-bank --catalog <path> --blueprints <dir> --destination <dir> | validate <bank-root> | admit <draft-file> | audit-bank <campaign-file> | project <case-file> <a|b|none|irrelevant> <destination> | calibrate <projection-root> <artifact> | calibrate-bank <bank-root> <empty-workspace>",
+                      "usage: materialize-bank --catalog <path> --blueprints <dir> --destination <dir> | validate <bank-root> | admit <draft-file> | audit-bank <campaign-file> | project <case-file> <a|b|none|irrelevant> <destination> | calibrate-bank <bank-root> <empty-workspace> | judge <projection-root> <artifact> <isolated-verifier-attestation>",
                     );
   process.stdout.write(`${JSON.stringify(report)}\n`);
-  if (command === "calibrate" && "accepted" in report) {
-    return report.accepted === true ? 0 : 1;
+  if (command === "judge" && "state" in report) {
+    return report.state === "measured" ? 0 : 1;
   }
   if (command === "admit" && "admitted" in report) {
     return report.admitted === true ? 0 : 1;
@@ -165,4 +165,4 @@ export function runCli(argv: readonly string[]): number {
       : 1;
 }
 
-process.exitCode = runCli(process.argv.slice(2));
+process.exitCode = await runCli(process.argv.slice(2));

@@ -18,7 +18,7 @@ import { join, resolve } from "node:path";
 import test from "node:test";
 
 import {
-  calibrateProjectedBank,
+  calibratePreparedBank,
   calibrateBank,
   projectCalibrationBank,
 } from "../src/calibration.ts";
@@ -175,6 +175,78 @@ test("full-bank calibration CLI verifies all 288 projected conditions through th
   }
 });
 
+test("full-bank calibration subprocess receives only PATH and locale, including its generated verifier", () => {
+  const root = temporaryDirectory("coffee-chat-calibration-env-");
+  const workspace = join(root, "workspace");
+  const bin = join(root, "bin");
+  const observedEnvironment = join(root, "subprocess-environment.txt");
+  const realPython = spawnSync(
+    "python3",
+    ["-c", "import sys; print(sys.executable)"],
+    {
+      encoding: "utf8",
+    },
+  );
+  const environmentKeys = [
+    "PATH",
+    "LANG",
+    "LC_ALL",
+    "OPENAI_API_KEY",
+    "COFFEE_CHAT_EVAL_ATTESTATION_KEY",
+    "HOST_AUTH_TOKEN",
+    "PROVIDER_TOKEN",
+  ] as const;
+  const originalEnvironment = Object.fromEntries(
+    environmentKeys.map((key) => [key, process.env[key]]),
+  );
+  try {
+    assert.equal(realPython.status, 0, realPython.stderr);
+    mkdirSync(bin);
+    writeFileSync(
+      join(bin, "python3"),
+      `#!${process.execPath}\nconst { writeFileSync } = require("node:fs");\nconst { spawnSync } = require("node:child_process");\nwriteFileSync(${JSON.stringify(observedEnvironment)}, JSON.stringify(process.env));\nconst result = spawnSync(${JSON.stringify(realPython.stdout.trim())}, process.argv.slice(2), { env: process.env, stdio: "inherit" });\nprocess.exitCode = result.status ?? 1;\n`,
+      { encoding: "utf8", mode: 0o755 },
+    );
+    process.env.PATH = `${bin}:${originalEnvironment.PATH ?? ""}`;
+    process.env.OPENAI_API_KEY = "must-not-reach-calibration";
+    process.env.COFFEE_CHAT_EVAL_ATTESTATION_KEY = "must-not-reach-calibration";
+    process.env.HOST_AUTH_TOKEN = "must-not-reach-calibration";
+    process.env.PROVIDER_TOKEN = "must-not-reach-calibration";
+
+    const report = calibrateBank(campaignRoot, workspace);
+    assert.equal(report.state, "valid");
+    const observed = JSON.parse(
+      readFileSync(observedEnvironment, "utf8"),
+    ) as Record<string, string>;
+    const observedKeys = Object.keys(observed).sort();
+    assert.equal(observedKeys.includes("PATH"), true);
+    assert.equal(observedKeys.includes("LANG"), true);
+    assert.equal(observedKeys.includes("LC_ALL"), true);
+    assert.equal(
+      observedKeys.every((key) =>
+        ["PATH", "LANG", "LC_ALL", "__CF_USER_TEXT_ENCODING"].includes(key),
+      ),
+      true,
+    );
+    for (const value of [
+      "must-not-reach-calibration",
+      "OPENAI_API_KEY",
+      "COFFEE_CHAT_EVAL_ATTESTATION_KEY",
+      "HOST_AUTH_TOKEN",
+      "PROVIDER_TOKEN",
+    ]) {
+      assert.equal(JSON.stringify(observed).includes(value), false, value);
+    }
+  } finally {
+    for (const key of environmentKeys) {
+      const value = originalEnvironment[key];
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+    rmSync(root, { force: true, recursive: true });
+  }
+});
+
 test("calibration marks a deliberately mutated projected Oracle as a named failure", () => {
   const root = temporaryDirectory("coffee-chat-calibration-oracle-");
   const workspace = join(root, "workspace");
@@ -188,7 +260,7 @@ test("calibration marks a deliberately mutated projected Oracle as a named failu
     value.manifest.decisions[0]!.selectedRegion = "not-an-accepted-region";
     writeFileSync(oracle, `${JSON.stringify(value)}\n`, "utf8");
 
-    const report = calibrateProjectedBank(projected);
+    const report = calibratePreparedBank(projected);
     assert.equal(report.state, "invalid");
     assert.equal(report.counts.expectedProjections, 288);
     assert.equal(report.counts.completedControlRuns, 864);
@@ -201,6 +273,33 @@ test("calibration marks a deliberately mutated projected Oracle as a named failu
       ),
       true,
     );
+  } finally {
+    rmSync(root, { force: true, recursive: true });
+  }
+});
+
+test("calibration never imports a forged projected verifier", () => {
+  const root = temporaryDirectory("coffee-chat-calibration-forged-verifier-");
+  const workspace = join(root, "workspace");
+  const marker = join(root, "forged-verifier-executed");
+  try {
+    const projected = projectCalibrationBank(campaignRoot, workspace);
+    writeFileSync(
+      join(
+        projected.workspace,
+        "projections",
+        "000-none",
+        "harbor",
+        "tests",
+        "verifier.py",
+      ),
+      `from pathlib import Path\nPath(${JSON.stringify(marker)}).write_text("executed", encoding="utf-8")\n`,
+      "utf8",
+    );
+
+    const report = calibratePreparedBank(projected);
+    assert.equal(existsSync(marker), false);
+    assert.equal(report.state, "valid");
   } finally {
     rmSync(root, { force: true, recursive: true });
   }

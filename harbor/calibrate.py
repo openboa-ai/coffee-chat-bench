@@ -7,10 +7,16 @@ import importlib.util
 import io
 import json
 import sys
+from pathlib import Path
 
 
-def load_verifier(path, request_id):
-    spec = importlib.util.spec_from_file_location(f"pcda_verifier_{request_id}", path)
+CANONICAL_VERIFIER = Path(__file__).resolve().with_name("verifier.py")
+
+
+def load_verifier(request_id):
+    spec = importlib.util.spec_from_file_location(
+        f"pcda_verifier_{request_id}", CANONICAL_VERIFIER
+    )
     if spec is None or spec.loader is None:
         raise RuntimeError("could not load projected verifier")
     module = importlib.util.module_from_spec(spec)
@@ -21,7 +27,7 @@ def load_verifier(path, request_id):
 def run_request(request):
     request_id = request["id"]
     try:
-        module = load_verifier(request["verifier"], request_id)
+        module = load_verifier(request_id)
         output = io.StringIO()
         with contextlib.redirect_stdout(output):
             module.verify(request["judgment"], request["artifact"])

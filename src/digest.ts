@@ -2,7 +2,10 @@ import { createHash } from "node:crypto";
 
 export type Digest = `sha256:${string}`;
 
-function canonicalJson(value: unknown, ancestors = new Set<object>()): string {
+export function canonicalJson(
+  value: unknown,
+  ancestors = new Set<object>(),
+): string {
   if (value === null) return "null";
   if (typeof value === "string" || typeof value === "boolean") {
     return JSON.stringify(value);

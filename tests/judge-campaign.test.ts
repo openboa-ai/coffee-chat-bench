@@ -214,6 +214,45 @@ test("campaign rejects a manifest whose declared atom count differs from the sup
   assert.equal(calls, 0);
 });
 
+test("campaign rejects an actual UTF-8 request above the input ceiling before transport", async () => {
+  let calls = 0;
+  const result = await runJudgeCampaign(
+    [
+      {
+        atomId: "atom-1",
+        prompt: "한글",
+        deterministicVerifierPassed: true,
+      },
+    ],
+    manifest({ maxInputTokensPerRequest: 1 }),
+    {
+      async request() {
+        calls += 1;
+        throw new Error("must not run");
+      },
+    },
+  );
+  assert.equal(result.state, "preflight_rejected");
+  assert.equal(result.budgetStopReason, "request_too_large");
+  assert.equal(calls, 0);
+});
+
+test("campaign sends the manifest output ceiling with every bounded request", async () => {
+  const observed: number[] = [];
+  const result = await runJudgeCampaign(
+    [{ atomId: "atom-1", prompt: "safe", deterministicVerifierPassed: true }],
+    manifest({ maxOutputTokensPerRequest: 123 }),
+    {
+      async request(request) {
+        observed.push(request.maxOutputTokens);
+        return response(request.model);
+      },
+    },
+  );
+  assert.equal(result.state, "completed");
+  assert.deepEqual(observed, [123, 123]);
+});
+
 test("campaign settles exact integer nano-USD receipts and preserves returned token detail", async () => {
   const transport: JudgeTransport = {
     async request(request) {

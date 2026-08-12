@@ -72,15 +72,29 @@ export interface JudgePanelResult {
 export function parseJudgeDimensions(
   body: unknown,
 ): QualificationDimensions | undefined {
-  if (typeof body !== "object" || body === null) return undefined;
+  if (
+    typeof body !== "object" ||
+    body === null ||
+    Array.isArray(body) ||
+    Object.getPrototypeOf(body) !== Object.prototype
+  ) {
+    return undefined;
+  }
   const record = body as Record<string, unknown>;
-  for (const key of [
+  const keys = [
     "taskAdequate",
     "evidenceIntegrity",
     "perspectiveAligned",
     "invariantsPreserved",
     "criticalFailure",
-  ] as const) {
+  ] as const;
+  if (
+    Object.keys(record).length !== keys.length ||
+    keys.some((key) => !Object.hasOwn(record, key))
+  ) {
+    return undefined;
+  }
+  for (const key of keys) {
     if (typeof record[key] !== "boolean") return undefined;
   }
   return {
@@ -249,6 +263,7 @@ export async function runJudgePanel(
           model,
           prompt,
           responseFormat: config.responseFormat,
+          maxOutputTokens: 0,
         });
       } catch {
         finalVote = {

@@ -63,6 +63,7 @@ export interface JudgeCampaignResult {
   budgetStopReason?:
     | "atom_count_mismatch"
     | "invalid_manifest"
+    | "request_too_large"
     | "planned_cost_exceeds_cap"
     | "usage_invalid";
 }
@@ -219,22 +220,26 @@ class BudgetedTransport implements JudgeTransport {
     if (this.accounting.stopped) {
       return { state: "budget_stopped", reason: "usage_invalid" };
     }
+    const boundedRequest = {
+      ...request,
+      maxOutputTokens: this.manifest.maxOutputTokensPerRequest,
+    };
     const reservedNanoUsd = maximumCharge(
       this.config,
-      request.model,
+      boundedRequest.model,
       this.manifest,
     );
     this.accounting.outstandingReservationNanoUsd += reservedNanoUsd;
     const attempt =
-      this.receipts.filter((receipt) => receipt.slot === request.model).length +
-      1;
+      this.receipts.filter((receipt) => receipt.slot === boundedRequest.model)
+        .length + 1;
     const promptDigest = stableDigest({
-      model: request.model,
-      prompt: request.prompt,
+      model: boundedRequest.model,
+      prompt: boundedRequest.prompt,
     });
     let response: JudgeTransportResponse;
     try {
-      response = await this.transport.request(request);
+      response = await this.transport.request(boundedRequest);
     } catch {
       response = { state: "provider_error" };
     }
@@ -250,9 +255,9 @@ class BudgetedTransport implements JudgeTransport {
     const details = responseDetails(response);
     const receipt: JudgeCampaignReceipt = {
       atomId: this.atomId,
-      slot: request.model,
+      slot: boundedRequest.model,
       attempt,
-      requestedModel: request.model,
+      requestedModel: boundedRequest.model,
       promptDigest,
       reservedNanoUsd,
       remainingBudgetNanoUsd:
@@ -274,7 +279,7 @@ class BudgetedTransport implements JudgeTransport {
     }
     const settledNanoUsd = charge(
       this.config,
-      request.model,
+      boundedRequest.model,
       usage.inputTokens,
       usage.outputTokens,
     );
@@ -333,6 +338,17 @@ export async function runJudgeCampaign(
     return empty("preflight_rejected", "invalid_manifest");
   if (atoms.length !== manifest.atomCount)
     return empty("preflight_rejected", "atom_count_mismatch");
+  if (
+    atoms.some(
+      (atom) =>
+        Buffer.byteLength(
+          JSON.stringify({ atomId: atom.atomId, instruction: atom.prompt }),
+          "utf8",
+        ) > manifest.maxInputTokensPerRequest,
+    )
+  ) {
+    return empty("preflight_rejected", "request_too_large");
+  }
   if (
     !Number.isSafeInteger(plannedWorstCaseNanoUsd) ||
     plannedWorstCaseNanoUsd > config.campaignCapNanoUsd
