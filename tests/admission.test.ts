@@ -331,7 +331,6 @@ const campaignDifficulties = ["standard", "hard"] as const;
 
 function campaignRecord(index: number, admitted: boolean): AdmissionRecord {
   const admittedIndex = index % 96;
-  const caseIndex = admittedIndex % 4;
   const stratumIndex = Math.floor(admittedIndex / 4);
   const difficultyIndex = stratumIndex % 2;
   const operationIndex = Math.floor(stratumIndex / 2) % 4;
