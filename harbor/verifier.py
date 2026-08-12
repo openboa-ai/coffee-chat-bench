@@ -186,7 +186,9 @@ def verify(judgment_path, artifact_path):
         decision = submitted[decision_id]
         if decision["selectedRegion"] not in expected_decision["acceptedRegions"]:
             return emit("candidate_failure", False, False, ["selected region is not accepted"])
-        if set(decision["evidenceRefs"]) != set(expected_decision["requiredEvidenceRefs"]):
+        if not set(expected_decision["requiredEvidenceRefs"]).issubset(
+            set(decision["evidenceRefs"])
+        ):
             return emit("candidate_failure", False, False, ["evidence references are incomplete"])
     return emit("unmeasured", True, False, [])
 
