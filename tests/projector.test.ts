@@ -470,7 +470,11 @@ test("project emits a Harbor task whose resolved agent environment contains only
     );
     assert.match(
       dockerfile,
-      /RUN apk add --no-cache bash curl nodejs npm ripgrep/u,
+      /^FROM python@sha256:540c7d91f98ff6880174c40e99067bf5941eb54d818a7a5e094d188b196a934d$/mu,
+    );
+    assert.match(
+      dockerfile,
+      /^RUN apk add --no-cache bash=5\.3\.9-r1 curl=8\.21\.0-r0 nodejs=24\.18\.1-r0 npm=11\.12\.1-r0 ripgrep=15\.1\.0-r0$/mu,
     );
     assert.equal(
       readFileSync(join(harbor, "instruction.md"), "utf8"),

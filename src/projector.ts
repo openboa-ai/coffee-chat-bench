@@ -316,7 +316,7 @@ function harborFiles(
     {
       file: "environment/Dockerfile",
       content:
-        "FROM python:3.13-alpine\nRUN apk add --no-cache bash curl nodejs npm ripgrep\nWORKDIR /app\nCOPY input/ /app/\n",
+        "FROM python@sha256:540c7d91f98ff6880174c40e99067bf5941eb54d818a7a5e094d188b196a934d\nRUN apk add --no-cache bash=5.3.9-r1 curl=8.21.0-r0 nodejs=24.18.1-r0 npm=11.12.1-r0 ripgrep=15.1.0-r0\nWORKDIR /app\nCOPY input/ /app/\n",
     },
     ...candidateInput,
     {
