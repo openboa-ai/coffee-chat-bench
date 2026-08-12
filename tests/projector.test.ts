@@ -539,6 +539,11 @@ test("project emits the standalone Harbor verifier build context", () => {
       ],
     );
     assert.match(tests["Dockerfile"] ?? "", /^WORKDIR \/app$/mu);
+    assert.match(
+      tests["Dockerfile"] ?? "",
+      /^FROM --platform=linux\/arm64 python@sha256:ffb752e139c0a19692a43af8d8523b274222dd68eebad5d583b45c2201c6e30a$/mu,
+    );
+    assert.doesNotMatch(tests["Dockerfile"] ?? "", /alpine/u);
   });
 });
 
