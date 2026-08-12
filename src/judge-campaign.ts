@@ -307,10 +307,20 @@ class BudgetedTransport implements JudgeTransport {
 export async function runJudgeCampaign(
   atoms: readonly JudgePanelInput[],
   manifest: JudgeCampaignManifest,
-  transport: JudgeTransport,
+  transport: JudgeTransport | (() => JudgeTransport),
   config: JudgeCampaignConfig = loadJudgeCampaignConfig(),
+  campaignCapNanoUsd?: number,
 ): Promise<JudgeCampaignResult> {
   config = parseJudgeCampaignConfig(config);
+  const effectiveCap = campaignCapNanoUsd ?? config.campaignCapNanoUsd;
+  if (
+    !Number.isSafeInteger(effectiveCap) ||
+    effectiveCap < 0 ||
+    effectiveCap > config.campaignCapNanoUsd
+  ) {
+    throw new TypeError("judge campaign cap override is invalid");
+  }
+  config = { ...config, campaignCapNanoUsd: effectiveCap };
   const plannedWorstCaseNanoUsd =
     manifest.atomCount *
     config.models.reduce(
@@ -355,6 +365,8 @@ export async function runJudgeCampaign(
   ) {
     return empty("preflight_rejected", "planned_cost_exceeds_cap");
   }
+  const resolvedTransport =
+    typeof transport === "function" ? transport() : transport;
   const accounting: Accounting = {
     settledNanoUsd: 0,
     outstandingReservationNanoUsd: 0,
@@ -372,7 +384,7 @@ export async function runJudgeCampaign(
       atom.atomId,
       manifest,
       config,
-      transport,
+      resolvedTransport,
       accounting,
       digests,
     );

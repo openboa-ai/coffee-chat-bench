@@ -12,6 +12,7 @@ import {
 } from "./contracts.ts";
 import { canonicalJson, stableDigest, type Digest } from "./digest.ts";
 import {
+  loadJudgeCampaignConfig,
   runJudgeCampaign,
   type JudgeCampaignManifest,
   type JudgeCampaignReceipt,
@@ -135,6 +136,7 @@ export interface JudgmentInput {
   readonly transport?: JudgeTransport;
   readonly createTransport?: () => JudgeTransport;
   readonly manifest?: Omit<JudgeCampaignManifest, "atomCount">;
+  readonly judgeCampaignCapNanoUsd?: number;
 }
 
 export interface JudgmentResult {
@@ -952,12 +954,14 @@ function attestationFailureReason(error: unknown): VerifierFailureReasonCode {
   return "attestation_invalid";
 }
 
-function selectedTransport(input: JudgmentInput): JudgeTransport {
+function selectedTransport(
+  input: JudgmentInput,
+): JudgeTransport | (() => JudgeTransport) {
   if (input.transport !== undefined && input.createTransport !== undefined) {
     throw new TypeError("provide either transport or createTransport");
   }
   if (input.transport !== undefined) return input.transport;
-  if (input.createTransport !== undefined) return input.createTransport();
+  if (input.createTransport !== undefined) return input.createTransport;
   throw new TypeError(
     "a judge transport is required after attestation preflight",
   );
@@ -1022,6 +1026,8 @@ export async function judgeProjection(
     [panel],
     { atomCount: 1, ...(input.manifest ?? DEFAULT_MANIFEST) },
     selectedTransport(input),
+    loadJudgeCampaignConfig(),
+    input.judgeCampaignCapNanoUsd,
   );
   const campaignSummary = {
     state: campaign.state,
