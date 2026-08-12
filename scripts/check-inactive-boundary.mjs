@@ -6,11 +6,15 @@ import { resolve } from "node:path";
 
 const allowedPaths = new Set([
   ".gitattributes",
+  ".gitignore",
+  ".githooks/pre-commit",
   ".github/PULL_REQUEST_TEMPLATE.md",
   ".github/dependabot.yml",
+  ".github/scripts/install-gitleaks.sh",
   ".github/workflows/codeql.yml",
   ".github/workflows/policy.yml",
   ".github/workflows/quality.yml",
+  ".github/workflows/secret-boundary.yml",
   "AGENTS.md",
   "CODEOWNERS",
   "LICENSE",
@@ -20,6 +24,7 @@ const allowedPaths = new Set([
   "docs/validity/activation-criteria.md",
   "scripts/check-inactive-boundary.mjs",
   "tests/inactive-boundary.test.mjs",
+  "tests/secret-prevention.test.mjs",
 ]);
 const benchmarkDirectories = new Set([
   "cases",
@@ -48,7 +53,9 @@ const publicContracts = [
     "does not provide a benchmark, metric, result, or validity claim",
   ],
 ];
-const publicDocuments = [...allowedPaths].filter((path) => path.endsWith(".md"));
+const publicDocuments = [...allowedPaths].filter((path) =>
+  path.endsWith(".md"),
+);
 
 function fail(message) {
   throw new Error(message);
@@ -64,7 +71,9 @@ function trackedPaths(root) {
     encoding: "utf8",
   });
   if (result.error || result.status !== 0) {
-    fail(result.error?.message || result.stderr.trim() || "unable to read paths");
+    fail(
+      result.error?.message || result.stderr.trim() || "unable to read paths",
+    );
   }
   return result.stdout
     .split("\0")
@@ -85,8 +94,10 @@ function verifyPaths(paths) {
 function verifyPublicContracts(root) {
   for (const [path, status, absence] of publicContracts) {
     const content = readFileSync(resolve(root, path), "utf8");
-    if (!content.includes(status)) fail(`missing public not_active status: ${path}`);
-    if (!content.includes(absence)) fail(`missing public no-claim boundary: ${path}`);
+    if (!content.includes(status))
+      fail(`missing public not_active status: ${path}`);
+    if (!content.includes(absence))
+      fail(`missing public no-claim boundary: ${path}`);
   }
 }
 
@@ -119,7 +130,9 @@ function isConcreteClaim({ kind, text }) {
     ) ||
     /^(?:repository\s+)?status\s*(?::|=|is)\s*active\b/u.test(text) ||
     (kind === "heading" &&
-      /^(?:results?|leaderboard|scores?|metrics?|datasets?|tasks?)\b/u.test(text))
+      /^(?:results?|leaderboard|scores?|metrics?|datasets?|tasks?)\b/u.test(
+        text,
+      ))
   );
 }
 function verifyNoConcreteClaims(root) {
@@ -147,6 +160,8 @@ function main() {
 try {
   main();
 } catch (error) {
-  process.stderr.write(`${error instanceof Error ? error.message : String(error)}\n`);
+  process.stderr.write(
+    `${error instanceof Error ? error.message : String(error)}\n`,
+  );
   process.exitCode = 1;
 }

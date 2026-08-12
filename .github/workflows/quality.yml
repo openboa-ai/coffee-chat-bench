@@ -16,8 +16,7 @@ jobs:
       - name: Verify trusted pull request author
         if: github.event_name == 'pull_request'
         env:
-          AUTHOR_ASSOCIATION:
-            ${{ github.event.pull_request.author_association }}
+          AUTHOR_ASSOCIATION: ${{ github.event.pull_request.author_association }}
         run: |
           case "$AUTHOR_ASSOCIATION" in
             OWNER|MEMBER)
@@ -33,9 +32,20 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-          ref:
-            ${{ github.event.pull_request.head.sha ||
+          ref: ${{ github.event.pull_request.head.sha ||
             github.event.merge_group.head_sha || github.sha }}
+      - name: Install immutable Gitleaks
+        run: .github/scripts/install-gitleaks.sh
+      - name: Scan complete Git history
+        run: |
+          test ! -e .gitleaks.toml
+          test ! -e .gitleaksignore
+          gitleaks git --config "$GITLEAKS_TRUSTED_CONFIG" \
+            --gitleaks-ignore-path /dev/null --ignore-gitleaks-allow \
+            --redact --no-banner .
+          gitleaks dir --config "$GITLEAKS_TRUSTED_CONFIG" \
+            --gitleaks-ignore-path /dev/null --ignore-gitleaks-allow \
+            --redact --no-banner .
       - name: Set up Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
@@ -43,7 +53,7 @@ jobs:
       - name: Verify inactive boundary
         run: node scripts/check-inactive-boundary.mjs --root .
       - name: Run deterministic tests
-        run: node --test tests/inactive-boundary.test.mjs
+        run: node --test tests/*.test.mjs
 
   aggregate:
     name: Bench required

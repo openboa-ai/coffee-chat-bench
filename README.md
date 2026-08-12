@@ -29,3 +29,7 @@ Governance and reusable documentation are licensed under the
 ## Security
 
 Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
+Install Gitleaks, then enable staged-secret prevention with
+`git config core.hooksPath .githooks`. Run
+`gitleaks git --redact --no-banner .` for a complete history scan; required
+CI performs that scan independently.

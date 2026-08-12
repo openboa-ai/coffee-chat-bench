@@ -1,0 +1,12 @@
+# Local credentials
+.env
+.env.*
+!.env.example
+credentials.json
+secrets.json
+*.private.pem
+private-key.pem
+*.key
+*.p12
+*.pfx
+*.jks
