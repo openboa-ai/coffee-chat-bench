@@ -538,6 +538,7 @@ test("project emits the standalone Harbor verifier build context", () => {
         "COPY test.sh /tests/test.sh",
       ],
     );
+    assert.match(tests["Dockerfile"] ?? "", /^WORKDIR \/app$/mu);
   });
 });
 
