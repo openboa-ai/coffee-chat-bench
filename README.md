@@ -46,15 +46,21 @@ Its strict isolation attestation carries an `attestationMac`: an HMAC-SHA256
 over the canonical attestation fields excluding the MAC. That MAC covers the
 exact Bench commit and bank digest along with candidate, verifier, projection,
 and artifact digests, plus candidate-only mount, verifier-only judgment,
-output-only transfer, network-disabled, and cleanup evidence. Missing,
-malformed, or forged attestations/MACs are `verifier_failure` with zero
-provider calls; capability keys and MACs are never logged or persisted in a
-judgment result.
+output-only transfer, cleanup evidence, and the exact Harbor phase-network
+contract. The task baseline is `no-network`; setup is allowlisted only to
+`dl-cdn.alpinelinux.org` and `registry.npmjs.org`; the agent phase is
+allowlisted only to `api.openai.com`; and both the separate-verifier baseline
+and verifier phase remain `no-network`. Missing, reordered, duplicate,
+unknown, extra, or public-network values are `verifier_failure` with zero
+provider calls. Accepted phase-network fields remain in public provenance;
+capability keys and MACs are never logged or persisted in a judgment result.
 
 This capability authenticates the trusted Eval execution boundary against an
 untrusted candidate attempting path, projection, or attestation forgery. It is
 not a global signing PKI and does not claim to defend against a malicious Eval
-operator. Bench retains the MAC-bound `benchCommit` and `bankDigest` as result
+operator. Eval proves phase-network evidence from the actual Harbor result and
+network plan; Bench validates it without inventing host evidence. Bench retains
+the MAC-bound `benchCommit`, `bankDigest`, and phase-network fields as result
 provenance; Eval must pin those exact merged Bench values before execution.
 This package intentionally does not independently compare a bank digest to Git
 or a network source, so that final provenance selection remains a trusted
