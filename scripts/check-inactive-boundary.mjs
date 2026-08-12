@@ -6,8 +6,11 @@ import { resolve } from "node:path";
 
 const allowedPaths = new Set([
   ".gitattributes",
+  ".gitignore",
+  ".githooks/pre-commit",
   ".github/PULL_REQUEST_TEMPLATE.md",
   ".github/dependabot.yml",
+  ".github/scripts/install-gitleaks.sh",
   ".github/workflows/codeql.yml",
   ".github/workflows/policy.yml",
   ".github/workflows/quality.yml",
@@ -20,6 +23,7 @@ const allowedPaths = new Set([
   "docs/validity/activation-criteria.md",
   "scripts/check-inactive-boundary.mjs",
   "tests/inactive-boundary.test.mjs",
+  "tests/secret-prevention.test.mjs",
 ]);
 const benchmarkDirectories = new Set([
   "cases",
