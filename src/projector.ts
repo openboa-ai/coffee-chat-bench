@@ -316,7 +316,7 @@ function harborFiles(
     {
       file: "environment/Dockerfile",
       content:
-        "FROM python@sha256:540c7d91f98ff6880174c40e99067bf5941eb54d818a7a5e094d188b196a934d\nRUN apk add --no-cache bash=5.3.9-r1 curl=8.21.0-r0 nodejs=24.18.1-r0 npm=11.12.1-r0 ripgrep=15.1.0-r0\nWORKDIR /app\nCOPY input/ /app/\n",
+        "FROM node@sha256:048ed02c5fd52e86fda6fbd2f6a76cf0d4492fd6c6fee9e2c463ed5108da0e34\nRUN rm -f /etc/apt/sources.list.d/debian.sources \\\n && printf '%s\\n' 'deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20260801T000000Z bookworm main' > /etc/apt/sources.list \\\n && apt-get update \\\n && apt-get install -y --no-install-recommends ca-certificates=20230311+deb12u1 curl=7.88.1-10+deb12u15 ripgrep=13.0.0-4+b2 \\\n && rm -rf /var/lib/apt/lists/*\nWORKDIR /app\nCOPY input/ /app/\n",
     },
     ...candidateInput,
     {
