@@ -3,6 +3,7 @@ import { spawnSync } from "node:child_process";
 import {
   cpSync,
   existsSync,
+  lstatSync,
   mkdtempSync,
   readFileSync,
   realpathSync,
@@ -205,6 +206,145 @@ test("accepted Oracle projection calls exactly Terra and Luna and emits only pub
     ]) {
       assert.equal(serialized.includes(forbidden), false, forbidden);
     }
+  });
+});
+
+test("public attest CLI signs once without exposing its capability", async () => {
+  await withProjection(async (root, projection) => {
+    const oracle = artifact(root, projection, "oracle");
+    const signedFixture = attestation(root, projection, oracle);
+    const unsigned = JSON.parse(readFileSync(signedFixture, "utf8")) as Record<
+      string,
+      unknown
+    >;
+    delete unsigned.attestationMac;
+    const unsignedPath = join(root, "unsigned-attestation.json");
+    const signedPath = join(root, "signed-attestation.json");
+    writeFileSync(unsignedPath, JSON.stringify(unsigned), "utf8");
+
+    const result = spawnSync(
+      process.execPath,
+      [
+        "--experimental-strip-types",
+        join(repositoryRoot, "src", "cli.ts"),
+        "attest",
+        unsignedPath,
+        signedPath,
+      ],
+      {
+        encoding: "utf8",
+        env: {
+          PATH: process.env.PATH ?? "/usr/bin:/bin",
+          COFFEE_CHAT_EVAL_ATTESTATION_KEY: capabilityKey,
+        },
+      },
+    );
+    assert.equal(result.status, 0, result.stderr);
+    assert.deepEqual(JSON.parse(result.stdout), { state: "signed" });
+    assert.equal(result.stdout.includes(capabilityKey), false);
+    const signed = JSON.parse(readFileSync(signedPath, "utf8")) as Record<
+      string,
+      unknown
+    >;
+    assert.equal(
+      signed.attestationMac,
+      createAttestationMac(signed, capabilityKey),
+    );
+    assert.equal(JSON.stringify(signed).includes(capabilityKey), false);
+    assert.equal(lstatSync(signedPath).mode & 0o777, 0o600);
+    const judged = await judgeProjection({
+      projectionRoot: projection,
+      artifactPath: oracle,
+      attestationPath: signedPath,
+      capabilityKey,
+      transport: acceptedTransport([]),
+    });
+    assert.equal(judged.state, "measured");
+
+    const preSignedInput = join(root, "pre-signed-attestation.json");
+    writeFileSync(preSignedInput, JSON.stringify(signed), "utf8");
+    const rejectedPreSigned = spawnSync(
+      process.execPath,
+      [
+        "--experimental-strip-types",
+        join(repositoryRoot, "src", "cli.ts"),
+        "attest",
+        preSignedInput,
+        join(root, "must-not-exist.json"),
+      ],
+      {
+        encoding: "utf8",
+        env: {
+          PATH: process.env.PATH ?? "/usr/bin:/bin",
+          COFFEE_CHAT_EVAL_ATTESTATION_KEY: capabilityKey,
+        },
+      },
+    );
+    assert.equal(rejectedPreSigned.status, 1);
+    assert.equal(rejectedPreSigned.stdout.includes(capabilityKey), false);
+
+    const missingCapability = spawnSync(
+      process.execPath,
+      [
+        "--experimental-strip-types",
+        join(repositoryRoot, "src", "cli.ts"),
+        "attest",
+        unsignedPath,
+        join(root, "missing-capability.json"),
+      ],
+      {
+        encoding: "utf8",
+        env: { PATH: process.env.PATH ?? "/usr/bin:/bin" },
+      },
+    );
+    assert.equal(missingCapability.status, 1);
+    assert.equal(missingCapability.stdout.includes(capabilityKey), false);
+
+    const overwrite = spawnSync(
+      process.execPath,
+      [
+        "--experimental-strip-types",
+        join(repositoryRoot, "src", "cli.ts"),
+        "attest",
+        unsignedPath,
+        signedPath,
+      ],
+      {
+        encoding: "utf8",
+        env: {
+          PATH: process.env.PATH ?? "/usr/bin:/bin",
+          COFFEE_CHAT_EVAL_ATTESTATION_KEY: capabilityKey,
+        },
+      },
+    );
+    assert.equal(overwrite.status, 1);
+    assert.equal(overwrite.stdout.includes(capabilityKey), false);
+    assert.deepEqual(JSON.parse(readFileSync(signedPath, "utf8")), signed);
+
+    const incompletePath = join(root, "incomplete-attestation.json");
+    writeFileSync(
+      incompletePath,
+      JSON.stringify({ artifactType: "isolated_verifier_attestation" }),
+      "utf8",
+    );
+    const rejectedIncomplete = spawnSync(
+      process.execPath,
+      [
+        "--experimental-strip-types",
+        join(repositoryRoot, "src", "cli.ts"),
+        "attest",
+        incompletePath,
+        join(root, "incomplete-signed.json"),
+      ],
+      {
+        encoding: "utf8",
+        env: {
+          PATH: process.env.PATH ?? "/usr/bin:/bin",
+          COFFEE_CHAT_EVAL_ATTESTATION_KEY: capabilityKey,
+        },
+      },
+    );
+    assert.equal(rejectedIncomplete.status, 1);
   });
 });
 

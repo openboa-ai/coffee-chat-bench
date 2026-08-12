@@ -253,6 +253,102 @@ export function createAttestationMac(
     .digest("base64url");
 }
 
+export function validateUnsignedAttestationShape(
+  value: Record<string, unknown>,
+): void {
+  exactKeys(
+    value,
+    [
+      "artifactType",
+      "issuer",
+      "release",
+      "benchRepository",
+      "benchCommit",
+      "bankDigest",
+      "trialId",
+      "caseId",
+      "condition",
+      "sourceDigest",
+      "candidateDigest",
+      "verifierDigest",
+      "projectionDigest",
+      "artifactDigest",
+      "state",
+      "accepted",
+      "criticalFailure",
+      "reasonCode",
+      "isolation",
+    ],
+    "unsigned isolated verifier attestation",
+  );
+  if (
+    value.artifactType !== "isolated_verifier_attestation" ||
+    value.issuer !== "openboa-ai/coffee-chat-eval" ||
+    value.release !== RELEASE_ID ||
+    value.benchRepository !== "openboa-ai/coffee-chat-bench" ||
+    !/^[0-9a-f]{40}$/.test(string(value.benchCommit, "attestation.benchCommit"))
+  ) {
+    throw new TypeError("unsigned attestation has invalid provenance");
+  }
+  for (const field of [
+    "bankDigest",
+    "sourceDigest",
+    "candidateDigest",
+    "verifierDigest",
+    "projectionDigest",
+    "artifactDigest",
+  ] as const) {
+    digest(value[field], `attestation.${field}`);
+  }
+  string(value.trialId, "attestation.trialId");
+  string(value.caseId, "attestation.caseId");
+  const condition = string(value.condition, "attestation.condition");
+  if (!("T0" === condition || "T1-A" === condition || "T1-B" === condition)) {
+    throw new TypeError("unsigned attestation has invalid condition");
+  }
+  const state = string(value.state, "attestation.state");
+  const reasonCode = string(value.reasonCode, "attestation.reasonCode");
+  if (
+    ![
+      "unmeasured",
+      "candidate_invalid",
+      "candidate_failure",
+      "verifier_failure",
+    ].includes(state) ||
+    typeof value.accepted !== "boolean" ||
+    typeof value.criticalFailure !== "boolean" ||
+    (state === "unmeasured") !== value.accepted ||
+    (state === "unmeasured" ? reasonCode !== "none" : reasonCode !== state)
+  ) {
+    throw new TypeError("unsigned attestation has invalid verdict");
+  }
+  const isolation = record(value.isolation, "attestation.isolation");
+  exactKeys(
+    isolation,
+    [
+      "network",
+      "candidateInputs",
+      "verifierJudgment",
+      "transferredArtifacts",
+      "cleanup",
+    ],
+    "attestation.isolation",
+  );
+  parsePhaseNetwork(isolation.network);
+  if (
+    isolation.candidateInputs !== "candidate_projection_only" ||
+    isolation.verifierJudgment !== "verifier_only" ||
+    isolation.cleanup !== "completed" ||
+    !Array.isArray(isolation.transferredArtifacts) ||
+    isolation.transferredArtifacts.length !== 1 ||
+    isolation.transferredArtifacts[0] !== "/app/output.json"
+  ) {
+    throw new TypeError(
+      "unsigned attestation lacks required isolation evidence",
+    );
+  }
+}
+
 function verifyAttestationMac(
   value: Record<string, unknown>,
   capabilityKey: string,
