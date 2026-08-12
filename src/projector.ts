@@ -315,7 +315,8 @@ function harborFiles(
     },
     {
       file: "environment/Dockerfile",
-      content: "FROM python:3.13-alpine\nWORKDIR /app\nCOPY input/ /app/\n",
+      content:
+        "FROM --platform=linux/arm64 node@sha256:4dc25e9fc0dcf900eb9064614f03487058ff863b1e509a7ccee0d1ff80d8f62e\nRUN apk add --no-cache \\\n ncurses-terminfo-base=6.5_p20250503-r0 \\\n libncursesw=6.5_p20250503-r0 \\\n readline=8.2.13-r1 \\\n bash=5.2.37-r0 \\\n brotli-libs=1.1.0-r2 \\\n c-ares=1.34.8-r0 \\\n libunistring=1.3-r0 \\\n libidn2=2.3.7-r0 \\\n nghttp2-libs=1.69.0-r0 \\\n libpsl=0.21.5-r3 \\\n zstd-libs=1.5.7-r0 \\\n libcurl=8.14.1-r3 \\\n curl=8.14.1-r3 \\\n pcre2=10.46-r0 \\\n ripgrep=14.1.1-r0\nWORKDIR /app\nCOPY input/ /app/\n",
     },
     ...candidateInput,
     {
