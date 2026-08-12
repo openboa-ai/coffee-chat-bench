@@ -16,7 +16,11 @@ files remain in separate Harbor environments. QPCFR is conjunctive, while
 reliability and efficiency are reported separately. All public source and
 documentation are MIT-licensed. CalVer `2026.8.12` is the only release
 identity. Product implementation and a Coffee Chat `CC` condition are out of
-scope.
+scope. Measurement scope and activation criteria are derived independently of
+available API funds. The current USD 50 runner cap is an operational profile
+for individually authorized executions and never licenses a smaller sample,
+fewer controls, weaker statistical evidence, or an activation claim from an
+incomplete campaign.
 
 ## Task sequence
 
@@ -65,8 +69,10 @@ single malformed-response retry. The live roster is exactly Terra and Luna:
 one ordinary request per model, at most four calls per atom, no fallback or
 tie-breaker, and deterministic-verifier failure before a provider call. A
 campaign preflights its declared atom count and per-request token maxima against
-the hard USD 50 integer-nano-USD ceiling, reserves before each call, and stops
-on missing, malformed, or over-reservation usage. CI uses complete fake
+the current operator-authorized integer-nano-USD execution cap, reserves before
+each call, and stops on missing, malformed, or over-reservation usage. The
+`2026.8.12` implementation profile sets that cap to USD 50; it is not a
+benchmark-design constant or activation threshold. CI uses complete fake
 transports; manual execution reads only `OPENAI_API_KEY` without exposing it.
 
 ### Task 6: Consume Bench from Eval and run baseline E2E

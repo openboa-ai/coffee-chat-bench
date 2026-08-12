@@ -16,8 +16,9 @@ or strong measure compensates for a failed measure.
 
 The prospective judge configuration is a two-model Terra/Luna panel, not a
 majority panel. It records a CalVer tariff snapshot fetched on `2026-08-12`
-from <https://openai.com/api/pricing/> and applies an exact USD 50 campaign
-ceiling in integer nano-USD. The snapshot is provenance for a future run, not
-a claim that provider prices are unchanged. Fake-transport implementation tests
-do not constitute provider execution, reliability evidence, or a measured
-validity result.
+from <https://openai.com/api/pricing/>. The current manual execution profile
+applies an exact USD 50 campaign guardrail in integer nano-USD. That guardrail
+represents operator-authorized run spending, not benchmark scope or validity.
+The snapshot is provenance for a future run, not a claim that provider prices
+are unchanged. Fake-transport implementation tests do not constitute provider
+execution, reliability evidence, or a measured validity result.
