@@ -1,0 +1,84 @@
+{
+  "release": "2026.8.12",
+  "caseId": "case-research-a17",
+  "familyId": "family-research-a17",
+  "domain": "research",
+  "operation": "synthesize",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Synthesize a research brief from the study records. Treat the supplied records as the complete synthetic evidence set and make one selection for each declared decision.",
+    "deliverable": "A brief that states the competing interpretation, the next observation, and cited evidence. Cite the named evidence references and do not list mutually incompatible selections."
+  },
+  "sourceDigest": "sha256:933bbc2f36f1d2336b5f7de67844007fbc2daa10c05cd52061b92b342430ee36",
+  "evidence": [
+    {
+      "ref": "constraint-a17",
+      "content": "The observation log notes a shorter incubation on the radial dish, while the measurement slip reports equal initial inoculation marks.",
+      "digest": "sha256:fa512e1562873f72f1594a2f8b61f03467cb83b85944d829168fad1e7ebe7db0"
+    },
+    {
+      "ref": "observation-a17",
+      "content": "A fabricated petri-dish study contains two growth sketches: one with a radial edge and one with clustered islands.",
+      "digest": "sha256:06b0e49fd4f059f9c79e0bc654077589c142d749dc4a95c545269135fe4e73fc"
+    },
+    {
+      "ref": "scope-a17",
+      "content": "This synthetic synthesize record for case-research-a17 is bounded to the named observation and constraint. A valid conclusion must distinguish them, cite both, and avoid an unstated factual claim.",
+      "digest": "sha256:7ac3ff76b069477fc0f225b6520131e8f97786cd1b53d556b2f7d45de6e5a3fe"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "speed-assurance-a",
+      "pairId": "speed/assurance",
+      "content": "When the stated risks remain bounded, prefer shorter feedback loops and earlier delivery so evidence can arrive sooner.",
+      "digest": "sha256:c5fde5a067e235619fcd84d828574403abf0809e43d0bcfcb26030af19568a98"
+    },
+    "B": {
+      "id": "speed-assurance-b",
+      "pairId": "speed/assurance",
+      "content": "When the stated risks warrant it, prefer stronger verification before commitment so preventable failures are less likely.",
+      "digest": "sha256:515649e0feb8d33f99549619db0795075fe36c7cd0d6d19592487e9d15bbebfb"
+    },
+    "irrelevant": {
+      "id": "speed-assurance-irrelevant",
+      "pairId": "irrelevant/scanability",
+      "content": "Prefer section headings that make the final artifact easy to scan.",
+      "digest": "sha256:ba3d0ca63a7016e52dd1ea72bcaeb455c6ef0b410b4f4eceb5c8558d973850a3"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "research-a17-synthesize-judgment",
+      "prompt": "Choose exactly one synthesize judgment for case-research-a17; justify it from the observation and constraint records rather than listing alternatives.",
+      "regionOptions": [
+        "publish a bounded interpretation with a measurement caveat",
+        "publish a provisional radial-dish interpretation",
+        "withhold synthesis pending a verification read"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["publish a bounded interpretation with a measurement caveat"],
+        "T1-A": ["publish a provisional radial-dish interpretation"],
+        "T1-B": ["withhold synthesis pending a verification read"]
+      },
+      "requiredEvidenceRefs": ["observation-a17", "constraint-a17"]
+    },
+    {
+      "decisionId": "research-a17-evidence-scope",
+      "prompt": "Choose the evidence practice that keeps the synthesize conclusion for case-research-a17 within the supplied record boundary.",
+      "regionOptions": [
+        "cite the named record bundle for a17",
+        "replace the record bundle with an unstated conclusion for a17"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["cite the named record bundle for a17"],
+        "T1-A": ["cite the named record bundle for a17"],
+        "T1-B": ["cite the named record bundle for a17"]
+      },
+      "requiredEvidenceRefs": ["observation-a17", "constraint-a17", "scope-a17"]
+    }
+  ],
+  "nonGoal": "Do not provide biological or health conclusions. Do not replace the supplied record with an unstated factual conclusion."
+}

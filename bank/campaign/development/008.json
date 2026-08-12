@@ -1,0 +1,90 @@
+{
+  "release": "2026.8.12",
+  "caseId": "operations-a-prioritize-complex-05-case",
+  "familyId": "operations-a-prioritize-complex-05-family",
+  "domain": "operations",
+  "operation": "prioritize",
+  "difficulty": "complex",
+  "task": {
+    "instruction": "Set the first response order across three zones whose fault reports share a power feed but have different recovery costs and occupant exposure.",
+    "deliverable": "A sequenced response board showing dependencies, stop conditions, and the evidence behind the first two moves."
+  },
+  "sourceDigest": "sha256:6434aa979401a33cd459c3c441d3cdf04ccea8b03fc22136754c16882985471b",
+  "evidence": [
+    {
+      "ref": "brief/05",
+      "content": "Zone Amber has intermittent power loss near an occupied work area; Zone Slate has a stable alarm; Zone Moss has a failed backup indicator.",
+      "digest": "sha256:c428e49041a3c0096ae29a5af9cb66645570191263831c34130b29a2ae1cb13a"
+    },
+    {
+      "ref": "record/05",
+      "content": "The shared-feed diagram shows an Amber isolation could interrupt Moss monitoring, while Slate can be tested independently.",
+      "digest": "sha256:f24e7b6b6f141d0f3fcbcc13214a6651c443995dbdb03715e991b07996009fc1"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "agency-guidance-a",
+      "pairId": "agency/guidance",
+      "content": "When participants have the needed context, preserve their discretion over how to reach the declared outcome.",
+      "digest": "sha256:ef6cc6f2faa1894ac57c2104b7b0f1dbef2d458c34b4ad26d76e7919251cf7ba"
+    },
+    "B": {
+      "id": "agency-guidance-b",
+      "pairId": "agency/guidance",
+      "content": "When consistency or unfamiliarity matters, provide a clearer path and decision support toward the declared outcome.",
+      "digest": "sha256:449eda0750c29040a5956b187060a20b120aa2a5b7295b7850f4d4f87431d475"
+    },
+    "irrelevant": {
+      "id": "agency-guidance-irrelevant",
+      "pairId": "irrelevant/file-naming",
+      "content": "Use descriptive file names for any attached artifacts.",
+      "digest": "sha256:02154c47bb6e71f1a134ddb9fac149ea3c8bdd189bd4c33c3954a452759ed3f7"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "operations-a-prioritize-complex-05-response",
+      "prompt": "Which response region should govern multi-zone fault queue after weighing the supplied evidence?",
+      "regionOptions": [
+        "hold-prioritize-05",
+        "let-zone-leads-choose-bounded-recovery-steps-within-shared-feed-gates-05",
+        "follow-a-central-response-sequence-before-local-zone-action-05",
+        "collect-zone-proposals-before-enforcing-the-shared-feed-stop-conditions-05"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["hold-prioritize-05"],
+        "T1-A": [
+          "let-zone-leads-choose-bounded-recovery-steps-within-shared-feed-gates-05"
+        ],
+        "T1-B": [
+          "follow-a-central-response-sequence-before-local-zone-action-05"
+        ]
+      },
+      "requiredEvidenceRefs": ["brief/05", "record/05"]
+    },
+    {
+      "decisionId": "operations-a-prioritize-complex-05-record",
+      "prompt": "Which evidence-recording rule must remain fixed while choosing the response for multi-zone fault queue?",
+      "regionOptions": [
+        "keep-the-zone-exposure-and-dependency-map-attached-to-every-move-05",
+        "record-review-05"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": [
+          "keep-the-zone-exposure-and-dependency-map-attached-to-every-move-05"
+        ],
+        "T1-A": [
+          "keep-the-zone-exposure-and-dependency-map-attached-to-every-move-05"
+        ],
+        "T1-B": [
+          "keep-the-zone-exposure-and-dependency-map-attached-to-every-move-05"
+        ]
+      },
+      "requiredEvidenceRefs": ["brief/05", "record/05"]
+    }
+  ],
+  "nonGoal": "Do not declare any zone repaired from an alarm reset alone."
+}

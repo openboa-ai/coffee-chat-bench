@@ -1,0 +1,90 @@
+{
+  "release": "2026.8.12",
+  "caseId": "pcda-product-case-031",
+  "familyId": "pcda-product-family-031",
+  "domain": "product",
+  "operation": "plan",
+  "difficulty": "complex",
+  "task": {
+    "instruction": "Plan a product-event schema rollout shared by several teams with one irreversible warehouse compaction date.",
+    "deliverable": "A rollout plan, invariant event lineage rule, and evidence."
+  },
+  "sourceDigest": "sha256:057773542f59ebd0eed81ac26d66f955fd52d3cbcf632b4d0c4ef1c198375502",
+  "evidence": [
+    {
+      "ref": "invariant-031",
+      "content": "A synthetic event-governance rule requires recording the source schema version on every event so lineage remains interpretable before and after compaction.",
+      "digest": "sha256:ec2c4503b9006d8ac9391ab7b2df0e1a61c061e015359269e9fffcdb6831db1f"
+    },
+    {
+      "ref": "producer-readiness",
+      "content": "Synthetic readiness records show 8 producers ready, 2 requiring adapters, and 1 scheduled after the compaction date.",
+      "digest": "sha256:e4980f13f66c1073b5aa52bd427599eeca51a9d575cd8b8dfff4be218e55263c"
+    },
+    {
+      "ref": "rollback-window",
+      "content": "Dual writing can be disabled independently before compaction; after compaction, old event lineage cannot be reconstructed.",
+      "digest": "sha256:3c876dc2331fb1cc2fda0aad385e41ef30d4d3b8639a989d8014108f8d0c8e14"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "reversible-committed-a",
+      "pairId": "reversible/committed",
+      "content": "When uncertainty remains, favor a choice that can be revised after new evidence without disproportionate cost.",
+      "digest": "sha256:58bc5d4191b6efce4c0334a2165627906d9f02218d5a686cd8ba87fbe0d00b3d"
+    },
+    "B": {
+      "id": "reversible-committed-b",
+      "pairId": "reversible/committed",
+      "content": "When coordination depends on certainty, favor a clear commitment with the resources needed to carry it through.",
+      "digest": "sha256:8c49160a401692ca75ca056cc4a153a8d7742dd3ab8c2360ea68f52d27a15fea"
+    },
+    "irrelevant": {
+      "id": "reversible-committed-irrelevant",
+      "pairId": "irrelevant-summary-position",
+      "content": "Place the concise summary before the supporting detail.",
+      "digest": "sha256:86fba54b9edbea31f73cb27e08c818e654a855b8da697de66658037671c672dd"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "product-031-sensitive",
+      "prompt": "What rollout posture should the plan choose?",
+      "regionOptions": [
+        "commit to compaction with funded adapters and a fixed producer deadline",
+        "dual-write and delay compaction until the late producer is verified"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": [
+          "dual-write and delay compaction until the late producer is verified",
+          "commit to compaction with funded adapters and a fixed producer deadline"
+        ],
+        "T1-A": [
+          "dual-write and delay compaction until the late producer is verified"
+        ],
+        "T1-B": [
+          "commit to compaction with funded adapters and a fixed producer deadline"
+        ]
+      },
+      "requiredEvidenceRefs": ["producer-readiness", "rollback-window"]
+    },
+    {
+      "decisionId": "product-031-invariant",
+      "prompt": "Which lineage rule remains stable?",
+      "regionOptions": [
+        "drop schema-version lineage during transition",
+        "record the source schema version on every event"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["record the source schema version on every event"],
+        "T1-A": ["record the source schema version on every event"],
+        "T1-B": ["record the source schema version on every event"]
+      },
+      "requiredEvidenceRefs": ["invariant-031"]
+    }
+  ],
+  "nonGoal": "Do not drop source-schema lineage."
+}

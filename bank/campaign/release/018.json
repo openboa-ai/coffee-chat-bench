@@ -1,0 +1,90 @@
+{
+  "release": "2026.8.12",
+  "caseId": "operations-a-plan-standard-28-case",
+  "familyId": "operations-a-plan-standard-28-family",
+  "domain": "operations",
+  "operation": "plan",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Plan a small records migration when the target schema has one required field absent from old records and the source count is not yet reconciled.",
+    "deliverable": "A migration plan with inventory step, mapping rule, validation sample, and rollback condition."
+  },
+  "sourceDigest": "sha256:790be2f4d792a6900a6ac63d18f10ce0bf5b4fd56126bcd1fe6f458787fae2b3",
+  "evidence": [
+    {
+      "ref": "brief/28",
+      "content": "The source inventory contains 420 records, but the count differs by 11 between the index and the export manifest.",
+      "digest": "sha256:d1a694247218202615f416b06a5ab23b95e164d2a4a104e3538cf82bd19408a7"
+    },
+    {
+      "ref": "record/28",
+      "content": "The target schema requires a custody field that old records lack; a bounded review can infer it only for records with a matching handoff note.",
+      "digest": "sha256:6a8c055cf8bfeca921f70ea86997f7be0763d2692a015a8226b86c664df74d1b"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "novelty-precedent-a",
+      "pairId": "novelty/precedent",
+      "content": "When existing patterns do not fit the stated constraints, prefer a new approach whose risks can be tested explicitly.",
+      "digest": "sha256:6436d147872630cea3dc550a9447f6653055339ec9c7f90f790b2f65bd5e55e9"
+    },
+    "B": {
+      "id": "novelty-precedent-b",
+      "pairId": "novelty/precedent",
+      "content": "When a proven pattern fits the stated constraints, prefer its established behavior and known operational costs.",
+      "digest": "sha256:238b2216af2fd2cf56aa86a4921f78f42e1252280cbd073dc3685dd9b49940e8"
+    },
+    "irrelevant": {
+      "id": "novelty-precedent-irrelevant",
+      "pairId": "irrelevant/list-style",
+      "content": "Use parallel grammar for items in the final list.",
+      "digest": "sha256:f5d11a4db862bc9d896c1093f7db73f35900d5e92dda43b0d6340da8db5ab352"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "operations-a-plan-standard-28-response",
+      "prompt": "Which response region should govern records migration after weighing the supplied evidence?",
+      "regionOptions": [
+        "hold-plan-28",
+        "plan-an-inventory-reconciliation-before-mapping-only-evidenced-custody-fields-28",
+        "plan-a-schema-gate-that-blocks-migration-until-every-custody-field-is-resolved-28",
+        "migrate-only-reconciled-records-while-isolating-the-11-count-gap-28"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["hold-plan-28"],
+        "T1-A": [
+          "plan-an-inventory-reconciliation-before-mapping-only-evidenced-custody-fields-28"
+        ],
+        "T1-B": [
+          "plan-a-schema-gate-that-blocks-migration-until-every-custody-field-is-resolved-28"
+        ]
+      },
+      "requiredEvidenceRefs": ["brief/28", "record/28"]
+    },
+    {
+      "decisionId": "operations-a-plan-standard-28-record",
+      "prompt": "Which evidence-recording rule must remain fixed while choosing the response for records migration?",
+      "regionOptions": [
+        "retain-source-id-mapping-decision-and-reviewer-for-every-migrated-record-28",
+        "record-review-28"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": [
+          "retain-source-id-mapping-decision-and-reviewer-for-every-migrated-record-28"
+        ],
+        "T1-A": [
+          "retain-source-id-mapping-decision-and-reviewer-for-every-migrated-record-28"
+        ],
+        "T1-B": [
+          "retain-source-id-mapping-decision-and-reviewer-for-every-migrated-record-28"
+        ]
+      },
+      "requiredEvidenceRefs": ["brief/28", "record/28"]
+    }
+  ],
+  "nonGoal": "Do not invent custody fields to make the target count match."
+}

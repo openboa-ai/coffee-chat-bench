@@ -1,0 +1,84 @@
+{
+  "release": "2026.8.12",
+  "caseId": "case-research-a20",
+  "familyId": "family-research-a20",
+  "domain": "research",
+  "operation": "synthesize",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Synthesize the findings for a methods panel. Treat the supplied records as the complete synthetic evidence set and make one selection for each declared decision.",
+    "deliverable": "A methods synthesis with an approach choice, risk note, and evidence citations. Cite the named evidence references and do not list mutually incompatible selections."
+  },
+  "sourceDigest": "sha256:04bf7536138577b73485c6c9faa4e32b2b9a01e1b576d9e9f2e57b37eb228cb3",
+  "evidence": [
+    {
+      "ref": "constraint-a20",
+      "content": "The bench note records a new low-light imaging trial, while the catalog card describes a long-used hand-lens sequence.",
+      "digest": "sha256:2325e72e8577a8f3c67a8b81f57f07b7c0ef0d0ae1b6db71954bcb38a1711dfa"
+    },
+    {
+      "ref": "observation-a20",
+      "content": "A fictional paper-fiber study compares a translucent sheet that tears at the fold with a matte sheet that resists tearing.",
+      "digest": "sha256:91c8650130836e3028fd14334e2ca6df3379a06b8432cd5c23c446e9d85d0dad"
+    },
+    {
+      "ref": "scope-a20",
+      "content": "This synthetic synthesize record for case-research-a20 is bounded to the named observation and constraint. A valid conclusion must distinguish them, cite both, and avoid an unstated factual claim.",
+      "digest": "sha256:b20bf756c3c9523a8d5b842765082f96d4bb28a97f3adba5cff7c38129708094"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "novelty-precedent-a",
+      "pairId": "novelty/precedent",
+      "content": "When existing patterns do not fit the stated constraints, prefer a new approach whose risks can be tested explicitly.",
+      "digest": "sha256:6436d147872630cea3dc550a9447f6653055339ec9c7f90f790b2f65bd5e55e9"
+    },
+    "B": {
+      "id": "novelty-precedent-b",
+      "pairId": "novelty/precedent",
+      "content": "When a proven pattern fits the stated constraints, prefer its established behavior and known operational costs.",
+      "digest": "sha256:238b2216af2fd2cf56aa86a4921f78f42e1252280cbd073dc3685dd9b49940e8"
+    },
+    "irrelevant": {
+      "id": "novelty-precedent-irrelevant",
+      "pairId": "irrelevant/list-style",
+      "content": "Use parallel grammar for items in the final list.",
+      "digest": "sha256:f5d11a4db862bc9d896c1093f7db73f35900d5e92dda43b0d6340da8db5ab352"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "research-a20-synthesize-judgment",
+      "prompt": "Choose exactly one synthesize judgment for case-research-a20; justify it from the observation and constraint records rather than listing alternatives.",
+      "regionOptions": [
+        "run the low-light imaging trial",
+        "pair a limited imaging trial with the hand-lens record",
+        "reuse the hand-lens sequence"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["pair a limited imaging trial with the hand-lens record"],
+        "T1-A": ["run the low-light imaging trial"],
+        "T1-B": ["reuse the hand-lens sequence"]
+      },
+      "requiredEvidenceRefs": ["observation-a20", "constraint-a20"]
+    },
+    {
+      "decisionId": "research-a20-evidence-scope",
+      "prompt": "Choose the evidence practice that keeps the synthesize conclusion for case-research-a20 within the supplied record boundary.",
+      "regionOptions": [
+        "replace the record bundle with an unstated conclusion for a20",
+        "cite the named record bundle for a20"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["cite the named record bundle for a20"],
+        "T1-A": ["cite the named record bundle for a20"],
+        "T1-B": ["cite the named record bundle for a20"]
+      },
+      "requiredEvidenceRefs": ["observation-a20", "constraint-a20", "scope-a20"]
+    }
+  ],
+  "nonGoal": "Do not identify a real archive or material. Do not replace the supplied record with an unstated factual conclusion."
+}

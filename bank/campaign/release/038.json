@@ -1,0 +1,86 @@
+{
+  "release": "2026.8.12",
+  "caseId": "pcda-product-case-028",
+  "familyId": "pcda-product-family-028",
+  "domain": "product",
+  "operation": "plan",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Plan keyboard navigation for a dense product where a spatial command map could outperform the standard focus list.",
+    "deliverable": "An implementation plan, invariant operability rule, and cited evidence."
+  },
+  "sourceDigest": "sha256:19323789f1f24b9689febb7f9d06ed646b04d987f9a71a3fd979fb777f2e58c4",
+  "evidence": [
+    {
+      "ref": "compatibility-note",
+      "content": "The linear list matches the existing component contract; the map needs tests for remapping, localization, and screen-reader announcements.",
+      "digest": "sha256:1890530cae11e8192ac5a342c185113912dfa9f45edc2c8a8e5dae89e3be7449"
+    },
+    {
+      "ref": "invariant-028",
+      "content": "A synthetic accessibility obligation requires every action to remain reachable without a pointer, including when a spatial command map is chosen for expert speed.",
+      "digest": "sha256:aff444a7e05b2ae25ca22646512529aed627666d779889bb745e4fa1db68764c"
+    },
+    {
+      "ref": "task-test",
+      "content": "Synthetic specialists complete cross-panel moves 27% faster with a spatial command map; first-time users finish more reliably with a linear focus list.",
+      "digest": "sha256:acc932c7717c2f7b0751999d8bdcaba51f11a96eccd5c65e5a61be7c1e79ab6e"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "novelty-precedent-a",
+      "pairId": "novelty/precedent",
+      "content": "When existing patterns do not fit the stated constraints, prefer a new approach whose risks can be tested explicitly.",
+      "digest": "sha256:6436d147872630cea3dc550a9447f6653055339ec9c7f90f790b2f65bd5e55e9"
+    },
+    "B": {
+      "id": "novelty-precedent-b",
+      "pairId": "novelty/precedent",
+      "content": "When a proven pattern fits the stated constraints, prefer its established behavior and known operational costs.",
+      "digest": "sha256:238b2216af2fd2cf56aa86a4921f78f42e1252280cbd073dc3685dd9b49940e8"
+    },
+    "irrelevant": {
+      "id": "novelty-precedent-irrelevant",
+      "pairId": "irrelevant/list-style",
+      "content": "Use parallel grammar for items in the final list.",
+      "digest": "sha256:f5d11a4db862bc9d896c1093f7db73f35900d5e92dda43b0d6340da8db5ab352"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "product-028-sensitive",
+      "prompt": "Which navigation pattern should the plan advance?",
+      "regionOptions": [
+        "extend the conventional linear focus list",
+        "prototype the spatial command map behind an opt-in setting"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": [
+          "prototype the spatial command map behind an opt-in setting",
+          "extend the conventional linear focus list"
+        ],
+        "T1-A": ["prototype the spatial command map behind an opt-in setting"],
+        "T1-B": ["extend the conventional linear focus list"]
+      },
+      "requiredEvidenceRefs": ["task-test", "compatibility-note"]
+    },
+    {
+      "decisionId": "product-028-invariant",
+      "prompt": "Which accessibility obligation is invariant?",
+      "regionOptions": [
+        "leave drag-only actions outside keyboard access",
+        "make every action reachable without a pointer"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["make every action reachable without a pointer"],
+        "T1-A": ["make every action reachable without a pointer"],
+        "T1-B": ["make every action reachable without a pointer"]
+      },
+      "requiredEvidenceRefs": ["invariant-028"]
+    }
+  ],
+  "nonGoal": "Do not preserve pointer-only actions."
+}

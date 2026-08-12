@@ -1,0 +1,12 @@
+{
+  "manifest": {
+    "release": "2026.8.12",
+    "trialId": "trial-9e05c89e6a757d7922506044444137300f0f8ac1f417bdce8d5e424fc86a4e58",
+    "caseId": "case-projection",
+    "condition": "T1-A",
+    "artifactDigest": "sha256:d6ae28c9bb75b2e5058d4cc5529fd2411173429f0b7dc5c47da17cedc804b310",
+    "decisions": []
+  },
+  "response": "No action.",
+  "accessedPaths": []
+}

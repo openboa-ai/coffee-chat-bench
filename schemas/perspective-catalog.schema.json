@@ -1,0 +1,380 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openboa.ai/coffee-chat-bench/2026.8.12/schemas/perspective-catalog.schema.json",
+  "title": "PCDA synthetic perspective catalog",
+  "$comment": "Structural author-input validation. parsePerspectiveCatalog is authoritative for exact pair identities, uniqueness, names, and irrelevant provenance.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["release", "rights", "pairs"],
+  "properties": {
+    "release": { "const": "2026.8.12" },
+    "rights": { "$ref": "#/$defs/rights" },
+    "pairs": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": { "$ref": "#/$defs/pair" },
+      "allOf": [
+        { "$ref": "#/$defs/hasSpeedAssurance" },
+        { "$ref": "#/$defs/hasExplorationConvergence" },
+        { "$ref": "#/$defs/hasLocalSystems" },
+        { "$ref": "#/$defs/hasNoveltyPrecedent" },
+        { "$ref": "#/$defs/hasAgencyGuidance" },
+        { "$ref": "#/$defs/hasBreadthDepth" },
+        { "$ref": "#/$defs/hasReversibleCommitted" },
+        { "$ref": "#/$defs/hasExplicitProcessAdaptiveJudgment" }
+      ]
+    }
+  },
+  "$defs": {
+    "nonEmptyString": { "type": "string", "minLength": 1 },
+    "pairId": {
+      "enum": [
+        "speed/assurance",
+        "exploration/convergence",
+        "local/systems",
+        "novelty/precedent",
+        "agency/guidance",
+        "breadth/depth",
+        "reversible/committed",
+        "explicit-process/adaptive-judgment"
+      ]
+    },
+    "rights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "license",
+        "synthetic",
+        "public",
+        "noUniversalPreference",
+        "declaration"
+      ],
+      "properties": {
+        "license": { "const": "MIT" },
+        "synthetic": { "const": true },
+        "public": { "const": true },
+        "noUniversalPreference": { "const": true },
+        "declaration": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "namedPerspective": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "content"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "name": { "$ref": "#/$defs/nonEmptyString" },
+        "content": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "irrelevantPerspective": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "pairId", "content"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "pairId": { "$ref": "#/$defs/nonEmptyString" },
+        "content": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "pair": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pairId",
+        "A",
+        "B",
+        "irrelevant",
+        "neitherSideUniversallySuperior"
+      ],
+      "properties": {
+        "pairId": { "$ref": "#/$defs/pairId" },
+        "A": { "$ref": "#/$defs/namedPerspective" },
+        "B": { "$ref": "#/$defs/namedPerspective" },
+        "irrelevant": { "$ref": "#/$defs/irrelevantPerspective" },
+        "neitherSideUniversallySuperior": { "const": true }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "pairId": { "const": "speed/assurance" } },
+            "required": ["pairId"]
+          },
+          "then": {
+            "properties": {
+              "A": {
+                "type": "object",
+                "properties": { "name": { "const": "speed" } }
+              },
+              "B": {
+                "type": "object",
+                "properties": { "name": { "const": "assurance" } }
+              },
+              "irrelevant": {
+                "type": "object",
+                "properties": {
+                  "pairId": { "const": "irrelevant/scanability" }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "pairId": { "const": "exploration/convergence" }
+            },
+            "required": ["pairId"]
+          },
+          "then": {
+            "properties": {
+              "A": {
+                "type": "object",
+                "properties": { "name": { "const": "exploration" } }
+              },
+              "B": {
+                "type": "object",
+                "properties": { "name": { "const": "convergence" } }
+              },
+              "irrelevant": {
+                "type": "object",
+                "properties": {
+                  "pairId": { "const": "irrelevant/date-format" }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "pairId": { "const": "local/systems" } },
+            "required": ["pairId"]
+          },
+          "then": {
+            "properties": {
+              "A": {
+                "type": "object",
+                "properties": { "name": { "const": "local" } }
+              },
+              "B": {
+                "type": "object",
+                "properties": { "name": { "const": "systems" } }
+              },
+              "irrelevant": {
+                "type": "object",
+                "properties": {
+                  "pairId": { "const": "irrelevant/title-length" }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "pairId": { "const": "novelty/precedent" } },
+            "required": ["pairId"]
+          },
+          "then": {
+            "properties": {
+              "A": {
+                "type": "object",
+                "properties": { "name": { "const": "novelty" } }
+              },
+              "B": {
+                "type": "object",
+                "properties": { "name": { "const": "precedent" } }
+              },
+              "irrelevant": {
+                "type": "object",
+                "properties": {
+                  "pairId": { "const": "irrelevant/list-style" }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "pairId": { "const": "agency/guidance" } },
+            "required": ["pairId"]
+          },
+          "then": {
+            "properties": {
+              "A": {
+                "type": "object",
+                "properties": { "name": { "const": "agency" } }
+              },
+              "B": {
+                "type": "object",
+                "properties": { "name": { "const": "guidance" } }
+              },
+              "irrelevant": {
+                "type": "object",
+                "properties": {
+                  "pairId": { "const": "irrelevant/file-naming" }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "pairId": { "const": "breadth/depth" } },
+            "required": ["pairId"]
+          },
+          "then": {
+            "properties": {
+              "A": {
+                "type": "object",
+                "properties": { "name": { "const": "breadth" } }
+              },
+              "B": {
+                "type": "object",
+                "properties": { "name": { "const": "depth" } }
+              },
+              "irrelevant": {
+                "type": "object",
+                "properties": {
+                  "pairId": { "const": "irrelevant-spacing" }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "pairId": { "const": "reversible/committed" } },
+            "required": ["pairId"]
+          },
+          "then": {
+            "properties": {
+              "A": {
+                "type": "object",
+                "properties": { "name": { "const": "reversible" } }
+              },
+              "B": {
+                "type": "object",
+                "properties": { "name": { "const": "committed" } }
+              },
+              "irrelevant": {
+                "type": "object",
+                "properties": {
+                  "pairId": { "const": "irrelevant-summary-position" }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "pairId": { "const": "explicit-process/adaptive-judgment" }
+            },
+            "required": ["pairId"]
+          },
+          "then": {
+            "properties": {
+              "A": {
+                "type": "object",
+                "properties": { "name": { "const": "explicit-process" } }
+              },
+              "B": {
+                "type": "object",
+                "properties": { "name": { "const": "adaptive-judgment" } }
+              },
+              "irrelevant": {
+                "type": "object",
+                "properties": {
+                  "pairId": { "const": "irrelevant-heading-case" }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "hasSpeedAssurance": {
+      "type": "array",
+      "contains": {
+        "type": "object",
+        "required": ["pairId"],
+        "properties": { "pairId": { "const": "speed/assurance" } }
+      },
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "hasExplorationConvergence": {
+      "type": "array",
+      "contains": {
+        "type": "object",
+        "required": ["pairId"],
+        "properties": { "pairId": { "const": "exploration/convergence" } }
+      },
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "hasLocalSystems": {
+      "type": "array",
+      "contains": {
+        "type": "object",
+        "required": ["pairId"],
+        "properties": { "pairId": { "const": "local/systems" } }
+      },
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "hasNoveltyPrecedent": {
+      "type": "array",
+      "contains": {
+        "type": "object",
+        "required": ["pairId"],
+        "properties": { "pairId": { "const": "novelty/precedent" } }
+      },
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "hasAgencyGuidance": {
+      "type": "array",
+      "contains": {
+        "type": "object",
+        "required": ["pairId"],
+        "properties": { "pairId": { "const": "agency/guidance" } }
+      },
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "hasBreadthDepth": {
+      "type": "array",
+      "contains": {
+        "type": "object",
+        "required": ["pairId"],
+        "properties": { "pairId": { "const": "breadth/depth" } }
+      },
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "hasReversibleCommitted": {
+      "type": "array",
+      "contains": {
+        "type": "object",
+        "required": ["pairId"],
+        "properties": { "pairId": { "const": "reversible/committed" } }
+      },
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "hasExplicitProcessAdaptiveJudgment": {
+      "type": "array",
+      "contains": {
+        "type": "object",
+        "required": ["pairId"],
+        "properties": {
+          "pairId": { "const": "explicit-process/adaptive-judgment" }
+        }
+      },
+      "minContains": 1,
+      "maxContains": 1
+    }
+  }
+}

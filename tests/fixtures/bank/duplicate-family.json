@@ -1,0 +1,63 @@
+{
+  "release": "2026.8.12",
+  "caseId": "case-charlie",
+  "familyId": "family-alpha",
+  "domain": "writing",
+  "operation": "rewrite",
+  "difficulty": "medium",
+  "task": {
+    "instruction": "Choose one region for each decision.",
+    "deliverable": "Return the declared decision manifest."
+  },
+  "evidence": [
+    {
+      "ref": "source-charlie",
+      "content": "Synthetic evidence for charlie.",
+      "digest": "sha256:3f3f21322ae28f901aaa0f0d5a00d68e1d979dc4659b6d307ac1bc36d574b59e"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "perspective-charlie-a",
+      "pairId": "perspective-pair-charlie",
+      "content": "Prefer direct treatment.",
+      "digest": "sha256:e4358b6d64a3dc70f7d14965c8745e94bc45782e9fc636c488315535148adbed"
+    },
+    "B": {
+      "id": "perspective-charlie-b",
+      "pairId": "perspective-pair-charlie",
+      "content": "Prefer contextual treatment.",
+      "digest": "sha256:c895eb71e2d05d74a1756c560c619dd4683af3fa93b055a2c202839c9bc7a6cd"
+    },
+    "irrelevant": {
+      "id": "perspective-charlie-irrelevant",
+      "pairId": "perspective-pair-charlie-irrelevant",
+      "content": "Prefer concise updates.",
+      "digest": "sha256:948c34c9cd4b2b9aae443163e82c227ec9e7ad28597057c032cab8eff51a173c"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "sensitive-charlie",
+      "prompt": "Which treatment should be used?",
+      "regionOptions": ["draft", "direct", "contextual"],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["draft"],
+        "T1-A": ["direct"],
+        "T1-B": ["contextual"]
+      },
+      "requiredEvidenceRefs": ["source-charlie"]
+    },
+    {
+      "decisionId": "invariant-charlie",
+      "prompt": "Which evidence bound should be preserved?",
+      "regionOptions": ["cite", "bounded", "omit"],
+      "partition": "invariant",
+      "acceptedRegions": { "T0": ["cite"], "T1-A": ["cite"], "T1-B": ["cite"] },
+      "requiredEvidenceRefs": ["source-charlie"]
+    }
+  ],
+  "nonGoal": "Do not invent sources.",
+  "sourceDigest": "sha256:08df924915e8f713cea2f5ad8c5fa1ecffb3aeaa1ed6036a2d884c66847361d5"
+}

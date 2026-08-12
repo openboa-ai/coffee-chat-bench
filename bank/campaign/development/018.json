@@ -1,0 +1,88 @@
+{
+  "release": "2026.8.12",
+  "caseId": "pcda-product-case-003",
+  "familyId": "pcda-product-family-003",
+  "domain": "product",
+  "operation": "prioritize",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Prioritize a fix for a refill-return product whose customers complete requests but wait unpredictably for collection.",
+    "deliverable": "A first-priority intervention, stable service promise, and supporting evidence."
+  },
+  "sourceDigest": "sha256:445bb6093acd80956229e3b63f5a150c03683095ab965a75383fd903fcc75a48",
+  "evidence": [
+    {
+      "ref": "capacity-note",
+      "content": "Changing label copy needs one design day; changing batching rules needs three teams and can reduce the long tail by an estimated two days.",
+      "digest": "sha256:bb4b0ada025bec6d99a47663e6bdd369083c1bd0d7b764926e8129f9e968e4df"
+    },
+    {
+      "ref": "invariant-003",
+      "content": "A synthetic return-policy register states that every already-issued return window remains honored while pickup labels or batching rules change; those operational changes cannot shorten a customer commitment.",
+      "digest": "sha256:6e841835f7fe50f4cfc886a766a866ef4f2b66720a71b3e698e7e833c84f2edf"
+    },
+    {
+      "ref": "queue-trace",
+      "content": "A synthetic trace of 90 returns finds 62 delayed at the pickup-label screen and 21 delayed later by route batching.",
+      "digest": "sha256:83ec06d8062ddd6f5df3bc74f7b5d13688cc57c9c7ffa203894e17a4b9194f32"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "local-systems-a",
+      "pairId": "local/systems",
+      "content": "Prefer a bounded intervention at the immediate decision point when wider changes are not required by the evidence.",
+      "digest": "sha256:9f1ab63dab599cfbd1e90d917f550d8a38c0ab908b103b85fb26ecca19be1831"
+    },
+    "B": {
+      "id": "local-systems-b",
+      "pairId": "local/systems",
+      "content": "Prefer an intervention that accounts for connected incentives and downstream effects when the evidence shows they matter.",
+      "digest": "sha256:0043d133ec80283c55d8d2d32b6a99d9758bfa5ea65b8c453bb38ab0c1056638"
+    },
+    "irrelevant": {
+      "id": "local-systems-irrelevant",
+      "pairId": "irrelevant/title-length",
+      "content": "Keep the artifact title concise enough to fit on one line.",
+      "digest": "sha256:0983700ec288937912c879a015b31619394fc1a58c4aed29100133720878528a"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "product-003-sensitive",
+      "prompt": "What intervention scope should receive first priority?",
+      "regionOptions": [
+        "repair the pickup-label decision point first",
+        "coordinate label, batching, and capacity changes as one system"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": [
+          "repair the pickup-label decision point first",
+          "coordinate label, batching, and capacity changes as one system"
+        ],
+        "T1-A": ["repair the pickup-label decision point first"],
+        "T1-B": [
+          "coordinate label, batching, and capacity changes as one system"
+        ]
+      },
+      "requiredEvidenceRefs": ["queue-trace", "capacity-note"]
+    },
+    {
+      "decisionId": "product-003-invariant",
+      "prompt": "Which service promise stays fixed?",
+      "regionOptions": [
+        "honor every already-issued return window",
+        "cancel existing windows while routing is redesigned"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["honor every already-issued return window"],
+        "T1-A": ["honor every already-issued return window"],
+        "T1-B": ["honor every already-issued return window"]
+      },
+      "requiredEvidenceRefs": ["invariant-003"]
+    }
+  ],
+  "nonGoal": "Do not revoke collection windows already shown to customers."
+}

@@ -1,0 +1,84 @@
+{
+  "release": "2026.8.12",
+  "caseId": "case-research-a09",
+  "familyId": "family-research-a09",
+  "domain": "research",
+  "operation": "recommend",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Recommend the next response. Treat the supplied records as the complete synthetic evidence set and make one selection for each declared decision.",
+    "deliverable": "A recommendation memo that names one action, its timing, and the evidence used. Cite the named evidence references and do not list mutually incompatible selections."
+  },
+  "sourceDigest": "sha256:67b61c140b5bfaface1b461560671f6402bf36360f34db9eae7dbb26d1935656",
+  "evidence": [
+    {
+      "ref": "constraint-a09",
+      "content": "The maintenance record allows a same-day desiccant swap; the verification log requires two readings before opening a cabinet.",
+      "digest": "sha256:857e8a16bd102281393de309a2aefc78d5ed772c406f3673e0b019d8eb39b3f3"
+    },
+    {
+      "ref": "observation-a09",
+      "content": "A synthetic seed vault reports one cabinet with a rising humidity trend and another with a stable trend but a late sensor reading.",
+      "digest": "sha256:71cc1d7a75e694f1f809eac1b2c92db0361434c2eda8515e4a5ace3559e8de4f"
+    },
+    {
+      "ref": "scope-a09",
+      "content": "This synthetic recommend record for case-research-a09 is bounded to the named observation and constraint. A valid conclusion must distinguish them, cite both, and avoid an unstated factual claim.",
+      "digest": "sha256:7ebaef9e25ab72ce7541c25a581db8306423c86cfacde562c771f9d21641ff7b"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "speed-assurance-a",
+      "pairId": "speed/assurance",
+      "content": "When the stated risks remain bounded, prefer shorter feedback loops and earlier delivery so evidence can arrive sooner.",
+      "digest": "sha256:c5fde5a067e235619fcd84d828574403abf0809e43d0bcfcb26030af19568a98"
+    },
+    "B": {
+      "id": "speed-assurance-b",
+      "pairId": "speed/assurance",
+      "content": "When the stated risks warrant it, prefer stronger verification before commitment so preventable failures are less likely.",
+      "digest": "sha256:515649e0feb8d33f99549619db0795075fe36c7cd0d6d19592487e9d15bbebfb"
+    },
+    "irrelevant": {
+      "id": "speed-assurance-irrelevant",
+      "pairId": "irrelevant/scanability",
+      "content": "Prefer section headings that make the final artifact easy to scan.",
+      "digest": "sha256:ba3d0ca63a7016e52dd1ea72bcaeb455c6ef0b410b4f4eceb5c8558d973850a3"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "research-a09-recommend-judgment",
+      "prompt": "Choose exactly one recommend judgment for case-research-a09; justify it from the observation and constraint records rather than listing alternatives.",
+      "regionOptions": [
+        "hold the cabinet closed until a two-reading review",
+        "swap desiccant and take two readings before opening",
+        "prepare a swap with a documented opening gate"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["prepare a swap with a documented opening gate"],
+        "T1-A": ["swap desiccant and take two readings before opening"],
+        "T1-B": ["hold the cabinet closed until a two-reading review"]
+      },
+      "requiredEvidenceRefs": ["observation-a09", "constraint-a09"]
+    },
+    {
+      "decisionId": "research-a09-evidence-scope",
+      "prompt": "Choose the evidence practice that keeps the recommend conclusion for case-research-a09 within the supplied record boundary.",
+      "regionOptions": [
+        "cite the named record bundle for a09",
+        "replace the record bundle with an unstated conclusion for a09"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["cite the named record bundle for a09"],
+        "T1-A": ["cite the named record bundle for a09"],
+        "T1-B": ["cite the named record bundle for a09"]
+      },
+      "requiredEvidenceRefs": ["observation-a09", "constraint-a09", "scope-a09"]
+    }
+  ],
+  "nonGoal": "Do not provide agricultural or biological advice. Do not replace the supplied record with an unstated factual conclusion."
+}

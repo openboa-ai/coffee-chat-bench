@@ -1,0 +1,86 @@
+{
+  "release": "2026.8.12",
+  "caseId": "operations-a-synthesize-standard-18-case",
+  "familyId": "operations-a-synthesize-standard-18-family",
+  "domain": "operations",
+  "operation": "synthesize",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Synthesize quality observations from a short run where one reviewer saw a repeat defect and two reviewers saw clean output.",
+    "deliverable": "A synthesis that distinguishes prevalence from inspection coverage and names the next verification step."
+  },
+  "sourceDigest": "sha256:c947416fb1114b23ecab8e1f5a9809c41e2c0ade7b2dae3370a1ddeb0773ccfc",
+  "evidence": [
+    {
+      "ref": "brief/18",
+      "content": "Reviewer Ash found the same alignment defect in three samples; Reviewer Birch found none in two samples; Reviewer Cedar inspected only final packaging.",
+      "digest": "sha256:4b78e1954fff9578697ea217345667efe11cac18c8c11f9a6ff863ed0727b121"
+    },
+    {
+      "ref": "record/18",
+      "content": "The sample log shows Ash used the oldest setup while Birch used a freshly adjusted setup.",
+      "digest": "sha256:9ed1427f137ff4e746418e43b993ef5f8c730e827411cc4469e5a0eaa420b95a"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "exploration-convergence-a",
+      "pairId": "exploration/convergence",
+      "content": "When uncertainty is material, preserve room to compare distinct hypotheses before narrowing the choice.",
+      "digest": "sha256:5ccc1c7766896675f653f27dbe36ae02279e2990a024670a9a360da35ae64e62"
+    },
+    "B": {
+      "id": "exploration-convergence-b",
+      "pairId": "exploration/convergence",
+      "content": "When evidence is sufficient, narrow the choice and direct effort toward one coherent course of action.",
+      "digest": "sha256:3037c8cf8ca432ea8ceee62297c071a1bfb70da59b1511606b322c832bb464db"
+    },
+    "irrelevant": {
+      "id": "exploration-convergence-irrelevant",
+      "pairId": "irrelevant/date-format",
+      "content": "Use one consistent date format throughout the deliverable.",
+      "digest": "sha256:e81068d824a8b4782b821782116e6ea6cdf489bd2fe2391a07d55b56c1a72b6f"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "operations-a-synthesize-standard-18-response",
+      "prompt": "Which response region should govern quality observations after weighing the supplied evidence?",
+      "regionOptions": [
+        "hold-synthesize-18",
+        "synthesize-a-setup-linked-hypothesis-and-request-a-focused-repeat-sample-18",
+        "synthesize-the-clean-current-state-result-and-require-a-deeper-setup-audit-18",
+        "separate-setup-era-findings-from-current-output-before-deciding-18"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["hold-synthesize-18"],
+        "T1-A": [
+          "synthesize-a-setup-linked-hypothesis-and-request-a-focused-repeat-sample-18"
+        ],
+        "T1-B": [
+          "synthesize-the-clean-current-state-result-and-require-a-deeper-setup-audit-18"
+        ]
+      },
+      "requiredEvidenceRefs": ["brief/18", "record/18"]
+    },
+    {
+      "decisionId": "operations-a-synthesize-standard-18-record",
+      "prompt": "Which evidence-recording rule must remain fixed while choosing the response for quality observations?",
+      "regionOptions": [
+        "preserve-sample-identity-setup-version-and-reviewer-scope-18",
+        "record-review-18"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["preserve-sample-identity-setup-version-and-reviewer-scope-18"],
+        "T1-A": [
+          "preserve-sample-identity-setup-version-and-reviewer-scope-18"
+        ],
+        "T1-B": ["preserve-sample-identity-setup-version-and-reviewer-scope-18"]
+      },
+      "requiredEvidenceRefs": ["brief/18", "record/18"]
+    }
+  ],
+  "nonGoal": "Do not call the defect systemic or absent from five samples."
+}

@@ -1,0 +1,88 @@
+{
+  "release": "2026.8.12",
+  "caseId": "operations-a-prioritize-standard-02-case",
+  "familyId": "operations-a-prioritize-standard-02-family",
+  "domain": "operations",
+  "operation": "prioritize",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Order four maintenance requests before a quiet access period ends, weighing a drifting sensor against two noisy but noncritical readings.",
+    "deliverable": "A maintenance order that names the first visit, the evidence used, and the requests intentionally left for later."
+  },
+  "sourceDigest": "sha256:1536f1c36aab0d77d571a40c8b5292ec88d707ec580f6731e5c1140ea9f873eb",
+  "evidence": [
+    {
+      "ref": "brief/02",
+      "content": "The drift trace shows one sensor crossing its tolerance twice, while the two noisy readings return to range after restart.",
+      "digest": "sha256:4d3bb5601d5988d5d85171f5a432cc9527081e04249d5b6c2f40650c3fa5eef0"
+    },
+    {
+      "ref": "record/02",
+      "content": "The access roster provides two technicians for one hour, but replacement housings are available for only one sensor.",
+      "digest": "sha256:fc3e58bed8c1da9a8d3817e6c3138b621972527d81bc8d31905d221bb8c4f6a8"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "exploration-convergence-a",
+      "pairId": "exploration/convergence",
+      "content": "When uncertainty is material, preserve room to compare distinct hypotheses before narrowing the choice.",
+      "digest": "sha256:5ccc1c7766896675f653f27dbe36ae02279e2990a024670a9a360da35ae64e62"
+    },
+    "B": {
+      "id": "exploration-convergence-b",
+      "pairId": "exploration/convergence",
+      "content": "When evidence is sufficient, narrow the choice and direct effort toward one coherent course of action.",
+      "digest": "sha256:3037c8cf8ca432ea8ceee62297c071a1bfb70da59b1511606b322c832bb464db"
+    },
+    "irrelevant": {
+      "id": "exploration-convergence-irrelevant",
+      "pairId": "irrelevant/date-format",
+      "content": "Use one consistent date format throughout the deliverable.",
+      "digest": "sha256:e81068d824a8b4782b821782116e6ea6cdf489bd2fe2391a07d55b56c1a72b6f"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "operations-a-prioritize-standard-02-response",
+      "prompt": "Which response region should govern sensor maintenance queue after weighing the supplied evidence?",
+      "regionOptions": [
+        "hold-prioritize-02",
+        "compare-drift-and-noise-hypotheses-with-paired-diagnostics-02",
+        "commit-the-window-to-the-tolerance-crossing-sensor-02",
+        "inspect-the-drifting-sensor-first-and-stage-the-compatible-housing-02"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["hold-prioritize-02"],
+        "T1-A": [
+          "compare-drift-and-noise-hypotheses-with-paired-diagnostics-02"
+        ],
+        "T1-B": ["commit-the-window-to-the-tolerance-crossing-sensor-02"]
+      },
+      "requiredEvidenceRefs": ["brief/02", "record/02"]
+    },
+    {
+      "decisionId": "operations-a-prioritize-standard-02-record",
+      "prompt": "Which evidence-recording rule must remain fixed while choosing the response for sensor maintenance queue?",
+      "regionOptions": [
+        "record-every-deferred-sensor-with-its-last-verified-reading-02",
+        "record-review-02"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": [
+          "record-every-deferred-sensor-with-its-last-verified-reading-02"
+        ],
+        "T1-A": [
+          "record-every-deferred-sensor-with-its-last-verified-reading-02"
+        ],
+        "T1-B": [
+          "record-every-deferred-sensor-with-its-last-verified-reading-02"
+        ]
+      },
+      "requiredEvidenceRefs": ["brief/02", "record/02"]
+    }
+  ],
+  "nonGoal": "Do not infer a permanent sensor failure from a single noisy reading."
+}

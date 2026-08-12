@@ -1,0 +1,90 @@
+{
+  "release": "2026.8.12",
+  "caseId": "operations-a-plan-complex-30-case",
+  "familyId": "operations-a-plan-complex-30-family",
+  "domain": "operations",
+  "operation": "plan",
+  "difficulty": "complex",
+  "task": {
+    "instruction": "Plan a capacity reset when one lane is overloaded, another is underused, and a shared queue contains work with different reversibility.",
+    "deliverable": "A reset plan with allocation order, protected work, measurement points, and a condition for reversing the change."
+  },
+  "sourceDigest": "sha256:3c5bd770dc2eed1d781e657f18986e67407a79ef36d245f66b91ec80b13b67e3",
+  "evidence": [
+    {
+      "ref": "brief/30",
+      "content": "Lane Ash has a growing queue of reversible reviews; Lane Clay has unused time but handles a less familiar format.",
+      "digest": "sha256:bc7943c1209b2f12eb1b5fb889189c513296e7a35a58ed2dc5628bdb105e2711"
+    },
+    {
+      "ref": "record/30",
+      "content": "The shared queue contains two irreversible submissions and six reversible checks, with no common owner for reassignment.",
+      "digest": "sha256:dd4d7edcf5a3ae1c59fa3d2f22d5fe8470a9fb0ec4c02762da142d70b8ae0574"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "breadth-depth-a",
+      "pairId": "breadth/depth",
+      "content": "When coverage is the limiting need, represent the important range of cases before adding detail to any one case.",
+      "digest": "sha256:647551f13672a2a474cddfdf775bab7400dd4e162ba93df0052323a12fd75f8c"
+    },
+    "B": {
+      "id": "breadth-depth-b",
+      "pairId": "breadth/depth",
+      "content": "When understanding is the limiting need, examine the pivotal case deeply before extending coverage.",
+      "digest": "sha256:657fea21964c8b6427724e121ceee29f6d7dcf7b3b67a61ef1b549bdfa13ab01"
+    },
+    "irrelevant": {
+      "id": "breadth-depth-irrelevant",
+      "pairId": "irrelevant-spacing",
+      "content": "Use consistent spacing between sections in the final artifact.",
+      "digest": "sha256:110d8f2f49d8a5ffffcec452bea51470b890f37d9a9cabb66bb9b19a7dd0cd20"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "operations-a-plan-complex-30-response",
+      "prompt": "Which response region should govern capacity reset after weighing the supplied evidence?",
+      "regionOptions": [
+        "hold-plan-30",
+        "redistribute-reversible-work-across-both-lanes-with-protected-coverage-30",
+        "resolve-the-pivotal-clay-format-mismatch-before-broader-redistribution-30",
+        "transfer-one-reversible-batch-while-aligning-the-format-for-the-next-batch-30"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["hold-plan-30"],
+        "T1-A": [
+          "redistribute-reversible-work-across-both-lanes-with-protected-coverage-30"
+        ],
+        "T1-B": [
+          "resolve-the-pivotal-clay-format-mismatch-before-broader-redistribution-30"
+        ]
+      },
+      "requiredEvidenceRefs": ["brief/30", "record/30"]
+    },
+    {
+      "decisionId": "operations-a-plan-complex-30-record",
+      "prompt": "Which evidence-recording rule must remain fixed while choosing the response for capacity reset?",
+      "regionOptions": [
+        "preserve-priority-ownership-and-reversibility-labels-through-the-reset-30",
+        "record-review-30"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": [
+          "preserve-priority-ownership-and-reversibility-labels-through-the-reset-30"
+        ],
+        "T1-A": [
+          "preserve-priority-ownership-and-reversibility-labels-through-the-reset-30"
+        ],
+        "T1-B": [
+          "preserve-priority-ownership-and-reversibility-labels-through-the-reset-30"
+        ]
+      },
+      "requiredEvidenceRefs": ["brief/30", "record/30"]
+    }
+  ],
+  "nonGoal": "Do not move irreversible submissions without their accountable owner."
+}

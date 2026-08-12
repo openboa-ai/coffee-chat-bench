@@ -1,0 +1,90 @@
+{
+  "release": "2026.8.12",
+  "caseId": "operations-a-synthesize-complex-24-case",
+  "familyId": "operations-a-synthesize-complex-24-family",
+  "domain": "operations",
+  "operation": "synthesize",
+  "difficulty": "complex",
+  "task": {
+    "instruction": "Synthesize demand signals from a stable baseline, a burst of requests, and a delayed reporting stream before setting the next capacity decision.",
+    "deliverable": "A signal synthesis that separates observed demand, reporting lag, hypotheses, and the evidence needed to commit."
+  },
+  "sourceDigest": "sha256:83962a76878340193d0bff7e454aac1b0a65a811b0e2bd4fe6dfefc0619d33bc",
+  "evidence": [
+    {
+      "ref": "brief/24",
+      "content": "The request ledger shows a burst in Cell Umber, while Cell Pearl remains near baseline and Cell Sable's report is two cycles late.",
+      "digest": "sha256:8eaa47d471154ef1d1c7b83eec94d2ce70ecf63e788d39f9a0a3e343dd2ee9b6"
+    },
+    {
+      "ref": "record/24",
+      "content": "A temporary intake rule routed some Umber requests twice, but the duplicate marker was added only after the burst.",
+      "digest": "sha256:cb860f01ce926718b1b001fdecf25c86015f25492605575eaecc36d24abb0316"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "explicit-process-adaptive-judgment-a",
+      "pairId": "explicit-process/adaptive-judgment",
+      "content": "When repeatability and auditability dominate, make the decision sequence and required checks explicit.",
+      "digest": "sha256:b4bded11d21400f7ad3cc98e717f118ec9b63379360389d47e5ba21a1fbe3de6"
+    },
+    "B": {
+      "id": "explicit-process-adaptive-judgment-b",
+      "pairId": "explicit-process/adaptive-judgment",
+      "content": "When conditions vary in consequential ways, preserve bounded judgment to adapt the decision to observed context.",
+      "digest": "sha256:6eeabf1ff34371290287594380f15d489ec0d290acdcd99da63037da46edc5a2"
+    },
+    "irrelevant": {
+      "id": "explicit-process-adaptive-judgment-irrelevant",
+      "pairId": "irrelevant-heading-case",
+      "content": "Use one capitalization style for all section headings.",
+      "digest": "sha256:57a84abe5191b6a7276652249bbbf70644cc7bdb4e08786f74504bd0b1b69f0d"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "operations-a-synthesize-complex-24-response",
+      "prompt": "Which response region should govern demand signals after weighing the supplied evidence?",
+      "regionOptions": [
+        "hold-synthesize-24",
+        "reconcile-duplicates-and-late-periods-through-an-explicit-sequence-before-resizing-24",
+        "use-bounded-operator-judgment-to-hold-a-small-reserve-while-data-arrives-24",
+        "reserve-a-small-lane-while-reconciling-duplicates-and-late-reports-24"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["hold-synthesize-24"],
+        "T1-A": [
+          "reconcile-duplicates-and-late-periods-through-an-explicit-sequence-before-resizing-24"
+        ],
+        "T1-B": [
+          "use-bounded-operator-judgment-to-hold-a-small-reserve-while-data-arrives-24"
+        ]
+      },
+      "requiredEvidenceRefs": ["brief/24", "record/24"]
+    },
+    {
+      "decisionId": "operations-a-synthesize-complex-24-record",
+      "prompt": "Which evidence-recording rule must remain fixed while choosing the response for demand signals?",
+      "regionOptions": [
+        "preserve-source-period-duplicate-status-and-correction-owner-24",
+        "record-review-24"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": [
+          "preserve-source-period-duplicate-status-and-correction-owner-24"
+        ],
+        "T1-A": [
+          "preserve-source-period-duplicate-status-and-correction-owner-24"
+        ],
+        "T1-B": [
+          "preserve-source-period-duplicate-status-and-correction-owner-24"
+        ]
+      },
+      "requiredEvidenceRefs": ["brief/24", "record/24"]
+    }
+  ],
+  "nonGoal": "Do not extrapolate the burst to all cells before the duplicate review."
+}

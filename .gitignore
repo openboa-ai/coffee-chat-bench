@@ -22,3 +22,9 @@ privkey*.pem
 *.p12
 *.pfx
 *.jks
+node_modules/
+coverage/
+dist/
+*.tsbuildinfo
+__pycache__/
+*.pyc

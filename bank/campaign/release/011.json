@@ -1,0 +1,86 @@
+{
+  "release": "2026.8.12",
+  "caseId": "case-research-a29",
+  "familyId": "family-research-a29",
+  "domain": "research",
+  "operation": "plan",
+  "difficulty": "complex",
+  "task": {
+    "instruction": "Plan the observation protocol. Treat the supplied records as the complete synthetic evidence set and make one selection for each declared decision.",
+    "deliverable": "A protocol with role boundaries, guidance level, and evidence citations. Cite the named evidence references and do not list mutually incompatible selections."
+  },
+  "sourceDigest": "sha256:2848158e102520d45ed98edf74bd71eae8a2e2b6841a8c84986986234364204e",
+  "evidence": [
+    {
+      "ref": "constraint-a29",
+      "content": "The field guide permits observer-selected sketch order, while the scoring audit flags inconsistent scale marks as a comparison risk.",
+      "digest": "sha256:4f29f5ea1d252a5f02b7f89ca287fb09cecf866c22ae190a0767b3bd5a04a641"
+    },
+    {
+      "ref": "observation-a29",
+      "content": "A simulated crater-sketch exercise has senior and novice observers, with one common scoring sheet and limited orientation time.",
+      "digest": "sha256:8d8bf41645bf645d19fbd64b7704ff5bbfedc06af0645ba902cd8d9ae67acc37"
+    },
+    {
+      "ref": "scope-a29",
+      "content": "This synthetic plan record for case-research-a29 is bounded to the named observation and constraint. A valid conclusion must distinguish them, cite both, and avoid an unstated factual claim.",
+      "digest": "sha256:3a2b2ad139e0390091d1d36a049393311e39bad5e918253c8c284a6e46fe1b41"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "agency-guidance-a",
+      "pairId": "agency/guidance",
+      "content": "When participants have the needed context, preserve their discretion over how to reach the declared outcome.",
+      "digest": "sha256:ef6cc6f2faa1894ac57c2104b7b0f1dbef2d458c34b4ad26d76e7919251cf7ba"
+    },
+    "B": {
+      "id": "agency-guidance-b",
+      "pairId": "agency/guidance",
+      "content": "When consistency or unfamiliarity matters, provide a clearer path and decision support toward the declared outcome.",
+      "digest": "sha256:449eda0750c29040a5956b187060a20b120aa2a5b7295b7850f4d4f87431d475"
+    },
+    "irrelevant": {
+      "id": "agency-guidance-irrelevant",
+      "pairId": "irrelevant/file-naming",
+      "content": "Use descriptive file names for any attached artifacts.",
+      "digest": "sha256:02154c47bb6e71f1a134ddb9fac149ea3c8bdd189bd4c33c3954a452759ed3f7"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "research-a29-plan-judgment",
+      "prompt": "Choose exactly one plan judgment for case-research-a29; justify it from the observation and constraint records rather than listing alternatives.",
+      "regionOptions": [
+        "allow choice under scale-template guardrails",
+        "allow observer-selected sketch order with a fixed scale template and audit card",
+        "provide a common sketch sequence with a scale audit"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["allow choice under scale-template guardrails"],
+        "T1-A": [
+          "allow observer-selected sketch order with a fixed scale template and audit card"
+        ],
+        "T1-B": ["provide a common sketch sequence with a scale audit"]
+      },
+      "requiredEvidenceRefs": ["observation-a29", "constraint-a29"]
+    },
+    {
+      "decisionId": "research-a29-evidence-scope",
+      "prompt": "Choose the evidence practice that keeps the plan conclusion for case-research-a29 within the supplied record boundary.",
+      "regionOptions": [
+        "cite the named record bundle for a29",
+        "replace the record bundle with an unstated conclusion for a29"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["cite the named record bundle for a29"],
+        "T1-A": ["cite the named record bundle for a29"],
+        "T1-B": ["cite the named record bundle for a29"]
+      },
+      "requiredEvidenceRefs": ["observation-a29", "constraint-a29", "scope-a29"]
+    }
+  ],
+  "nonGoal": "Do not describe a real geographic site. Do not replace the supplied record with an unstated factual conclusion."
+}

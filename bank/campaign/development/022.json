@@ -1,0 +1,88 @@
+{
+  "release": "2026.8.12",
+  "caseId": "pcda-product-case-007",
+  "familyId": "pcda-product-family-007",
+  "domain": "product",
+  "operation": "prioritize",
+  "difficulty": "complex",
+  "task": {
+    "instruction": "Prioritize the migration posture for replacing an old document export format used by several downstream tools.",
+    "deliverable": "A migration priority, preserved exit path, and evidence citations."
+  },
+  "sourceDigest": "sha256:40cd5e1f8fd40c239e6f68b69ee51ba9159c33d20e110ada642165e21d208f3c",
+  "evidence": [
+    {
+      "ref": "consumer-scan",
+      "content": "A synthetic scan finds 14 consumers: 11 accept the new format, 2 need adapters, and 1 has no current owner.",
+      "digest": "sha256:19830ee80e30433d88a4d5dd4c7926373ee51dd3f88cebf41ad85b1feee420e6"
+    },
+    {
+      "ref": "coordination-window",
+      "content": "The release train has one shared migration window this quarter; dual export adds 8% storage and can be removed independently.",
+      "digest": "sha256:2e69e25f255aeba679830d7bec4d295796f67f06efa5d3995ca6952e892178e1"
+    },
+    {
+      "ref": "invariant-007",
+      "content": "A synthetic compatibility contract requires a downloadable conversion path for every existing file consumer before a format migration can proceed, including consumers without a current owner.",
+      "digest": "sha256:b1e90f605e0946ae68bbb4eb7f064661ae7d27946f51d16afde3a4f5044d1e53"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "reversible-committed-a",
+      "pairId": "reversible/committed",
+      "content": "When uncertainty remains, favor a choice that can be revised after new evidence without disproportionate cost.",
+      "digest": "sha256:58bc5d4191b6efce4c0334a2165627906d9f02218d5a686cd8ba87fbe0d00b3d"
+    },
+    "B": {
+      "id": "reversible-committed-b",
+      "pairId": "reversible/committed",
+      "content": "When coordination depends on certainty, favor a clear commitment with the resources needed to carry it through.",
+      "digest": "sha256:8c49160a401692ca75ca056cc4a153a8d7742dd3ab8c2360ea68f52d27a15fea"
+    },
+    "irrelevant": {
+      "id": "reversible-committed-irrelevant",
+      "pairId": "irrelevant-summary-position",
+      "content": "Place the concise summary before the supporting detail.",
+      "digest": "sha256:86fba54b9edbea31f73cb27e08c818e654a855b8da697de66658037671c672dd"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "product-007-sensitive",
+      "prompt": "Which migration posture should lead?",
+      "regionOptions": [
+        "run dual export until the ownerless consumer is resolved",
+        "commit to the shared cutover window with adapters for known consumers"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": [
+          "run dual export until the ownerless consumer is resolved",
+          "commit to the shared cutover window with adapters for known consumers"
+        ],
+        "T1-A": ["run dual export until the ownerless consumer is resolved"],
+        "T1-B": [
+          "commit to the shared cutover window with adapters for known consumers"
+        ]
+      },
+      "requiredEvidenceRefs": ["consumer-scan", "coordination-window"]
+    },
+    {
+      "decisionId": "product-007-invariant",
+      "prompt": "Which user protection is invariant?",
+      "regionOptions": [
+        "keep a downloadable conversion path for existing files",
+        "make existing files unreadable after cutover"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["keep a downloadable conversion path for existing files"],
+        "T1-A": ["keep a downloadable conversion path for existing files"],
+        "T1-B": ["keep a downloadable conversion path for existing files"]
+      },
+      "requiredEvidenceRefs": ["invariant-007"]
+    }
+  ],
+  "nonGoal": "Do not strand previously exported files."
+}

@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openboa.ai/coffee-chat-bench/2026.8.12/schemas/report.schema.json",
+  "title": "PCDA benchmark report",
+  "$comment": "Structural wire and report-state validation. aggregateBenchmark remains authoritative for family-ID uniqueness, bootstrap referential integrity, and metric computation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "release",
+    "familyStateCounts",
+    "trialStateCounts",
+    "qpcfr",
+    "bootstrap",
+    "efficiency"
+  ],
+  "properties": {
+    "release": { "const": "2026.8.12" },
+    "familyStateCounts": { "$ref": "#/$defs/stateCounts" },
+    "trialStateCounts": { "$ref": "#/$defs/stateCounts" },
+    "qpcfr": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "byDomain",
+        "byOperation",
+        "macroByDomain",
+        "macroByOperation"
+      ],
+      "properties": {
+        "byDomain": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/stratumRate" }
+        },
+        "byOperation": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/stratumRate" }
+        },
+        "macroByDomain": { "$ref": "#/$defs/macroRate" },
+        "macroByOperation": { "$ref": "#/$defs/macroRate" }
+      }
+    },
+    "bootstrap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit", "samples", "macroByDomain", "macroByOperation"],
+      "properties": {
+        "unit": { "const": "case_family" },
+        "samples": { "type": "integer", "minimum": 0 },
+        "macroByDomain": {
+          "anyOf": [{ "$ref": "#/$defs/interval" }, { "type": "null" }]
+        },
+        "macroByOperation": {
+          "anyOf": [{ "$ref": "#/$defs/interval" }, { "type": "null" }]
+        }
+      }
+    },
+    "efficiency": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "sampleCount",
+            "wallTimeMs",
+            "inputTokens",
+            "outputTokens"
+          ],
+          "properties": {
+            "state": { "const": "measured" },
+            "sampleCount": { "type": "integer", "minimum": 1 },
+            "wallTimeMs": { "$ref": "#/$defs/summaryStatistic" },
+            "inputTokens": { "$ref": "#/$defs/summaryStatistic" },
+            "outputTokens": { "$ref": "#/$defs/summaryStatistic" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "sampleCount",
+            "wallTimeMs",
+            "inputTokens",
+            "outputTokens"
+          ],
+          "properties": {
+            "state": { "const": "unmeasured" },
+            "sampleCount": { "const": 0 },
+            "wallTimeMs": { "type": "null" },
+            "inputTokens": { "type": "null" },
+            "outputTokens": { "type": "null" }
+          }
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "resultState": {
+      "enum": [
+        "measured",
+        "candidate_invalid",
+        "candidate_failure",
+        "host_failure",
+        "verifier_failure",
+        "judge_disagreement",
+        "judge_unavailable",
+        "skipped",
+        "unavailable",
+        "unmeasured"
+      ]
+    },
+    "stateCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "measured": { "type": "integer", "minimum": 0 },
+        "candidate_invalid": { "type": "integer", "minimum": 0 },
+        "candidate_failure": { "type": "integer", "minimum": 0 },
+        "host_failure": { "type": "integer", "minimum": 0 },
+        "verifier_failure": { "type": "integer", "minimum": 0 },
+        "judge_disagreement": { "type": "integer", "minimum": 0 },
+        "judge_unavailable": { "type": "integer", "minimum": 0 },
+        "skipped": { "type": "integer", "minimum": 0 },
+        "unavailable": { "type": "integer", "minimum": 0 },
+        "unmeasured": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "stratumRate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "state", "numerator", "denominator", "value"],
+      "properties": {
+        "key": { "type": "string", "minLength": 1 },
+        "state": { "enum": ["measured", "unmeasured"] },
+        "numerator": { "type": "integer", "minimum": 0 },
+        "denominator": { "type": "integer", "minimum": 0 },
+        "value": { "type": ["number", "null"], "minimum": 0, "maximum": 1 }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": ["state"],
+            "properties": { "state": { "const": "measured" } }
+          },
+          "then": {
+            "properties": {
+              "denominator": { "type": "integer", "minimum": 1 },
+              "value": { "type": "number", "minimum": 0, "maximum": 1 }
+            }
+          },
+          "else": {
+            "properties": {
+              "state": { "const": "unmeasured" },
+              "numerator": { "const": 0 },
+              "denominator": { "const": 0 },
+              "value": { "type": "null" }
+            }
+          }
+        }
+      ]
+    },
+    "macroRate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "value", "strataMeasured", "strataTotal"],
+      "properties": {
+        "state": { "enum": ["measured", "unmeasured"] },
+        "value": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "strataMeasured": { "type": "integer", "minimum": 0 },
+        "strataTotal": { "type": "integer", "minimum": 0 }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": ["state"],
+            "properties": { "state": { "const": "measured" } }
+          },
+          "then": {
+            "properties": {
+              "value": { "type": "number", "minimum": 0, "maximum": 1 },
+              "strataMeasured": { "type": "integer", "minimum": 1 }
+            }
+          },
+          "else": {
+            "properties": {
+              "state": { "const": "unmeasured" },
+              "value": { "type": "null" },
+              "strataMeasured": { "const": 0 }
+            }
+          }
+        }
+      ]
+    },
+    "interval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lower", "upper"],
+      "properties": {
+        "lower": { "type": "number", "minimum": 0, "maximum": 1 },
+        "upper": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "summaryStatistic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mean", "median"],
+      "properties": {
+        "mean": { "type": "number", "minimum": 0 },
+        "median": { "type": "number", "minimum": 0 }
+      }
+    }
+  }
+}

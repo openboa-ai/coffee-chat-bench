@@ -1,0 +1,84 @@
+{
+  "release": "2026.8.12",
+  "caseId": "case-research-a23",
+  "familyId": "family-research-a23",
+  "domain": "research",
+  "operation": "synthesize",
+  "difficulty": "complex",
+  "task": {
+    "instruction": "Synthesize a calibration dossier. Treat the supplied records as the complete synthetic evidence set and make one selection for each declared decision.",
+    "deliverable": "A dossier with an action recommendation, uncertainty statement, and evidence citations. Cite the named evidence references and do not list mutually incompatible selections."
+  },
+  "sourceDigest": "sha256:2321cd7d629af6d1891ed4826d45242120d68019aa02ebbcb38951c6f334c2e4",
+  "evidence": [
+    {
+      "ref": "constraint-a23",
+      "content": "The test card permits a reversible bench comparison, while the workshop schedule offers a single irreversible magnet reset.",
+      "digest": "sha256:c998bf912fc66cf7344eb2cbbb26219000691c339074296a406b3d33e6b59377"
+    },
+    {
+      "ref": "observation-a23",
+      "content": "A fictional compass study reports a small drift after transport and a larger drift after a storage-box closure.",
+      "digest": "sha256:eff9ba94b0c4f0463ec854229795c380e0afeb770921e6d7d4b54346e3004132"
+    },
+    {
+      "ref": "scope-a23",
+      "content": "This synthetic synthesize record for case-research-a23 is bounded to the named observation and constraint. A valid conclusion must distinguish them, cite both, and avoid an unstated factual claim.",
+      "digest": "sha256:d08c99b364aa4a665713da52cf01b262db4c5098b32e4e55d447eef82e7d9f85"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "reversible-committed-a",
+      "pairId": "reversible/committed",
+      "content": "When uncertainty remains, favor a choice that can be revised after new evidence without disproportionate cost.",
+      "digest": "sha256:58bc5d4191b6efce4c0334a2165627906d9f02218d5a686cd8ba87fbe0d00b3d"
+    },
+    "B": {
+      "id": "reversible-committed-b",
+      "pairId": "reversible/committed",
+      "content": "When coordination depends on certainty, favor a clear commitment with the resources needed to carry it through.",
+      "digest": "sha256:8c49160a401692ca75ca056cc4a153a8d7742dd3ab8c2360ea68f52d27a15fea"
+    },
+    "irrelevant": {
+      "id": "reversible-committed-irrelevant",
+      "pairId": "irrelevant-summary-position",
+      "content": "Place the concise summary before the supporting detail.",
+      "digest": "sha256:86fba54b9edbea31f73cb27e08c818e654a855b8da697de66658037671c672dd"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "research-a23-synthesize-judgment",
+      "prompt": "Choose exactly one synthesize judgment for case-research-a23; justify it from the observation and constraint records rather than listing alternatives.",
+      "regionOptions": [
+        "compare on the bench before any reset",
+        "run a reversible bench comparison",
+        "schedule the irreversible magnet reset"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["compare on the bench before any reset"],
+        "T1-A": ["run a reversible bench comparison"],
+        "T1-B": ["schedule the irreversible magnet reset"]
+      },
+      "requiredEvidenceRefs": ["observation-a23", "constraint-a23"]
+    },
+    {
+      "decisionId": "research-a23-evidence-scope",
+      "prompt": "Choose the evidence practice that keeps the synthesize conclusion for case-research-a23 within the supplied record boundary.",
+      "regionOptions": [
+        "cite the named record bundle for a23",
+        "replace the record bundle with an unstated conclusion for a23"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["cite the named record bundle for a23"],
+        "T1-A": ["cite the named record bundle for a23"],
+        "T1-B": ["cite the named record bundle for a23"]
+      },
+      "requiredEvidenceRefs": ["observation-a23", "constraint-a23", "scope-a23"]
+    }
+  ],
+  "nonGoal": "Do not describe real instruments or navigation. Do not replace the supplied record with an unstated factual conclusion."
+}

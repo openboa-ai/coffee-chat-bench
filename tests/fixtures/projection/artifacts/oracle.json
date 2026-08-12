@@ -1,0 +1,23 @@
+{
+  "manifest": {
+    "release": "2026.8.12",
+    "trialId": "trial-9e05c89e6a757d7922506044444137300f0f8ac1f417bdce8d5e424fc86a4e58",
+    "caseId": "case-projection",
+    "condition": "T1-A",
+    "artifactDigest": "sha256:79fc65ab526034fbc8d6a848c754703daf00ae34517cdb369dea13c7fe98af69",
+    "decisions": [
+      {
+        "decisionId": "focus",
+        "selectedRegion": "preserve-focus",
+        "evidenceRefs": ["calendar"]
+      },
+      {
+        "decisionId": "sources",
+        "selectedRegion": "cite-sources",
+        "evidenceRefs": ["notes"]
+      }
+    ]
+  },
+  "response": "A concise response grounded in the supplied evidence.",
+  "accessedPaths": []
+}

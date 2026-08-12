@@ -1,0 +1,90 @@
+{
+  "release": "2026.8.12",
+  "caseId": "pcda-product-case-027",
+  "familyId": "pcda-product-family-027",
+  "domain": "product",
+  "operation": "plan",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Plan a cart-reminder improvement after message timing and cross-device state produce different abandonment patterns.",
+    "deliverable": "A product plan, fixed consent rule, and supporting evidence."
+  },
+  "sourceDigest": "sha256:4788e57dd249df6d212ee1df4c250b1e4eaabe5034d738bfc75e8b4c5e903fcb",
+  "evidence": [
+    {
+      "ref": "invariant-027",
+      "content": "A synthetic communication-consent rule permits reminders only for accounts with active reminder consent; copy clarity and shared state do not substitute for that consent.",
+      "digest": "sha256:e8a3ce767f11d5793a6ed7c0944c7247a54c2075941642848e31b298d0a02eae"
+    },
+    {
+      "ref": "screen-test",
+      "content": "Synthetic tests find the reminder copy misunderstood in 8 of 30 mobile sessions.",
+      "digest": "sha256:b15d8571d9894c95d9ab6d741281f05041c830c6edec82518fd28b667b065b82"
+    },
+    {
+      "ref": "state-trace",
+      "content": "Cross-device traces show 19 carts already completed elsewhere before a reminder was sent; suppression requires shared state changes.",
+      "digest": "sha256:501c2e19ec4ddf2f3c7b65309bf6f1081866344ea9949b4cfcd3a81ef50d45d4"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "local-systems-a",
+      "pairId": "local/systems",
+      "content": "Prefer a bounded intervention at the immediate decision point when wider changes are not required by the evidence.",
+      "digest": "sha256:9f1ab63dab599cfbd1e90d917f550d8a38c0ab908b103b85fb26ecca19be1831"
+    },
+    "B": {
+      "id": "local-systems-b",
+      "pairId": "local/systems",
+      "content": "Prefer an intervention that accounts for connected incentives and downstream effects when the evidence shows they matter.",
+      "digest": "sha256:0043d133ec80283c55d8d2d32b6a99d9758bfa5ea65b8c453bb38ab0c1056638"
+    },
+    "irrelevant": {
+      "id": "local-systems-irrelevant",
+      "pairId": "irrelevant/title-length",
+      "content": "Keep the artifact title concise enough to fit on one line.",
+      "digest": "sha256:0983700ec288937912c879a015b31619394fc1a58c4aed29100133720878528a"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "product-027-sensitive",
+      "prompt": "What scope should the plan begin with?",
+      "regionOptions": [
+        "coordinate copy, cross-device completion state, and suppression logic",
+        "repair the mobile reminder copy and measure comprehension"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": [
+          "repair the mobile reminder copy and measure comprehension",
+          "coordinate copy, cross-device completion state, and suppression logic"
+        ],
+        "T1-A": ["repair the mobile reminder copy and measure comprehension"],
+        "T1-B": [
+          "coordinate copy, cross-device completion state, and suppression logic"
+        ]
+      },
+      "requiredEvidenceRefs": ["screen-test", "state-trace"]
+    },
+    {
+      "decisionId": "product-027-invariant",
+      "prompt": "Which consent rule remains stable?",
+      "regionOptions": [
+        "treat cart creation as permanent reminder consent",
+        "send reminders only to accounts with active reminder consent"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["send reminders only to accounts with active reminder consent"],
+        "T1-A": [
+          "send reminders only to accounts with active reminder consent"
+        ],
+        "T1-B": ["send reminders only to accounts with active reminder consent"]
+      },
+      "requiredEvidenceRefs": ["invariant-027"]
+    }
+  ],
+  "nonGoal": "Do not infer reminder consent from cart creation."
+}

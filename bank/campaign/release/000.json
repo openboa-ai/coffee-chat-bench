@@ -1,0 +1,84 @@
+{
+  "release": "2026.8.12",
+  "caseId": "case-research-a03",
+  "familyId": "family-research-a03",
+  "domain": "research",
+  "operation": "prioritize",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Rank the inspection and repair actions. Treat the supplied records as the complete synthetic evidence set and make one selection for each declared decision.",
+    "deliverable": "A shift-ready sequence with a first action, dependency, and evidence citations. Cite the named evidence references and do not list mutually incompatible selections."
+  },
+  "sourceDigest": "sha256:d0949572e21bb1f443735e1276e8e309c09ec5f11b3206802e3995ead0012af5",
+  "evidence": [
+    {
+      "ref": "constraint-a03",
+      "content": "The repair ledger allows one crew this shift; the safety note requires a pressure reading before any hardware action.",
+      "digest": "sha256:298237d52b7b88984ea60745de07f04bc4e733d0c16c8e150146b0d70dfa6636"
+    },
+    {
+      "ref": "observation-a03",
+      "content": "A fabricated water-control slate lists a loose hinge at one gate and synchronized pressure spikes at two connected gates.",
+      "digest": "sha256:d99284eecaf4e87377932b30287e2f955b1f2c0f352312938b25ff2ac7449c0f"
+    },
+    {
+      "ref": "scope-a03",
+      "content": "This synthetic prioritize record for case-research-a03 is bounded to the named observation and constraint. A valid conclusion must distinguish them, cite both, and avoid an unstated factual claim.",
+      "digest": "sha256:be116d5af4b6693a4e0e098f7f48582d2e8ff09fa92d1a17d2485710ebe3dc21"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "local-systems-a",
+      "pairId": "local/systems",
+      "content": "Prefer a bounded intervention at the immediate decision point when wider changes are not required by the evidence.",
+      "digest": "sha256:9f1ab63dab599cfbd1e90d917f550d8a38c0ab908b103b85fb26ecca19be1831"
+    },
+    "B": {
+      "id": "local-systems-b",
+      "pairId": "local/systems",
+      "content": "Prefer an intervention that accounts for connected incentives and downstream effects when the evidence shows they matter.",
+      "digest": "sha256:0043d133ec80283c55d8d2d32b6a99d9758bfa5ea65b8c453bb38ab0c1056638"
+    },
+    "irrelevant": {
+      "id": "local-systems-irrelevant",
+      "pairId": "irrelevant/title-length",
+      "content": "Keep the artifact title concise enough to fit on one line.",
+      "digest": "sha256:0983700ec288937912c879a015b31619394fc1a58c4aed29100133720878528a"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "research-a03-prioritize-judgment",
+      "prompt": "Choose exactly one prioritize judgment for case-research-a03; justify it from the observation and constraint records rather than listing alternatives.",
+      "regionOptions": [
+        "coordinate both linked gates after pressure readings",
+        "repair the loose hinge after a local pressure reading",
+        "stabilize the hinge while logging network pressure"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["stabilize the hinge while logging network pressure"],
+        "T1-A": ["repair the loose hinge after a local pressure reading"],
+        "T1-B": ["coordinate both linked gates after pressure readings"]
+      },
+      "requiredEvidenceRefs": ["observation-a03", "constraint-a03"]
+    },
+    {
+      "decisionId": "research-a03-evidence-scope",
+      "prompt": "Choose the evidence practice that keeps the prioritize conclusion for case-research-a03 within the supplied record boundary.",
+      "regionOptions": [
+        "cite the named record bundle for a03",
+        "replace the record bundle with an unstated conclusion for a03"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["cite the named record bundle for a03"],
+        "T1-A": ["cite the named record bundle for a03"],
+        "T1-B": ["cite the named record bundle for a03"]
+      },
+      "requiredEvidenceRefs": ["observation-a03", "constraint-a03", "scope-a03"]
+    }
+  ],
+  "nonGoal": "Do not assert a real flood forecast or public-safety condition. Do not replace the supplied record with an unstated factual conclusion."
+}

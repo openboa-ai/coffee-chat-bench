@@ -1,0 +1,84 @@
+{
+  "release": "2026.8.12",
+  "caseId": "case-research-a11",
+  "familyId": "family-research-a11",
+  "domain": "research",
+  "operation": "recommend",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Recommend a monitoring intervention. Treat the supplied records as the complete synthetic evidence set and make one selection for each declared decision.",
+    "deliverable": "A recommendation that identifies scope, first placement, and supporting evidence. Cite the named evidence references and do not list mutually incompatible selections."
+  },
+  "sourceDigest": "sha256:2721062f36f341d32e9a4dbf2822b0bdf1f0c72565e3a19fdc1b4079ff3d7081",
+  "evidence": [
+    {
+      "ref": "constraint-a11",
+      "content": "The facility sketch shows a shared airflow path, while the access rule says the storage aisle must remain unobstructed.",
+      "digest": "sha256:ccba2fac30149259698e4a0304f98d1de80bfcb125827210e029642f04b40cf4"
+    },
+    {
+      "ref": "observation-a11",
+      "content": "A synthetic reading room has a warm corner near a return vent and a cool storage aisle; only one portable monitor can be moved.",
+      "digest": "sha256:89810e55b9e94b80c5fca4d011373933c9afccf79214845b4db8cd4b9790ec5f"
+    },
+    {
+      "ref": "scope-a11",
+      "content": "This synthetic recommend record for case-research-a11 is bounded to the named observation and constraint. A valid conclusion must distinguish them, cite both, and avoid an unstated factual claim.",
+      "digest": "sha256:79a8f8bcd7d2c7c361864e18960493f6338f45f0a820557beeb1ed7190ec5054"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "local-systems-a",
+      "pairId": "local/systems",
+      "content": "Prefer a bounded intervention at the immediate decision point when wider changes are not required by the evidence.",
+      "digest": "sha256:9f1ab63dab599cfbd1e90d917f550d8a38c0ab908b103b85fb26ecca19be1831"
+    },
+    "B": {
+      "id": "local-systems-b",
+      "pairId": "local/systems",
+      "content": "Prefer an intervention that accounts for connected incentives and downstream effects when the evidence shows they matter.",
+      "digest": "sha256:0043d133ec80283c55d8d2d32b6a99d9758bfa5ea65b8c453bb38ab0c1056638"
+    },
+    "irrelevant": {
+      "id": "local-systems-irrelevant",
+      "pairId": "irrelevant/title-length",
+      "content": "Keep the artifact title concise enough to fit on one line.",
+      "digest": "sha256:0983700ec288937912c879a015b31619394fc1a58c4aed29100133720878528a"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "research-a11-recommend-judgment",
+      "prompt": "Choose exactly one recommend judgment for case-research-a11; justify it from the observation and constraint records rather than listing alternatives.",
+      "regionOptions": [
+        "take a bounded corner reading with an airflow note",
+        "move the monitor to the warm corner",
+        "map the shared airflow path before moving it"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["take a bounded corner reading with an airflow note"],
+        "T1-A": ["move the monitor to the warm corner"],
+        "T1-B": ["map the shared airflow path before moving it"]
+      },
+      "requiredEvidenceRefs": ["observation-a11", "constraint-a11"]
+    },
+    {
+      "decisionId": "research-a11-evidence-scope",
+      "prompt": "Choose the evidence practice that keeps the recommend conclusion for case-research-a11 within the supplied record boundary.",
+      "regionOptions": [
+        "cite the named record bundle for a11",
+        "replace the record bundle with an unstated conclusion for a11"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["cite the named record bundle for a11"],
+        "T1-A": ["cite the named record bundle for a11"],
+        "T1-B": ["cite the named record bundle for a11"]
+      },
+      "requiredEvidenceRefs": ["observation-a11", "constraint-a11", "scope-a11"]
+    }
+  ],
+  "nonGoal": "Do not state building-management facts. Do not replace the supplied record with an unstated factual conclusion."
+}

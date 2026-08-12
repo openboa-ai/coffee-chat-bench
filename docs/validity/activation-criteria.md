@@ -2,7 +2,10 @@
 
 ## Current decision
 
-Status is `not_active`. No activation decision has been made.
+Status is `not_active`. No activation decision has been made. Experimental
+candidate-independent PCDA design and implementation may be added under the
+repository's role-labelled experimental roots, but those materials are not
+activation evidence and may not be reported as measured benchmark results.
 
 ## Required evidence before activation
 
@@ -29,6 +32,18 @@ the following:
 10. A written activation decision that records reviewers, evidence locations,
     limitations, and an explicit approval or rejection.
 
-The proposal may introduce the concrete construct and associated materials only
-after the activation decision records that these gates are satisfied. This file
-does not define a Taste construct.
+The prospective judge evidence is complete only when it independently covers
+exactly `gpt-5.6-terra` and `gpt-5.6-luna`, including a positive denominator
+and the per-model balanced-accuracy floor for each. Required disagreement and
+core-stratum declarations are non-empty unique strings with exact evidence-map
+coverage. Exactly two clean-run QPCFR values are required. Bench commit, bank
+digest, Eval commit, non-empty receipt digests, judge-config digest, and CalVer
+`2026.8.12` are independently checked: missing and malformed provenance remain
+distinct blocking states.
+
+Experimental materials may describe the proposed synthetic PCDA construct,
+candidate-visible inputs, sealed judgments, validity studies, and deterministic
+controls before activation. They must remain candidate-independent, preserve
+explicit unmeasured and unavailable states, and not establish Product credit,
+a leaderboard, or an activation decision. This file does not define an active
+Taste construct.

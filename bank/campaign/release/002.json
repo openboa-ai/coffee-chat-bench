@@ -1,0 +1,84 @@
+{
+  "release": "2026.8.12",
+  "caseId": "case-research-a06",
+  "familyId": "family-research-a06",
+  "domain": "research",
+  "operation": "prioritize",
+  "difficulty": "complex",
+  "task": {
+    "instruction": "Prioritize the survey work. Treat the supplied records as the complete synthetic evidence set and make one selection for each declared decision.",
+    "deliverable": "A route order that names coverage, a deep-check point, and cited evidence. Cite the named evidence references and do not list mutually incompatible selections."
+  },
+  "sourceDigest": "sha256:3ef304f1c7631d32083f4921967b64c14be128267bbe0b9d21be12dd59ebe431",
+  "evidence": [
+    {
+      "ref": "constraint-a06",
+      "content": "The survey form requires one morning route; a soil card says the central roots disturb sediment if sampled twice.",
+      "digest": "sha256:d749145208b7b98b1397df2e59b171141da37477d757136caea4f824fd07fea4"
+    },
+    {
+      "ref": "observation-a06",
+      "content": "A constructed wetland survey divides a reed spread into nine cells; two edge cells have sparse stems and one central cell has unusually dense roots.",
+      "digest": "sha256:d87dcbbffb7115c194b4ef0c8d8d9e0876a0583f61d12e82fa7a56c42a227430"
+    },
+    {
+      "ref": "scope-a06",
+      "content": "This synthetic prioritize record for case-research-a06 is bounded to the named observation and constraint. A valid conclusion must distinguish them, cite both, and avoid an unstated factual claim.",
+      "digest": "sha256:dcc486e81d27c8fa53319f9f6d58aa4cfca164cf7ec1f380713d1a04f2dd55d2"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "breadth-depth-a",
+      "pairId": "breadth/depth",
+      "content": "When coverage is the limiting need, represent the important range of cases before adding detail to any one case.",
+      "digest": "sha256:647551f13672a2a474cddfdf775bab7400dd4e162ba93df0052323a12fd75f8c"
+    },
+    "B": {
+      "id": "breadth-depth-b",
+      "pairId": "breadth/depth",
+      "content": "When understanding is the limiting need, examine the pivotal case deeply before extending coverage.",
+      "digest": "sha256:657fea21964c8b6427724e121ceee29f6d7dcf7b3b67a61ef1b549bdfa13ab01"
+    },
+    "irrelevant": {
+      "id": "breadth-depth-irrelevant",
+      "pairId": "irrelevant-spacing",
+      "content": "Use consistent spacing between sections in the final artifact.",
+      "digest": "sha256:110d8f2f49d8a5ffffcec452bea51470b890f37d9a9cabb66bb9b19a7dd0cd20"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "research-a06-prioritize-judgment",
+      "prompt": "Choose exactly one prioritize judgment for case-research-a06; justify it from the observation and constraint records rather than listing alternatives.",
+      "regionOptions": [
+        "cover edge cells then take one protected central sample",
+        "study the dense central roots in depth",
+        "sample all nine reed cells once"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["cover edge cells then take one protected central sample"],
+        "T1-A": ["sample all nine reed cells once"],
+        "T1-B": ["study the dense central roots in depth"]
+      },
+      "requiredEvidenceRefs": ["observation-a06", "constraint-a06"]
+    },
+    {
+      "decisionId": "research-a06-evidence-scope",
+      "prompt": "Choose the evidence practice that keeps the prioritize conclusion for case-research-a06 within the supplied record boundary.",
+      "regionOptions": [
+        "replace the record bundle with an unstated conclusion for a06",
+        "cite the named record bundle for a06"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["cite the named record bundle for a06"],
+        "T1-A": ["cite the named record bundle for a06"],
+        "T1-B": ["cite the named record bundle for a06"]
+      },
+      "requiredEvidenceRefs": ["observation-a06", "constraint-a06", "scope-a06"]
+    }
+  ],
+  "nonGoal": "Do not identify a real species or wetland. Do not replace the supplied record with an unstated factual conclusion."
+}

@@ -1,0 +1,88 @@
+{
+  "release": "2026.8.12",
+  "caseId": "operations-a-prioritize-standard-01-case",
+  "familyId": "operations-a-prioritize-standard-01-family",
+  "domain": "operations",
+  "operation": "prioritize",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Rank the incoming crate requests for the next dispatch window when one cold-storage alarm and two incomplete labels compete with a fixed loading slot.",
+    "deliverable": "A ranked dispatch queue with one evidence-backed first action, deferrals, and a handoff note."
+  },
+  "sourceDigest": "sha256:92ab73763869756f5b02e9b9099131601d495cdae42fc7759709e59ee9853f99",
+  "evidence": [
+    {
+      "ref": "brief/01",
+      "content": "The intake ledger shows the cold-storage alarm affects two crates, while four unlabeled crates can wait one window.",
+      "digest": "sha256:7cb9109bfe58f28403a236082c4b0ca3bc2e079f735ba3e3ed1b2e1df8f17ad3"
+    },
+    {
+      "ref": "record/01",
+      "content": "The loading roster has one certified checker for the next slot and no spare checker until the following shift.",
+      "digest": "sha256:6f2c0bc664922706258c620ce86ef1a4992e8e679902827ea7e9910177003000"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "speed-assurance-a",
+      "pairId": "speed/assurance",
+      "content": "When the stated risks remain bounded, prefer shorter feedback loops and earlier delivery so evidence can arrive sooner.",
+      "digest": "sha256:c5fde5a067e235619fcd84d828574403abf0809e43d0bcfcb26030af19568a98"
+    },
+    "B": {
+      "id": "speed-assurance-b",
+      "pairId": "speed/assurance",
+      "content": "When the stated risks warrant it, prefer stronger verification before commitment so preventable failures are less likely.",
+      "digest": "sha256:515649e0feb8d33f99549619db0795075fe36c7cd0d6d19592487e9d15bbebfb"
+    },
+    "irrelevant": {
+      "id": "speed-assurance-irrelevant",
+      "pairId": "irrelevant/scanability",
+      "content": "Prefer section headings that make the final artifact easy to scan.",
+      "digest": "sha256:ba3d0ca63a7016e52dd1ea72bcaeb455c6ef0b410b4f4eceb5c8558d973850a3"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "operations-a-prioritize-standard-01-response",
+      "prompt": "Which response region should govern crate intake queue after weighing the supplied evidence?",
+      "regionOptions": [
+        "hold-prioritize-01",
+        "run-a-narrow-alarm-confirmation-check-before-loading-01",
+        "hold-the-slot-for-a-full-label-and-temperature-verification-01",
+        "split-the-slot-between-one-confirmed-crate-and-a-label-review-01"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["hold-prioritize-01"],
+        "T1-A": ["run-a-narrow-alarm-confirmation-check-before-loading-01"],
+        "T1-B": [
+          "hold-the-slot-for-a-full-label-and-temperature-verification-01"
+        ]
+      },
+      "requiredEvidenceRefs": ["brief/01", "record/01"]
+    },
+    {
+      "decisionId": "operations-a-prioritize-standard-01-record",
+      "prompt": "Which evidence-recording rule must remain fixed while choosing the response for crate intake queue?",
+      "regionOptions": [
+        "preserve-the-alarm-and-label-exceptions-in-the-handoff-record-01",
+        "record-review-01"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": [
+          "preserve-the-alarm-and-label-exceptions-in-the-handoff-record-01"
+        ],
+        "T1-A": [
+          "preserve-the-alarm-and-label-exceptions-in-the-handoff-record-01"
+        ],
+        "T1-B": [
+          "preserve-the-alarm-and-label-exceptions-in-the-handoff-record-01"
+        ]
+      },
+      "requiredEvidenceRefs": ["brief/01", "record/01"]
+    }
+  ],
+  "nonGoal": "Do not redesign the warehouse labeling system or reprioritize later dispatch windows."
+}

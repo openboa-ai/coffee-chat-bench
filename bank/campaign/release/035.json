@@ -1,0 +1,88 @@
+{
+  "release": "2026.8.12",
+  "caseId": "pcda-product-case-025",
+  "familyId": "pcda-product-family-025",
+  "domain": "product",
+  "operation": "plan",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Plan the next release for an offline-sync defect with a narrow fix and incomplete device-state coverage.",
+    "deliverable": "A release plan, invariant conflict-protection step, and evidence citations."
+  },
+  "sourceDigest": "sha256:7d42b2855e7909517f62308a0f93c595b7dfb5ed3c48fd0eb222c551588a769c",
+  "evidence": [
+    {
+      "ref": "coverage-gap",
+      "content": "The patch passes phone and tablet states, while low-battery resume on two device profiles is not yet tested.",
+      "digest": "sha256:6d977d9cdb92135f4ebd95034d4f8acf54351c6176a05c063d493c40f65574df"
+    },
+    {
+      "ref": "defect-replay",
+      "content": "A synthetic replay reproduces 13 duplicate uploads; a bounded idempotency patch prevents all 13.",
+      "digest": "sha256:687350d13c37f136c32e7ba65bc10570b99c1f2fb91c16afe931ab6a98725c56"
+    },
+    {
+      "ref": "invariant-025",
+      "content": "A synthetic merge-integrity policy requires conflict history to be retained for every merged upload, allowing later diagnosis even when an idempotency patch prevents duplicate uploads.",
+      "digest": "sha256:93a10e476d1d2692a4183896b3440c8164eda9b6d0f31f838ca99fa20e1f2720"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "speed-assurance-a",
+      "pairId": "speed/assurance",
+      "content": "When the stated risks remain bounded, prefer shorter feedback loops and earlier delivery so evidence can arrive sooner.",
+      "digest": "sha256:c5fde5a067e235619fcd84d828574403abf0809e43d0bcfcb26030af19568a98"
+    },
+    "B": {
+      "id": "speed-assurance-b",
+      "pairId": "speed/assurance",
+      "content": "When the stated risks warrant it, prefer stronger verification before commitment so preventable failures are less likely.",
+      "digest": "sha256:515649e0feb8d33f99549619db0795075fe36c7cd0d6d19592487e9d15bbebfb"
+    },
+    "irrelevant": {
+      "id": "speed-assurance-irrelevant",
+      "pairId": "irrelevant/scanability",
+      "content": "Prefer section headings that make the final artifact easy to scan.",
+      "digest": "sha256:ba3d0ca63a7016e52dd1ea72bcaeb455c6ef0b410b4f4eceb5c8558d973850a3"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "product-025-sensitive",
+      "prompt": "What release sequence should the plan use?",
+      "regionOptions": [
+        "complete both low-battery profiles before any deployment",
+        "deploy the patch to an internal ring and inspect low-battery telemetry"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": [
+          "deploy the patch to an internal ring and inspect low-battery telemetry",
+          "complete both low-battery profiles before any deployment"
+        ],
+        "T1-A": [
+          "deploy the patch to an internal ring and inspect low-battery telemetry"
+        ],
+        "T1-B": ["complete both low-battery profiles before any deployment"]
+      },
+      "requiredEvidenceRefs": ["defect-replay", "coverage-gap"]
+    },
+    {
+      "decisionId": "product-025-invariant",
+      "prompt": "Which protection remains mandatory?",
+      "regionOptions": [
+        "discard conflict history after synchronization",
+        "retain conflict history for every merged upload"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["retain conflict history for every merged upload"],
+        "T1-A": ["retain conflict history for every merged upload"],
+        "T1-B": ["retain conflict history for every merged upload"]
+      },
+      "requiredEvidenceRefs": ["invariant-025"]
+    }
+  ],
+  "nonGoal": "Do not discard synchronization conflict history."
+}

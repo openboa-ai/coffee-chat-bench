@@ -1,0 +1,88 @@
+{
+  "release": "2026.8.12",
+  "caseId": "operations-a-prioritize-standard-03-case",
+  "familyId": "operations-a-prioritize-standard-03-family",
+  "domain": "operations",
+  "operation": "prioritize",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Prioritize access requests for a maintenance crew entering a quiet facility, separating urgent work from requests that can wait for the morning review.",
+    "deliverable": "An access queue with a named first request, an exception rule, and a short rationale."
+  },
+  "sourceDigest": "sha256:84a6f672f36ddb3e04fd271da8d2fcdde4ced5d9e22a10bd3b0e88134b70ca18",
+  "evidence": [
+    {
+      "ref": "brief/03",
+      "content": "The work notes identify a leaking valve near the north gate and a cosmetic panel replacement in the south corridor.",
+      "digest": "sha256:1f5c206f88c57ff33f96222b2cc7ee8c459ab86d3b107259595b1f818b989be2"
+    },
+    {
+      "ref": "record/03",
+      "content": "The gate log shows the north gate has opened twice without a matching request, while the south corridor has a normal access history.",
+      "digest": "sha256:54f5f5b2f64845f29ba773f8eb3f2db123c7f8050f37b2d30a84fe8a9fd2184d"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "local-systems-a",
+      "pairId": "local/systems",
+      "content": "Prefer a bounded intervention at the immediate decision point when wider changes are not required by the evidence.",
+      "digest": "sha256:9f1ab63dab599cfbd1e90d917f550d8a38c0ab908b103b85fb26ecca19be1831"
+    },
+    "B": {
+      "id": "local-systems-b",
+      "pairId": "local/systems",
+      "content": "Prefer an intervention that accounts for connected incentives and downstream effects when the evidence shows they matter.",
+      "digest": "sha256:0043d133ec80283c55d8d2d32b6a99d9758bfa5ea65b8c453bb38ab0c1056638"
+    },
+    "irrelevant": {
+      "id": "local-systems-irrelevant",
+      "pairId": "irrelevant/title-length",
+      "content": "Keep the artifact title concise enough to fit on one line.",
+      "digest": "sha256:0983700ec288937912c879a015b31619394fc1a58c4aed29100133720878528a"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "operations-a-prioritize-standard-03-response",
+      "prompt": "Which response region should govern night-shift access requests after weighing the supplied evidence?",
+      "regionOptions": [
+        "hold-prioritize-03",
+        "verify-the-north-gate-anomaly-before-granting-broad-access-03",
+        "approve-the-valve-crew-under-a-narrow-time-and-area-permit-03",
+        "grant-a-monitored-entry-while-escalating-the-gate-anomaly-03"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["hold-prioritize-03"],
+        "T1-A": [
+          "approve-the-valve-crew-under-a-narrow-time-and-area-permit-03"
+        ],
+        "T1-B": [
+          "verify-the-north-gate-anomaly-before-granting-broad-access-03"
+        ]
+      },
+      "requiredEvidenceRefs": ["brief/03", "record/03"]
+    },
+    {
+      "decisionId": "operations-a-prioritize-standard-03-record",
+      "prompt": "Which evidence-recording rule must remain fixed while choosing the response for night-shift access requests?",
+      "regionOptions": [
+        "retain-the-permit-scope-and-review-owner-for-every-request-03",
+        "record-review-03"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["retain-the-permit-scope-and-review-owner-for-every-request-03"],
+        "T1-A": [
+          "retain-the-permit-scope-and-review-owner-for-every-request-03"
+        ],
+        "T1-B": [
+          "retain-the-permit-scope-and-review-owner-for-every-request-03"
+        ]
+      },
+      "requiredEvidenceRefs": ["brief/03", "record/03"]
+    }
+  ],
+  "nonGoal": "Do not grant permanent access or investigate unrelated gate history."
+}

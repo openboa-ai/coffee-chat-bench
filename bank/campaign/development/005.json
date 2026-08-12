@@ -1,0 +1,84 @@
+{
+  "release": "2026.8.12",
+  "caseId": "case-research-a26",
+  "familyId": "family-research-a26",
+  "domain": "research",
+  "operation": "plan",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Plan the study session. Treat the supplied records as the complete synthetic evidence set and make one selection for each declared decision.",
+    "deliverable": "A session plan with hypothesis handling, chosen outputs, and citations. Cite the named evidence references and do not list mutually incompatible selections."
+  },
+  "sourceDigest": "sha256:3b36db886a283d9134cde56bd1befd5efb3e597d5657f18b0a9f5455daf43dc1",
+  "evidence": [
+    {
+      "ref": "constraint-a26",
+      "content": "The trial notes invite comparing arrangements, while the session clock leaves time to document only one final arrangement in detail.",
+      "digest": "sha256:dddccc0d8efa4e92a5de5b81b4f684596ddf568a38b552c0fa11ecbb9675fc96"
+    },
+    {
+      "ref": "observation-a26",
+      "content": "A fictional signal-lantern study has three reflector arrangements and two observers who disagree about glare.",
+      "digest": "sha256:6b5497169029e52d7ec4b69546042144395a2ef5a73dc010038e29abd8bd7084"
+    },
+    {
+      "ref": "scope-a26",
+      "content": "This synthetic plan record for case-research-a26 is bounded to the named observation and constraint. A valid conclusion must distinguish them, cite both, and avoid an unstated factual claim.",
+      "digest": "sha256:eed82712e4b29558d6f1b78259eda22ea2b58eb503532ae117a6b9be7a3bc417"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "exploration-convergence-a",
+      "pairId": "exploration/convergence",
+      "content": "When uncertainty is material, preserve room to compare distinct hypotheses before narrowing the choice.",
+      "digest": "sha256:5ccc1c7766896675f653f27dbe36ae02279e2990a024670a9a360da35ae64e62"
+    },
+    "B": {
+      "id": "exploration-convergence-b",
+      "pairId": "exploration/convergence",
+      "content": "When evidence is sufficient, narrow the choice and direct effort toward one coherent course of action.",
+      "digest": "sha256:3037c8cf8ca432ea8ceee62297c071a1bfb70da59b1511606b322c832bb464db"
+    },
+    "irrelevant": {
+      "id": "exploration-convergence-irrelevant",
+      "pairId": "irrelevant/date-format",
+      "content": "Use one consistent date format throughout the deliverable.",
+      "digest": "sha256:e81068d824a8b4782b821782116e6ea6cdf489bd2fe2391a07d55b56c1a72b6f"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "research-a26-plan-judgment",
+      "prompt": "Choose exactly one plan judgment for case-research-a26; justify it from the observation and constraint records rather than listing alternatives.",
+      "regionOptions": [
+        "compare reflector arrangements before final documentation",
+        "stage one comparison then document the finalist",
+        "select one reflector arrangement for detailed study"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["stage one comparison then document the finalist"],
+        "T1-A": ["compare reflector arrangements before final documentation"],
+        "T1-B": ["select one reflector arrangement for detailed study"]
+      },
+      "requiredEvidenceRefs": ["observation-a26", "constraint-a26"]
+    },
+    {
+      "decisionId": "research-a26-evidence-scope",
+      "prompt": "Choose the evidence practice that keeps the plan conclusion for case-research-a26 within the supplied record boundary.",
+      "regionOptions": [
+        "replace the record bundle with an unstated conclusion for a26",
+        "cite the named record bundle for a26"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["cite the named record bundle for a26"],
+        "T1-A": ["cite the named record bundle for a26"],
+        "T1-B": ["cite the named record bundle for a26"]
+      },
+      "requiredEvidenceRefs": ["observation-a26", "constraint-a26", "scope-a26"]
+    }
+  ],
+  "nonGoal": "Do not describe public signaling systems. Do not replace the supplied record with an unstated factual conclusion."
+}

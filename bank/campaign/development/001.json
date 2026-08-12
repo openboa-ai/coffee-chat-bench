@@ -1,0 +1,84 @@
+{
+  "release": "2026.8.12",
+  "caseId": "case-research-a08",
+  "familyId": "family-research-a08",
+  "domain": "research",
+  "operation": "prioritize",
+  "difficulty": "complex",
+  "task": {
+    "instruction": "Prioritize bulletin revisions. Treat the supplied records as the complete synthetic evidence set and make one selection for each declared decision.",
+    "deliverable": "A prioritized revision sequence with a decision rule and record citations. Cite the named evidence references and do not list mutually incompatible selections."
+  },
+  "sourceDigest": "sha256:52ea3ebff1833abbd72d1852bc81e9a8784d47188cb05f4853f167d95068467e",
+  "evidence": [
+    {
+      "ref": "constraint-a08",
+      "content": "The route cards give walking times but disagree on whether the ridge trail is passable after dusk; the signboard policy requires a documented decision path.",
+      "digest": "sha256:05166c209ee7da913e29201a818d7c13e71dd45a64cddb911e6b2abc0dc80969"
+    },
+    {
+      "ref": "observation-a08",
+      "content": "A made-up field shelter network has a blocked footbridge, a weatherproof ridge route, and a route steward who can update one signboard.",
+      "digest": "sha256:fe1dcc2590bc03b34cffc2102e77e9506c3e2bf3c050c769fbe22a150ced4976"
+    },
+    {
+      "ref": "scope-a08",
+      "content": "This synthetic prioritize record for case-research-a08 is bounded to the named observation and constraint. A valid conclusion must distinguish them, cite both, and avoid an unstated factual claim.",
+      "digest": "sha256:530e29d0cbf4c5859895039863de6c6056d60e6c8827d0e098480d2e20df8c3e"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "explicit-process-adaptive-judgment-a",
+      "pairId": "explicit-process/adaptive-judgment",
+      "content": "When repeatability and auditability dominate, make the decision sequence and required checks explicit.",
+      "digest": "sha256:b4bded11d21400f7ad3cc98e717f118ec9b63379360389d47e5ba21a1fbe3de6"
+    },
+    "B": {
+      "id": "explicit-process-adaptive-judgment-b",
+      "pairId": "explicit-process/adaptive-judgment",
+      "content": "When conditions vary in consequential ways, preserve bounded judgment to adapt the decision to observed context.",
+      "digest": "sha256:6eeabf1ff34371290287594380f15d489ec0d290acdcd99da63037da46edc5a2"
+    },
+    "irrelevant": {
+      "id": "explicit-process-adaptive-judgment-irrelevant",
+      "pairId": "irrelevant-heading-case",
+      "content": "Use one capitalization style for all section headings.",
+      "digest": "sha256:57a84abe5191b6a7276652249bbbf70644cc7bdb4e08786f74504bd0b1b69f0d"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "research-a08-prioritize-judgment",
+      "prompt": "Choose exactly one prioritize judgment for case-research-a08; justify it from the observation and constraint records rather than listing alternatives.",
+      "regionOptions": [
+        "publish a fixed dusk-route checklist",
+        "publish a checklist with explicit ridge exceptions",
+        "use a documented exception review for the ridge route"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["publish a checklist with explicit ridge exceptions"],
+        "T1-A": ["publish a fixed dusk-route checklist"],
+        "T1-B": ["use a documented exception review for the ridge route"]
+      },
+      "requiredEvidenceRefs": ["observation-a08", "constraint-a08"]
+    },
+    {
+      "decisionId": "research-a08-evidence-scope",
+      "prompt": "Choose the evidence practice that keeps the prioritize conclusion for case-research-a08 within the supplied record boundary.",
+      "regionOptions": [
+        "replace the record bundle with an unstated conclusion for a08",
+        "cite the named record bundle for a08"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["cite the named record bundle for a08"],
+        "T1-A": ["cite the named record bundle for a08"],
+        "T1-B": ["cite the named record bundle for a08"]
+      },
+      "requiredEvidenceRefs": ["observation-a08", "constraint-a08", "scope-a08"]
+    }
+  ],
+  "nonGoal": "Do not issue travel advice for any real place. Do not replace the supplied record with an unstated factual conclusion."
+}

@@ -1,0 +1,92 @@
+{
+  "release": "2026.8.12",
+  "caseId": "pcda-product-case-006",
+  "familyId": "pcda-product-family-006",
+  "domain": "product",
+  "operation": "prioritize",
+  "difficulty": "complex",
+  "task": {
+    "instruction": "Prioritize telemetry work for a commerce dashboard whose teams dispute whether breadth or diagnosis is the larger gap.",
+    "deliverable": "A telemetry priority, privacy invariant, and evidence-backed coverage boundary."
+  },
+  "sourceDigest": "sha256:a73ddb8991da8570e948f2b83b5692dfd8ffccc116ceb5bc3457f04c720fe75f",
+  "evidence": [
+    {
+      "ref": "coverage-map",
+      "content": "Synthetic instrumentation covers 9 of 12 dashboard modules, but only checkout has step-level traces.",
+      "digest": "sha256:bfe8de138d8665daf0a20134f5ecf2fc3b60640ae2228554d781c431db560d98"
+    },
+    {
+      "ref": "incident-review",
+      "content": "Four invented incidents span inventory, refunds, checkout, and delivery; the checkout incident consumed 61% of diagnosis time.",
+      "digest": "sha256:f83a8d34e721417adc8115bcad71cc79d221bb3e746ae693f1d22cefe989fcc7"
+    },
+    {
+      "ref": "invariant-006",
+      "content": "A synthetic data-retention rule keeps aggregate identifiers available for cross-module diagnosis while limiting raw event retention to seven days; instrumentation coverage does not authorize a wider raw-event window.",
+      "digest": "sha256:b9cfd5c2ea7a7cab9b833182e90ab2d62c5e3ce7310c5ee09da7993166046cc1"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "breadth-depth-a",
+      "pairId": "breadth/depth",
+      "content": "When coverage is the limiting need, represent the important range of cases before adding detail to any one case.",
+      "digest": "sha256:647551f13672a2a474cddfdf775bab7400dd4e162ba93df0052323a12fd75f8c"
+    },
+    "B": {
+      "id": "breadth-depth-b",
+      "pairId": "breadth/depth",
+      "content": "When understanding is the limiting need, examine the pivotal case deeply before extending coverage.",
+      "digest": "sha256:657fea21964c8b6427724e121ceee29f6d7dcf7b3b67a61ef1b549bdfa13ab01"
+    },
+    "irrelevant": {
+      "id": "breadth-depth-irrelevant",
+      "pairId": "irrelevant-spacing",
+      "content": "Use consistent spacing between sections in the final artifact.",
+      "digest": "sha256:110d8f2f49d8a5ffffcec452bea51470b890f37d9a9cabb66bb9b19a7dd0cd20"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "product-006-sensitive",
+      "prompt": "What telemetry investment should come first?",
+      "regionOptions": [
+        "add basic event coverage to the three uninstrumented modules",
+        "deepen checkout traces through payment and recovery branches"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": [
+          "add basic event coverage to the three uninstrumented modules",
+          "deepen checkout traces through payment and recovery branches"
+        ],
+        "T1-A": [
+          "add basic event coverage to the three uninstrumented modules"
+        ],
+        "T1-B": ["deepen checkout traces through payment and recovery branches"]
+      },
+      "requiredEvidenceRefs": ["coverage-map", "incident-review"]
+    },
+    {
+      "decisionId": "product-006-invariant",
+      "prompt": "What data rule remains unchanged?",
+      "regionOptions": [
+        "retain aggregate identifiers with a seven-day raw-event limit",
+        "introduce persistent person-level tracking"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["retain aggregate identifiers with a seven-day raw-event limit"],
+        "T1-A": [
+          "retain aggregate identifiers with a seven-day raw-event limit"
+        ],
+        "T1-B": [
+          "retain aggregate identifiers with a seven-day raw-event limit"
+        ]
+      },
+      "requiredEvidenceRefs": ["invariant-006"]
+    }
+  ],
+  "nonGoal": "Do not introduce persistent person-level analytics."
+}

@@ -1,0 +1,88 @@
+{
+  "release": "2026.8.12",
+  "caseId": "pcda-product-case-004",
+  "familyId": "pcda-product-family-004",
+  "domain": "product",
+  "operation": "prioritize",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Select the priority design for reducing reminder fatigue without suppressing urgent product alerts.",
+    "deliverable": "A prioritized snooze design, invariant urgent-alert rule, and evidence basis."
+  },
+  "sourceDigest": "sha256:e3f1fccaa4c803f40244a0ccb505584c582b421c2b4c99ecd2ef91dfcc971051",
+  "evidence": [
+    {
+      "ref": "invariant-004",
+      "content": "A synthetic safety-alert protocol classifies urgent alerts as dispatch-critical: every such alert must be delivered immediately and cannot be delayed by a quiet-window design.",
+      "digest": "sha256:ea6cf66b4679f5f07a058d9cce12d39beea2779c82a648570fbf1eda938ec63d"
+    },
+    {
+      "ref": "prototype-cost",
+      "content": "A fixed-duration menu can reuse the current component; an adaptive quiet window needs a two-week sandbox test and an explicit reset control.",
+      "digest": "sha256:d5fa24ea8d153cecbaecf130b71c460c27357c9c02e5815cc8d988e17e2a0cfe"
+    },
+    {
+      "ref": "usage-shape",
+      "content": "Synthetic usage shows 68% of snoozes repeat at the same hour, while 19% move with shift schedules.",
+      "digest": "sha256:bec9ccf93df18de70d2e7ceee57699a15ab64ec0577df1d473386b73e08da2c7"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "novelty-precedent-a",
+      "pairId": "novelty/precedent",
+      "content": "When existing patterns do not fit the stated constraints, prefer a new approach whose risks can be tested explicitly.",
+      "digest": "sha256:6436d147872630cea3dc550a9447f6653055339ec9c7f90f790b2f65bd5e55e9"
+    },
+    "B": {
+      "id": "novelty-precedent-b",
+      "pairId": "novelty/precedent",
+      "content": "When a proven pattern fits the stated constraints, prefer its established behavior and known operational costs.",
+      "digest": "sha256:238b2216af2fd2cf56aa86a4921f78f42e1252280cbd073dc3685dd9b49940e8"
+    },
+    "irrelevant": {
+      "id": "novelty-precedent-irrelevant",
+      "pairId": "irrelevant/list-style",
+      "content": "Use parallel grammar for items in the final list.",
+      "digest": "sha256:f5d11a4db862bc9d896c1093f7db73f35900d5e92dda43b0d6340da8db5ab352"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "product-004-sensitive",
+      "prompt": "Which snooze pattern should be prioritized?",
+      "regionOptions": [
+        "test an adaptive quiet-window prototype with a reset control",
+        "extend the proven fixed-duration snooze menu"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": [
+          "test an adaptive quiet-window prototype with a reset control",
+          "extend the proven fixed-duration snooze menu"
+        ],
+        "T1-A": [
+          "test an adaptive quiet-window prototype with a reset control"
+        ],
+        "T1-B": ["extend the proven fixed-duration snooze menu"]
+      },
+      "requiredEvidenceRefs": ["usage-shape", "prototype-cost"]
+    },
+    {
+      "decisionId": "product-004-invariant",
+      "prompt": "What must every design preserve?",
+      "regionOptions": [
+        "deliver urgent safety alerts immediately",
+        "allow snooze to suppress urgent safety alerts"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["deliver urgent safety alerts immediately"],
+        "T1-A": ["deliver urgent safety alerts immediately"],
+        "T1-B": ["deliver urgent safety alerts immediately"]
+      },
+      "requiredEvidenceRefs": ["invariant-004"]
+    }
+  ],
+  "nonGoal": "Do not change the urgent-alert classification policy."
+}
