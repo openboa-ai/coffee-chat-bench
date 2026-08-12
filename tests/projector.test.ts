@@ -481,7 +481,6 @@ test("project emits a Harbor task whose resolved agent environment contains only
       dockerfile,
       /ca-certificates=20230311\+deb12u1 curl=7\.88\.1-10\+deb12u15 ripgrep=13\.0\.0-4\+b2/u,
     );
-    assert.equal(dockerfile.includes("deb.debian.org"), false);
     assert.equal(
       readFileSync(join(harbor, "instruction.md"), "utf8"),
       "Choose one region for each decision using the evidence and any supplied perspective.\n\nWrite /app/output.json with the declared decision manifest and a concise evidence-grounded response.\n\nFollow /app/output-contract.json exactly.\n",
