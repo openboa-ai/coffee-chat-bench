@@ -55,6 +55,13 @@ unknown, extra, or public-network values are `verifier_failure` with zero
 provider calls. Accepted phase-network fields remain in public provenance;
 capability keys and MACs are never logged or persisted in a judgment result.
 
+The trusted Eval host creates that MAC through the public
+`attest <unsigned-attestation> <signed-attestation>` CLI. This keeps canonical
+authentication Bench-owned: Eval supplies observed execution fields and an
+environment-only capability, while neither importing Bench source nor
+reimplementing its MAC serialization. The signer creates a new owner-only file,
+never overwrites an existing path, and emits only `{ "state": "signed" }`.
+
 This capability authenticates the trusted Eval execution boundary against an
 untrusted candidate attempting path, projection, or attestation forgery. It is
 not a global signing PKI and does not claim to defend against a malicious Eval
