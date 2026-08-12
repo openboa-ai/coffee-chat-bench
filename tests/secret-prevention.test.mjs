@@ -52,7 +52,11 @@ test("local credential files are ignored without hiding the example", () => {
 });
 
 test("the repository hook rejects a generated staged secret and redacts output", () => {
-  assert.notEqual(statSync(hook).mode & 0o111, 0, "pre-commit must be executable");
+  assert.notEqual(
+    statSync(hook).mode & 0o111,
+    0,
+    "pre-commit must be executable",
+  );
   const directory = mkdtempSync(join(tmpdir(), "gitleaks-hook-"));
   try {
     execFileSync("git", ["init", "--quiet"], { cwd: directory });
