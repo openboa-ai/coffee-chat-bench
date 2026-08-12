@@ -111,7 +111,19 @@ function attestation(
     criticalFailure: false,
     reasonCode: state === "unmeasured" ? "none" : state,
     isolation: {
-      candidateNetwork: "disabled",
+      network: {
+        taskBaseline: "no-network",
+        setup: {
+          policy: "allowlist",
+          hosts: ["dl-cdn.alpinelinux.org", "registry.npmjs.org"],
+        },
+        agent: {
+          policy: "allowlist",
+          hosts: ["api.openai.com"],
+        },
+        verifierBaseline: "no-network",
+        verifierPhase: "no-network",
+      },
       candidateInputs: "candidate_projection_only",
       verifierJudgment: "verifier_only",
       transferredArtifacts: ["/app/output.json"],
@@ -168,6 +180,16 @@ test("accepted Oracle projection calls exactly Terra and Luna and emits only pub
     assert.deepEqual(calls, ["gpt-5.6-terra", "gpt-5.6-luna"]);
     assert.equal(result.state, "measured");
     assert.equal(result.deterministic.state, "unmeasured");
+    assert.deepEqual(result.provenance?.network, {
+      taskBaseline: "no-network",
+      setup: {
+        policy: "allowlist",
+        hosts: ["dl-cdn.alpinelinux.org", "registry.npmjs.org"],
+      },
+      agent: { policy: "allowlist", hosts: ["api.openai.com"] },
+      verifierBaseline: "no-network",
+      verifierPhase: "no-network",
+    });
     assert.deepEqual(
       result.publicVotes.map(parseJudgeVote),
       result.publicVotes,
@@ -219,7 +241,7 @@ test("deterministic candidate outcomes make zero provider calls", async () => {
   });
 });
 
-test("missing, unbound, or non-isolated verifier attestations stop before provider calls", async () => {
+test("missing, unbound, or broader phase-network attestations stop before provider calls", async () => {
   await withProjection(async (root, projection) => {
     const oracle = artifact(root, projection, "oracle");
     let calls = 0;
@@ -230,8 +252,10 @@ test("missing, unbound, or non-isolated verifier attestations stop before provid
           "sha256:0000000000000000000000000000000000000000000000000000000000000000";
       }),
       attestation(root, projection, oracle, "unmeasured", (value) => {
-        (value.isolation as Record<string, unknown>).candidateNetwork =
-          "enabled";
+        const isolation = value.isolation as Record<string, unknown>;
+        const network = isolation.network as Record<string, unknown>;
+        const agent = network.agent as Record<string, unknown>;
+        agent.policy = "public";
       }),
     ]) {
       const result = await judgeProjection({
@@ -249,6 +273,186 @@ test("missing, unbound, or non-isolated verifier attestations stop before provid
       assert.equal(result.state, "verifier_failure");
     }
     assert.equal(calls, 0);
+  });
+});
+
+test("phase-network attestation rejects every missing, broader, duplicate, extra, or reordered host policy", async () => {
+  await withProjection(async (root, projection) => {
+    const oracle = artifact(root, projection, "oracle");
+    const mutations: readonly (readonly [
+      string,
+      (value: Record<string, unknown>) => void,
+    ])[] = [
+      [
+        "retired candidateNetwork shape",
+        (value) => {
+          const isolation = value.isolation as Record<string, unknown>;
+          delete isolation.network;
+          isolation.candidateNetwork = "disabled";
+        },
+      ],
+      [
+        "missing network",
+        (value) => {
+          delete (value.isolation as Record<string, unknown>).network;
+        },
+      ],
+      [
+        "missing task baseline",
+        (value) => {
+          const isolation = value.isolation as Record<string, unknown>;
+          delete (isolation.network as Record<string, unknown>).taskBaseline;
+        },
+      ],
+      [
+        "missing setup",
+        (value) => {
+          const network = (value.isolation as Record<string, unknown>)
+            .network as Record<string, unknown>;
+          delete network.setup;
+        },
+      ],
+      [
+        "public setup policy",
+        (value) => {
+          const network = (value.isolation as Record<string, unknown>)
+            .network as Record<string, unknown>;
+          (network.setup as Record<string, unknown>).policy = "public";
+        },
+      ],
+      [
+        "missing agent",
+        (value) => {
+          const network = (value.isolation as Record<string, unknown>)
+            .network as Record<string, unknown>;
+          delete network.agent;
+        },
+      ],
+      [
+        "missing setup host",
+        (value) => {
+          const network = (value.isolation as Record<string, unknown>)
+            .network as Record<string, unknown>;
+          (network.setup as Record<string, unknown>).hosts = [
+            "dl-cdn.alpinelinux.org",
+          ];
+        },
+      ],
+      [
+        "missing verifier baseline",
+        (value) => {
+          const network = (value.isolation as Record<string, unknown>)
+            .network as Record<string, unknown>;
+          delete network.verifierBaseline;
+        },
+      ],
+      [
+        "reordered setup hosts",
+        (value) => {
+          const network = (value.isolation as Record<string, unknown>)
+            .network as Record<string, unknown>;
+          (network.setup as Record<string, unknown>).hosts = [
+            "registry.npmjs.org",
+            "dl-cdn.alpinelinux.org",
+          ];
+        },
+      ],
+      [
+        "duplicate setup host",
+        (value) => {
+          const network = (value.isolation as Record<string, unknown>)
+            .network as Record<string, unknown>;
+          (network.setup as Record<string, unknown>).hosts = [
+            "dl-cdn.alpinelinux.org",
+            "registry.npmjs.org",
+            "registry.npmjs.org",
+          ];
+        },
+      ],
+      [
+        "missing agent host",
+        (value) => {
+          const network = (value.isolation as Record<string, unknown>)
+            .network as Record<string, unknown>;
+          (network.agent as Record<string, unknown>).hosts = [];
+        },
+      ],
+      [
+        "public agent policy",
+        (value) => {
+          const network = (value.isolation as Record<string, unknown>)
+            .network as Record<string, unknown>;
+          (network.agent as Record<string, unknown>).policy = "public";
+        },
+      ],
+      [
+        "extra agent host",
+        (value) => {
+          const network = (value.isolation as Record<string, unknown>)
+            .network as Record<string, unknown>;
+          (network.agent as Record<string, unknown>).hosts = [
+            "api.openai.com",
+            "example.com",
+          ];
+        },
+      ],
+      [
+        "broader verifier baseline",
+        (value) => {
+          const network = (value.isolation as Record<string, unknown>)
+            .network as Record<string, unknown>;
+          network.verifierBaseline = "allowlist";
+        },
+      ],
+      [
+        "missing verifier phase",
+        (value) => {
+          const network = (value.isolation as Record<string, unknown>)
+            .network as Record<string, unknown>;
+          delete network.verifierPhase;
+        },
+      ],
+      [
+        "broader verifier phase",
+        (value) => {
+          const network = (value.isolation as Record<string, unknown>)
+            .network as Record<string, unknown>;
+          network.verifierPhase = "allowlist";
+        },
+      ],
+      [
+        "unknown network field",
+        (value) => {
+          const network = (value.isolation as Record<string, unknown>)
+            .network as Record<string, unknown>;
+          network.unexpected = "no-network";
+        },
+      ],
+    ];
+
+    for (const [label, mutate] of mutations) {
+      let calls = 0;
+      const result = await judgeProjection({
+        projectionRoot: projection,
+        artifactPath: oracle,
+        attestationPath: attestation(
+          root,
+          projection,
+          oracle,
+          "unmeasured",
+          mutate,
+        ),
+        capabilityKey,
+        transport: {
+          async request() {
+            calls += 1;
+            throw new Error("provider must not run");
+          },
+        },
+      });
+      assert.equal(result.state, "verifier_failure", label);
+      assert.equal(calls, 0, label);
+    }
   });
 });
 
@@ -419,6 +623,30 @@ test("MAC-authenticated attestation rejects forgery before any provider call and
     assert.equal(serialized.includes(capabilityKey), false);
     assert.equal(serialized.includes(String(forged.attestationMac)), false);
     assert.equal(serialized.includes("attestationMac"), false);
+
+    const forgedNetworkPath = attestation(root, projection, oracle);
+    const forgedNetwork = JSON.parse(
+      readFileSync(forgedNetworkPath, "utf8"),
+    ) as Record<string, unknown>;
+    const network = (
+      (forgedNetwork.isolation as Record<string, unknown>).network as Record<
+        string,
+        unknown
+      >
+    ).agent as Record<string, unknown>;
+    network.hosts = ["api.openai.com", "example.com"];
+    writeFileSync(forgedNetworkPath, JSON.stringify(forgedNetwork), "utf8");
+    const networkForgery = await judgeProjection({
+      projectionRoot: projection,
+      artifactPath: oracle,
+      attestationPath: forgedNetworkPath,
+      capabilityKey,
+      transport: acceptedTransport([]),
+    });
+    assert.equal(
+      networkForgery.deterministic.reasonCode,
+      "attestation_mac_invalid",
+    );
 
     const missing = attestation(root, projection, oracle);
     const missingValue = JSON.parse(readFileSync(missing, "utf8")) as Record<

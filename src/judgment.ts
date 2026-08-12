@@ -59,11 +59,26 @@ interface DeterministicVerdict {
   readonly reasonCode: JudgmentReasonCode;
 }
 
+export interface PhaseNetworkAttestation {
+  readonly taskBaseline: "no-network";
+  readonly setup: {
+    readonly policy: "allowlist";
+    readonly hosts: readonly ["dl-cdn.alpinelinux.org", "registry.npmjs.org"];
+  };
+  readonly agent: {
+    readonly policy: "allowlist";
+    readonly hosts: readonly ["api.openai.com"];
+  };
+  readonly verifierBaseline: "no-network";
+  readonly verifierPhase: "no-network";
+}
+
 interface AttestedProvenance {
   readonly issuer: "openboa-ai/coffee-chat-eval";
   readonly benchRepository: "openboa-ai/coffee-chat-bench";
   readonly benchCommit: string;
   readonly bankDigest: Digest;
+  readonly network: PhaseNetworkAttestation;
 }
 
 interface IsolatedVerifierAttestation {
@@ -271,6 +286,47 @@ function digest(value: unknown, label: string): Digest {
     throw new TypeError(`${label} must be a sha256 digest`);
   }
   return candidate as Digest;
+}
+
+function parsePhaseNetwork(value: unknown): PhaseNetworkAttestation {
+  const network = record(value, "attestation.isolation.network");
+  exactKeys(
+    network,
+    ["taskBaseline", "setup", "agent", "verifierBaseline", "verifierPhase"],
+    "attestation.isolation.network",
+  );
+  const setup = record(network.setup, "attestation.isolation.network.setup");
+  const agent = record(network.agent, "attestation.isolation.network.agent");
+  exactKeys(setup, ["policy", "hosts"], "attestation.isolation.network.setup");
+  exactKeys(agent, ["policy", "hosts"], "attestation.isolation.network.agent");
+  if (
+    network.taskBaseline !== "no-network" ||
+    setup.policy !== "allowlist" ||
+    !Array.isArray(setup.hosts) ||
+    setup.hosts.length !== 2 ||
+    setup.hosts[0] !== "dl-cdn.alpinelinux.org" ||
+    setup.hosts[1] !== "registry.npmjs.org" ||
+    agent.policy !== "allowlist" ||
+    !Array.isArray(agent.hosts) ||
+    agent.hosts.length !== 1 ||
+    agent.hosts[0] !== "api.openai.com" ||
+    network.verifierBaseline !== "no-network" ||
+    network.verifierPhase !== "no-network"
+  ) {
+    throw new TypeError(
+      "isolated verifier attestation has invalid phase-network evidence",
+    );
+  }
+  return {
+    taskBaseline: "no-network",
+    setup: {
+      policy: "allowlist",
+      hosts: ["dl-cdn.alpinelinux.org", "registry.npmjs.org"],
+    },
+    agent: { policy: "allowlist", hosts: ["api.openai.com"] },
+    verifierBaseline: "no-network",
+    verifierPhase: "no-network",
+  };
 }
 
 function noSymlinkAncestors(path: string): void {
@@ -638,7 +694,7 @@ function parseAttestation(
   exactKeys(
     isolation,
     [
-      "candidateNetwork",
+      "network",
       "candidateInputs",
       "verifierJudgment",
       "transferredArtifacts",
@@ -646,8 +702,8 @@ function parseAttestation(
     ],
     "attestation.isolation",
   );
+  const network = parsePhaseNetwork(isolation.network);
   if (
-    isolation.candidateNetwork !== "disabled" ||
     isolation.candidateInputs !== "candidate_projection_only" ||
     isolation.verifierJudgment !== "verifier_only" ||
     isolation.cleanup !== "completed" ||
@@ -669,6 +725,7 @@ function parseAttestation(
       benchRepository: value.benchRepository,
       benchCommit: value.benchCommit as string,
       bankDigest: digest(value.bankDigest, "attestation.bankDigest"),
+      network,
     },
     trialId: string(value.trialId, "attestation.trialId"),
     caseId: string(value.caseId, "attestation.caseId"),
