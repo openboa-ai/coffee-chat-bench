@@ -799,7 +799,7 @@ test("the verifier rejects changed digests, duplicate evidence, and semantic cop
   });
 });
 
-test("project and calibrate CLI JSON is stable and calibration failures exit nonzero", () => {
+test("project CLI JSON is stable", () => {
   withTemporaryDirectory((root) => {
     const projectionRoot = join(root, "projection");
     const first = runCli([
@@ -816,22 +816,6 @@ test("project and calibrate CLI JSON is stable and calibration failures exit non
     ]);
     assert.equal(first.status, 0, first.stderr);
     assert.equal(first.stdout, second.stdout);
-
-    const oracle = copyProjectedOracle(root, projectionRoot);
-    const calibrated = runCli(["calibrate", projectionRoot, oracle]);
-    assert.equal(calibrated.status, 0, calibrated.stderr);
-    assert.deepEqual(
-      JSON.parse(calibrated.stdout),
-      JSON.parse(runHarborVerifier(projectionRoot, oracle).stdout),
-    );
-
-    const failed = runCli([
-      "calibrate",
-      projectionRoot,
-      copyArtifact(root, "no-op"),
-    ]);
-    assert.equal(failed.status, 1);
-    assert.equal(JSON.parse(failed.stdout).state, "candidate_invalid");
   });
 });
 

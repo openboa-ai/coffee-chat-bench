@@ -32,6 +32,7 @@ test("Responses transport uses structured output and reads only OPENAI_API_KEY",
     model: "gpt-5.6-terra",
     prompt: "private prompt",
     responseFormat: "judge-v1",
+    maxOutputTokens: 321,
   });
   assert.equal(response.state, "response");
   assert.match(request?.url ?? "", /\/v1\/responses$/);
@@ -39,7 +40,9 @@ test("Responses transport uses structured output and reads only OPENAI_API_KEY",
   assert.equal(headers.get("authorization"), "Bearer test-key");
   const body = JSON.parse(String(request?.init?.body)) as {
     text: { format: { type: string; strict: boolean } };
+    max_output_tokens: number;
   };
+  assert.equal(body.max_output_tokens, 321);
   assert.deepEqual(body.text.format, {
     type: "json_schema",
     name: "judge_vote",

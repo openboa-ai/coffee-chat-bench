@@ -6,6 +6,7 @@ export interface JudgeRequest {
   model: JudgeModel;
   prompt: string;
   responseFormat: "judge-v1";
+  maxOutputTokens: number;
 }
 
 export interface JudgeUsage {
@@ -113,6 +114,7 @@ export function createOpenAiResponsesTransport(
           body: JSON.stringify({
             model: request.model,
             input: request.prompt,
+            max_output_tokens: request.maxOutputTokens,
             text: {
               format: {
                 type: "json_schema",

@@ -40,6 +40,14 @@ const EXPECTED_CASES = 96;
 const EXPECTED_PROJECTIONS = EXPECTED_CASES * CONDITIONS.length;
 const CONTROLS = ["oracle", "noOp", "listAll"] as const;
 
+function calibrationEnvironment(): Record<string, string> {
+  return {
+    PATH: process.env.PATH ?? "/usr/bin:/bin",
+    LANG: process.env.LANG ?? "C.UTF-8",
+    LC_ALL: process.env.LC_ALL ?? "C.UTF-8",
+  };
+}
+
 export type CalibrationControl = (typeof CONTROLS)[number];
 export type CalibrationOutcomeState =
   | "measured"
@@ -61,8 +69,7 @@ export interface CalibrationProjection {
   readonly condition: ConditionLabel;
   readonly trialId: string;
   readonly sourceDigest: Digest;
-  readonly projectionDirectory: string;
-  readonly verifierDirectory: string;
+  readonly judgmentPath: string;
   readonly oracleArtifact: string;
   readonly noOpArtifact: string;
   readonly listAllArtifact: string;
@@ -119,7 +126,6 @@ interface LoadedCampaign {
 
 interface BatchRequest {
   readonly id: string;
-  readonly verifier: string;
   readonly judgment: string;
   readonly artifact: string;
 }
@@ -425,8 +431,7 @@ export function projectCalibrationBank(
           condition: label,
           trialId,
           sourceDigest: caseBundle.sourceDigest,
-          projectionDirectory,
-          verifierDirectory: projected.verifierDirectory,
+          judgmentPath: join(projected.verifierDirectory, "judgment.json"),
           ...controls,
         });
       } catch (error) {
@@ -461,18 +466,7 @@ function batchRequests(
   return projections.flatMap((projection, projectionIndex) =>
     CONTROLS.map((control) => ({
       id: `${projectionIndex}:${control}`,
-      verifier: join(
-        projection.projectionDirectory,
-        "harbor",
-        "tests",
-        "verifier.py",
-      ),
-      judgment: join(
-        projection.projectionDirectory,
-        "harbor",
-        "tests",
-        "judgment.json",
-      ),
+      judgment: projection.judgmentPath,
       artifact:
         control === "oracle"
           ? projection.oracleArtifact
@@ -535,6 +529,7 @@ function runVerifierBatch(input: ProjectedCalibrationBank): BatchRun {
     [runner.pathname, "--requests", requestFile],
     {
       encoding: "utf8",
+      env: calibrationEnvironment(),
     },
   );
   if (process.error !== undefined) {
@@ -681,7 +676,7 @@ function finalReport(
   return { ...payload, reportDigest: stableDigest(payload) };
 }
 
-export function calibrateProjectedBank(
+function calibrateProjectedBank(
   input: ProjectedCalibrationBank,
 ): CalibrationReport {
   if (
@@ -732,6 +727,12 @@ export function calibrateProjectedBank(
     failures,
     batch.results.length,
   );
+}
+
+export function calibratePreparedBank(
+  input: ProjectedCalibrationBank,
+): CalibrationReport {
+  return calibrateProjectedBank(input);
 }
 
 export function calibrateBank(

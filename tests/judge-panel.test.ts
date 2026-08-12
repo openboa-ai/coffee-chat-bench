@@ -196,7 +196,7 @@ test("panel records provider errors and model drift without retries", async () =
   assert.equal(result.consensus.state, "insufficient_votes");
 });
 
-test("digests retain only canonical valid fields and sanitize malformed bodies", async () => {
+test("exact five-key responses are valid and extra fields remain malformed without leaking secrets", async () => {
   const canonical = async (body: unknown) =>
     runJudgePanel(
       { atomId: "atom-4", prompt: "safe", deterministicVerifierPassed: true },
@@ -210,24 +210,14 @@ test("digests retain only canonical valid fields and sanitize malformed bodies",
         },
       },
     );
-  const first = await canonical({
+  const exact = await canonical(measuredBody);
+  assert.equal(exact.votes[0]?.state, "valid");
+  const extra = await canonical({
     ...measuredBody,
     apiKey: "SECRET",
     created_at: "2026-01-01",
   });
-  const second = await canonical({
-    criticalFailure: false,
-    invariantsPreserved: true,
-    perspectiveAligned: true,
-    evidenceIntegrity: true,
-    taskAdequate: true,
-    token: "DIFFERENT",
-    timestamp: "never",
-  });
-  assert.deepEqual(
-    first.votes.map((entry) => entry.responseDigest),
-    second.votes.map((entry) => entry.responseDigest),
-  );
+  assert.equal(extra.votes[0]?.state, "malformed");
   const malformedA = await canonical({
     apiKey: "SECRET",
     timestamp: "2026-01-01",

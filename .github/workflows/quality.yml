@@ -50,10 +50,14 @@ jobs:
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: 24
+      - name: Install locked Node.js dependencies
+        run: npm ci
       - name: Verify inactive boundary
         run: node scripts/check-inactive-boundary.mjs --root .
+      - name: Typecheck deterministic TypeScript
+        run: npm run typecheck
       - name: Run deterministic tests
-        run: node --test tests/*.test.mjs
+        run: node --experimental-strip-types --test tests/*.test.mjs tests/*.test.ts
 
   aggregate:
     name: Bench required
