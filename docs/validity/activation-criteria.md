@@ -32,6 +32,15 @@ the following:
 10. A written activation decision that records reviewers, evidence locations,
     limitations, and an explicit approval or rejection.
 
+Available API credit and an execution cap are not validity criteria. They may
+determine when prespecified campaigns can run, but they must not change the
+declared population, sample, controls, repetitions, exclusions, uncertainty
+method, or evidence floors. If authorized funding cannot complete the
+prespecified design, activation remains blocked with explicit incomplete or
+unavailable evidence. Operational cost observed from completed campaigns is
+reported under feasibility; no particular dollar amount makes the benchmark
+eligible or ineligible by itself.
+
 The prospective judge evidence is complete only when it independently covers
 exactly `gpt-5.6-terra` and `gpt-5.6-luna`, including a positive denominator
 and the per-model balanced-accuracy floor for each. Required disagreement and

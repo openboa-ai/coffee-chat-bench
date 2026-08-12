@@ -40,12 +40,12 @@ trial or benchmark evidence.
 The following roots are expressly labelled experimental while the status is
 `not_active`:
 
-| Root | Role | Inactive constraint |
-| --- | --- | --- |
-| `bank/` and `perspectives/` | Public synthetic source material | Source design only; no measured artifacts |
-| `schemas/`, `src/`, `harbor/`, and `config/` | Candidate-independent contracts, projection, verifier, and configuration | No Product or candidate-specific import |
-| `tests/` | Deterministic local contract and fixture verification | No provider/model execution in CI |
-| `docs/superpowers/` and `docs/validity/` | Design, plan, and validity-method documentation | No activation or measured claim |
+| Root                                         | Role                                                                     | Inactive constraint                       |
+| -------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------- |
+| `bank/` and `perspectives/`                  | Public synthetic source material                                         | Source design only; no measured artifacts |
+| `schemas/`, `src/`, `harbor/`, and `config/` | Candidate-independent contracts, projection, verifier, and configuration | No Product or candidate-specific import   |
+| `tests/`                                     | Deterministic local contract and fixture verification                    | No provider/model execution in CI         |
+| `docs/superpowers/` and `docs/validity/`     | Design, plan, and validity-method documentation                          | No activation or measured claim           |
 
 The checker classifies JSON by its explicit experimental role and content:
 `bank/` source, `config/` configuration, and `schemas/*.schema.json` schema.
@@ -102,16 +102,31 @@ core stratum, and two clean runs within plus or minus `0.05` QPCFR. These are
 future decision gates only; missing, unavailable, or unmeasured evidence does
 not satisfy them.
 
+Measurement design is independent of execution funding. Sample scope,
+conditions, repetitions, controls, exclusions, uncertainty, and activation
+floors are chosen from the construct and statistical plan. An API balance,
+operator spending preference, or runner cap must not reduce those requirements
+or redefine an incomplete campaign as sufficient evidence.
+
+Execution funding is an Eval/operator concern. Before a live campaign, the
+operator authorizes a bounded run profile and verifies that available provider
+funding can cover that profile. Insufficient funding stops or defers execution
+with an explicit unavailable or incomplete state; it does not alter benchmark
+design. Activation has no fixed dollar-price criterion, although observed
+operational cost is reported as feasibility evidence.
+
 The experimental live-judge contract has exactly two slots: `gpt-5.6-terra`
 and `gpt-5.6-luna`. An ordinary atom requests each slot once; only malformed
 structured output receives one retry, so no atom makes more than four provider
 requests. Both valid non-critical votes must agree for an ordinary result;
 either disagreement is a tie, and a critical failure requires both slots. A
-deterministic-verifier failure prevents all provider calls. Campaign execution
-is sequential and preflights exact atom count plus independently measured
-request maxima under the USD 50 (`50,000,000,000` nano-USD) ceiling. It records
-only digests and token/cost fields, stops on unavailable or invalid usage, and
-never records raw prompts, responses, or credentials.
+deterministic-verifier failure prevents all provider calls. The current
+`2026.8.12` manual execution profile is sequential and preflights exact atom
+count plus independently measured request maxima under its operator-authorized
+USD 50 (`50,000,000,000` nano-USD) guardrail. That amount is run authority, not
+a construct, sample-size, validity, or activation requirement. The runner
+records only digests and token/cost fields, stops on unavailable or invalid
+usage, and never records raw prompts, responses, or credentials.
 
 ## Verification and implementation status
 
