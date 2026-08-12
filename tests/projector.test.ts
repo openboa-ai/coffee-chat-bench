@@ -470,17 +470,14 @@ test("project emits a Harbor task whose resolved agent environment contains only
     );
     assert.match(
       dockerfile,
-      /^FROM node@sha256:048ed02c5fd52e86fda6fbd2f6a76cf0d4492fd6c6fee9e2c463ed5108da0e34$/mu,
+      /^FROM --platform=linux\/arm64 node@sha256:4dc25e9fc0dcf900eb9064614f03487058ff863b1e509a7ccee0d1ff80d8f62e$/mu,
     );
     assert.doesNotMatch(dockerfile, /^\+ /mu);
     assert.match(
       dockerfile,
-      /snapshot\.debian\.org\/archive\/debian\/20260801T000000Z/u,
+      /ncurses-terminfo-base=6\.5_p20250503-r0[\s\S]*ripgrep=14\.1\.1-r0/u,
     );
-    assert.match(
-      dockerfile,
-      /ca-certificates=20230311\+deb12u1 curl=7\.88\.1-10\+deb12u15 ripgrep=13\.0\.0-4\+b2/u,
-    );
+    assert.match(dockerfile, /bash=5\.2\.37-r0[\s\S]*curl=8\.14\.1-r3/u);
     assert.equal(
       readFileSync(join(harbor, "instruction.md"), "utf8"),
       "Choose one region for each decision using the evidence and any supplied perspective.\n\nWrite /app/output.json with the declared decision manifest and a concise evidence-grounded response.\n\nFollow /app/output-contract.json exactly.\n",

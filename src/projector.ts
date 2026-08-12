@@ -316,7 +316,7 @@ function harborFiles(
     {
       file: "environment/Dockerfile",
       content:
-        "FROM node@sha256:048ed02c5fd52e86fda6fbd2f6a76cf0d4492fd6c6fee9e2c463ed5108da0e34\nRUN rm -f /etc/apt/sources.list.d/debian.sources \\\n && printf '%s\\n' 'deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20260801T000000Z bookworm main' > /etc/apt/sources.list \\\n && apt-get update \\\n && apt-get install -y --no-install-recommends ca-certificates=20230311+deb12u1 curl=7.88.1-10+deb12u15 ripgrep=13.0.0-4+b2 \\\n && rm -rf /var/lib/apt/lists/*\nWORKDIR /app\nCOPY input/ /app/\n",
+        "FROM --platform=linux/arm64 node@sha256:4dc25e9fc0dcf900eb9064614f03487058ff863b1e509a7ccee0d1ff80d8f62e\nRUN apk add --no-cache \\\n ncurses-terminfo-base=6.5_p20250503-r0 \\\n libncursesw=6.5_p20250503-r0 \\\n readline=8.2.13-r1 \\\n bash=5.2.37-r0 \\\n brotli-libs=1.1.0-r2 \\\n c-ares=1.34.8-r0 \\\n libunistring=1.3-r0 \\\n libidn2=2.3.7-r0 \\\n nghttp2-libs=1.69.0-r0 \\\n libpsl=0.21.5-r3 \\\n zstd-libs=1.5.7-r0 \\\n libcurl=8.14.1-r3 \\\n curl=8.14.1-r3 \\\n pcre2=10.46-r0 \\\n ripgrep=14.1.1-r0\nWORKDIR /app\nCOPY input/ /app/\n",
     },
     ...candidateInput,
     {
