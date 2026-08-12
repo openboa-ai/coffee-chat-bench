@@ -315,7 +315,8 @@ function harborFiles(
     },
     {
       file: "environment/Dockerfile",
-      content: "FROM python:3.13-alpine\nWORKDIR /app\nCOPY input/ /app/\n",
+      content:
+        "FROM python:3.13-alpine\nRUN apk add --no-cache bash curl nodejs npm ripgrep\nWORKDIR /app\nCOPY input/ /app/\n",
     },
     ...candidateInput,
     {

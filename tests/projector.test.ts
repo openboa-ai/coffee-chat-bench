@@ -468,6 +468,10 @@ test("project emits a Harbor task whose resolved agent environment contains only
       dockerfile.split("\n").filter((line) => line.startsWith("COPY ")),
       ["COPY input/ /app/"],
     );
+    assert.match(
+      dockerfile,
+      /RUN apk add --no-cache bash curl nodejs npm ripgrep/u,
+    );
     assert.equal(
       readFileSync(join(harbor, "instruction.md"), "utf8"),
       "Choose one region for each decision using the evidence and any supplied perspective.\n\nWrite /app/output.json with the declared decision manifest and a concise evidence-grounded response.\n\nFollow /app/output-contract.json exactly.\n",
