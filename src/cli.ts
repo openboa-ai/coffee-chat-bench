@@ -24,8 +24,10 @@ import {
   validateUnsignedAttestationShape,
 } from "./judgment.ts";
 import { createOpenAiResponsesTransport } from "./openai-judge.ts";
+import { loadJudgeCampaignConfig } from "./judge-config.ts";
 
 const EVAL_ATTESTATION_KEY_ENV = "COFFEE_CHAT_EVAL_ATTESTATION_KEY";
+const EVAL_JUDGE_CAP_ENV = "COFFEE_CHAT_EVAL_JUDGE_CAP_NANO_USD";
 
 function invalidUsage(message: string) {
   const files = [{ file: ".", state: "invalid" as const, errors: [message] }];
@@ -101,15 +103,30 @@ async function runJudge(
   projectionRoot: string,
   artifact: string,
   attestation: string,
+  capText: string | undefined,
 ) {
   const capabilityKey = process.env[EVAL_ATTESTATION_KEY_ENV] ?? "";
   delete process.env[EVAL_ATTESTATION_KEY_ENV];
   try {
+    const baseConfig = loadJudgeCampaignConfig();
+    const cap =
+      capText === undefined ? baseConfig.campaignCapNanoUsd : Number(capText);
+    if (
+      !Number.isSafeInteger(cap) ||
+      cap < 0 ||
+      cap > baseConfig.campaignCapNanoUsd ||
+      (String(cap) !== capText && capText !== undefined)
+    ) {
+      throw new TypeError(
+        "judge cap must be a canonical bounded nano-USD integer",
+      );
+    }
     return await judgeProjection({
       projectionRoot,
       artifactPath: artifact,
       attestationPath: attestation,
       capabilityKey,
+      judgeCampaignCapNanoUsd: cap,
       createTransport: createOpenAiResponsesTransport,
     });
   } catch (error) {
@@ -151,6 +168,8 @@ function runAttest(
 
 export async function runCli(argv: readonly string[]): Promise<number> {
   const [command, first, second, third] = argv;
+  const judgeCapText = process.env[EVAL_JUDGE_CAP_ENV];
+  delete process.env[EVAL_JUDGE_CAP_ENV];
   const attestCapabilityKey =
     command === "attest" ? (process.env[EVAL_ATTESTATION_KEY_ENV] ?? "") : "";
   if (command === "attest") delete process.env[EVAL_ATTESTATION_KEY_ENV];
@@ -191,7 +210,7 @@ export async function runCli(argv: readonly string[]): Promise<number> {
                       first !== undefined &&
                       second !== undefined &&
                       third !== undefined
-                    ? await runJudge(first, second, third)
+                    ? await runJudge(first, second, third, judgeCapText)
                     : invalidUsage(
                         "usage: materialize-bank --catalog <path> --blueprints <dir> --destination <dir> | validate <bank-root> | admit <draft-file> | audit-bank <campaign-file> | project <case-file> <a|b|none|irrelevant> <destination> | attest <unsigned-attestation> <signed-attestation> | calibrate-bank <bank-root> <empty-workspace> | judge <projection-root> <artifact> <isolated-verifier-attestation>",
                       );

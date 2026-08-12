@@ -835,6 +835,68 @@ test("capability keys and attestation MACs use exact bounded encodings", () => {
   );
 });
 
+test("remaining judge cap stops before provider calls and preserves the configured remainder", async () => {
+  await withProjection(async (root, projection) => {
+    const oracle = artifact(root, projection, "oracle");
+    let calls = 0;
+    const result = await judgeProjection({
+      projectionRoot: projection,
+      artifactPath: oracle,
+      attestationPath: attestation(root, projection, oracle),
+      capabilityKey,
+      judgeCampaignCapNanoUsd: 1,
+      transport: {
+        async request() {
+          calls += 1;
+          throw new Error("provider must not run");
+        },
+      },
+    });
+    assert.equal(calls, 0);
+    assert.equal(result.state, "judge_unavailable");
+    assert.equal(result.campaign?.state, "preflight_rejected");
+    assert.equal(result.campaign?.remainingBudgetNanoUsd, 1);
+    assert.equal(result.campaign?.budgetStopReason, "planned_cost_exceeds_cap");
+  });
+});
+
+test("judge CLI consumes the remaining cap before provider setup and deletes it", async () => {
+  await withProjection((root, projection) => {
+    const oracle = artifact(root, projection, "oracle");
+    const signed = attestation(root, projection, oracle);
+    const cliPath = join(repositoryRoot, "src", "cli.ts");
+    const cliArguments = ["judge", projection, oracle, signed];
+    const probe = [
+      `process.argv = [process.execPath, ${JSON.stringify(cliPath)}, ${cliArguments.map((argument) => JSON.stringify(argument)).join(", ")}];`,
+      `await import(${JSON.stringify(pathToFileURL(cliPath).href)});`,
+      "process.stdout.write(`${JSON.stringify({ cap: process.env.COFFEE_CHAT_EVAL_JUDGE_CAP_NANO_USD ?? null })}\\n`);",
+    ].join("\n");
+    const child = spawnSync(
+      process.execPath,
+      ["--experimental-strip-types", "--input-type=module", "--eval", probe],
+      {
+        encoding: "utf8",
+        env: {
+          PATH: process.env.PATH ?? "",
+          COFFEE_CHAT_EVAL_ATTESTATION_KEY: capabilityKey,
+          COFFEE_CHAT_EVAL_JUDGE_CAP_NANO_USD: "1",
+        },
+      },
+    );
+    assert.equal(child.status, 1, child.stderr);
+    const lines = child.stdout.trim().split("\n");
+    const report = JSON.parse(lines.at(-2) ?? "") as Record<string, unknown>;
+    const trace = JSON.parse(lines.at(-1) ?? "") as { cap: string | null };
+    assert.equal(report.state, "judge_unavailable");
+    assert.equal(
+      (report.campaign as Record<string, unknown>).remainingBudgetNanoUsd,
+      1,
+    );
+    assert.equal(trace.cap, null);
+    assert.equal(child.stdout.includes("OPENAI_API_KEY"), false);
+  });
+});
+
 test("CLI receives the capability only from Eval environment and preflights invalid attestations", async () => {
   await withProjection((root, projection) => {
     const oracle = artifact(root, projection, "oracle");
