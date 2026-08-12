@@ -1,0 +1,84 @@
+{
+  "release": "2026.8.12",
+  "caseId": "case-research-a15",
+  "familyId": "family-research-a15",
+  "domain": "research",
+  "operation": "recommend",
+  "difficulty": "complex",
+  "task": {
+    "instruction": "Recommend a maintenance choice. Treat the supplied records as the complete synthetic evidence set and make one selection for each declared decision.",
+    "deliverable": "A recommendation that names the first commitment, fallback, and cited records. Cite the named evidence references and do not list mutually incompatible selections."
+  },
+  "sourceDigest": "sha256:6fc396b5ac04819627261914da944cb0002226b0f3dbcfb3ebe00b137f02e075",
+  "evidence": [
+    {
+      "ref": "constraint-a15",
+      "content": "The repair card says battery replacement can be reversed on deck, while the anchor change commits the crew to a longer route.",
+      "digest": "sha256:301576a9ee58d66d87b57d73faa6209bcffee109e4d41cba1f647e89bf060ff5"
+    },
+    {
+      "ref": "observation-a15",
+      "content": "A fictional lake buoy array has a replaceable battery fault and a fixed anchor wear warning; a boat crew is available once before a training run.",
+      "digest": "sha256:9be0c34af596b8a898b8d570d313bfdf24e14a650831511b73c232f19b2fdc45"
+    },
+    {
+      "ref": "scope-a15",
+      "content": "This synthetic recommend record for case-research-a15 is bounded to the named observation and constraint. A valid conclusion must distinguish them, cite both, and avoid an unstated factual claim.",
+      "digest": "sha256:de114445a410541978fa07b3e6c1a9f71086a01026c9a241e9d5efb0f523291d"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "reversible-committed-a",
+      "pairId": "reversible/committed",
+      "content": "When uncertainty remains, favor a choice that can be revised after new evidence without disproportionate cost.",
+      "digest": "sha256:58bc5d4191b6efce4c0334a2165627906d9f02218d5a686cd8ba87fbe0d00b3d"
+    },
+    "B": {
+      "id": "reversible-committed-b",
+      "pairId": "reversible/committed",
+      "content": "When coordination depends on certainty, favor a clear commitment with the resources needed to carry it through.",
+      "digest": "sha256:8c49160a401692ca75ca056cc4a153a8d7742dd3ab8c2360ea68f52d27a15fea"
+    },
+    "irrelevant": {
+      "id": "reversible-committed-irrelevant",
+      "pairId": "irrelevant-summary-position",
+      "content": "Place the concise summary before the supporting detail.",
+      "digest": "sha256:86fba54b9edbea31f73cb27e08c818e654a855b8da697de66658037671c672dd"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "research-a15-recommend-judgment",
+      "prompt": "Choose exactly one recommend judgment for case-research-a15; justify it from the observation and constraint records rather than listing alternatives.",
+      "regionOptions": [
+        "commit the crew to the anchor route",
+        "replace the battery on deck as a reversible test",
+        "replace the battery while logging anchor risk"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["replace the battery while logging anchor risk"],
+        "T1-A": ["replace the battery on deck as a reversible test"],
+        "T1-B": ["commit the crew to the anchor route"]
+      },
+      "requiredEvidenceRefs": ["observation-a15", "constraint-a15"]
+    },
+    {
+      "decisionId": "research-a15-evidence-scope",
+      "prompt": "Choose the evidence practice that keeps the recommend conclusion for case-research-a15 within the supplied record boundary.",
+      "regionOptions": [
+        "cite the named record bundle for a15",
+        "replace the record bundle with an unstated conclusion for a15"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["cite the named record bundle for a15"],
+        "T1-A": ["cite the named record bundle for a15"],
+        "T1-B": ["cite the named record bundle for a15"]
+      },
+      "requiredEvidenceRefs": ["observation-a15", "constraint-a15", "scope-a15"]
+    }
+  ],
+  "nonGoal": "Do not describe a real lake or navigation condition. Do not replace the supplied record with an unstated factual conclusion."
+}

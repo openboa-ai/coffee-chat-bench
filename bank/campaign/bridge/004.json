@@ -1,0 +1,90 @@
+{
+  "release": "2026.8.12",
+  "caseId": "operations-a-plan-complex-32-case",
+  "familyId": "operations-a-plan-complex-32-family",
+  "domain": "operations",
+  "operation": "plan",
+  "difficulty": "complex",
+  "task": {
+    "instruction": "Plan a service change for a seasonal load when usage is rising, one dependency has a brittle interface, and the change becomes costly to reverse after records are merged.",
+    "deliverable": "A staged plan with dependency test, merge gate, rollback window, and capacity observation."
+  },
+  "sourceDigest": "sha256:7d0781840e63a3e27fe56d8d1c912f279a56d4e3f91d0e6c2c7e4b21736b3f90",
+  "evidence": [
+    {
+      "ref": "brief/32",
+      "content": "Usage has risen for three observation periods, but the brittle interface fails on a rare request shape in the latest sample.",
+      "digest": "sha256:73114308dc92e7a88d6e735ef398c8a8d56a4a656c99b12d9ddc3039d140c7b0"
+    },
+    {
+      "ref": "record/32",
+      "content": "The record merge shortens the rollback window from two cycles to one, while a shadow run can test the interface without merging records.",
+      "digest": "sha256:8928a867ce3b2a40c59e324efe8e5856c8f1e6b563ae9e59a6ae106913df3c68"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "explicit-process-adaptive-judgment-a",
+      "pairId": "explicit-process/adaptive-judgment",
+      "content": "When repeatability and auditability dominate, make the decision sequence and required checks explicit.",
+      "digest": "sha256:b4bded11d21400f7ad3cc98e717f118ec9b63379360389d47e5ba21a1fbe3de6"
+    },
+    "B": {
+      "id": "explicit-process-adaptive-judgment-b",
+      "pairId": "explicit-process/adaptive-judgment",
+      "content": "When conditions vary in consequential ways, preserve bounded judgment to adapt the decision to observed context.",
+      "digest": "sha256:6eeabf1ff34371290287594380f15d489ec0d290acdcd99da63037da46edc5a2"
+    },
+    "irrelevant": {
+      "id": "explicit-process-adaptive-judgment-irrelevant",
+      "pairId": "irrelevant-heading-case",
+      "content": "Use one capitalization style for all section headings.",
+      "digest": "sha256:57a84abe5191b6a7276652249bbbf70644cc7bdb4e08786f74504bd0b1b69f0d"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "operations-a-plan-complex-32-response",
+      "prompt": "Which response region should govern seasonal service change after weighing the supplied evidence?",
+      "regionOptions": [
+        "hold-plan-32",
+        "plan-a-shadow-run-and-preserve-the-two-cycle-rollback-window-32",
+        "plan-an-interface-hardening-gate-before-committing-the-seasonal-change-32",
+        "shadow-the-rare-request-shape-while-preparing-the-hardening-gate-32"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["hold-plan-32"],
+        "T1-A": [
+          "plan-an-interface-hardening-gate-before-committing-the-seasonal-change-32"
+        ],
+        "T1-B": [
+          "plan-a-shadow-run-and-preserve-the-two-cycle-rollback-window-32"
+        ]
+      },
+      "requiredEvidenceRefs": ["brief/32", "record/32"]
+    },
+    {
+      "decisionId": "operations-a-plan-complex-32-record",
+      "prompt": "Which evidence-recording rule must remain fixed while choosing the response for seasonal service change?",
+      "regionOptions": [
+        "keep-rollback-owner-merge-status-and-observation-metric-explicit-32",
+        "record-review-32"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": [
+          "keep-rollback-owner-merge-status-and-observation-metric-explicit-32"
+        ],
+        "T1-A": [
+          "keep-rollback-owner-merge-status-and-observation-metric-explicit-32"
+        ],
+        "T1-B": [
+          "keep-rollback-owner-merge-status-and-observation-metric-explicit-32"
+        ]
+      },
+      "requiredEvidenceRefs": ["brief/32", "record/32"]
+    }
+  ],
+  "nonGoal": "Do not merge seasonal records or claim interface readiness from average traffic."
+}

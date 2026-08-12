@@ -1,0 +1,90 @@
+{
+  "release": "2026.8.12",
+  "caseId": "pcda-product-case-014",
+  "familyId": "pcda-product-family-014",
+  "domain": "product",
+  "operation": "recommend",
+  "difficulty": "complex",
+  "task": {
+    "instruction": "Recommend the analytical shape of a retention report used by leaders and one specialist diagnosing a recent decline.",
+    "deliverable": "A report recommendation, cohort-definition invariant, and cited evidence."
+  },
+  "sourceDigest": "sha256:98ad2bbd2c2644adff0a5f03ef6d607618a802a5b618d5bafb6ec4152090b50f",
+  "evidence": [
+    {
+      "ref": "audience-needs",
+      "content": "Synthetic requests span acquisition, activation, renewal, and support for six leaders; one analyst needs session-level activation depth.",
+      "digest": "sha256:06fab8212a4098778d59fb6cd4d71052f71851eecd03c8606cf5b63099e6558b"
+    },
+    {
+      "ref": "invariant-014",
+      "content": "A synthetic measurement dictionary defines cohort entry as first verified use; acquisition, setup, or invitation events cannot substitute for that verified-use boundary.",
+      "digest": "sha256:3054c1d8e5ab59e20d0bf38fcb154a3c3d6d1a5803130ca8b3612d1642c8ae95"
+    },
+    {
+      "ref": "signal-map",
+      "content": "All four stages moved modestly, but delayed first collaboration explains most variance in the newest cohort.",
+      "digest": "sha256:f5b690c24816b76b068fe95c2ee9e8d04bacd5ce96ab74c59e6abb3c231a4b92"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "breadth-depth-a",
+      "pairId": "breadth/depth",
+      "content": "When coverage is the limiting need, represent the important range of cases before adding detail to any one case.",
+      "digest": "sha256:647551f13672a2a474cddfdf775bab7400dd4e162ba93df0052323a12fd75f8c"
+    },
+    "B": {
+      "id": "breadth-depth-b",
+      "pairId": "breadth/depth",
+      "content": "When understanding is the limiting need, examine the pivotal case deeply before extending coverage.",
+      "digest": "sha256:657fea21964c8b6427724e121ceee29f6d7dcf7b3b67a61ef1b549bdfa13ab01"
+    },
+    "irrelevant": {
+      "id": "breadth-depth-irrelevant",
+      "pairId": "irrelevant-spacing",
+      "content": "Use consistent spacing between sections in the final artifact.",
+      "digest": "sha256:110d8f2f49d8a5ffffcec452bea51470b890f37d9a9cabb66bb9b19a7dd0cd20"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "product-014-sensitive",
+      "prompt": "What analytical shape should be recommended?",
+      "regionOptions": [
+        "cover all four lifecycle stages with comparable health indicators",
+        "center the report on a deep first-collaboration cohort analysis"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": [
+          "cover all four lifecycle stages with comparable health indicators",
+          "center the report on a deep first-collaboration cohort analysis"
+        ],
+        "T1-A": [
+          "cover all four lifecycle stages with comparable health indicators"
+        ],
+        "T1-B": [
+          "center the report on a deep first-collaboration cohort analysis"
+        ]
+      },
+      "requiredEvidenceRefs": ["audience-needs", "signal-map"]
+    },
+    {
+      "decisionId": "product-014-invariant",
+      "prompt": "Which definition must stay fixed?",
+      "regionOptions": [
+        "redefine cohort entry differently in each section",
+        "keep cohort entry tied to first verified use"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["keep cohort entry tied to first verified use"],
+        "T1-A": ["keep cohort entry tied to first verified use"],
+        "T1-B": ["keep cohort entry tied to first verified use"]
+      },
+      "requiredEvidenceRefs": ["invariant-014"]
+    }
+  ],
+  "nonGoal": "Do not vary cohort definitions to improve a chart."
+}

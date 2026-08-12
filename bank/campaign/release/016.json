@@ -1,0 +1,84 @@
+{
+  "release": "2026.8.12",
+  "caseId": "operations-a-plan-standard-26-case",
+  "familyId": "operations-a-plan-standard-26-family",
+  "domain": "operations",
+  "operation": "plan",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Plan a short maintenance window for a quiet process when one component has an intermittent warning and a second component must remain available.",
+    "deliverable": "A window plan with entry criteria, work order, rollback point, and communication owner."
+  },
+  "sourceDigest": "sha256:8afb2e04ff656eb62dba721ee5e1771b33d3abf6ee401932bc1db3857abbc98d",
+  "evidence": [
+    {
+      "ref": "brief/26",
+      "content": "The warning appears only after a long run, while the second component supports the fallback path and cannot be offline at the same time.",
+      "digest": "sha256:fac5fcffe98c72b3691202ec568a69e1c12a37c56ef0adb1da46092cbd6820d9"
+    },
+    {
+      "ref": "record/26",
+      "content": "The quiet period lasts ninety minutes, and the replacement part for the warning component has one compatible revision.",
+      "digest": "sha256:d873b15161990070594a31a1a8e033995749a28dbbeb80d8fc4c906ff9071c39"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "exploration-convergence-a",
+      "pairId": "exploration/convergence",
+      "content": "When uncertainty is material, preserve room to compare distinct hypotheses before narrowing the choice.",
+      "digest": "sha256:5ccc1c7766896675f653f27dbe36ae02279e2990a024670a9a360da35ae64e62"
+    },
+    "B": {
+      "id": "exploration-convergence-b",
+      "pairId": "exploration/convergence",
+      "content": "When evidence is sufficient, narrow the choice and direct effort toward one coherent course of action.",
+      "digest": "sha256:3037c8cf8ca432ea8ceee62297c071a1bfb70da59b1511606b322c832bb464db"
+    },
+    "irrelevant": {
+      "id": "exploration-convergence-irrelevant",
+      "pairId": "irrelevant/date-format",
+      "content": "Use one consistent date format throughout the deliverable.",
+      "digest": "sha256:e81068d824a8b4782b821782116e6ea6cdf489bd2fe2391a07d55b56c1a72b6f"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "operations-a-plan-standard-26-response",
+      "prompt": "Which response region should govern maintenance window after weighing the supplied evidence?",
+      "regionOptions": [
+        "hold-plan-26",
+        "plan-a-diagnostic-first-window-with-a-reversible-component-check-26",
+        "plan-a-controlled-replacement-after-verifying-the-compatible-revision-26",
+        "diagnose-first-and-stage-the-replacement-without-taking-the-fallback-offline-26"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["hold-plan-26"],
+        "T1-A": [
+          "plan-a-diagnostic-first-window-with-a-reversible-component-check-26"
+        ],
+        "T1-B": [
+          "plan-a-controlled-replacement-after-verifying-the-compatible-revision-26"
+        ]
+      },
+      "requiredEvidenceRefs": ["brief/26", "record/26"]
+    },
+    {
+      "decisionId": "operations-a-plan-standard-26-record",
+      "prompt": "Which evidence-recording rule must remain fixed while choosing the response for maintenance window?",
+      "regionOptions": [
+        "retain-entry-exit-rollback-and-communication-checkpoints-26",
+        "record-review-26"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["retain-entry-exit-rollback-and-communication-checkpoints-26"],
+        "T1-A": ["retain-entry-exit-rollback-and-communication-checkpoints-26"],
+        "T1-B": ["retain-entry-exit-rollback-and-communication-checkpoints-26"]
+      },
+      "requiredEvidenceRefs": ["brief/26", "record/26"]
+    }
+  ],
+  "nonGoal": "Do not replace the fallback component or extend the window without approval."
+}

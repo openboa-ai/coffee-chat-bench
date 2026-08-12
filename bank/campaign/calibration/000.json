@@ -1,0 +1,84 @@
+{
+  "release": "2026.8.12",
+  "caseId": "case-research-a02",
+  "familyId": "family-research-a02",
+  "domain": "research",
+  "operation": "prioritize",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Rank work on the archive reels. Treat the supplied records as the complete synthetic evidence set and make one selection for each declared decision.",
+    "deliverable": "A priority queue that names the first reel, the hold point, and both supporting records. Cite the named evidence references and do not list mutually incompatible selections."
+  },
+  "sourceDigest": "sha256:46d234d2f2c977d86da2907e26fdddcf3a5241c69e921767876af0c8fa7fee25",
+  "evidence": [
+    {
+      "ref": "constraint-a02",
+      "content": "The transcript fragments conflict with the box order; the preservation note forbids splicing before a listening log is completed.",
+      "digest": "sha256:1ad45df6a7e7dd34253b700bb15ec3ae2f094a1f8d09aa68898f4e399f34a091"
+    },
+    {
+      "ref": "observation-a02",
+      "content": "A synthetic oral-signal archive has three unlabeled reels: one has repeated weather phrases, one has clipped refrains, and one has a missing duration card.",
+      "digest": "sha256:f48fa43edd4e1716daf99ab700039c2274d8274435f6b3bfa6f2b9a6b62e9202"
+    },
+    {
+      "ref": "scope-a02",
+      "content": "This synthetic prioritize record for case-research-a02 is bounded to the named observation and constraint. A valid conclusion must distinguish them, cite both, and avoid an unstated factual claim.",
+      "digest": "sha256:e5d974aed3888de3fbcf46839a9f2cd83bdfd12e1813b81bb3d6bd1c39efa5fc"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "exploration-convergence-a",
+      "pairId": "exploration/convergence",
+      "content": "When uncertainty is material, preserve room to compare distinct hypotheses before narrowing the choice.",
+      "digest": "sha256:5ccc1c7766896675f653f27dbe36ae02279e2990a024670a9a360da35ae64e62"
+    },
+    "B": {
+      "id": "exploration-convergence-b",
+      "pairId": "exploration/convergence",
+      "content": "When evidence is sufficient, narrow the choice and direct effort toward one coherent course of action.",
+      "digest": "sha256:3037c8cf8ca432ea8ceee62297c071a1bfb70da59b1511606b322c832bb464db"
+    },
+    "irrelevant": {
+      "id": "exploration-convergence-irrelevant",
+      "pairId": "irrelevant/date-format",
+      "content": "Use one consistent date format throughout the deliverable.",
+      "digest": "sha256:e81068d824a8b4782b821782116e6ea6cdf489bd2fe2391a07d55b56c1a72b6f"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "research-a02-prioritize-judgment",
+      "prompt": "Choose exactly one prioritize judgment for case-research-a02; justify it from the observation and constraint records rather than listing alternatives.",
+      "regionOptions": [
+        "compare reel hypotheses in a listening log",
+        "run a staged reel comparison before selection",
+        "select one reel hypothesis"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["run a staged reel comparison before selection"],
+        "T1-A": ["compare reel hypotheses in a listening log"],
+        "T1-B": ["select one reel hypothesis"]
+      },
+      "requiredEvidenceRefs": ["observation-a02", "constraint-a02"]
+    },
+    {
+      "decisionId": "research-a02-evidence-scope",
+      "prompt": "Choose the evidence practice that keeps the prioritize conclusion for case-research-a02 within the supplied record boundary.",
+      "regionOptions": [
+        "replace the record bundle with an unstated conclusion for a02",
+        "cite the named record bundle for a02"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["cite the named record bundle for a02"],
+        "T1-A": ["cite the named record bundle for a02"],
+        "T1-B": ["cite the named record bundle for a02"]
+      },
+      "requiredEvidenceRefs": ["observation-a02", "constraint-a02", "scope-a02"]
+    }
+  ],
+  "nonGoal": "Do not identify any real language, performer, or collection. Do not replace the supplied record with an unstated factual conclusion."
+}

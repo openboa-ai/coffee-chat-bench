@@ -1,0 +1,90 @@
+{
+  "release": "2026.8.12",
+  "caseId": "pcda-product-case-012",
+  "familyId": "pcda-product-family-012",
+  "domain": "product",
+  "operation": "recommend",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Recommend a first-use pattern for an empty workspace where users want both quick structure and room for unusual projects.",
+    "deliverable": "A starter-pattern recommendation, ownership invariant, and evidence basis."
+  },
+  "sourceDigest": "sha256:e65ad97c42840f8f021061f73d5d6b60deb0a691861e9d4d4c874d0bae084d5a",
+  "evidence": [
+    {
+      "ref": "first-use-notes",
+      "content": "Synthetic notes show 12 of 20 users choose a standard starter; 8 reject it because their work has non-linear stages.",
+      "digest": "sha256:cc614ce4636747ec092262cf2d02c6b3854a9a0dbdb92f5ddfa96476eea57caa"
+    },
+    {
+      "ref": "invariant-012",
+      "content": "A synthetic workspace-governance requirement says every created workspace must visibly name its owner, whether it starts from a standard starter or a configurable map.",
+      "digest": "sha256:a7be6e10f4f9f64805ec21456dc3d3ec7fd204d1ab2ace9d7498ad3e7d2a18b2"
+    },
+    {
+      "ref": "prototype-results",
+      "content": "A configurable map helps the non-linear group but adds six choices before first content; the starter opens immediately.",
+      "digest": "sha256:64341fff09e256a69aabb27ebc64b3dce650eebf0a1d1ad9d0a482bb3b0493c4"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "novelty-precedent-a",
+      "pairId": "novelty/precedent",
+      "content": "When existing patterns do not fit the stated constraints, prefer a new approach whose risks can be tested explicitly.",
+      "digest": "sha256:6436d147872630cea3dc550a9447f6653055339ec9c7f90f790b2f65bd5e55e9"
+    },
+    "B": {
+      "id": "novelty-precedent-b",
+      "pairId": "novelty/precedent",
+      "content": "When a proven pattern fits the stated constraints, prefer its established behavior and known operational costs.",
+      "digest": "sha256:238b2216af2fd2cf56aa86a4921f78f42e1252280cbd073dc3685dd9b49940e8"
+    },
+    "irrelevant": {
+      "id": "novelty-precedent-irrelevant",
+      "pairId": "irrelevant/list-style",
+      "content": "Use parallel grammar for items in the final list.",
+      "digest": "sha256:f5d11a4db862bc9d896c1093f7db73f35900d5e92dda43b0d6340da8db5ab352"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "product-012-sensitive",
+      "prompt": "Which first-use pattern should be recommended?",
+      "regionOptions": [
+        "test a configurable workspace map with a skip-to-blank option",
+        "use the established starter template with later customization"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": [
+          "test a configurable workspace map with a skip-to-blank option",
+          "use the established starter template with later customization"
+        ],
+        "T1-A": [
+          "test a configurable workspace map with a skip-to-blank option"
+        ],
+        "T1-B": [
+          "use the established starter template with later customization"
+        ]
+      },
+      "requiredEvidenceRefs": ["first-use-notes", "prototype-results"]
+    },
+    {
+      "decisionId": "product-012-invariant",
+      "prompt": "What must remain explicit?",
+      "regionOptions": [
+        "create workspaces without an owner field",
+        "show who owns every created workspace"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["show who owns every created workspace"],
+        "T1-A": ["show who owns every created workspace"],
+        "T1-B": ["show who owns every created workspace"]
+      },
+      "requiredEvidenceRefs": ["invariant-012"]
+    }
+  ],
+  "nonGoal": "Do not create ownerless workspaces."
+}

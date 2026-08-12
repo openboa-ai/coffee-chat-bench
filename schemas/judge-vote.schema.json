@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openboa.ai/coffee-chat-bench/2026.8.12/schemas/judge-vote.schema.json",
+  "title": "PCDA judge vote",
+  "$comment": "Structural wire validation only. Use the exported runtime parser parseJudgeVote for authoritative semantic validation of the measured and judge_unavailable branches.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "release": { "const": "2026.8.12" },
+    "trialId": { "$ref": "#/$defs/trialId" },
+    "judgeId": { "$ref": "#/$defs/nonEmptyString" },
+    "requestedModelId": { "$ref": "#/$defs/nonEmptyString" },
+    "resolvedModelId": { "$ref": "#/$defs/nonEmptyString" },
+    "promptDigest": { "$ref": "#/$defs/digest" },
+    "responseDigest": { "$ref": "#/$defs/digest" },
+    "state": { "enum": ["measured", "judge_unavailable"] },
+    "dimensions": { "$ref": "#/$defs/dimensions" },
+    "reason": { "$ref": "#/$defs/nonEmptyString" },
+    "evidenceRefs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/nonEmptyString" }
+    }
+  },
+  "oneOf": [
+    {
+      "required": [
+        "release",
+        "trialId",
+        "judgeId",
+        "requestedModelId",
+        "resolvedModelId",
+        "promptDigest",
+        "responseDigest",
+        "state",
+        "dimensions",
+        "evidenceRefs"
+      ],
+      "properties": { "state": { "const": "measured" } },
+      "not": { "required": ["reason"] }
+    },
+    {
+      "required": [
+        "release",
+        "trialId",
+        "judgeId",
+        "requestedModelId",
+        "state",
+        "reason",
+        "evidenceRefs"
+      ],
+      "properties": { "state": { "const": "judge_unavailable" } },
+      "not": {
+        "anyOf": [
+          { "required": ["resolvedModelId"] },
+          { "required": ["promptDigest"] },
+          { "required": ["responseDigest"] },
+          { "required": ["dimensions"] }
+        ]
+      }
+    }
+  ],
+  "$defs": {
+    "nonEmptyString": { "type": "string", "minLength": 1 },
+    "trialId": {
+      "type": "string",
+      "pattern": "^trial-[0-9a-f]{64}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "dimensions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "taskAdequate",
+        "evidenceIntegrity",
+        "perspectiveAligned",
+        "invariantsPreserved",
+        "criticalFailure"
+      ],
+      "properties": {
+        "taskAdequate": { "type": "boolean" },
+        "evidenceIntegrity": { "type": "boolean" },
+        "perspectiveAligned": { "type": "boolean" },
+        "invariantsPreserved": { "type": "boolean" },
+        "criticalFailure": { "type": "boolean" }
+      }
+    }
+  }
+}

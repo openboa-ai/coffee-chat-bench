@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openboa.ai/coffee-chat-bench/2026.8.12/schemas/admission-record.schema.json",
+  "title": "PCDA prospective draft admission record",
+  "$comment": "Structural wire validation only. evaluateDraft and auditProspectiveBank are authoritative for named-check completeness, model-role provenance, admission coherence, campaign balance, and selection semantics. Records are supplied evidence and do not establish live model execution.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "release",
+    "draftId",
+    "partition",
+    "draft",
+    "provenance",
+    "checks",
+    "admitted",
+    "reasons"
+  ],
+  "properties": {
+    "release": { "const": "2026.8.12" },
+    "draftId": { "$ref": "#/$defs/nonEmptyString" },
+    "partition": {
+      "enum": ["development", "calibration", "release", "bridge"]
+    },
+    "draft": {
+      "$ref": "https://openboa.ai/coffee-chat-bench/2026.8.12/schemas/case.schema.json"
+    },
+    "provenance": { "$ref": "#/$defs/provenance" },
+    "checks": { "$ref": "#/$defs/checks" },
+    "admitted": { "type": "boolean" },
+    "reasons": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/nonEmptyString" }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": ["admitted"],
+        "properties": { "admitted": { "const": true } }
+      },
+      "then": {
+        "properties": { "reasons": { "type": "array", "maxItems": 0 } }
+      },
+      "else": {
+        "properties": { "reasons": { "type": "array", "minItems": 1 } }
+      }
+    }
+  ],
+  "$defs": {
+    "nonEmptyString": { "type": "string", "minLength": 1 },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorModelId",
+        "criticModelId",
+        "adversaryModelId",
+        "decisiveModelId"
+      ],
+      "properties": {
+        "authorModelId": { "$ref": "#/$defs/modelId" },
+        "criticModelId": { "$ref": "#/$defs/modelId" },
+        "adversaryModelId": { "$ref": "#/$defs/modelId" },
+        "decisiveModelId": { "$ref": "#/$defs/modelId" }
+      }
+    },
+    "modelId": {
+      "enum": ["gpt-5.6-sol", "gpt-5.6-terra", "gpt-5.6-luna"]
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["passed", "reason"],
+      "properties": {
+        "passed": { "type": "boolean" },
+        "reason": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "taskOnlyUnderdetermination",
+        "perspectiveOnlyInsufficiency",
+        "counterfactualShift",
+        "locality",
+        "irrelevantStability",
+        "paraphraseInvariance",
+        "antiEcho",
+        "rights",
+        "deterministicOraclePass",
+        "deterministicNoOpFailure",
+        "deterministicListAllFailure"
+      ],
+      "properties": {
+        "taskOnlyUnderdetermination": { "$ref": "#/$defs/check" },
+        "perspectiveOnlyInsufficiency": { "$ref": "#/$defs/check" },
+        "counterfactualShift": { "$ref": "#/$defs/check" },
+        "locality": { "$ref": "#/$defs/check" },
+        "irrelevantStability": { "$ref": "#/$defs/check" },
+        "paraphraseInvariance": { "$ref": "#/$defs/check" },
+        "antiEcho": { "$ref": "#/$defs/check" },
+        "rights": { "$ref": "#/$defs/check" },
+        "deterministicOraclePass": { "$ref": "#/$defs/check" },
+        "deterministicNoOpFailure": { "$ref": "#/$defs/check" },
+        "deterministicListAllFailure": { "$ref": "#/$defs/check" }
+      }
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "release": "2026.8.12",
+  "caseId": "case-bravo",
+  "familyId": "family-bravo",
+  "domain": "analysis",
+  "operation": "compare",
+  "difficulty": "hard",
+  "task": {
+    "instruction": "Choose one region for each decision.",
+    "deliverable": "Return the declared decision manifest."
+  },
+  "evidence": [
+    {
+      "ref": "source-bravo",
+      "content": "Synthetic evidence for bravo.",
+      "digest": "sha256:322ba59656f5e53bf4b8fe31e32443a766367fe29d616c07bfba22eb5ba86c3c"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "perspective-bravo-a",
+      "pairId": "perspective-pair-bravo",
+      "content": "Prefer direct treatment.",
+      "digest": "sha256:e4358b6d64a3dc70f7d14965c8745e94bc45782e9fc636c488315535148adbed"
+    },
+    "B": {
+      "id": "perspective-bravo-b",
+      "pairId": "perspective-pair-bravo",
+      "content": "Prefer contextual treatment.",
+      "digest": "sha256:c895eb71e2d05d74a1756c560c619dd4683af3fa93b055a2c202839c9bc7a6cd"
+    },
+    "irrelevant": {
+      "id": "perspective-bravo-irrelevant",
+      "pairId": "perspective-pair-bravo-irrelevant",
+      "content": "Prefer concise updates.",
+      "digest": "sha256:948c34c9cd4b2b9aae443163e82c227ec9e7ad28597057c032cab8eff51a173c"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "sensitive-bravo",
+      "prompt": "Which treatment should be used?",
+      "regionOptions": ["baseline", "tradeoff-a", "tradeoff-b"],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["baseline"],
+        "T1-A": ["tradeoff-a"],
+        "T1-B": ["tradeoff-b"]
+      },
+      "requiredEvidenceRefs": ["source-bravo"]
+    },
+    {
+      "decisionId": "invariant-bravo",
+      "prompt": "Which evidence bound should be preserved?",
+      "regionOptions": ["cite", "bounded", "omit"],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["bounded"],
+        "T1-A": ["bounded"],
+        "T1-B": ["bounded"]
+      },
+      "requiredEvidenceRefs": ["source-bravo"]
+    }
+  ],
+  "nonGoal": "Do not make a recommendation.",
+  "sourceDigest": "sha256:543ed9d49b661a4924ebe65179fc2f7581cba8e902dfca65b9cf509b4c630692"
+}

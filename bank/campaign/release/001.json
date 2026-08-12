@@ -1,0 +1,84 @@
+{
+  "release": "2026.8.12",
+  "caseId": "case-research-a04",
+  "familyId": "family-research-a04",
+  "domain": "research",
+  "operation": "prioritize",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Rank the map-processing work. Treat the supplied records as the complete synthetic evidence set and make one selection for each declared decision.",
+    "deliverable": "A ranked preservation plan that cites the notebook and comparison sheet. Cite the named evidence references and do not list mutually incompatible selections."
+  },
+  "sourceDigest": "sha256:a6779318bb71015206ba9abfe365b8f63a1ef3d657864ac5743dba407e7fc55f",
+  "evidence": [
+    {
+      "ref": "constraint-a04",
+      "content": "The lab notebook says the older ink flakes under repeated scanning, while the comparison sheet lists two symbol correspondences.",
+      "digest": "sha256:69b32af9aeca1afa5878a4ea036fbbbb2a7f1c5407bb40bac8eec540d885c2c6"
+    },
+    {
+      "ref": "observation-a04",
+      "content": "A charcoal-dust map series has four sheets whose contour symbols drift between editions; a recent draft legend does not fit the oldest sheet.",
+      "digest": "sha256:05c3857fca6e253182a6e88f70bb403dae67e6bd933b8c3489f47c5740d3e842"
+    },
+    {
+      "ref": "scope-a04",
+      "content": "This synthetic prioritize record for case-research-a04 is bounded to the named observation and constraint. A valid conclusion must distinguish them, cite both, and avoid an unstated factual claim.",
+      "digest": "sha256:3ca07d5d8e4174970c4c33a6ac2cc809b5bfd84251f7634d2ec0fadf6ffeb391"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "novelty-precedent-a",
+      "pairId": "novelty/precedent",
+      "content": "When existing patterns do not fit the stated constraints, prefer a new approach whose risks can be tested explicitly.",
+      "digest": "sha256:6436d147872630cea3dc550a9447f6653055339ec9c7f90f790b2f65bd5e55e9"
+    },
+    "B": {
+      "id": "novelty-precedent-b",
+      "pairId": "novelty/precedent",
+      "content": "When a proven pattern fits the stated constraints, prefer its established behavior and known operational costs.",
+      "digest": "sha256:238b2216af2fd2cf56aa86a4921f78f42e1252280cbd073dc3685dd9b49940e8"
+    },
+    "irrelevant": {
+      "id": "novelty-precedent-irrelevant",
+      "pairId": "irrelevant/list-style",
+      "content": "Use parallel grammar for items in the final list.",
+      "digest": "sha256:f5d11a4db862bc9d896c1093f7db73f35900d5e92dda43b0d6340da8db5ab352"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "research-a04-prioritize-judgment",
+      "prompt": "Choose exactly one prioritize judgment for case-research-a04; justify it from the observation and constraint records rather than listing alternatives.",
+      "regionOptions": [
+        "reuse the documented symbol correspondence",
+        "pair one gentle trial with the recorded correspondence",
+        "test a non-contact legend comparison"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["pair one gentle trial with the recorded correspondence"],
+        "T1-A": ["test a non-contact legend comparison"],
+        "T1-B": ["reuse the documented symbol correspondence"]
+      },
+      "requiredEvidenceRefs": ["observation-a04", "constraint-a04"]
+    },
+    {
+      "decisionId": "research-a04-evidence-scope",
+      "prompt": "Choose the evidence practice that keeps the prioritize conclusion for case-research-a04 within the supplied record boundary.",
+      "regionOptions": [
+        "replace the record bundle with an unstated conclusion for a04",
+        "cite the named record bundle for a04"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["cite the named record bundle for a04"],
+        "T1-A": ["cite the named record bundle for a04"],
+        "T1-B": ["cite the named record bundle for a04"]
+      },
+      "requiredEvidenceRefs": ["observation-a04", "constraint-a04", "scope-a04"]
+    }
+  ],
+  "nonGoal": "Do not recreate or publish the maps. Do not replace the supplied record with an unstated factual conclusion."
+}

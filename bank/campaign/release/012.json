@@ -1,0 +1,84 @@
+{
+  "release": "2026.8.12",
+  "caseId": "case-research-a32",
+  "familyId": "family-research-a32",
+  "domain": "research",
+  "operation": "plan",
+  "difficulty": "complex",
+  "task": {
+    "instruction": "Plan the index audit. Treat the supplied records as the complete synthetic evidence set and make one selection for each declared decision.",
+    "deliverable": "An audit plan with a fixed rule or exception method, evidence citations, and a review point. Cite the named evidence references and do not list mutually incompatible selections."
+  },
+  "sourceDigest": "sha256:855359a28e8a643407a79e44f392010f275619e7f205f0fa41764ca841ae5151",
+  "evidence": [
+    {
+      "ref": "constraint-a32",
+      "content": "The audit rule requires reproducible corrections, while the exception notes contain context that could change the card interpretation.",
+      "digest": "sha256:d88a6782ffd38da3ddfb4b567399e5488cb78b3a055d3926ea6e1b45bfe567fb"
+    },
+    {
+      "ref": "observation-a32",
+      "content": "A constructed manuscript index has recurring cross-reference errors and two unusual card layouts that do not fit the usual pattern.",
+      "digest": "sha256:cd41ba418c320229369f36b1ef764fb829e4d88427c50e02978e9fd8daff5854"
+    },
+    {
+      "ref": "scope-a32",
+      "content": "This synthetic plan record for case-research-a32 is bounded to the named observation and constraint. A valid conclusion must distinguish them, cite both, and avoid an unstated factual claim.",
+      "digest": "sha256:75e38e95ad2e6a70f7408c3d197bccafab3ca429521ec68ccf698fadcbda89c4"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "explicit-process-adaptive-judgment-a",
+      "pairId": "explicit-process/adaptive-judgment",
+      "content": "When repeatability and auditability dominate, make the decision sequence and required checks explicit.",
+      "digest": "sha256:b4bded11d21400f7ad3cc98e717f118ec9b63379360389d47e5ba21a1fbe3de6"
+    },
+    "B": {
+      "id": "explicit-process-adaptive-judgment-b",
+      "pairId": "explicit-process/adaptive-judgment",
+      "content": "When conditions vary in consequential ways, preserve bounded judgment to adapt the decision to observed context.",
+      "digest": "sha256:6eeabf1ff34371290287594380f15d489ec0d290acdcd99da63037da46edc5a2"
+    },
+    "irrelevant": {
+      "id": "explicit-process-adaptive-judgment-irrelevant",
+      "pairId": "irrelevant-heading-case",
+      "content": "Use one capitalization style for all section headings.",
+      "digest": "sha256:57a84abe5191b6a7276652249bbbf70644cc7bdb4e08786f74504bd0b1b69f0d"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "research-a32-plan-judgment",
+      "prompt": "Choose exactly one plan judgment for case-research-a32; justify it from the observation and constraint records rather than listing alternatives.",
+      "regionOptions": [
+        "correct cross-references with a fixed index checklist",
+        "use a checklist with card-specific exception criteria",
+        "review unusual cards through bounded exceptions"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["use a checklist with card-specific exception criteria"],
+        "T1-A": ["correct cross-references with a fixed index checklist"],
+        "T1-B": ["review unusual cards through bounded exceptions"]
+      },
+      "requiredEvidenceRefs": ["observation-a32", "constraint-a32"]
+    },
+    {
+      "decisionId": "research-a32-evidence-scope",
+      "prompt": "Choose the evidence practice that keeps the plan conclusion for case-research-a32 within the supplied record boundary.",
+      "regionOptions": [
+        "replace the record bundle with an unstated conclusion for a32",
+        "cite the named record bundle for a32"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["cite the named record bundle for a32"],
+        "T1-A": ["cite the named record bundle for a32"],
+        "T1-B": ["cite the named record bundle for a32"]
+      },
+      "requiredEvidenceRefs": ["observation-a32", "constraint-a32", "scope-a32"]
+    }
+  ],
+  "nonGoal": "Do not name real texts or archives. Do not replace the supplied record with an unstated factual conclusion."
+}

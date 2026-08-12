@@ -1,0 +1,84 @@
+{
+  "release": "2026.8.12",
+  "caseId": "case-research-a05",
+  "familyId": "family-research-a05",
+  "domain": "research",
+  "operation": "prioritize",
+  "difficulty": "complex",
+  "task": {
+    "instruction": "Prioritize the next conservation research actions. Treat the supplied records as the complete synthetic evidence set and make one selection for each declared decision.",
+    "deliverable": "A two-step triage note with delegated roles, evidence citations, and a stop condition. Cite the named evidence references and do not list mutually incompatible selections."
+  },
+  "sourceDigest": "sha256:bc536d9e978b11f990484bd7c6eb2f126775c9a4c21e30885a71d31262f8dfe9",
+  "evidence": [
+    {
+      "ref": "constraint-a05",
+      "content": "The condition cards show equal flake counts, but the alcove card includes a handling restriction and the wall card includes a visitor-route sketch.",
+      "digest": "sha256:a180257867af4b9ffcd76024466a20c0f12c26cd5293e89235cbf1d651a20ba3"
+    },
+    {
+      "ref": "observation-a05",
+      "content": "A simulated mural study has pigment flakes from a high-traffic wall and a sheltered alcove; the volunteer team can document only one area before humidity rises.",
+      "digest": "sha256:d11e5b79c81314a2310e8bb16bb77ea42447d83fd9023371ad87d123fe473cd0"
+    },
+    {
+      "ref": "scope-a05",
+      "content": "This synthetic prioritize record for case-research-a05 is bounded to the named observation and constraint. A valid conclusion must distinguish them, cite both, and avoid an unstated factual claim.",
+      "digest": "sha256:ba9c1e0c35264c0ba38dc29bce9bbbfc190563b065332df16f762e88dcee331c"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "agency-guidance-a",
+      "pairId": "agency/guidance",
+      "content": "When participants have the needed context, preserve their discretion over how to reach the declared outcome.",
+      "digest": "sha256:ef6cc6f2faa1894ac57c2104b7b0f1dbef2d458c34b4ad26d76e7919251cf7ba"
+    },
+    "B": {
+      "id": "agency-guidance-b",
+      "pairId": "agency/guidance",
+      "content": "When consistency or unfamiliarity matters, provide a clearer path and decision support toward the declared outcome.",
+      "digest": "sha256:449eda0750c29040a5956b187060a20b120aa2a5b7295b7850f4d4f87431d475"
+    },
+    "irrelevant": {
+      "id": "agency-guidance-irrelevant",
+      "pairId": "irrelevant/file-naming",
+      "content": "Use descriptive file names for any attached artifacts.",
+      "digest": "sha256:02154c47bb6e71f1a134ddb9fac149ea3c8bdd189bd4c33c3954a452759ed3f7"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "research-a05-prioritize-judgment",
+      "prompt": "Choose exactly one prioritize judgment for case-research-a05; justify it from the observation and constraint records rather than listing alternatives.",
+      "regionOptions": [
+        "allow choice within handling and route guardrails",
+        "let the team choose an area using the handling card",
+        "assign the alcove through a guided sequence"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["allow choice within handling and route guardrails"],
+        "T1-A": ["let the team choose an area using the handling card"],
+        "T1-B": ["assign the alcove through a guided sequence"]
+      },
+      "requiredEvidenceRefs": ["observation-a05", "constraint-a05"]
+    },
+    {
+      "decisionId": "research-a05-evidence-scope",
+      "prompt": "Choose the evidence practice that keeps the prioritize conclusion for case-research-a05 within the supplied record boundary.",
+      "regionOptions": [
+        "cite the named record bundle for a05",
+        "replace the record bundle with an unstated conclusion for a05"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["cite the named record bundle for a05"],
+        "T1-A": ["cite the named record bundle for a05"],
+        "T1-B": ["cite the named record bundle for a05"]
+      },
+      "requiredEvidenceRefs": ["observation-a05", "constraint-a05", "scope-a05"]
+    }
+  ],
+  "nonGoal": "Do not claim conservation treatment or historical provenance. Do not replace the supplied record with an unstated factual conclusion."
+}

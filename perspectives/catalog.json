@@ -1,0 +1,164 @@
+{
+  "release": "2026.8.12",
+  "rights": {
+    "license": "MIT",
+    "synthetic": true,
+    "public": true,
+    "noUniversalPreference": true,
+    "declaration": "All catalog text is synthetic public material authored for this repository. Each side is context-dependent; neither side is globally superior."
+  },
+  "pairs": [
+    {
+      "pairId": "speed/assurance",
+      "A": {
+        "id": "speed-assurance-a",
+        "name": "speed",
+        "content": "When the stated risks remain bounded, prefer shorter feedback loops and earlier delivery so evidence can arrive sooner."
+      },
+      "B": {
+        "id": "speed-assurance-b",
+        "name": "assurance",
+        "content": "When the stated risks warrant it, prefer stronger verification before commitment so preventable failures are less likely."
+      },
+      "irrelevant": {
+        "id": "speed-assurance-irrelevant",
+        "pairId": "irrelevant/scanability",
+        "content": "Prefer section headings that make the final artifact easy to scan."
+      },
+      "neitherSideUniversallySuperior": true
+    },
+    {
+      "pairId": "exploration/convergence",
+      "A": {
+        "id": "exploration-convergence-a",
+        "name": "exploration",
+        "content": "When uncertainty is material, preserve room to compare distinct hypotheses before narrowing the choice."
+      },
+      "B": {
+        "id": "exploration-convergence-b",
+        "name": "convergence",
+        "content": "When evidence is sufficient, narrow the choice and direct effort toward one coherent course of action."
+      },
+      "irrelevant": {
+        "id": "exploration-convergence-irrelevant",
+        "pairId": "irrelevant/date-format",
+        "content": "Use one consistent date format throughout the deliverable."
+      },
+      "neitherSideUniversallySuperior": true
+    },
+    {
+      "pairId": "local/systems",
+      "A": {
+        "id": "local-systems-a",
+        "name": "local",
+        "content": "Prefer a bounded intervention at the immediate decision point when wider changes are not required by the evidence."
+      },
+      "B": {
+        "id": "local-systems-b",
+        "name": "systems",
+        "content": "Prefer an intervention that accounts for connected incentives and downstream effects when the evidence shows they matter."
+      },
+      "irrelevant": {
+        "id": "local-systems-irrelevant",
+        "pairId": "irrelevant/title-length",
+        "content": "Keep the artifact title concise enough to fit on one line."
+      },
+      "neitherSideUniversallySuperior": true
+    },
+    {
+      "pairId": "novelty/precedent",
+      "A": {
+        "id": "novelty-precedent-a",
+        "name": "novelty",
+        "content": "When existing patterns do not fit the stated constraints, prefer a new approach whose risks can be tested explicitly."
+      },
+      "B": {
+        "id": "novelty-precedent-b",
+        "name": "precedent",
+        "content": "When a proven pattern fits the stated constraints, prefer its established behavior and known operational costs."
+      },
+      "irrelevant": {
+        "id": "novelty-precedent-irrelevant",
+        "pairId": "irrelevant/list-style",
+        "content": "Use parallel grammar for items in the final list."
+      },
+      "neitherSideUniversallySuperior": true
+    },
+    {
+      "pairId": "agency/guidance",
+      "A": {
+        "id": "agency-guidance-a",
+        "name": "agency",
+        "content": "When participants have the needed context, preserve their discretion over how to reach the declared outcome."
+      },
+      "B": {
+        "id": "agency-guidance-b",
+        "name": "guidance",
+        "content": "When consistency or unfamiliarity matters, provide a clearer path and decision support toward the declared outcome."
+      },
+      "irrelevant": {
+        "id": "agency-guidance-irrelevant",
+        "pairId": "irrelevant/file-naming",
+        "content": "Use descriptive file names for any attached artifacts."
+      },
+      "neitherSideUniversallySuperior": true
+    },
+    {
+      "pairId": "breadth/depth",
+      "A": {
+        "id": "breadth-depth-a",
+        "name": "breadth",
+        "content": "When coverage is the limiting need, represent the important range of cases before adding detail to any one case."
+      },
+      "B": {
+        "id": "breadth-depth-b",
+        "name": "depth",
+        "content": "When understanding is the limiting need, examine the pivotal case deeply before extending coverage."
+      },
+      "irrelevant": {
+        "id": "breadth-depth-irrelevant",
+        "pairId": "irrelevant-spacing",
+        "content": "Use consistent spacing between sections in the final artifact."
+      },
+      "neitherSideUniversallySuperior": true
+    },
+    {
+      "pairId": "reversible/committed",
+      "A": {
+        "id": "reversible-committed-a",
+        "name": "reversible",
+        "content": "When uncertainty remains, favor a choice that can be revised after new evidence without disproportionate cost."
+      },
+      "B": {
+        "id": "reversible-committed-b",
+        "name": "committed",
+        "content": "When coordination depends on certainty, favor a clear commitment with the resources needed to carry it through."
+      },
+      "irrelevant": {
+        "id": "reversible-committed-irrelevant",
+        "pairId": "irrelevant-summary-position",
+        "content": "Place the concise summary before the supporting detail."
+      },
+      "neitherSideUniversallySuperior": true
+    },
+    {
+      "pairId": "explicit-process/adaptive-judgment",
+      "A": {
+        "id": "explicit-process-adaptive-judgment-a",
+        "name": "explicit-process",
+        "content": "When repeatability and auditability dominate, make the decision sequence and required checks explicit."
+      },
+      "B": {
+        "id": "explicit-process-adaptive-judgment-b",
+        "name": "adaptive-judgment",
+        "content": "When conditions vary in consequential ways, preserve bounded judgment to adapt the decision to observed context."
+      },
+      "irrelevant": {
+        "id": "explicit-process-adaptive-judgment-irrelevant",
+        "pairId": "irrelevant-heading-case",
+        "content": "Use one capitalization style for all section headings."
+      },
+      "neitherSideUniversallySuperior": true
+    }
+  ]
+}

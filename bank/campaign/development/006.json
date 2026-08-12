@@ -1,0 +1,84 @@
+{
+  "release": "2026.8.12",
+  "caseId": "case-research-a28",
+  "familyId": "family-research-a28",
+  "domain": "research",
+  "operation": "plan",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Plan a materials comparison. Treat the supplied records as the complete synthetic evidence set and make one selection for each declared decision.",
+    "deliverable": "A comparison plan with a test or adoption path and cited constraints. Cite the named evidence references and do not list mutually incompatible selections."
+  },
+  "sourceDigest": "sha256:8d89f1992ed3fcc897a8849793984bbcd811a01a4e49c29bf0bb8682e7752a65",
+  "evidence": [
+    {
+      "ref": "constraint-a28",
+      "content": "The trial card records a controllable humidity setting, while the handbook documents cleanup costs for the familiar binder.",
+      "digest": "sha256:8e45a82fc9f6367f5e074998a37902b6bbaf56aa5d9e8f5654c7c14d45efc474"
+    },
+    {
+      "ref": "observation-a28",
+      "content": "A fictional ink lab needs to compare a stain-resistant binder with a familiar archival binder; the new binder dries unevenly in one trial.",
+      "digest": "sha256:169cb568b2de3165fbddb637211bbea881b8f8583f0c073ce943db9fc34df7e2"
+    },
+    {
+      "ref": "scope-a28",
+      "content": "This synthetic plan record for case-research-a28 is bounded to the named observation and constraint. A valid conclusion must distinguish them, cite both, and avoid an unstated factual claim.",
+      "digest": "sha256:106e64ad55a098ff6dd2948fa663df03d15ec253cefb8170976c21317eea243f"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "novelty-precedent-a",
+      "pairId": "novelty/precedent",
+      "content": "When existing patterns do not fit the stated constraints, prefer a new approach whose risks can be tested explicitly.",
+      "digest": "sha256:6436d147872630cea3dc550a9447f6653055339ec9c7f90f790b2f65bd5e55e9"
+    },
+    "B": {
+      "id": "novelty-precedent-b",
+      "pairId": "novelty/precedent",
+      "content": "When a proven pattern fits the stated constraints, prefer its established behavior and known operational costs.",
+      "digest": "sha256:238b2216af2fd2cf56aa86a4921f78f42e1252280cbd073dc3685dd9b49940e8"
+    },
+    "irrelevant": {
+      "id": "novelty-precedent-irrelevant",
+      "pairId": "irrelevant/list-style",
+      "content": "Use parallel grammar for items in the final list.",
+      "digest": "sha256:f5d11a4db862bc9d896c1093f7db73f35900d5e92dda43b0d6340da8db5ab352"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "research-a28-plan-judgment",
+      "prompt": "Choose exactly one plan judgment for case-research-a28; justify it from the observation and constraint records rather than listing alternatives.",
+      "regionOptions": [
+        "reuse the familiar archival binder",
+        "run a bounded binder comparison with cleanup notes",
+        "test the stain-resistant binder under humidity control"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["run a bounded binder comparison with cleanup notes"],
+        "T1-A": ["test the stain-resistant binder under humidity control"],
+        "T1-B": ["reuse the familiar archival binder"]
+      },
+      "requiredEvidenceRefs": ["observation-a28", "constraint-a28"]
+    },
+    {
+      "decisionId": "research-a28-evidence-scope",
+      "prompt": "Choose the evidence practice that keeps the plan conclusion for case-research-a28 within the supplied record boundary.",
+      "regionOptions": [
+        "replace the record bundle with an unstated conclusion for a28",
+        "cite the named record bundle for a28"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["cite the named record bundle for a28"],
+        "T1-A": ["cite the named record bundle for a28"],
+        "T1-B": ["cite the named record bundle for a28"]
+      },
+      "requiredEvidenceRefs": ["observation-a28", "constraint-a28", "scope-a28"]
+    }
+  ],
+  "nonGoal": "Do not identify brands or real materials suppliers. Do not replace the supplied record with an unstated factual conclusion."
+}

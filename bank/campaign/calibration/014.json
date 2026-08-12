@@ -1,0 +1,90 @@
+{
+  "release": "2026.8.12",
+  "caseId": "operations-a-recommend-standard-11-case",
+  "familyId": "operations-a-recommend-standard-11-family",
+  "domain": "operations",
+  "operation": "recommend",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Recommend a handoff channel for a small team when one unresolved exception needs context and routine status updates must remain searchable.",
+    "deliverable": "A channel recommendation with the exception path, record owner, and evidence-based tradeoff."
+  },
+  "sourceDigest": "sha256:eb88c9c7c512b1970144a889f01f6b1d5b416d2d181c393936a8be087c546845",
+  "evidence": [
+    {
+      "ref": "brief/11",
+      "content": "The handoff notes show one exception depends on a three-step diagnosis, while routine status fits in a structured daily record.",
+      "digest": "sha256:84ec7bda67d62246a2dce9ea2162e58de7e8ea06b540cd1dcac2e12c8840efb2"
+    },
+    {
+      "ref": "record/11",
+      "content": "The team has a shared board with weak narrative support and a quiet channel with strong context but poor indexing.",
+      "digest": "sha256:cc1d85116f9bc1e80f5d1a11a6eb9a46f2a49b6999b63ae923c048cdb8eff70e"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "local-systems-a",
+      "pairId": "local/systems",
+      "content": "Prefer a bounded intervention at the immediate decision point when wider changes are not required by the evidence.",
+      "digest": "sha256:9f1ab63dab599cfbd1e90d917f550d8a38c0ab908b103b85fb26ecca19be1831"
+    },
+    "B": {
+      "id": "local-systems-b",
+      "pairId": "local/systems",
+      "content": "Prefer an intervention that accounts for connected incentives and downstream effects when the evidence shows they matter.",
+      "digest": "sha256:0043d133ec80283c55d8d2d32b6a99d9758bfa5ea65b8c453bb38ab0c1056638"
+    },
+    "irrelevant": {
+      "id": "local-systems-irrelevant",
+      "pairId": "irrelevant/title-length",
+      "content": "Keep the artifact title concise enough to fit on one line.",
+      "digest": "sha256:0983700ec288937912c879a015b31619394fc1a58c4aed29100133720878528a"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "operations-a-recommend-standard-11-response",
+      "prompt": "Which response region should govern handoff channel after weighing the supplied evidence?",
+      "regionOptions": [
+        "hold-recommend-11",
+        "recommend-a-contextual-handoff-note-linked-from-the-shared-board-11",
+        "recommend-a-structured-board-update-with-a-short-exception-checkpoint-11",
+        "use-the-board-for-status-and-a-timed-note-for-the-exception-11"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["hold-recommend-11"],
+        "T1-A": [
+          "recommend-a-contextual-handoff-note-linked-from-the-shared-board-11"
+        ],
+        "T1-B": [
+          "recommend-a-structured-board-update-with-a-short-exception-checkpoint-11"
+        ]
+      },
+      "requiredEvidenceRefs": ["brief/11", "record/11"]
+    },
+    {
+      "decisionId": "operations-a-recommend-standard-11-record",
+      "prompt": "Which evidence-recording rule must remain fixed while choosing the response for handoff channel?",
+      "regionOptions": [
+        "retain-the-same-owner-timestamp-and-unresolved-state-fields-11",
+        "record-review-11"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": [
+          "retain-the-same-owner-timestamp-and-unresolved-state-fields-11"
+        ],
+        "T1-A": [
+          "retain-the-same-owner-timestamp-and-unresolved-state-fields-11"
+        ],
+        "T1-B": [
+          "retain-the-same-owner-timestamp-and-unresolved-state-fields-11"
+        ]
+      },
+      "requiredEvidenceRefs": ["brief/11", "record/11"]
+    }
+  ],
+  "nonGoal": "Do not treat an unacknowledged message as a completed handoff."
+}

@@ -1,0 +1,88 @@
+{
+  "release": "2026.8.12",
+  "caseId": "pcda-product-case-009",
+  "familyId": "pcda-product-family-009",
+  "domain": "product",
+  "operation": "recommend",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Recommend a launch posture for a typo-correction feature with strong offline relevance but an unmeasured live latency tail.",
+    "deliverable": "A recommendation naming rollout posture, latency guardrail, and evidence."
+  },
+  "sourceDigest": "sha256:9c60a2dab9463a6a02cb837613c8e10632f2121828e0ef0d8553b06297869182",
+  "evidence": [
+    {
+      "ref": "invariant-009",
+      "content": "A synthetic search-integrity rule states that an exact-match query is a user-specified literal and must never be rewritten, even when correction performance is otherwise favorable.",
+      "digest": "sha256:639761b7419441af86ef181e70afc14d55a7837c3aeac2e75893e0f7e7e8f850"
+    },
+    {
+      "ref": "latency-sample",
+      "content": "Median added latency is 18 ms in a lab sample; peak-hour tail latency has not been observed.",
+      "digest": "sha256:54ff3eb7b16e45dd5392d312a164155fc024fb7dbf3818a3e63b3e39318ea2d1"
+    },
+    {
+      "ref": "offline-eval",
+      "content": "A synthetic query set shows relevant corrections for 184 of 200 misspellings and 3 incorrect corrections.",
+      "digest": "sha256:81201218b2316559acb417e8c4d0726ae1d76f9357ccbb1ec0986fe1e964e600"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "speed-assurance-a",
+      "pairId": "speed/assurance",
+      "content": "When the stated risks remain bounded, prefer shorter feedback loops and earlier delivery so evidence can arrive sooner.",
+      "digest": "sha256:c5fde5a067e235619fcd84d828574403abf0809e43d0bcfcb26030af19568a98"
+    },
+    "B": {
+      "id": "speed-assurance-b",
+      "pairId": "speed/assurance",
+      "content": "When the stated risks warrant it, prefer stronger verification before commitment so preventable failures are less likely.",
+      "digest": "sha256:515649e0feb8d33f99549619db0795075fe36c7cd0d6d19592487e9d15bbebfb"
+    },
+    "irrelevant": {
+      "id": "speed-assurance-irrelevant",
+      "pairId": "irrelevant/scanability",
+      "content": "Prefer section headings that make the final artifact easy to scan.",
+      "digest": "sha256:ba3d0ca63a7016e52dd1ea72bcaeb455c6ef0b410b4f4eceb5c8558d973850a3"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "product-009-sensitive",
+      "prompt": "What launch posture should the recommendation choose?",
+      "regionOptions": [
+        "release to a monitored slice with an instant disable switch",
+        "keep correction in shadow mode until peak-hour tails are measured"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": [
+          "release to a monitored slice with an instant disable switch",
+          "keep correction in shadow mode until peak-hour tails are measured"
+        ],
+        "T1-A": ["release to a monitored slice with an instant disable switch"],
+        "T1-B": [
+          "keep correction in shadow mode until peak-hour tails are measured"
+        ]
+      },
+      "requiredEvidenceRefs": ["offline-eval", "latency-sample"]
+    },
+    {
+      "decisionId": "product-009-invariant",
+      "prompt": "Which behavior is non-negotiable?",
+      "regionOptions": [
+        "allow correction to replace exact matches",
+        "never rewrite an exact-match query"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["never rewrite an exact-match query"],
+        "T1-A": ["never rewrite an exact-match query"],
+        "T1-B": ["never rewrite an exact-match query"]
+      },
+      "requiredEvidenceRefs": ["invariant-009"]
+    }
+  ],
+  "nonGoal": "Do not alter exact-match queries."
+}

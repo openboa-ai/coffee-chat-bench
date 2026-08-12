@@ -1,0 +1,84 @@
+{
+  "release": "2026.8.12",
+  "caseId": "case-research-a01",
+  "familyId": "family-research-a01",
+  "domain": "research",
+  "operation": "prioritize",
+  "difficulty": "standard",
+  "task": {
+    "instruction": "Rank the next sampling actions for the aquifer queue. Treat the supplied records as the complete synthetic evidence set and make one selection for each declared decision.",
+    "deliverable": "A ranked action card with the first action, its rationale, and cited records. Cite the named evidence references and do not list mutually incompatible selections."
+  },
+  "sourceDigest": "sha256:6f8ba8738dbfdc1b79c6abfc04f4cc6bf6af699c565faf6d07d1591e593786f8",
+  "evidence": [
+    {
+      "ref": "constraint-a01",
+      "content": "The field log records a twelve-minute pump reset, while the custody sheet says both anomalous vials require a chain-of-custody note.",
+      "digest": "sha256:43a7ef027de66b29f2861c5721005fee083b68d9a3a99f4115564ad839f58fc3"
+    },
+    {
+      "ref": "observation-a01",
+      "content": "A clay-layer survey has six sealed vials and one pump window; the salinity anomaly is concentrated in two vials but their labels may have been swapped.",
+      "digest": "sha256:8299547f1c892a7e68f297f29422c101cf0193552026a7ca0373ccbc99bab9b4"
+    },
+    {
+      "ref": "scope-a01",
+      "content": "This synthetic prioritize record for case-research-a01 is bounded to the named observation and constraint. A valid conclusion must distinguish them, cite both, and avoid an unstated factual claim.",
+      "digest": "sha256:c7bff3de543f7f7668fc971910c478df192c7e7b6854825801adb18df00a76f8"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "speed-assurance-a",
+      "pairId": "speed/assurance",
+      "content": "When the stated risks remain bounded, prefer shorter feedback loops and earlier delivery so evidence can arrive sooner.",
+      "digest": "sha256:c5fde5a067e235619fcd84d828574403abf0809e43d0bcfcb26030af19568a98"
+    },
+    "B": {
+      "id": "speed-assurance-b",
+      "pairId": "speed/assurance",
+      "content": "When the stated risks warrant it, prefer stronger verification before commitment so preventable failures are less likely.",
+      "digest": "sha256:515649e0feb8d33f99549619db0795075fe36c7cd0d6d19592487e9d15bbebfb"
+    },
+    "irrelevant": {
+      "id": "speed-assurance-irrelevant",
+      "pairId": "irrelevant/scanability",
+      "content": "Prefer section headings that make the final artifact easy to scan.",
+      "digest": "sha256:ba3d0ca63a7016e52dd1ea72bcaeb455c6ef0b410b4f4eceb5c8558d973850a3"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "research-a01-prioritize-judgment",
+      "prompt": "Choose exactly one prioritize judgment for case-research-a01; justify it from the observation and constraint records rather than listing alternatives.",
+      "regionOptions": [
+        "complete the pump reset with custody notes",
+        "verify vial labels before the pump reset",
+        "stage the reset after recording custody"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": ["stage the reset after recording custody"],
+        "T1-A": ["complete the pump reset with custody notes"],
+        "T1-B": ["verify vial labels before the pump reset"]
+      },
+      "requiredEvidenceRefs": ["observation-a01", "constraint-a01"]
+    },
+    {
+      "decisionId": "research-a01-evidence-scope",
+      "prompt": "Choose the evidence practice that keeps the prioritize conclusion for case-research-a01 within the supplied record boundary.",
+      "regionOptions": [
+        "cite the named record bundle for a01",
+        "replace the record bundle with an unstated conclusion for a01"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": ["cite the named record bundle for a01"],
+        "T1-A": ["cite the named record bundle for a01"],
+        "T1-B": ["cite the named record bundle for a01"]
+      },
+      "requiredEvidenceRefs": ["observation-a01", "constraint-a01", "scope-a01"]
+    }
+  ],
+  "nonGoal": "Do not infer the aquifer's real-world location or composition. Do not replace the supplied record with an unstated factual conclusion."
+}

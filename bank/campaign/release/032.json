@@ -1,0 +1,92 @@
+{
+  "release": "2026.8.12",
+  "caseId": "pcda-product-case-022",
+  "familyId": "pcda-product-family-022",
+  "domain": "product",
+  "operation": "synthesize",
+  "difficulty": "complex",
+  "task": {
+    "instruction": "Synthesize evidence for a learning dashboard serving several programs while one high-risk program drives most support work.",
+    "deliverable": "An analytical synthesis, invariant denominator rule, and cited evidence."
+  },
+  "sourceDigest": "sha256:ccb1715a74715bd38c2c485da2cf72c15c468a47f51d0e8062a46568dafff9e1",
+  "evidence": [
+    {
+      "ref": "diagnostic-sample",
+      "content": "Across that advanced program, failures cluster at one simulation step, but two small programs lack any diagnostic detail.",
+      "digest": "sha256:bf250bf6fb5a52ebeba43df2e516bbd85345198dddcde460d0578910683898ef"
+    },
+    {
+      "ref": "invariant-022",
+      "content": "A synthetic completion-definition rule calculates completion only among enrolled participants who started; diagnostic depth cannot change that denominator.",
+      "digest": "sha256:3395da4a2334f87507d1dfbb8b11dc74650bbe68d2a3f28341c1301b380b6704"
+    },
+    {
+      "ref": "program-map",
+      "content": "Synthetic data cover seven programs with moderate completion differences; one advanced program generates 54% of support contacts.",
+      "digest": "sha256:354485b9441ef90788a2b58ec874ce0572525beca6a5269388ff81263649a337"
+    }
+  ],
+  "perspectives": {
+    "A": {
+      "id": "breadth-depth-a",
+      "pairId": "breadth/depth",
+      "content": "When coverage is the limiting need, represent the important range of cases before adding detail to any one case.",
+      "digest": "sha256:647551f13672a2a474cddfdf775bab7400dd4e162ba93df0052323a12fd75f8c"
+    },
+    "B": {
+      "id": "breadth-depth-b",
+      "pairId": "breadth/depth",
+      "content": "When understanding is the limiting need, examine the pivotal case deeply before extending coverage.",
+      "digest": "sha256:657fea21964c8b6427724e121ceee29f6d7dcf7b3b67a61ef1b549bdfa13ab01"
+    },
+    "irrelevant": {
+      "id": "breadth-depth-irrelevant",
+      "pairId": "irrelevant-spacing",
+      "content": "Use consistent spacing between sections in the final artifact.",
+      "digest": "sha256:110d8f2f49d8a5ffffcec452bea51470b890f37d9a9cabb66bb9b19a7dd0cd20"
+    }
+  },
+  "decisions": [
+    {
+      "decisionId": "product-022-sensitive",
+      "prompt": "What scope should the synthesis emphasize?",
+      "regionOptions": [
+        "analyze the advanced program's simulation step in depth",
+        "represent all seven programs before deepening any one"
+      ],
+      "partition": "sensitive",
+      "acceptedRegions": {
+        "T0": [
+          "represent all seven programs before deepening any one",
+          "analyze the advanced program's simulation step in depth"
+        ],
+        "T1-A": ["represent all seven programs before deepening any one"],
+        "T1-B": ["analyze the advanced program's simulation step in depth"]
+      },
+      "requiredEvidenceRefs": ["program-map", "diagnostic-sample"]
+    },
+    {
+      "decisionId": "product-022-invariant",
+      "prompt": "Which metric rule remains stable?",
+      "regionOptions": [
+        "calculate completion against enrolled-and-started participants",
+        "change denominators by program to smooth differences"
+      ],
+      "partition": "invariant",
+      "acceptedRegions": {
+        "T0": [
+          "calculate completion against enrolled-and-started participants"
+        ],
+        "T1-A": [
+          "calculate completion against enrolled-and-started participants"
+        ],
+        "T1-B": [
+          "calculate completion against enrolled-and-started participants"
+        ]
+      },
+      "requiredEvidenceRefs": ["invariant-022"]
+    }
+  ],
+  "nonGoal": "Do not alter denominators to improve comparability."
+}
