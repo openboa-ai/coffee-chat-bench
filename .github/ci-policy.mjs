@@ -815,14 +815,15 @@ const packageJson = JSON.parse(
 );
 if (
   packageJson.scripts?.["ci:policy"] !==
-  "node --test tests/workflow-policy.test.mjs && node .github/ci-policy.mjs"
+  "npm run policy:install && node --test tests/workflow-policy.test.mjs && node .github/ci-policy.mjs"
 ) {
   fail("package command must run fixtures before the checker");
 }
 const expectedPackageScripts = {
   "ci:policy":
-    "node --test tests/workflow-policy.test.mjs && node .github/ci-policy.mjs",
-  test: "node --experimental-strip-types --test tests/*.test.mjs tests/*.test.ts",
+    "npm run policy:install && node --test tests/workflow-policy.test.mjs && node .github/ci-policy.mjs",
+  "policy:install": "npm ci --ignore-scripts --prefix .github/policy-parser",
+  test: "npm run policy:install && node --experimental-strip-types --test tests/*.test.mjs tests/*.test.ts",
   typecheck: "tsc --noEmit",
   format:
     'prettier --write package.json package-lock.json tsconfig.json prettier.config.mjs docs/quality-map.md docs/validity/*.md perspectives/*.json "bank/**/*.json" schemas/*.json scripts/*.mjs src/*.ts tests/*.test.mjs tests/*.test.ts tests/fixtures/**/*.json tests/fixtures/projection/artifacts/echo.json tests/fixtures/projection/artifacts/judgment-access.json tests/fixtures/projection/artifacts/list-all.json tests/fixtures/projection/artifacts/no-op.json tests/fixtures/projection/artifacts/oracle.json',
