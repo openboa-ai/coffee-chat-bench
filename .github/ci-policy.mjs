@@ -257,16 +257,24 @@ function validateMergePolicy() {
   }
   if (
     !equal(policy.required_checks, [
-      { context: "Bench required", integration_id: 15368 },
-      { context: "Bench dependency review", integration_id: 15368 },
-      { context: "Secret boundary", integration_id: 15368 },
       {
-        context: "Bench CodeQL JavaScript-TypeScript",
+        context:
+          "OpenBoa Coffee trusted required / OpenBoa Coffee trusted required",
         integration_id: 15368,
       },
     ])
   ) {
     fail("merge policy must require exact GitHub Actions checks");
+  }
+  if (
+    !equal(policy.sensitive_review, {
+      enforcement: "github_environment",
+      environment: "coffee-security",
+      required_approvals: 1,
+      prevent_self_review: false,
+    })
+  ) {
+    fail("merge policy must retain the protected Environment review");
   }
   if (
     !equal(policy.protected_paths, [
