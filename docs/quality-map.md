@@ -113,3 +113,6 @@ These tests exercise no provider and record no benchmark measurement. The
 manual `judge` CLI is an experimental bounded entrypoint, not CI activation or
 a live result. The tests validate only the inactive repository's prospective
 execution and evidence contracts.
+
+Routine documentation-only pull requests use the approval-free lane;
+`coffee-security` remains reserved for policy evolution and protected paths.
