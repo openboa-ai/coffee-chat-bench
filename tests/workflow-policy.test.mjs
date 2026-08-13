@@ -177,6 +177,32 @@ test("rejects a weakened owner-member or Dependabot gate", async () => {
   );
 });
 
+test("rejects removing maintainer identity binding", async () => {
+  await expectRejected(
+    (fixture) =>
+      replace(
+        fixture,
+        ".github/workflows/quality.yml",
+        '    test "$ACTOR" = "$PR_AUTHOR_LOGIN"\n',
+        "",
+      ),
+    /OWNER\|MEMBER or Dependabot author gate/u,
+  );
+});
+
+test("rejects weakening trusted-boundary maintainer identity binding", async () => {
+  await expectRejected(
+    (fixture) =>
+      replace(
+        fixture,
+        ".github/workflows/secret-boundary.yml",
+        "github.actor == github.event.pull_request.user.login &&\n",
+        "",
+      ),
+    /trusted author boundary/u,
+  );
+});
+
 test("rejects a disabled author eligibility job", async () => {
   await expectRejected(
     (fixture) =>
@@ -318,16 +344,29 @@ test("rejects a failure-tolerant trusted secret scan", async () => {
 });
 
 for (const path of [
+  "/schemas/judge-campaign.schema.json",
+  "/src/bank.ts",
+  "/src/bounded-fs.ts",
   "/src/cli.ts",
+  "/src/contracts.ts",
+  "/src/digest.ts",
+  "/src/identity.ts",
   "/src/judge-campaign.ts",
   "/src/judge-config.ts",
   "/src/judge-panel.ts",
   "/src/judgment.ts",
+  "/src/projector.ts",
 ]) {
   test(`rejects removing sensitive judgment path ${path}`, async () => {
     await expectRejected(
-      (fixture) =>
-        replace(fixture, ".github/merge-policy.json", `    "${path}",\n`, ""),
+      async (fixture) => {
+        const policyPath = join(fixture, ".github/merge-policy.json");
+        const policy = JSON.parse(await readFile(policyPath, "utf8"));
+        policy.protected_paths = policy.protected_paths.filter(
+          (candidate) => candidate !== path,
+        );
+        await writeFile(policyPath, `${JSON.stringify(policy, null, 2)}\n`);
+      },
       /exact sensitive paths/u,
     );
   });
@@ -338,12 +377,19 @@ test("checked-in policy protects every judgment trust boundary", async () => {
     await readFile(join(repositoryRoot, ".github/merge-policy.json"), "utf8"),
   );
   for (const path of [
+    "/schemas/judge-campaign.schema.json",
+    "/src/bank.ts",
+    "/src/bounded-fs.ts",
     "/src/cli.ts",
+    "/src/contracts.ts",
+    "/src/digest.ts",
+    "/src/identity.ts",
     "/src/judge-campaign.ts",
     "/src/judge-config.ts",
     "/src/judge-panel.ts",
     "/src/judgment.ts",
     "/src/openai-judge.ts",
+    "/src/projector.ts",
   ]) {
     assert.ok(policy.protected_paths.includes(path), path);
   }
@@ -372,5 +418,18 @@ test("rejects weakening the package policy command", async () => {
         "node .github/ci-policy.mjs",
       ),
     /package command/u,
+  );
+});
+
+test("rejects weakening a required package script", async () => {
+  await expectRejected(
+    (fixture) =>
+      replace(
+        fixture,
+        "package.json",
+        '"test": "node --experimental-strip-types --test tests/*.test.mjs tests/*.test.ts"',
+        '"test": "true"',
+      ),
+    /package scripts/u,
   );
 });

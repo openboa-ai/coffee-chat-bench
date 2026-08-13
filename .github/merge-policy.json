@@ -26,11 +26,18 @@
     "/SECURITY.md",
     "/config/judges/**",
     "/harbor/**",
+    "/schemas/judge-campaign.schema.json",
+    "/src/bank.ts",
+    "/src/bounded-fs.ts",
     "/src/cli.ts",
+    "/src/contracts.ts",
+    "/src/digest.ts",
+    "/src/identity.ts",
     "/src/judge-campaign.ts",
     "/src/judge-config.ts",
     "/src/judge-panel.ts",
     "/src/judgment.ts",
-    "/src/openai-judge.ts"
+    "/src/openai-judge.ts",
+    "/src/projector.ts"
   ]
 }

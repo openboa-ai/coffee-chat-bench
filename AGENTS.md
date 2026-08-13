@@ -30,9 +30,11 @@ Chat. Its current repository status is `not_active`.
   `npm run ci:policy`.
 - Mark whether the pull request changes a sensitive path: repository or
   workflow policy, `AGENTS.md`, `CODEOWNERS`, `SECURITY.md`, judge
-  configuration, `src/openai-judge.ts`, or `harbor/**`. The external ruleset
-  decides whether human review is required for those paths; ordinary changes
-  remain eligible for required-CI native auto-merge.
+  configuration or schema, external execution, resource bounds, canonical
+  digests, sealed judgment, projection, or `harbor/**`. The exact list lives in
+  `.github/merge-policy.json`; the external ruleset decides whether human review
+  is required for those paths. Ordinary changes remain eligible for
+  required-CI native auto-merge.
 - Do not create custom write-token merge automation or bypass the external
   ruleset's review decision.
 - Routine Dependabot pull requests may use the same required-CI auto-merge

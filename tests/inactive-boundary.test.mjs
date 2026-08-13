@@ -432,8 +432,36 @@ test("ignores Python dynamic-import text in comments and ordinary strings", () =
 
 test("enforces exact member and Dependabot author eligibility", () => {
   const scenarios = [
-    ["owner", { event: "pull_request", association: "OWNER" }, true],
-    ["member", { event: "pull_request", association: "MEMBER" }, true],
+    [
+      "owner",
+      { event: "pull_request", association: "OWNER", login: "owner" },
+      true,
+    ],
+    [
+      "member",
+      { event: "pull_request", association: "MEMBER", login: "member" },
+      true,
+    ],
+    [
+      "different actor updating owner PR",
+      {
+        event: "pull_request",
+        association: "OWNER",
+        login: "owner",
+        actor: "different-maintainer",
+      },
+      false,
+    ],
+    [
+      "owner fork",
+      {
+        event: "pull_request",
+        association: "OWNER",
+        login: "owner",
+        headRepository: "owner/coffee-chat-bench",
+      },
+      false,
+    ],
     [
       "collaborator",
       { event: "pull_request", association: "COLLABORATOR" },

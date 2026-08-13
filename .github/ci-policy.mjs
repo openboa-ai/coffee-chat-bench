@@ -32,10 +32,17 @@ const requiredCommands = [
 ];
 const eligibilityGate = `case "$EVENT_NAME" in
   pull_request)
-    case "$AUTHOR_ASSOCIATION" in OWNER|MEMBER) exit 0 ;; esac
-    test "$ACTOR" = 'dependabot[bot]'
-    test "$PR_AUTHOR_LOGIN" = 'dependabot[bot]'
-    test "$HEAD_REPOSITORY" = "$BASE_REPOSITORY"
+    case "$AUTHOR_ASSOCIATION" in
+      OWNER|MEMBER)
+        test "$ACTOR" = "$PR_AUTHOR_LOGIN"
+        test "$HEAD_REPOSITORY" = "$BASE_REPOSITORY"
+        ;;
+      *)
+        test "$ACTOR" = 'dependabot[bot]'
+        test "$PR_AUTHOR_LOGIN" = 'dependabot[bot]'
+        test "$HEAD_REPOSITORY" = "$BASE_REPOSITORY"
+        ;;
+    esac
     ;;
   *) exit 1 ;;
 esac
@@ -437,7 +444,7 @@ function validateSecretBoundary(workflow) {
     boundary["runs-on"] !== "ubuntu-24.04" ||
     boundary["timeout-minutes"] !== 15 ||
     boundary.if !==
-      "github.event_name == 'workflow_dispatch' || github.event.pull_request.author_association == 'OWNER' || github.event.pull_request.author_association == 'MEMBER' || (github.actor == 'dependabot[bot]' && github.event.pull_request.user.login == 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository)"
+      "github.event_name == 'workflow_dispatch' || (((github.event.pull_request.author_association == 'OWNER' || github.event.pull_request.author_association == 'MEMBER') && github.actor == github.event.pull_request.user.login && github.event.pull_request.head.repo.full_name == github.repository) || (github.actor == 'dependabot[bot]' && github.event.pull_request.user.login == 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository))"
   ) {
     fail("secret-boundary.yml: trusted author boundary");
   }
@@ -618,12 +625,19 @@ function validateMergePolicy() {
       "/SECURITY.md",
       "/config/judges/**",
       "/harbor/**",
+      "/schemas/judge-campaign.schema.json",
+      "/src/bank.ts",
+      "/src/bounded-fs.ts",
       "/src/cli.ts",
+      "/src/contracts.ts",
+      "/src/digest.ts",
+      "/src/identity.ts",
       "/src/judge-campaign.ts",
       "/src/judge-config.ts",
       "/src/judge-panel.ts",
       "/src/judgment.ts",
       "/src/openai-judge.ts",
+      "/src/projector.ts",
     ])
   ) {
     fail("merge policy must preserve exact sensitive paths");
@@ -667,6 +681,29 @@ if (
   "node --test tests/workflow-policy.test.mjs && node .github/ci-policy.mjs"
 ) {
   fail("package command must run fixtures before the checker");
+}
+const expectedPackageScripts = {
+  "ci:policy":
+    "node --test tests/workflow-policy.test.mjs && node .github/ci-policy.mjs",
+  test: "node --experimental-strip-types --test tests/*.test.mjs tests/*.test.ts",
+  typecheck: "tsc --noEmit",
+  format:
+    'prettier --write package.json package-lock.json tsconfig.json prettier.config.mjs docs/quality-map.md docs/validity/*.md perspectives/*.json "bank/**/*.json" schemas/*.json scripts/*.mjs src/*.ts tests/*.test.mjs tests/*.test.ts tests/fixtures/**/*.json tests/fixtures/projection/artifacts/echo.json tests/fixtures/projection/artifacts/judgment-access.json tests/fixtures/projection/artifacts/list-all.json tests/fixtures/projection/artifacts/no-op.json tests/fixtures/projection/artifacts/oracle.json',
+  "format:check":
+    'prettier --check package.json package-lock.json tsconfig.json prettier.config.mjs docs/quality-map.md docs/validity/*.md perspectives/*.json "bank/**/*.json" schemas/*.json scripts/*.mjs src/*.ts tests/*.test.mjs tests/*.test.ts tests/fixtures/**/*.json tests/fixtures/projection/artifacts/echo.json tests/fixtures/projection/artifacts/judgment-access.json tests/fixtures/projection/artifacts/list-all.json tests/fixtures/projection/artifacts/no-op.json tests/fixtures/projection/artifacts/oracle.json',
+  "check:inactive": "node scripts/check-inactive-boundary.mjs --root .",
+};
+if (
+  !equal(
+    Object.entries(packageJson.scripts ?? {}).sort(([left], [right]) =>
+      left.localeCompare(right),
+    ),
+    Object.entries(expectedPackageScripts).sort(([left], [right]) =>
+      left.localeCompare(right),
+    ),
+  )
+) {
+  fail("package scripts must remain exact");
 }
 validateDependabot();
 validateMergePolicy();
