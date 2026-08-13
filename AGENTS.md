@@ -43,6 +43,9 @@ Chat. Its current repository status is `not_active`.
   `.github/policy-parser` and runs structural policy before installing root
   dependencies. Treat its manifest, lockfile, checker, and workflow ordering as
   one sensitive bootstrap boundary.
+- After a clean checkout, run `npm ci --ignore-scripts` for root dependencies;
+  `npm test` and `npm run ci:policy` install the isolated parser through the
+  exact `policy:install` command before loading the checker or fixtures.
 - Root dependency updates stay on the GitHub-native path only when package
   names, exact versions, npm registry tarball identities, and sha512 lockfile
   integrities pass that protected policy.
