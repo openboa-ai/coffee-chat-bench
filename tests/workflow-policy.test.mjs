@@ -6,6 +6,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { promisify } from "node:util";
+import { parse } from "yaml";
 
 const execFileAsync = promisify(execFile);
 const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
@@ -62,6 +63,24 @@ async function expectRejected(mutate, message) {
 test("accepts the checked-in workflow policy", async () => {
   const result = await runChecker(repositoryRoot);
   assert.equal(result.status, 0, result.output);
+});
+
+test("runs structural policy directly before delegated package scripts", async () => {
+  const workflow = parse(
+    await readFile(
+      join(repositoryRoot, ".github/workflows/quality.yml"),
+      "utf8",
+    ),
+  );
+  const runs = workflow.jobs.quality.steps
+    .map((step) => step.run)
+    .filter((run) => typeof run === "string");
+  const installIndex = runs.indexOf("npm ci --ignore-scripts");
+  const policyIndex = runs.indexOf("node .github/ci-policy.mjs");
+  const delegatedIndex = runs.findIndex((run) => run.startsWith("npm run "));
+
+  assert.equal(policyIndex, installIndex + 1);
+  assert.ok(policyIndex < delegatedIndex);
 });
 
 test("rejects duplicate YAML mapping keys", async () => {
@@ -287,6 +306,19 @@ test("rejects removal or relocation of the quality policy step", async () => {
       "jobs:\n  auxiliary:\n    runs-on: ubuntu-24.04\n    timeout-minutes: 15\n    permissions:\n      contents: read\n    steps:\n      - run: npm run ci:policy\n\n",
     );
   }, /exact fail-closed candidate quality steps/u);
+});
+
+test("rejects removal of the direct pre-delegation policy gate", async () => {
+  await expectRejected(
+    (fixture) =>
+      replace(
+        fixture,
+        ".github/workflows/quality.yml",
+        "      - name: Enforce repository policy before delegated scripts\n        run: node .github/ci-policy.mjs\n",
+        "",
+      ),
+    /exact fail-closed candidate quality steps/u,
+  );
 });
 
 test("rejects required CI live-model execution", async () => {
