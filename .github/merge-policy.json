@@ -24,6 +24,8 @@
     "/AGENTS.md",
     "/CODEOWNERS",
     "/SECURITY.md",
+    "/.npmrc",
+    "/npm-shrinkwrap.json",
     "/config/judges/**",
     "/harbor/**",
     "/scripts/check-inactive-boundary.mjs",
