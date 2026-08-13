@@ -1,7 +1,8 @@
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
-import { lstatSync, readFileSync, readdirSync } from "node:fs";
+import { lstatSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 
+import { readDirectoryEntries, readUtf8File } from "./bounded-fs.ts";
 import {
   RELEASE_ID,
   parseDecisionManifest,
@@ -469,17 +470,7 @@ function fileUnder(root: string, file: string, label: string): string {
 }
 
 function readUtf8(path: string, label: string, maxBytes: number): string {
-  const metadata = lstatSync(path);
-  if (metadata.size > maxBytes) {
-    throw new TypeError(`${label} exceeds ${maxBytes} byte limit`);
-  }
-  try {
-    return new TextDecoder("utf-8", { fatal: true }).decode(readFileSync(path));
-  } catch (error) {
-    throw new TypeError(
-      `${label} must be valid UTF-8: ${error instanceof Error ? error.message : String(error)}`,
-    );
-  }
+  return readUtf8File(path, label, maxBytes);
 }
 
 function assertJsonBudget(value: unknown, label: string): void {
@@ -537,22 +528,24 @@ function fileDigest(root: string, files: readonly string[]): Digest {
 function exactEntries(root: string, expected: readonly string[]): void {
   noSymlinkAncestors(root);
   const seen: string[] = [];
-  const walk = (directory: string, prefix = "") => {
-    for (const entry of readdirSync(directory, { withFileTypes: true })) {
-      const file = prefix ? `${prefix}/${entry.name}` : entry.name;
-      const path = join(directory, entry.name);
-      if (entry.isSymbolicLink()) {
-        throw new TypeError(
-          `symlinked projection entry is not allowed: ${file}`,
-        );
-      }
-      if (entry.isDirectory()) walk(path, file);
-      else if (entry.isFile()) seen.push(file);
-      else
-        throw new TypeError(`projection entry must be a regular file: ${file}`);
+  for (const entry of readDirectoryEntries(root)) {
+    if (seen.length >= expected.length) {
+      throw new TypeError(
+        `candidate projection exceeds ${expected.length} entry limit`,
+      );
     }
-  };
-  walk(root);
+    if (entry.isSymbolicLink()) {
+      throw new TypeError(
+        `symlinked projection entry is not allowed: ${entry.name}`,
+      );
+    }
+    if (!entry.isFile()) {
+      throw new TypeError(
+        `projection entry must be a regular file: ${entry.name}`,
+      );
+    }
+    seen.push(entry.name);
+  }
   seen.sort();
   const sortedExpected = [...expected].sort();
   if (

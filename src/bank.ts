@@ -1,7 +1,8 @@
-import { lstatSync, readdirSync, readFileSync, realpathSync } from "node:fs";
+import { lstatSync, realpathSync } from "node:fs";
 import type { Dirent, Stats } from "node:fs";
 import { isAbsolute, relative, resolve, sep } from "node:path";
 
+import { readDirectoryEntries, readUtf8File } from "./bounded-fs.ts";
 import {
   CONDITION_LABELS,
   parseCaseBundle,
@@ -14,7 +15,6 @@ const MAX_BANK_FILE_BYTES = 256 * 1024;
 const MAX_BANK_AGGREGATE_BYTES = 4 * 1024 * 1024;
 const MAX_BANK_DEPTH = 8;
 const MAX_BANK_ENTRIES = 512;
-const utf8 = new TextDecoder("utf-8", { fatal: true });
 
 export interface BankFileReport {
   readonly file: string;
@@ -37,17 +37,19 @@ interface DiscoveredFile {
 
 export interface BankFileSystem {
   readonly lstat: (path: string) => Stats;
-  readonly readDirectory: (path: string) => Dirent[];
-  readonly readFile: (path: string) => string;
+  readonly readDirectory: (path: string) => Iterable<Dirent>;
+  readonly readFile: (path: string, maxBytes: number) => string;
   readonly realpath: (path: string) => string;
 }
 
 const nodeFileSystem: BankFileSystem = {
   lstat: lstatSync,
-  readDirectory: (path) => readdirSync(path, { withFileTypes: true }),
-  readFile: (path) => utf8.decode(readFileSync(path)),
+  readDirectory: readDirectoryEntries,
+  readFile: (path, maxBytes) => readUtf8File(path, "bank file", maxBytes),
   realpath: realpathSync,
 };
+
+class BankEntryLimitError extends Error {}
 
 function asErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
@@ -96,12 +98,19 @@ function readCaseFiles(
     if (depth > MAX_BANK_DEPTH) {
       throw new Error(`bank depth exceeds ${MAX_BANK_DEPTH} entry limit`);
     }
-    let entries: Dirent[];
+    const entries: Dirent[] = [];
     try {
-      entries = fileSystem
-        .readDirectory(directory)
-        .sort((left, right) => comparePaths(left.name, right.name));
+      for (const entry of fileSystem.readDirectory(directory)) {
+        entriesSeen += 1;
+        if (entriesSeen > MAX_BANK_ENTRIES) {
+          throw new BankEntryLimitError(
+            `bank exceeds ${MAX_BANK_ENTRIES} entry limit`,
+          );
+        }
+        entries.push(entry);
+      }
     } catch (error) {
+      if (error instanceof BankEntryLimitError) throw error;
       discovered.push(
         invalidFile(
           directory === root ? "." : relativeFile(root, directory),
@@ -110,11 +119,8 @@ function readCaseFiles(
       );
       return;
     }
+    entries.sort((left, right) => comparePaths(left.name, right.name));
     for (const entry of entries) {
-      entriesSeen += 1;
-      if (entriesSeen > MAX_BANK_ENTRIES) {
-        throw new Error(`bank exceeds ${MAX_BANK_ENTRIES} entry limit`);
-      }
       const path = resolve(directory, entry.name);
       const file = relativeFile(root, path);
       let stat: Stats;
@@ -173,21 +179,32 @@ function readCaseFiles(
         );
         continue;
       }
-      aggregateBytes += stat.size;
-      if (aggregateBytes > MAX_BANK_AGGREGATE_BYTES) {
-        throw new Error(
-          `bank aggregate exceeds ${MAX_BANK_AGGREGATE_BYTES} byte limit`,
-        );
-      }
-
       let source: string | undefined;
       let caseBundle: CaseBundle | undefined;
       const errors: string[] = [];
       try {
-        source = fileSystem.readFile(resolvedPath);
-        caseBundle = parseCaseBundle(JSON.parse(source));
+        source = fileSystem.readFile(resolvedPath, MAX_BANK_FILE_BYTES);
       } catch (error) {
         errors.push(asErrorMessage(error));
+      }
+      if (source !== undefined) {
+        const sourceBytes = Buffer.byteLength(source, "utf8");
+        if (sourceBytes > MAX_BANK_FILE_BYTES) {
+          errors.push(`bank file exceeds ${MAX_BANK_FILE_BYTES} byte limit`);
+          source = undefined;
+        } else {
+          aggregateBytes += sourceBytes;
+          if (aggregateBytes > MAX_BANK_AGGREGATE_BYTES) {
+            throw new Error(
+              `bank aggregate exceeds ${MAX_BANK_AGGREGATE_BYTES} byte limit`,
+            );
+          }
+          try {
+            caseBundle = parseCaseBundle(JSON.parse(source));
+          } catch (error) {
+            errors.push(asErrorMessage(error));
+          }
+        }
       }
       discovered.push({ file, source, caseBundle, errors });
     }

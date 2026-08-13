@@ -12,6 +12,7 @@ import {
   symlinkSync,
   writeFileSync,
 } from "node:fs";
+import type { Dirent } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import test from "node:test";
@@ -92,6 +93,62 @@ test("rejects an otherwise-valid case file beyond the bank depth budget", () => 
 
     assert.equal(report.state, "invalid");
     assert.match(report.files[0]?.errors[0] ?? "", /depth.*limit/i);
+  });
+});
+
+test("stops lazy directory enumeration at the global bank entry budget", () => {
+  withBank((root) => {
+    let entriesYielded = 0;
+    const fileSystem: BankFileSystem = {
+      lstat: lstatSync,
+      readDirectory() {
+        return (function* (): Iterable<Dirent> {
+          for (let index = 0; index < 513; index += 1) {
+            entriesYielded += 1;
+            yield {
+              name: `${String(index).padStart(3, "0")}.json`,
+              isBlockDevice: () => false,
+              isCharacterDevice: () => false,
+              isDirectory: () => false,
+              isFIFO: () => false,
+              isFile: () => true,
+              isSocket: () => false,
+              isSymbolicLink: () => false,
+              parentPath: root,
+              path: root,
+            } as Dirent;
+          }
+          throw new Error("enumeration continued beyond the entry budget");
+        })();
+      },
+      readFile: () => {
+        throw new Error("entry metadata must not be read after budget failure");
+      },
+      realpath: realpathSync,
+    };
+
+    const report = validateBank(root, fileSystem);
+
+    assert.equal(entriesYielded, 513);
+    assert.match(report.files[0]?.errors[0] ?? "", /exceeds 512 entry limit/i);
+  });
+});
+
+test("rejects content that grows beyond the file budget after metadata", () => {
+  withBank((root) => {
+    copyFixture(root, "valid/alpha.json", "alpha.json");
+    const valid = readFileSync(join(root, "alpha.json"), "utf8");
+    const fileSystem: BankFileSystem = {
+      lstat: lstatSync,
+      readDirectory: (path) => readdirSync(path, { withFileTypes: true }),
+      readFile: () => `${" ".repeat(300 * 1024)}${valid}`,
+      realpath: realpathSync,
+    };
+
+    const report = validateBank(root, fileSystem);
+
+    assert.equal(report.state, "invalid");
+    assert.match(report.files[0]?.errors[0] ?? "", /exceeds.*byte limit/i);
   });
 });
 

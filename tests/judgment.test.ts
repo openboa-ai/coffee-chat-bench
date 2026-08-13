@@ -255,6 +255,32 @@ test("rejects oversized artifacts before model calls and Harbor parsing", async 
   });
 });
 
+test("stops candidate projection enumeration at the declared file budget", async () => {
+  await withProjection(async (root, projection) => {
+    const oracle = artifact(root, projection, "oracle");
+    const signedAttestation = attestation(root, projection, oracle);
+    writeFileSync(join(projection, "candidate", "unexpected.json"), "{}\n");
+    let calls = 0;
+
+    await assert.rejects(
+      judgeProjection({
+        projectionRoot: projection,
+        artifactPath: oracle,
+        attestationPath: signedAttestation,
+        capabilityKey,
+        transport: {
+          async request() {
+            calls += 1;
+            throw new Error("provider must not run");
+          },
+        },
+      }),
+      /candidate projection exceeds 4 entry limit/i,
+    );
+    assert.equal(calls, 0);
+  });
+});
+
 test("rejects an oversized artifact response before model calls", async () => {
   await withProjection(async (root, projection) => {
     const oracle = artifact(root, projection, "oracle");
