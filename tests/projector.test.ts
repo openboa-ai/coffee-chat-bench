@@ -10,6 +10,7 @@ import {
   readdirSync,
   rmSync,
   statSync,
+  symlinkSync,
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
@@ -929,6 +930,94 @@ test("project CLI JSON is stable", () => {
     ]);
     assert.equal(first.status, 0, first.stderr);
     assert.equal(first.stdout, second.stdout);
+  });
+});
+
+test("project rejects a symlinked destination without changing its target", () => {
+  withTemporaryDirectory((root) => {
+    const target = join(root, "target");
+    const destination = join(root, "projection");
+    mkdirSync(target);
+    writeFileSync(join(target, "owner.txt"), "owner-controlled\n", "utf8");
+    symlinkSync(target, destination, "dir");
+
+    const result = runCli([
+      "project",
+      join(fixturesRoot, "case.json"),
+      "a",
+      destination,
+    ]);
+
+    assert.equal(result.status, 1);
+    assert.match(
+      (JSON.parse(result.stdout) as { error: string }).error,
+      /symbolic link/i,
+    );
+    assert.deepEqual(readdirSync(target), ["owner.txt"]);
+    assert.equal(
+      readFileSync(join(target, "owner.txt"), "utf8"),
+      "owner-controlled\n",
+    );
+  });
+});
+
+test("project rejects a symlinked destination ancestor with an existing child", () => {
+  withTemporaryDirectory((root) => {
+    const target = join(root, "target");
+    const linkedParent = join(root, "linked-parent");
+    const existingChild = join(target, "existing");
+    const destination = join(linkedParent, "existing", "projection");
+    mkdirSync(existingChild, { recursive: true });
+    writeFileSync(
+      join(existingChild, "owner.txt"),
+      "owner-controlled\n",
+      "utf8",
+    );
+    symlinkSync(target, linkedParent, "dir");
+
+    const result = runCli([
+      "project",
+      join(fixturesRoot, "case.json"),
+      "a",
+      destination,
+    ]);
+
+    assert.equal(result.status, 1);
+    assert.match(
+      (JSON.parse(result.stdout) as { error: string }).error,
+      /symbolic link/i,
+    );
+    assert.deepEqual(readdirSync(existingChild), ["owner.txt"]);
+  });
+});
+
+test("project rejects an unauthenticated prior marker without changing its directory", () => {
+  withTemporaryDirectory((root) => {
+    const destination = join(root, "projection");
+    mkdirSync(destination);
+    writeFileSync(join(destination, "owner.txt"), "owner-controlled\n", "utf8");
+    writeFileSync(join(destination, "projection.json"), "{}\n", "utf8");
+
+    const result = runCli([
+      "project",
+      join(fixturesRoot, "case.json"),
+      "a",
+      destination,
+    ]);
+
+    assert.equal(result.status, 1);
+    assert.match(
+      (JSON.parse(result.stdout) as { error: string }).error,
+      /generated projection marker/i,
+    );
+    assert.deepEqual(readdirSync(destination).sort(), [
+      "owner.txt",
+      "projection.json",
+    ]);
+    assert.equal(
+      readFileSync(join(destination, "owner.txt"), "utf8"),
+      "owner-controlled\n",
+    );
   });
 });
 
