@@ -2,12 +2,11 @@ name: Bench quality
 
 on:
   pull_request:
-  merge_group:
 
 permissions: {}
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.event.merge_group.head_sha || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -20,13 +19,19 @@ jobs:
     steps:
       - name: Decide author eligibility
         env:
+          ACTOR: ${{ github.actor }}
           AUTHOR_ASSOCIATION: ${{ github.event.pull_request.author_association }}
+          BASE_REPOSITORY: ${{ github.repository }}
           EVENT_NAME: ${{ github.event_name }}
+          HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+          PR_AUTHOR_LOGIN: ${{ github.event.pull_request.user.login }}
         run: |
           case "$EVENT_NAME" in
-            merge_group) exit 0 ;;
             pull_request)
-              case "$AUTHOR_ASSOCIATION" in OWNER|MEMBER) exit 0 ;; *) exit 1 ;; esac
+              case "$AUTHOR_ASSOCIATION" in OWNER|MEMBER) exit 0 ;; esac
+              test "$ACTOR" = 'dependabot[bot]'
+              test "$PR_AUTHOR_LOGIN" = 'dependabot[bot]'
+              test "$HEAD_REPOSITORY" = "$BASE_REPOSITORY"
               ;;
             *) exit 1 ;;
           esac
@@ -39,20 +44,6 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Verify trusted pull request author
-        if: github.event_name == 'pull_request'
-        env:
-          AUTHOR_ASSOCIATION: ${{ github.event.pull_request.author_association }}
-        run: |
-          case "$AUTHOR_ASSOCIATION" in
-            OWNER|MEMBER)
-              printf '%s\n' 'author=trusted_member'
-              ;;
-            *)
-              printf '%s\n' 'author=untrusted' >&2
-              exit 1
-              ;;
-          esac
       - name: Check out repository without persisted credentials
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:

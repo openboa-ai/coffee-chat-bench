@@ -53,13 +53,32 @@ def load_json(path, label):
         if metadata.st_size > MAX_JSON_BYTES:
             raise ValueError(f"{label} exceeds {MAX_JSON_BYTES} byte limit")
         chunks = []
-        remaining = metadata.st_size
-        while remaining:
-            chunk = os.read(descriptor, min(remaining, 64 * 1024))
+        byte_count = 0
+        while True:
+            chunk = os.read(descriptor, min(64 * 1024, MAX_JSON_BYTES + 1 - byte_count))
             if not chunk:
-                raise ValueError(f"{label} changed while it was read")
+                break
             chunks.append(chunk)
-            remaining -= len(chunk)
+            byte_count += len(chunk)
+            if byte_count > MAX_JSON_BYTES:
+                raise ValueError(f"{label} exceeds {MAX_JSON_BYTES} byte limit")
+        final_metadata = os.fstat(descriptor)
+        if (
+            metadata.st_dev,
+            metadata.st_ino,
+            metadata.st_mode,
+            metadata.st_size,
+            metadata.st_mtime_ns,
+            metadata.st_ctime_ns,
+        ) != (
+            final_metadata.st_dev,
+            final_metadata.st_ino,
+            final_metadata.st_mode,
+            final_metadata.st_size,
+            final_metadata.st_mtime_ns,
+            final_metadata.st_ctime_ns,
+        ) or byte_count != final_metadata.st_size:
+            raise ValueError(f"{label} changed while it was read")
         source = b"".join(chunks).decode("utf-8", errors="strict")
         assert_json_source_depth(source, label)
         value = json.loads(source)

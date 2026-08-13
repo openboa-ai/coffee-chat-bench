@@ -35,6 +35,9 @@ Chat. Its current repository status is `not_active`.
   remain eligible for required-CI native auto-merge.
 - Do not create custom write-token merge automation or bypass the external
   ruleset's review decision.
+- Routine Dependabot pull requests may use the same required-CI auto-merge
+  path only when the actor, pull-request author, and head repository exactly
+  match GitHub's in-repository Dependabot identity. Merge queue is disabled.
 - Preserve explicit failure states. Do not turn missing, invalid, unavailable,
   or skipped evidence into success.
 - Run `node scripts/check-inactive-boundary.mjs --root .` and

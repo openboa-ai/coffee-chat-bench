@@ -127,6 +127,17 @@ test("rejects future workflows", async () => {
   );
 });
 
+test("rejects future workflows with the alternate YAML extension", async () => {
+  await expectRejected(
+    (fixture) =>
+      writeFile(
+        join(fixture, ".github/workflows/future.yaml"),
+        "name: Future\non:\n  workflow_dispatch:\npermissions: {}\njobs:\n  future:\n    runs-on: ubuntu-24.04\n    timeout-minutes: 15\n    steps:\n      - run: 'true'\n",
+      ),
+    /workflow set/u,
+  );
+});
+
 test("rejects an extra pull_request_target trigger", async () => {
   await expectRejected(
     (fixture) =>
@@ -153,7 +164,7 @@ test("rejects a missing bounded timeout", async () => {
   );
 });
 
-test("rejects a weakened owner-member gate", async () => {
+test("rejects a weakened owner-member or Dependabot gate", async () => {
   await expectRejected(
     (fixture) =>
       replace(
@@ -162,7 +173,20 @@ test("rejects a weakened owner-member gate", async () => {
         "OWNER|MEMBER",
         "CONTRIBUTOR",
       ),
-    /OWNER\|MEMBER author gate/u,
+    /OWNER\|MEMBER or Dependabot author gate/u,
+  );
+});
+
+test("rejects a disabled author eligibility job", async () => {
+  await expectRejected(
+    (fixture) =>
+      replace(
+        fixture,
+        ".github/workflows/quality.yml",
+        "    name: Bench author eligibility\n",
+        "    name: Bench author eligibility\n    if: ${{ false }}\n",
+      ),
+    /author gate/u,
   );
 });
 
@@ -179,17 +203,47 @@ test("rejects dependency review without the moderate policy", async () => {
   );
 });
 
-test("rejects an inexact merge-group reference", async () => {
+test("rejects re-enabling a merge-group workflow", async () => {
   await expectRejected(
     (fixture) =>
       replace(
         fixture,
         ".github/workflows/policy.yml",
-        "${{ github.event.merge_group.base_sha }}",
-        "${{ github.event.merge_group.base_ref }}",
+        "  pull_request:\n",
+        "  pull_request:\n  merge_group:\n",
       ),
-    /exact merge-group refs/u,
+    /approved triggers/u,
   );
+});
+
+test("rejects removing the exact Dependabot identity policy", async () => {
+  await expectRejected(
+    (fixture) =>
+      replace(
+        fixture,
+        ".github/merge-policy.json",
+        '  "eligible_bot_logins": ["dependabot[bot]"],\n',
+        "",
+      ),
+    /zero-approval GitHub-native squash/u,
+  );
+});
+
+test("rejects weakening sensitive paths or check integration IDs", async () => {
+  await expectRejected(async (fixture) => {
+    await replace(
+      fixture,
+      ".github/merge-policy.json",
+      '    "/harbor/**",\n',
+      "",
+    );
+    await replace(
+      fixture,
+      ".github/merge-policy.json",
+      '"integration_id": 15368',
+      '"integration_id": 0',
+    );
+  }, /exact GitHub Actions checks|exact sensitive paths/u);
 });
 
 test("rejects removal or relocation of the quality policy step", async () => {

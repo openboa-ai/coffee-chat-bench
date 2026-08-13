@@ -31,13 +31,23 @@ const requiredCommands = [
   "npm run ci:policy",
 ];
 const eligibilityGate = `case "$EVENT_NAME" in
-  merge_group) exit 0 ;;
   pull_request)
-    case "$AUTHOR_ASSOCIATION" in OWNER|MEMBER) exit 0 ;; *) exit 1 ;; esac
+    case "$AUTHOR_ASSOCIATION" in OWNER|MEMBER) exit 0 ;; esac
+    test "$ACTOR" = 'dependabot[bot]'
+    test "$PR_AUTHOR_LOGIN" = 'dependabot[bot]'
+    test "$HEAD_REPOSITORY" = "$BASE_REPOSITORY"
     ;;
   *) exit 1 ;;
 esac
 `;
+const eligibilityEnv = {
+  ACTOR: "${{ github.actor }}",
+  AUTHOR_ASSOCIATION: "${{ github.event.pull_request.author_association }}",
+  BASE_REPOSITORY: "${{ github.repository }}",
+  EVENT_NAME: "${{ github.event_name }}",
+  HEAD_REPOSITORY: "${{ github.event.pull_request.head.repo.full_name }}",
+  PR_AUTHOR_LOGIN: "${{ github.event.pull_request.user.login }}",
+};
 
 function fail(message) {
   failures.push(message);
@@ -139,7 +149,7 @@ function validateActions(name, workflow) {
 }
 
 function validateCandidateWorkflow(name, workflow) {
-  if (!exactKeys(workflow.on, ["pull_request", "merge_group"])) {
+  if (!exactKeys(workflow.on, ["pull_request"])) {
     fail(`${name}: approved triggers`);
   }
   if (!exactKeys(workflow.permissions, [])) {
@@ -158,13 +168,28 @@ function validateCandidateWorkflow(name, workflow) {
 }
 
 function validateEligibility(job, name) {
+  const eligibilitySteps = steps(job);
   if (
     !isRecord(job) ||
+    !exactKeys(job, [
+      "name",
+      "runs-on",
+      "timeout-minutes",
+      "permissions",
+      "steps",
+    ]) ||
     job.name !== "Bench author eligibility" ||
+    job["runs-on"] !== "ubuntu-24.04" ||
+    job["timeout-minutes"] !== 15 ||
     !equal(job.permissions, { contents: "read" }) ||
-    !steps(job).some((step) => step?.run === eligibilityGate)
+    eligibilitySteps.length !== 1 ||
+    !equal(eligibilitySteps[0], {
+      name: "Decide author eligibility",
+      env: eligibilityEnv,
+      run: eligibilityGate,
+    })
   ) {
-    fail(`${name}: OWNER|MEMBER author gate`);
+    fail(`${name}: OWNER|MEMBER or Dependabot author gate`);
   }
 }
 
@@ -213,30 +238,21 @@ function validateDependencyReview(workflow) {
   ) {
     fail("policy.yml: job permissions");
   }
-  const [pullRequest, mergeGroup] = steps(review);
-  for (const step of [pullRequest, mergeGroup]) {
-    if (
-      !isRecord(step) ||
-      step.uses !==
-        "actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294" ||
-      step.with?.["fail-on-severity"] !== "moderate" ||
-      step.with?.["fail-on-scopes"] !== "runtime,development,unknown" ||
-      step.with?.["show-patched-versions"] !== true ||
-      step.with?.["comment-summary-in-pr"] !== "never"
-    ) {
-      fail("policy.yml: dependency-review inputs");
-      break;
-    }
-  }
+  const [pullRequest] = steps(review);
   if (
-    pullRequest?.if !== "github.event_name == 'pull_request'" ||
-    mergeGroup?.if !== "github.event_name == 'merge_group'" ||
-    mergeGroup?.with?.["base-ref"] !==
-      "${{ github.event.merge_group.base_sha }}" ||
-    mergeGroup?.with?.["head-ref"] !==
-      "${{ github.event.merge_group.head_sha }}"
+    steps(review).length !== 1 ||
+    !isRecord(pullRequest) ||
+    pullRequest.name !== "Review pull request dependencies" ||
+    pullRequest.uses !==
+      "actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294" ||
+    !equal(pullRequest.with, {
+      "fail-on-severity": "moderate",
+      "fail-on-scopes": "runtime,development,unknown",
+      "show-patched-versions": true,
+      "comment-summary-in-pr": "never",
+    })
   ) {
-    fail("policy.yml: exact merge-group refs");
+    fail("policy.yml: dependency-review inputs");
   }
 }
 
@@ -319,7 +335,7 @@ function validateSecretBoundary(workflow) {
     boundary.name !== "Secret boundary" ||
     boundary["runs-on"] !== "ubuntu-latest" ||
     boundary.if !==
-      "github.event_name == 'workflow_dispatch' || github.event.pull_request.author_association == 'OWNER' || github.event.pull_request.author_association == 'MEMBER'"
+      "github.event_name == 'workflow_dispatch' || github.event.pull_request.author_association == 'OWNER' || github.event.pull_request.author_association == 'MEMBER' || (github.actor == 'dependabot[bot]' && github.event.pull_request.user.login == 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository)"
   ) {
     fail("secret-boundary.yml: trusted author boundary");
   }
@@ -442,26 +458,47 @@ function validateMergePolicy() {
   if (
     policy.merge_method !== "squash" ||
     policy.auto_merge !== "github-native" ||
+    policy.merge_queue !== false ||
     policy.required_approvals !== 0 ||
-    !equal(policy.required_events, ["pull_request", "merge_group"]) ||
-    !equal(policy.eligible_author_associations, ["OWNER", "MEMBER"])
+    !equal(policy.required_events, ["pull_request"]) ||
+    !equal(policy.eligible_author_associations, ["OWNER", "MEMBER"]) ||
+    !equal(policy.eligible_bot_logins, ["dependabot[bot]"])
   ) {
     fail("merge policy is not zero-approval GitHub-native squash");
   }
-  const contexts = policy.required_checks?.map(({ context }) => context) ?? [];
-  for (const context of [
-    "Bench required",
-    "Bench dependency review",
-    "Secret boundary",
-    "Bench CodeQL JavaScript-TypeScript",
-  ]) {
-    if (!contexts.includes(context))
-      fail(`merge policy must require ${context}`);
+  if (
+    !equal(policy.required_checks, [
+      { context: "Bench required", integration_id: 15368 },
+      { context: "Bench dependency review", integration_id: 15368 },
+      { context: "Secret boundary", integration_id: 15368 },
+      {
+        context: "Bench CodeQL JavaScript-TypeScript",
+        integration_id: 15368,
+      },
+    ])
+  ) {
+    fail("merge policy must require exact GitHub Actions checks");
+  }
+  if (
+    !equal(policy.protected_paths, [
+      "/.github/**",
+      "/.githooks/**",
+      "/.gitleaksignore",
+      "/.gitleaks.toml",
+      "/AGENTS.md",
+      "/CODEOWNERS",
+      "/SECURITY.md",
+      "/config/judges/**",
+      "/harbor/**",
+      "/src/openai-judge.ts",
+    ])
+  ) {
+    fail("merge policy must preserve exact sensitive paths");
   }
 }
 
 const discovered = readdirSync(workflowRoot)
-  .filter((name) => name.endsWith(".yml"))
+  .filter((name) => /\.ya?ml$/u.test(name))
   .sort();
 if (!equal(discovered, workflowNames)) fail("workflow set must be exact");
 

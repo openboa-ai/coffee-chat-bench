@@ -77,13 +77,23 @@ function workflowStep(name) {
   return { condition, script };
 }
 
-function runAuthorGate({ event, association, login }) {
-  const gate = workflowStep("Verify trusted pull request author");
-  assert.equal(gate.condition, "github.event_name == 'pull_request'");
-  if (event !== "pull_request") return { status: 0 };
+function runAuthorGate({
+  event,
+  association,
+  login,
+  actor = login,
+  headRepository = "openboa-ai/coffee-chat-bench",
+}) {
+  const gate = workflowStep("Decide author eligibility");
+  assert.equal(gate.condition, undefined);
   const env = { ...process.env };
+  env.BASE_REPOSITORY = "openboa-ai/coffee-chat-bench";
+  env.HEAD_REPOSITORY = headRepository;
+  env.EVENT_NAME = event;
   if (association === undefined) delete env.AUTHOR_ASSOCIATION;
   else env.AUTHOR_ASSOCIATION = association;
+  if (actor === undefined) delete env.ACTOR;
+  else env.ACTOR = actor;
   if (login === undefined) delete env.PR_AUTHOR_LOGIN;
   else env.PR_AUTHOR_LOGIN = login;
   return spawnSync("bash", ["-e", "-o", "pipefail", "-c", gate.script], {
@@ -420,7 +430,7 @@ test("ignores Python dynamic-import text in comments and ordinary strings", () =
   });
 });
 
-test("enforces member-only author eligibility for pull requests", () => {
+test("enforces exact member and Dependabot author eligibility", () => {
   const scenarios = [
     ["owner", { event: "pull_request", association: "OWNER" }, true],
     ["member", { event: "pull_request", association: "MEMBER" }, true],
@@ -437,11 +447,40 @@ test("enforces member-only author eligibility for pull requests", () => {
     ["none", { event: "pull_request", association: "NONE" }, false],
     ["missing association", { event: "pull_request" }, false],
     [
+      "Dependabot",
+      {
+        event: "pull_request",
+        association: "NONE",
+        login: "dependabot[bot]",
+      },
+      true,
+    ],
+    [
       "openboa login with none",
       { event: "pull_request", association: "NONE", login: "openboa" },
       false,
     ],
-    ["merge group", { event: "merge_group" }, true],
+    [
+      "spoofed Dependabot author",
+      {
+        event: "pull_request",
+        association: "NONE",
+        login: "dependabot[bot]",
+        actor: "openboa",
+      },
+      false,
+    ],
+    [
+      "Dependabot fork",
+      {
+        event: "pull_request",
+        association: "NONE",
+        login: "dependabot[bot]",
+        headRepository: "attacker/coffee-chat-bench",
+      },
+      false,
+    ],
+    ["merge group", { event: "merge_group" }, false],
   ];
 
   for (const [name, input, allowed] of scenarios) {

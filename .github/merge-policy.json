@@ -2,8 +2,10 @@
   "repository_role": "bench",
   "merge_method": "squash",
   "auto_merge": "github-native",
-  "required_events": ["pull_request", "merge_group"],
+  "merge_queue": false,
+  "required_events": ["pull_request"],
   "eligible_author_associations": ["OWNER", "MEMBER"],
+  "eligible_bot_logins": ["dependabot[bot]"],
   "required_approvals": 0,
   "required_checks": [
     { "context": "Bench required", "integration_id": 15368 },
@@ -16,6 +18,9 @@
   ],
   "protected_paths": [
     "/.github/**",
+    "/.githooks/**",
+    "/.gitleaksignore",
+    "/.gitleaks.toml",
     "/AGENTS.md",
     "/CODEOWNERS",
     "/SECURITY.md",
