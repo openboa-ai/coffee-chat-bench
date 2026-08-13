@@ -14,7 +14,10 @@ test("documents GitHub-native selective-review auto-merge", async () => {
 
   assert.match(agentContract, /pull request/u);
   assert.match(agentContract, /GitHub-native squash\s+auto-merge/u);
-  assert.match(agentContract, /external ruleset[\s\S]*human review/iu);
+  assert.match(
+    agentContract,
+    /central classifier[\s\S]*coffee-security[\s\S]*Environment/iu,
+  );
   assert.match(agentContract, /custom write-token merge automation/u);
   assert.doesNotMatch(agentContract, /Human approval is not required/u);
   assert.match(pullRequestTemplate, /Sensitive path/u);
