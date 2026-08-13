@@ -9,7 +9,16 @@ Describe the repository-owned boundary and why it belongs here.
 - [ ] The inactive status remains explicit unless this is an approved activation
       change.
 
-## Protected-path evidence
+- [ ] `npm run format:check`
+- [ ] `npm run typecheck`
+- [ ] `npm test`
+- [ ] `npm run ci:policy`
 
-- [ ] I identified any protected paths and ran their applicable automated
-      policy and security checks.
+## Merge lifecycle
+
+- [ ] I marked the applicable Sensitive path status below.
+  - [ ] No sensitive path changed.
+  - [ ] Sensitive path changed: explain the governance, judge, workflow, or
+        Harbor boundary affected.
+- [ ] GitHub-native squash auto-merge is enabled only after required checks
+      pass. The external ruleset decides whether human review is required.
