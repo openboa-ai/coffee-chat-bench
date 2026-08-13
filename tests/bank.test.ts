@@ -68,6 +68,33 @@ test("validates recursively discovered case files in deterministic order", () =>
   });
 });
 
+test("rejects an oversized otherwise-valid case file before parsing", () => {
+  withBank((root) => {
+    const destination = join(root, "oversized.json");
+    writeFileSync(
+      destination,
+      `${" ".repeat(1024 * 1024)}${readFileSync(join(fixturesRoot, "valid/alpha.json"), "utf8")}`,
+      "utf8",
+    );
+
+    const report = validateBank(root);
+
+    assert.equal(report.state, "invalid");
+    assert.match(report.files[0]?.errors[0] ?? "", /exceeds.*byte limit/i);
+  });
+});
+
+test("rejects an otherwise-valid case file beyond the bank depth budget", () => {
+  withBank((root) => {
+    copyFixture(root, "valid/alpha.json", "a/b/c/d/e/f/g/h/i/alpha.json");
+
+    const report = validateBank(root);
+
+    assert.equal(report.state, "invalid");
+    assert.match(report.files[0]?.errors[0] ?? "", /depth.*limit/i);
+  });
+});
+
 test("keeps the bank digest stable when filesystem creation order differs", () => {
   const first = fixtureRoot();
   const second = fixtureRoot();

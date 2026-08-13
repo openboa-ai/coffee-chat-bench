@@ -32,6 +32,14 @@ const DEFAULT_MANIFEST: JudgeCampaignManifest = {
   maxInputTokensPerRequest: 32_768,
   maxOutputTokensPerRequest: 1_024,
 };
+const MAX_PROJECTION_JSON_BYTES = 64 * 1024;
+const MAX_CANDIDATE_FILE_BYTES = 256 * 1024;
+const MAX_CANDIDATE_AGGREGATE_BYTES = 512 * 1024;
+const MAX_ARTIFACT_JSON_BYTES = 256 * 1024;
+const MAX_ARTIFACT_RESPONSE_BYTES = 128 * 1024;
+const MAX_ATTESTATION_JSON_BYTES = 128 * 1024;
+const MAX_JSON_DEPTH = 32;
+const MAX_JSON_ENTRIES = 10_000;
 
 type DeterministicState = Extract<
   ResultState,
@@ -460,9 +468,43 @@ function fileUnder(root: string, file: string, label: string): string {
   return regularFile(resolvedFile, label);
 }
 
-function readJson(path: string, label: string): unknown {
+function readUtf8(path: string, label: string, maxBytes: number): string {
+  const metadata = lstatSync(path);
+  if (metadata.size > maxBytes) {
+    throw new TypeError(`${label} exceeds ${maxBytes} byte limit`);
+  }
   try {
-    return JSON.parse(readFileSync(path, "utf8"));
+    return new TextDecoder("utf-8", { fatal: true }).decode(readFileSync(path));
+  } catch (error) {
+    throw new TypeError(
+      `${label} must be valid UTF-8: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+}
+
+function assertJsonBudget(value: unknown, label: string): void {
+  const stack: Array<readonly [unknown, number]> = [[value, 0]];
+  let entries = 0;
+  while (stack.length > 0) {
+    const [current, depth] = stack.pop()!;
+    if (depth > MAX_JSON_DEPTH) {
+      throw new TypeError(`${label} exceeds JSON depth limit`);
+    }
+    if (current === null || typeof current !== "object") continue;
+    const children = Array.isArray(current) ? current : Object.values(current);
+    entries += children.length;
+    if (entries > MAX_JSON_ENTRIES) {
+      throw new TypeError(`${label} exceeds JSON entry limit`);
+    }
+    for (const child of children) stack.push([child, depth + 1]);
+  }
+}
+
+function readJson(path: string, label: string, maxBytes: number): unknown {
+  try {
+    const value = JSON.parse(readUtf8(path, label, maxBytes));
+    assertJsonBudget(value, label);
+    return value;
   } catch (error) {
     throw new TypeError(
       `${label} must be JSON: ${error instanceof Error ? error.message : String(error)}`,
@@ -471,12 +513,23 @@ function readJson(path: string, label: string): unknown {
 }
 
 function fileDigest(root: string, files: readonly string[]): Digest {
+  let aggregateBytes = 0;
   return stableDigest(
     files
-      .map((file) => ({
-        file,
-        content: readFileSync(fileUnder(root, file, file), "utf8"),
-      }))
+      .map((file) => {
+        const content = readUtf8(
+          fileUnder(root, file, file),
+          file,
+          MAX_CANDIDATE_FILE_BYTES,
+        );
+        aggregateBytes += Buffer.byteLength(content, "utf8");
+        if (aggregateBytes > MAX_CANDIDATE_AGGREGATE_BYTES) {
+          throw new TypeError(
+            `candidate projection exceeds ${MAX_CANDIDATE_AGGREGATE_BYTES} byte aggregate limit`,
+          );
+        }
+        return { file, content };
+      })
       .sort((left, right) => left.file.localeCompare(right.file)),
   );
 }
@@ -604,6 +657,7 @@ function loadMaterial(projectionRoot: string): ProjectionMaterial {
     readJson(
       fileUnder(root, "projection.json", "projection.json"),
       "projection",
+      MAX_PROJECTION_JSON_BYTES,
     ),
     root,
   );
@@ -620,6 +674,7 @@ function loadMaterial(projectionRoot: string): ProjectionMaterial {
     readJson(
       fileUnder(root, "candidate/task.json", "candidate task"),
       "candidate task",
+      MAX_CANDIDATE_FILE_BYTES,
     ),
     "candidate task",
   );
@@ -652,6 +707,7 @@ function loadMaterial(projectionRoot: string): ProjectionMaterial {
       evidence: readJson(
         fileUnder(root, "candidate/evidence.json", "candidate evidence"),
         "candidate evidence",
+        MAX_CANDIDATE_FILE_BYTES,
       ),
       perspective:
         projection.condition === "none"
@@ -663,6 +719,7 @@ function loadMaterial(projectionRoot: string): ProjectionMaterial {
                 "candidate perspective",
               ),
               "candidate perspective",
+              MAX_CANDIDATE_FILE_BYTES,
             ),
       outputContract: readJson(
         fileUnder(
@@ -671,6 +728,7 @@ function loadMaterial(projectionRoot: string): ProjectionMaterial {
           "candidate output contract",
         ),
         "candidate output contract",
+        MAX_CANDIDATE_FILE_BYTES,
       ),
     },
   };
@@ -682,7 +740,11 @@ function parseArtifact(path: string): {
   readonly response: string;
 } {
   const raw = record(
-    readJson(regularFile(path, "candidate artifact"), "candidate artifact"),
+    readJson(
+      regularFile(path, "candidate artifact"),
+      "candidate artifact",
+      MAX_ARTIFACT_JSON_BYTES,
+    ),
     "candidate artifact",
   );
   exactKeys(
@@ -701,6 +763,11 @@ function parseArtifact(path: string): {
   const rawManifest = record(raw.manifest, "candidate artifact manifest");
   const manifest = parseDecisionManifest(rawManifest);
   const response = string(raw.response, "candidate artifact response");
+  if (Buffer.byteLength(response, "utf8") > MAX_ARTIFACT_RESPONSE_BYTES) {
+    throw new TypeError(
+      `candidate artifact response exceeds ${MAX_ARTIFACT_RESPONSE_BYTES} byte limit`,
+    );
+  }
   const digestInput = {
     ...raw,
     manifest: Object.fromEntries(
@@ -723,6 +790,7 @@ function parseAttestation(
     readJson(
       regularFile(path, "isolated verifier attestation"),
       "isolated verifier attestation",
+      MAX_ATTESTATION_JSON_BYTES,
     ),
     "isolated verifier attestation",
   );

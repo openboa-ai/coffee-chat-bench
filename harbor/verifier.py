@@ -10,7 +10,9 @@ untrusted.
 import argparse
 import hashlib
 import json
+import os
 import re
+import stat
 import sys
 from pathlib import Path
 
@@ -18,6 +20,11 @@ from pathlib import Path
 TRIAL_ID = re.compile(r"^trial-[0-9a-f]{64}$")
 DIGEST = re.compile(r"^sha256:[0-9a-f]{64}$")
 CONDITIONS = {"T0", "T1-A", "T1-B"}
+MAX_JSON_BYTES = 256 * 1024
+MAX_RESPONSE_BYTES = 128 * 1024
+MAX_JSON_SCAN_STARTS = 256
+MAX_JSON_DEPTH = 32
+MAX_JSON_ENTRIES = 10_000
 
 
 def emit(state, accepted, critical_failure, reasons):
@@ -37,11 +44,70 @@ def emit(state, accepted, critical_failure, reasons):
 
 
 def load_json(path, label):
+    descriptor = None
     try:
-        with Path(path).open(encoding="utf-8") as handle:
-            return json.load(handle)
-    except (OSError, json.JSONDecodeError) as error:
+        descriptor = os.open(os.fspath(path), os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
+        metadata = os.fstat(descriptor)
+        if not stat.S_ISREG(metadata.st_mode):
+            raise ValueError(f"{label} must be a regular file")
+        if metadata.st_size > MAX_JSON_BYTES:
+            raise ValueError(f"{label} exceeds {MAX_JSON_BYTES} byte limit")
+        chunks = []
+        remaining = metadata.st_size
+        while remaining:
+            chunk = os.read(descriptor, min(remaining, 64 * 1024))
+            if not chunk:
+                raise ValueError(f"{label} changed while it was read")
+            chunks.append(chunk)
+            remaining -= len(chunk)
+        source = b"".join(chunks).decode("utf-8", errors="strict")
+        assert_json_source_depth(source, label)
+        value = json.loads(source)
+        assert_json_budget(value, label)
+        return value
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError) as error:
         raise ValueError(f"malformed {label}: {error}") from error
+    finally:
+        if descriptor is not None:
+            os.close(descriptor)
+
+
+def assert_json_source_depth(source, label):
+    depth = 0
+    quoted = False
+    escaped = False
+    for character in source:
+        if quoted:
+            if escaped:
+                escaped = False
+            elif character == "\\":
+                escaped = True
+            elif character == '"':
+                quoted = False
+            continue
+        if character == '"':
+            quoted = True
+        elif character in "{[":
+            depth += 1
+            if depth > MAX_JSON_DEPTH:
+                raise ValueError(f"{label} exceeds JSON depth limit")
+        elif character in "}]":
+            depth -= 1
+
+
+def assert_json_budget(value, label):
+    entries = 0
+    stack = [value]
+    while stack:
+        current = stack.pop()
+        if isinstance(current, dict):
+            entries += len(current)
+            stack.extend(current.values())
+        elif isinstance(current, list):
+            entries += len(current)
+            stack.extend(current)
+        if entries > MAX_JSON_ENTRIES:
+            raise ValueError(f"{label} exceeds JSON entry limit")
 
 
 def require_object(value, label):
@@ -72,6 +138,8 @@ def validate_manifest(value, judgment):
     artifact = require_exact_keys(value, {"manifest", "response", "accessedPaths"}, "artifact")
     if not isinstance(artifact["response"], str):
         raise ValueError("artifact response must be a string")
+    if len(artifact["response"].encode("utf-8")) > MAX_RESPONSE_BYTES:
+        raise ValueError(f"artifact response exceeds {MAX_RESPONSE_BYTES} byte limit")
     if not isinstance(artifact["accessedPaths"], list) or not all(
         isinstance(path, str) for path in artifact["accessedPaths"]
     ):
@@ -108,9 +176,13 @@ def declares_verifier_access(paths):
 def copied_projection(response, projection):
     values = [value for value in projection.values() if value is not None]
     decoder = json.JSONDecoder()
+    scan_starts = 0
     for index, character in enumerate(response):
         if character not in "{[":
             continue
+        scan_starts += 1
+        if scan_starts > MAX_JSON_SCAN_STARTS:
+            raise ValueError("candidate response exceeds JSON scan limit")
         try:
             value, _ = decoder.raw_decode(response[index:])
         except json.JSONDecodeError:
@@ -151,8 +223,11 @@ def verify(judgment_path, artifact_path):
 
     if declares_verifier_access(artifact["accessedPaths"]):
         return emit("candidate_failure", False, True, ["judgment access declared"])
-    if copied_projection(artifact["response"], judgment["candidateProjection"]):
-        return emit("candidate_failure", False, False, ["candidate copied projection input"])
+    try:
+        if copied_projection(artifact["response"], judgment["candidateProjection"]):
+            return emit("candidate_failure", False, False, ["candidate copied projection input"])
+    except ValueError as error:
+        return emit("candidate_invalid", False, False, [str(error)])
     if enumerates_accepted_regions(artifact["response"], judgment["decisions"]):
         return emit("candidate_failure", False, False, ["candidate enumerated accepted regions"])
 

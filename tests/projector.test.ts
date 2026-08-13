@@ -661,6 +661,37 @@ test("the real Harbor verifier accepts Oracle and rejects each critical candidat
   });
 });
 
+test("the verifier fails closed on an over-depth sealed judgment", () => {
+  withTemporaryDirectory((root) => {
+    const projectionRoot = join(root, "projection");
+    project(projectionRoot);
+    const judgmentPath = join(
+      projectionRoot,
+      "harbor",
+      "tests",
+      "judgment.json",
+    );
+    const judgment = JSON.parse(readFileSync(judgmentPath, "utf8")) as Record<
+      string,
+      unknown
+    >;
+    let nested: Record<string, unknown> = { leaf: "bounded" };
+    for (let depth = 0; depth < 40; depth += 1) nested = { nested };
+    (judgment.candidateProjection as Record<string, unknown>).nested = nested;
+    writeFileSync(judgmentPath, JSON.stringify(judgment), "utf8");
+
+    const result = runHarborVerifier(
+      projectionRoot,
+      copyProjectedOracle(root, projectionRoot),
+    );
+
+    assert.equal(result.status, 1, result.stderr);
+    const verdict = JSON.parse(result.stdout) as Record<string, unknown>;
+    assert.equal(verdict.state, "verifier_failure");
+    assert.match(JSON.stringify(verdict.reasons), /depth.*limit/i);
+  });
+});
+
 test("the verifier accepts required evidence with additional declared support", () => {
   withTemporaryDirectory((root) => {
     const projectionRoot = join(root, "projection");
