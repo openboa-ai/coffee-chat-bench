@@ -1,16 +1,28 @@
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { loadPolicyParser } from "./policy-bootstrap.mjs";
 
-const root = resolve(
-  process.env.BENCH_CI_POLICY_ROOT ??
-    resolve(dirname(fileURLToPath(import.meta.url)), ".."),
-);
-const { parseDocument } = loadPolicyParser(root);
+const controlRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const root = resolve(process.env.BENCH_CI_POLICY_ROOT ?? controlRoot);
+const { parseDocument } = loadPolicyParser(controlRoot);
 const workflowRoot = resolve(root, ".github/workflows");
 const failures = [];
+if (existsSync(resolve(root, ".npmrc"))) {
+  failures.push("root .npmrc must be absent");
+}
+if (existsSync(resolve(root, ".github/policy-parser/.npmrc"))) {
+  failures.push("isolated policy parser .npmrc must be absent before install");
+}
+if (existsSync(resolve(root, "npm-shrinkwrap.json"))) {
+  failures.push("root npm-shrinkwrap.json must be absent");
+}
+if (existsSync(resolve(root, ".github/policy-parser/npm-shrinkwrap.json"))) {
+  failures.push(
+    "isolated policy parser npm-shrinkwrap.json must be absent before loading",
+  );
+}
 const YAML_MAX_BYTES = 256 * 1024;
 const YAML_MAX_ALIASES = 100;
 const YAML_MAX_DEPTH = 32;
@@ -29,7 +41,7 @@ const pinnedActions = new Set([
   "github/codeql-action/analyze@5595ccaf912efad79be6eef63a5619ff05969be3",
   "github/codeql-action/init@5595ccaf912efad79be6eef63a5619ff05969be3",
 ]);
-const candidateWorkflows = new Set(["codeql.yml", "policy.yml", "quality.yml"]);
+const candidateWorkflows = new Set(["policy.yml", "quality.yml"]);
 const requiredCommands = [
   "npm run format:check",
   "npm run check:inactive",
@@ -375,6 +387,13 @@ function validateEligibility(job, name) {
 }
 
 function validateCodeql(workflow) {
+  const triggers = Object.keys(workflow.on ?? {}).sort();
+  if (
+    !equal(triggers, ["pull_request", "pull_request_target"]) &&
+    !equal(triggers, ["pull_request_target"])
+  ) {
+    fail("codeql.yml: trusted-base triggers");
+  }
   const { eligibility, analyze } = workflow.jobs ?? {};
   if (!exactKeys(workflow.jobs, ["eligibility", "analyze"]))
     fail("codeql.yml: exact jobs");
@@ -406,7 +425,11 @@ function validateCodeql(workflow) {
       {
         name: "Check out repository without persisted credentials",
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-        with: { "persist-credentials": false },
+        with: {
+          repository: "${{ github.event.pull_request.head.repo.full_name }}",
+          ref: "${{ github.event.pull_request.head.sha }}",
+          "persist-credentials": false,
+        },
       },
       {
         name: "Initialize CodeQL",
@@ -762,6 +785,8 @@ function validateMergePolicy() {
       "/AGENTS.md",
       "/CODEOWNERS",
       "/SECURITY.md",
+      "/.npmrc",
+      "/npm-shrinkwrap.json",
       "/config/judges/**",
       "/harbor/**",
       "/scripts/check-inactive-boundary.mjs",
@@ -782,6 +807,8 @@ function validateCodeowners() {
 /CODEOWNERS @openboa-ai/security-maintainers
 /LICENSE @openboa
 /README.md @openboa
+/.npmrc @openboa-ai/security-maintainers
+/npm-shrinkwrap.json @openboa-ai/security-maintainers
 /SECURITY.md @openboa-ai/security-maintainers
 /config/judges/** @openboa-ai/security-maintainers
 /harbor/** @openboa-ai/security-maintainers
@@ -828,16 +855,14 @@ const packageJson = JSON.parse(
 );
 if (
   packageJson.scripts?.["ci:policy"] !==
-  "npm run policy:install && node --test tests/workflow-policy.test.mjs && node .github/ci-policy.mjs"
+  "node --test tests/workflow-policy.test.mjs && node .github/ci-policy.mjs"
 ) {
   fail("package command must run fixtures before the checker");
 }
 const expectedPackageScripts = {
   "ci:policy":
-    "npm run policy:install && node --test tests/workflow-policy.test.mjs && node .github/ci-policy.mjs",
-  "policy:install":
-    "node .github/policy-bootstrap.mjs && npm ci --ignore-scripts --prefix .github/policy-parser",
-  test: "npm run policy:install && node --experimental-strip-types --test tests/*.test.mjs tests/*.test.ts",
+    "node --test tests/workflow-policy.test.mjs && node .github/ci-policy.mjs",
+  test: "node --experimental-strip-types --test tests/*.test.mjs tests/*.test.ts",
   typecheck: "tsc --noEmit",
   format:
     'prettier --write package.json package-lock.json tsconfig.json prettier.config.mjs docs/quality-map.md docs/validity/*.md perspectives/*.json "bank/**/*.json" schemas/*.json scripts/*.mjs src/*.ts tests/*.test.mjs tests/*.test.ts tests/fixtures/**/*.json tests/fixtures/projection/artifacts/echo.json tests/fixtures/projection/artifacts/judgment-access.json tests/fixtures/projection/artifacts/list-all.json tests/fixtures/projection/artifacts/no-op.json tests/fixtures/projection/artifacts/oracle.json',
