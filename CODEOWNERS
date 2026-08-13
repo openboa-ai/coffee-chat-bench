@@ -1,11 +1,18 @@
 # No wildcard owner: ordinary paths may become eligible for strong-CI auto-merge.
-/.github/** @openboa
-/AGENTS.md @openboa
-/CODEOWNERS @openboa
+/.github/** @openboa-ai/security-maintainers
+/.githooks/** @openboa-ai/security-maintainers
+/.gitleaks* @openboa-ai/security-maintainers
+/AGENTS.md @openboa-ai/security-maintainers
+/CODEOWNERS @openboa-ai/security-maintainers
 /LICENSE @openboa
 /README.md @openboa
-/SECURITY.md @openboa
+/SECURITY.md @openboa-ai/security-maintainers
+/config/judges/** @openboa-ai/security-maintainers
+/harbor/** @openboa-ai/security-maintainers
+/schemas/judge-campaign.schema.json @openboa-ai/security-maintainers
+/src/** @openboa-ai/security-maintainers
 /scripts/** @openboa
+/scripts/check-inactive-boundary.mjs @openboa-ai/security-maintainers
 /tests/** @openboa
 /docs/validity/** @openboa
 /docs/quality-map.md @openboa

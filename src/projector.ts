@@ -1,13 +1,16 @@
 import {
   existsSync,
+  lstatSync,
   mkdirSync,
+  mkdtempSync,
   readFileSync,
-  readdirSync,
+  renameSync,
   rmSync,
   writeFileSync,
 } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 
+import { readDirectoryEntries, readUtf8File } from "./bounded-fs.ts";
 import {
   RELEASE_ID,
   type CaseBundle,
@@ -50,6 +53,14 @@ const perspectiveKeys = {
 } as const;
 
 const DIGEST_PATTERN = "^sha256:[0-9a-f]{64}$";
+const DIGEST_VALUE_PATTERN = /^sha256:[0-9a-f]{64}$/u;
+const PROJECTION_MARKER_MAX_BYTES = 4096;
+const PROJECTION_ROOT_ENTRIES = [
+  "candidate",
+  "harbor",
+  "projection.json",
+  "verifier",
+] as const;
 
 function json(value: unknown): string {
   return `${JSON.stringify(value, null, 2)}\n`;
@@ -71,14 +82,155 @@ function writeFiles(root: string, files: readonly ProjectionFile[]): void {
   }
 }
 
+function assertSafeDestinationPath(destination: string): void {
+  let current = destination;
+  while (true) {
+    try {
+      const stat = lstatSync(current);
+      if (stat.isSymbolicLink()) {
+        const rootOwnedSystemAncestor =
+          current !== destination && stat.uid === 0;
+        if (!rootOwnedSystemAncestor) {
+          throw new TypeError(
+            `projection destination has a symbolic link ancestor: ${current}`,
+          );
+        }
+      } else if (current !== destination && !stat.isDirectory()) {
+        throw new TypeError(
+          `projection destination ancestor must be a directory: ${current}`,
+        );
+      }
+    } catch (error) {
+      if (!(
+        error instanceof Error &&
+        "code" in error &&
+        error.code === "ENOENT"
+      )) {
+        throw error;
+      }
+    }
+    const parent = dirname(current);
+    if (parent === current) {
+      if (!existsSync(current)) {
+        throw new TypeError(
+          "projection destination must have an existing parent directory",
+        );
+      }
+      return;
+    }
+    current = parent;
+  }
+}
+
+function directoryEntries(root: string): readonly string[] {
+  const entries: string[] = [];
+  for (const entry of readDirectoryEntries(root)) {
+    entries.push(entry.name);
+    if (entries.length > PROJECTION_ROOT_ENTRIES.length) break;
+  }
+  return entries.sort();
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function hasGeneratedProjectionMarker(root: string): boolean {
+  try {
+    const entries = directoryEntries(root);
+    if (
+      entries.length !== PROJECTION_ROOT_ENTRIES.length ||
+      !entries.every((entry, index) => entry === PROJECTION_ROOT_ENTRIES[index])
+    ) {
+      return false;
+    }
+    for (const directory of ["candidate", "verifier", "harbor"] as const) {
+      const stat = lstatSync(join(root, directory));
+      if (!stat.isDirectory() || stat.isSymbolicLink()) return false;
+    }
+    const marker = JSON.parse(
+      readUtf8File(
+        join(root, "projection.json"),
+        "projection marker",
+        PROJECTION_MARKER_MAX_BYTES,
+      ),
+    ) as unknown;
+    if (!isRecord(marker)) return false;
+    const expectedKeys = [
+      "candidateDigest",
+      "candidateDirectory",
+      "caseId",
+      "condition",
+      "harborDirectory",
+      "projectionDigest",
+      "release",
+      "sourceDigest",
+      "verifierDigest",
+      "verifierDirectory",
+    ];
+    if (
+      JSON.stringify(Object.keys(marker).sort()) !==
+      JSON.stringify(expectedKeys)
+    ) {
+      return false;
+    }
+    return (
+      marker.release === RELEASE_ID &&
+      typeof marker.caseId === "string" &&
+      marker.caseId.length > 0 &&
+      typeof marker.condition === "string" &&
+      marker.condition in conditionLabels &&
+      marker.candidateDirectory === join(root, "candidate") &&
+      marker.verifierDirectory === join(root, "verifier") &&
+      marker.harborDirectory === join(root, "harbor") &&
+      [
+        marker.sourceDigest,
+        marker.candidateDigest,
+        marker.verifierDigest,
+        marker.projectionDigest,
+      ].every(
+        (digest) =>
+          typeof digest === "string" && DIGEST_VALUE_PATTERN.test(digest),
+      )
+    );
+  } catch {
+    return false;
+  }
+}
+
 function requireDestination(destination: string): string {
   const root = resolve(destination);
+  assertSafeDestinationPath(root);
   if (!existsSync(root)) return root;
-  const entries = readdirSync(root).sort();
-  if (entries.length === 0 || entries.includes("projection.json")) return root;
+  const stat = lstatSync(root);
+  if (!stat.isDirectory() || stat.isSymbolicLink()) {
+    throw new TypeError("projection destination must be a real directory");
+  }
+  const entries = directoryEntries(root);
+  if (entries.length === 0) return root;
+  if (hasGeneratedProjectionMarker(root)) return root;
   throw new TypeError(
-    "projection destination must be empty or a prior projection",
+    "projection destination must be empty or contain an exact generated projection marker",
   );
+}
+
+function publishStagedProjection(stage: string, destination: string): void {
+  if (!existsSync(destination)) {
+    renameSync(stage, destination);
+    return;
+  }
+  requireDestination(destination);
+  const parent = dirname(destination);
+  const backup = mkdtempSync(join(parent, `.${basename(destination)}.backup-`));
+  rmSync(backup, { recursive: true, force: true });
+  renameSync(destination, backup);
+  try {
+    renameSync(stage, destination);
+  } catch (error) {
+    renameSync(backup, destination);
+    throw error;
+  }
+  rmSync(backup, { recursive: true, force: true });
 }
 
 function requireCondition(condition: string): HarborCondition {
@@ -378,13 +530,17 @@ export function projectHarborTask(
     projectionDigest,
   };
 
-  mkdirSync(root, { recursive: true });
-  rmSync(candidateDirectory, { force: true, recursive: true });
-  rmSync(verifierDirectory, { force: true, recursive: true });
-  rmSync(harborDirectory, { force: true, recursive: true });
-  writeFiles(candidateDirectory, candidate);
-  writeFiles(verifierDirectory, verifier);
-  writeFiles(harborDirectory, harbor);
-  writeFileSync(join(root, "projection.json"), json(result), "utf8");
+  const parent = dirname(root);
+  mkdirSync(parent, { recursive: true });
+  const stage = mkdtempSync(join(parent, `.${basename(root)}.stage-`));
+  try {
+    writeFiles(join(stage, "candidate"), candidate);
+    writeFiles(join(stage, "verifier"), verifier);
+    writeFiles(join(stage, "harbor"), harbor);
+    writeFileSync(join(stage, "projection.json"), json(result), "utf8");
+    publishStagedProjection(stage, root);
+  } finally {
+    if (existsSync(stage)) rmSync(stage, { recursive: true, force: true });
+  }
   return result;
 }

@@ -1,7 +1,12 @@
 import { readFileSync, readdirSync } from "node:fs";
+import { createRequire } from "node:module";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { parseDocument } from "yaml";
+
+const policyRequire = createRequire(
+  new URL("./policy-parser/package.json", import.meta.url),
+);
+const { parseDocument } = policyRequire("yaml");
 
 const root = resolve(
   process.env.BENCH_CI_POLICY_ROOT ??
@@ -108,6 +113,122 @@ function equal(actual, expected) {
 
 function isRecord(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+const EXACT_VERSION = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/u;
+const SHA512_INTEGRITY = /^sha512-[A-Za-z0-9+/]+={0,2}$/u;
+
+function packageNameFromLockPath(path) {
+  const marker = "node_modules/";
+  const index = path.lastIndexOf(marker);
+  return index === -1 ? null : path.slice(index + marker.length);
+}
+
+function expectedRegistryUrl(name, version) {
+  const tarballName = name.slice(name.lastIndexOf("/") + 1);
+  return `https://registry.npmjs.org/${name}/-/${tarballName}-${version}.tgz`;
+}
+
+function validatePackageLock(packageJson, allowedDevDependencies) {
+  let lock;
+  try {
+    lock = JSON.parse(readFileSync(resolve(root, "package-lock.json"), "utf8"));
+  } catch (error) {
+    fail(
+      `package lock must parse: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+    return;
+  }
+  const rootPackage = lock?.packages?.[""];
+  const devDependencies = packageJson.devDependencies ?? {};
+  if (
+    lock.lockfileVersion !== 3 ||
+    lock.requires !== true ||
+    lock.name !== packageJson.name ||
+    lock.version !== packageJson.version ||
+    !isRecord(lock.packages) ||
+    !isRecord(rootPackage) ||
+    rootPackage.name !== packageJson.name ||
+    rootPackage.version !== packageJson.version ||
+    !equal(rootPackage.devDependencies ?? {}, devDependencies) ||
+    !equal(rootPackage.dependencies ?? {}, packageJson.dependencies ?? {}) ||
+    !equal(
+      Object.keys(devDependencies).sort(),
+      [...allowedDevDependencies].sort(),
+    ) ||
+    !Object.values(devDependencies).every(
+      (version) => typeof version === "string" && EXACT_VERSION.test(version),
+    )
+  ) {
+    fail("package lock must match the approved dependency contract");
+    return;
+  }
+  for (const [path, entry] of Object.entries(lock.packages)) {
+    if (path === "") continue;
+    const name = packageNameFromLockPath(path);
+    if (
+      name === null ||
+      !isRecord(entry) ||
+      typeof entry.version !== "string" ||
+      !EXACT_VERSION.test(entry.version) ||
+      entry.resolved !== expectedRegistryUrl(name, entry.version) ||
+      typeof entry.integrity !== "string" ||
+      !SHA512_INTEGRITY.test(entry.integrity) ||
+      entry.link === true ||
+      entry.hasInstallScript === true
+    ) {
+      fail("package lock must preserve registry identity and integrity");
+      return;
+    }
+  }
+}
+
+function validatePolicyParserContract(expectedName) {
+  const parserRoot = resolve(root, ".github/policy-parser");
+  let packageJson;
+  let lock;
+  try {
+    packageJson = JSON.parse(
+      readFileSync(resolve(parserRoot, "package.json"), "utf8"),
+    );
+    lock = JSON.parse(
+      readFileSync(resolve(parserRoot, "package-lock.json"), "utf8"),
+    );
+  } catch (error) {
+    fail(
+      `isolated policy parser must parse: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+    return;
+  }
+  const expectedPackage = {
+    name: expectedName,
+    private: true,
+    version: "1.0.0",
+    dependencies: { yaml: "2.9.0" },
+  };
+  const yaml = lock?.packages?.["node_modules/yaml"];
+  if (
+    !equal(packageJson, expectedPackage) ||
+    lock.name !== expectedName ||
+    lock.version !== "1.0.0" ||
+    lock.lockfileVersion !== 3 ||
+    lock.requires !== true ||
+    !equal(lock.packages?.[""], {
+      name: expectedName,
+      version: "1.0.0",
+      dependencies: { yaml: "2.9.0" },
+    }) ||
+    yaml?.version !== "2.9.0" ||
+    yaml?.resolved !== "https://registry.npmjs.org/yaml/-/yaml-2.9.0.tgz" ||
+    yaml?.integrity !==
+      "sha512-2AvhNX3mb8zd6Zy7INTtSpl1F15HW6Wnqj0srWlkKLcpYl/gMIMJiyuGq2KeI2YFxUPjdlB+3Lc10seMLtL4cA=="
+  ) {
+    fail("isolated policy parser must remain exact and integrity-pinned");
+  }
 }
 
 function exactKeys(value, keys) {
@@ -363,11 +484,12 @@ function validateQuality(workflow) {
         uses: "actions/setup-node@820762786026740c76f36085b0efc47a31fe5020",
         with: { "node-version": 24, cache: "npm" },
       },
-      { run: "npm ci --ignore-scripts" },
+      { run: "npm ci --ignore-scripts --prefix .github/policy-parser" },
       {
-        name: "Enforce repository policy before delegated scripts",
+        name: "Enforce repository policy before candidate dependencies",
         run: "node .github/ci-policy.mjs",
       },
+      { run: "npm ci --ignore-scripts" },
       { run: "npm audit --audit-level=moderate" },
       ...requiredCommands.map((run) => ({ run })),
     ])
@@ -625,22 +747,37 @@ function validateMergePolicy() {
       "/SECURITY.md",
       "/config/judges/**",
       "/harbor/**",
+      "/scripts/check-inactive-boundary.mjs",
       "/schemas/judge-campaign.schema.json",
-      "/src/bank.ts",
-      "/src/bounded-fs.ts",
-      "/src/cli.ts",
-      "/src/contracts.ts",
-      "/src/digest.ts",
-      "/src/identity.ts",
-      "/src/judge-campaign.ts",
-      "/src/judge-config.ts",
-      "/src/judge-panel.ts",
-      "/src/judgment.ts",
-      "/src/openai-judge.ts",
-      "/src/projector.ts",
+      "/src/**",
     ])
   ) {
     fail("merge policy must preserve exact sensitive paths");
+  }
+}
+
+function validateCodeowners() {
+  const expected = `# No wildcard owner: ordinary paths may become eligible for strong-CI auto-merge.
+/.github/** @openboa-ai/security-maintainers
+/.githooks/** @openboa-ai/security-maintainers
+/.gitleaks* @openboa-ai/security-maintainers
+/AGENTS.md @openboa-ai/security-maintainers
+/CODEOWNERS @openboa-ai/security-maintainers
+/LICENSE @openboa
+/README.md @openboa
+/SECURITY.md @openboa-ai/security-maintainers
+/config/judges/** @openboa-ai/security-maintainers
+/harbor/** @openboa-ai/security-maintainers
+/schemas/judge-campaign.schema.json @openboa-ai/security-maintainers
+/src/** @openboa-ai/security-maintainers
+/scripts/** @openboa
+/scripts/check-inactive-boundary.mjs @openboa-ai/security-maintainers
+/tests/** @openboa
+/docs/validity/** @openboa
+/docs/quality-map.md @openboa
+`;
+  if (readFileSync(resolve(root, "CODEOWNERS"), "utf8") !== expected) {
+    fail("CODEOWNERS must preserve exact sensitive ownership");
   }
 }
 
@@ -705,8 +842,34 @@ if (
 ) {
   fail("package scripts must remain exact");
 }
+if (
+  !exactKeys(packageJson, [
+    "name",
+    "private",
+    "version",
+    "type",
+    "engines",
+    "scripts",
+    "devDependencies",
+  ]) ||
+  packageJson.name !== "@openboa-ai/coffee-chat-bench" ||
+  packageJson.private !== true ||
+  packageJson.version !== "2026.8.12" ||
+  packageJson.type !== "module" ||
+  !equal(packageJson.engines, { node: ">=24" })
+) {
+  fail("package metadata must remain exact");
+}
+validatePackageLock(packageJson, [
+  "@types/node",
+  "ajv",
+  "prettier",
+  "typescript",
+]);
+validatePolicyParserContract("@openboa-ai/bench-policy-parser");
 validateDependabot();
 validateMergePolicy();
+validateCodeowners();
 
 if (failures.length > 0) {
   process.stderr.write(`${failures.join("\n")}\n`);

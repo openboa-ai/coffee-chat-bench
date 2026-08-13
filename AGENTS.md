@@ -35,6 +35,17 @@ Chat. Its current repository status is `not_active`.
   `.github/merge-policy.json`; the external ruleset decides whether human review
   is required for those paths. Ordinary changes remain eligible for
   required-CI native auto-merge.
+- Treat every current `src/**` module and `scripts/check-inactive-boundary.mjs`
+  as a benchmark-integrity boundary: admission, calibration, materialization,
+  metrics, validity, and inactive-state decisions are sensitive even when they
+  do not call a provider or external process directly.
+- Required CI installs the integrity-pinned parser under
+  `.github/policy-parser` and runs structural policy before installing root
+  dependencies. Treat its manifest, lockfile, checker, and workflow ordering as
+  one sensitive bootstrap boundary.
+- Root dependency updates stay on the GitHub-native path only when package
+  names, exact versions, npm registry tarball identities, and sha512 lockfile
+  integrities pass that protected policy.
 - Do not create custom write-token merge automation or bypass the external
   ruleset's review decision.
 - Routine Dependabot pull requests may use the same required-CI auto-merge
