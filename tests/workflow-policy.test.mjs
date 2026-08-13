@@ -358,17 +358,14 @@ for (const path of [
   "/src/projector.ts",
 ]) {
   test(`rejects removing sensitive judgment path ${path}`, async () => {
-    await expectRejected(
-      async (fixture) => {
-        const policyPath = join(fixture, ".github/merge-policy.json");
-        const policy = JSON.parse(await readFile(policyPath, "utf8"));
-        policy.protected_paths = policy.protected_paths.filter(
-          (candidate) => candidate !== path,
-        );
-        await writeFile(policyPath, `${JSON.stringify(policy, null, 2)}\n`);
-      },
-      /exact sensitive paths/u,
-    );
+    await expectRejected(async (fixture) => {
+      const policyPath = join(fixture, ".github/merge-policy.json");
+      const policy = JSON.parse(await readFile(policyPath, "utf8"));
+      policy.protected_paths = policy.protected_paths.filter(
+        (candidate) => candidate !== path,
+      );
+      await writeFile(policyPath, `${JSON.stringify(policy, null, 2)}\n`);
+    }, /exact sensitive paths/u);
   });
 }
 
