@@ -459,6 +459,35 @@ test("rejects a symlinked destination ancestor without changing its target", () 
   }
 });
 
+test("rejects a symlink ancestor even when its target has existing descendants", () => {
+  const root = mkdtempSync(join(tmpdir(), "coffee-chat-existing-symlink-"));
+  const target = join(root, "target");
+  const existing = join(target, "existing", "nested");
+  const linkedParent = join(root, "linked-parent");
+  const destination = join(linkedParent, "existing", "nested", "bank");
+  try {
+    mkdirSync(existing, { recursive: true });
+    writeFileSync(join(existing, "owner.txt"), "owner-controlled\n", "utf8");
+    symlinkSync(target, linkedParent, "dir");
+    const before = treeBytes(target);
+
+    assert.throws(
+      () =>
+        materializeCampaign(
+          {
+            catalog: parsePerspectiveCatalog(perspectiveCatalogSource()),
+            blueprints: campaignBlueprints().map(parseDomainBlueprint),
+          },
+          destination,
+        ),
+      /symbolic link.*ancestor/i,
+    );
+    assert.deepEqual(treeBytes(target), before);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test("domain blueprints use structural evidence maps and require 32/16 intent", () => {
   const blueprint = domainBlueprint();
   const parsed = parseDomainBlueprint(blueprint);

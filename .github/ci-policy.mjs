@@ -1,19 +1,21 @@
 import { readFileSync, readdirSync } from "node:fs";
-import { createRequire } from "node:module";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const policyRequire = createRequire(
-  new URL("./policy-parser/package.json", import.meta.url),
-);
-const { parseDocument } = policyRequire("yaml");
+import { loadPolicyParser } from "./policy-bootstrap.mjs";
 
 const root = resolve(
   process.env.BENCH_CI_POLICY_ROOT ??
     resolve(dirname(fileURLToPath(import.meta.url)), ".."),
 );
+const { parseDocument } = loadPolicyParser(root);
 const workflowRoot = resolve(root, ".github/workflows");
 const failures = [];
+const YAML_MAX_BYTES = 256 * 1024;
+const YAML_MAX_ALIASES = 100;
+const YAML_MAX_DEPTH = 32;
+const YAML_MAX_NODES = 10_000;
+const YAML_MAX_STRING_BYTES = 256 * 1024;
 const workflowNames = [
   "codeql.yml",
   "policy.yml",
@@ -60,6 +62,65 @@ const eligibilityEnv = {
   HEAD_REPOSITORY: "${{ github.event.pull_request.head.repo.full_name }}",
   PR_AUTHOR_LOGIN: "${{ github.event.pull_request.user.login }}",
 };
+
+function assertYamlResourceBudget(value, label) {
+  const pending = [{ value, depth: 0 }];
+  const seen = new WeakSet();
+  let nodes = 0;
+  let stringBytes = 0;
+  while (pending.length > 0) {
+    const current = pending.pop();
+    if (!current) break;
+    nodes += 1;
+    if (nodes > YAML_MAX_NODES) {
+      fail(`${label}: document node limit exceeded`);
+      return false;
+    }
+    if (current.depth > YAML_MAX_DEPTH) {
+      fail(`${label}: document depth limit exceeded`);
+      return false;
+    }
+    if (typeof current.value === "string") {
+      stringBytes += Buffer.byteLength(current.value, "utf8");
+      if (stringBytes > YAML_MAX_STRING_BYTES) {
+        fail(`${label}: document string limit exceeded`);
+        return false;
+      }
+      continue;
+    }
+    if (!current.value || typeof current.value !== "object") continue;
+    if (seen.has(current.value)) continue;
+    seen.add(current.value);
+    const children = Array.isArray(current.value)
+      ? current.value
+      : Object.entries(current.value).flat();
+    for (const child of children) {
+      pending.push({ value: child, depth: current.depth + 1 });
+    }
+  }
+  return true;
+}
+
+function parseBoundedYaml(relativePath, label) {
+  const source = readFileSync(resolve(root, relativePath), "utf8");
+  if (Buffer.byteLength(source, "utf8") > YAML_MAX_BYTES) {
+    fail(`${label}: document byte limit exceeded`);
+    return undefined;
+  }
+  const document = parseDocument(source, { uniqueKeys: true });
+  if (document.errors.length > 0) {
+    fail(`${label} must parse uniquely`);
+    return undefined;
+  }
+  let value;
+  try {
+    value = document.toJS({ maxAliasCount: YAML_MAX_ALIASES });
+  } catch {
+    fail(`${label}: alias resource limit exceeded`);
+    return undefined;
+  }
+  return assertYamlResourceBudget(value, label) ? value : undefined;
+}
 const qualitySecretScan = [
   "test ! -e .gitleaks.toml",
   "test ! -e .gitleaksignore",
@@ -182,52 +243,6 @@ function validatePackageLock(packageJson, allowedDevDependencies) {
       fail("package lock must preserve registry identity and integrity");
       return;
     }
-  }
-}
-
-function validatePolicyParserContract(expectedName) {
-  const parserRoot = resolve(root, ".github/policy-parser");
-  let packageJson;
-  let lock;
-  try {
-    packageJson = JSON.parse(
-      readFileSync(resolve(parserRoot, "package.json"), "utf8"),
-    );
-    lock = JSON.parse(
-      readFileSync(resolve(parserRoot, "package-lock.json"), "utf8"),
-    );
-  } catch (error) {
-    fail(
-      `isolated policy parser must parse: ${
-        error instanceof Error ? error.message : String(error)
-      }`,
-    );
-    return;
-  }
-  const expectedPackage = {
-    name: expectedName,
-    private: true,
-    version: "1.0.0",
-    dependencies: { yaml: "2.9.0" },
-  };
-  const yaml = lock?.packages?.["node_modules/yaml"];
-  if (
-    !equal(packageJson, expectedPackage) ||
-    lock.name !== expectedName ||
-    lock.version !== "1.0.0" ||
-    lock.lockfileVersion !== 3 ||
-    lock.requires !== true ||
-    !equal(lock.packages?.[""], {
-      name: expectedName,
-      version: "1.0.0",
-      dependencies: { yaml: "2.9.0" },
-    }) ||
-    yaml?.version !== "2.9.0" ||
-    yaml?.resolved !== "https://registry.npmjs.org/yaml/-/yaml-2.9.0.tgz" ||
-    yaml?.integrity !==
-      "sha512-2AvhNX3mb8zd6Zy7INTtSpl1F15HW6Wnqj0srWlkKLcpYl/gMIMJiyuGq2KeI2YFxUPjdlB+3Lc10seMLtL4cA=="
-  ) {
-    fail("isolated policy parser must remain exact and integrity-pinned");
   }
 }
 
@@ -484,6 +499,10 @@ function validateQuality(workflow) {
         uses: "actions/setup-node@820762786026740c76f36085b0efc47a31fe5020",
         with: { "node-version": 24, cache: "npm" },
       },
+      {
+        name: "Authenticate the isolated policy parser lock",
+        run: "node .github/policy-bootstrap.mjs",
+      },
       { run: "npm ci --ignore-scripts --prefix .github/policy-parser" },
       {
         name: "Enforce repository policy before candidate dependencies",
@@ -636,15 +655,10 @@ function validateWritePermissions(workflows) {
 }
 
 function validateDependabot() {
-  const document = parseDocument(
-    readFileSync(resolve(root, ".github/dependabot.yml"), "utf8"),
-    { uniqueKeys: true },
-  );
-  if (document.errors.length > 0) {
-    fail("dependabot.yml: must parse uniquely");
-    return;
-  }
-  const updates = document.toJS({ maxAliasCount: -1 })?.updates;
+  const updates = parseBoundedYaml(
+    ".github/dependabot.yml",
+    "dependabot.yml",
+  )?.updates;
   if (!Array.isArray(updates) || updates.length !== 2) {
     fail("dependabot.yml: exact update lanes");
     return;
@@ -788,15 +802,11 @@ if (!equal(discovered, workflowNames)) fail("workflow set must be exact");
 
 const workflows = {};
 for (const name of workflowNames) {
-  const document = parseDocument(
-    readFileSync(resolve(workflowRoot, name), "utf8"),
-    { uniqueKeys: true },
+  const workflow = parseBoundedYaml(
+    `.github/workflows/${name}`,
+    `${name}: workflow`,
   );
-  if (document.errors.length > 0) {
-    fail(`${name}: workflow must parse uniquely`);
-    continue;
-  }
-  const workflow = document.toJS({ maxAliasCount: -1 });
+  if (workflow === undefined) continue;
   workflows[name] = workflow;
   validateShape(name, workflow);
   validateActions(name, workflow);
@@ -822,7 +832,8 @@ if (
 const expectedPackageScripts = {
   "ci:policy":
     "npm run policy:install && node --test tests/workflow-policy.test.mjs && node .github/ci-policy.mjs",
-  "policy:install": "npm ci --ignore-scripts --prefix .github/policy-parser",
+  "policy:install":
+    "node .github/policy-bootstrap.mjs && npm ci --ignore-scripts --prefix .github/policy-parser",
   test: "npm run policy:install && node --experimental-strip-types --test tests/*.test.mjs tests/*.test.ts",
   typecheck: "tsc --noEmit",
   format:
@@ -867,7 +878,6 @@ validatePackageLock(packageJson, [
   "prettier",
   "typescript",
 ]);
-validatePolicyParserContract("@openboa-ai/bench-policy-parser");
 validateDependabot();
 validateMergePolicy();
 validateCodeowners();

@@ -46,7 +46,12 @@ def emit(state, accepted, critical_failure, reasons):
 def load_json(path, label):
     descriptor = None
     try:
-        descriptor = os.open(os.fspath(path), os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
+        descriptor = os.open(
+            os.fspath(path),
+            os.O_RDONLY
+            | getattr(os, "O_NOFOLLOW", 0)
+            | getattr(os, "O_NONBLOCK", 0),
+        )
         metadata = os.fstat(descriptor)
         if not stat.S_ISREG(metadata.st_mode):
             raise ValueError(f"{label} must be a regular file")

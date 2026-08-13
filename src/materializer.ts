@@ -932,6 +932,7 @@ function isGeneratedDestination(destination: string): boolean {
 }
 
 function publishStagedCampaign(stage: string, destination: string): void {
+  assertSafeDestinationPath(destination);
   if (!existsSync(destination)) {
     renameSync(stage, destination);
     return;
@@ -957,37 +958,40 @@ function publishStagedCampaign(stage: string, destination: string): void {
 function assertSafeDestinationPath(destination: string): void {
   let current = destination;
   while (true) {
-    let stat;
     try {
-      stat = lstatSync(current);
+      const stat = lstatSync(current);
+      if (stat.isSymbolicLink()) {
+        const rootOwnedSystemAncestor =
+          current !== destination && stat.uid === 0;
+        if (!rootOwnedSystemAncestor) {
+          throw new TypeError(
+            `destination has a symbolic link ancestor: ${current}`,
+          );
+        }
+      } else if (current !== destination && !stat.isDirectory()) {
+        throw new TypeError(
+          `destination ancestor must be a directory: ${current}`,
+        );
+      }
     } catch (error) {
-      if (
+      if (!(
         error instanceof Error &&
         "code" in error &&
         error.code === "ENOENT"
-      ) {
-        const parent = dirname(current);
-        if (parent === current) {
-          throw new TypeError(
-            "destination must have an existing parent directory",
-          );
-        }
-        current = parent;
-        continue;
+      )) {
+        throw error;
       }
-      throw error;
     }
-    if (stat.isSymbolicLink()) {
-      throw new TypeError(
-        `destination has a symbolic link ancestor: ${current}`,
-      );
+    const parent = dirname(current);
+    if (parent === current) {
+      if (!existsSync(current)) {
+        throw new TypeError(
+          "destination must have an existing parent directory",
+        );
+      }
+      return;
     }
-    if (current !== destination && !stat.isDirectory()) {
-      throw new TypeError(
-        `destination ancestor must be a directory: ${current}`,
-      );
-    }
-    return;
+    current = parent;
   }
 }
 

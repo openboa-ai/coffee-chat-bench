@@ -194,33 +194,36 @@ function assertSafeWorkspacePath(destination: string): string {
     try {
       const stat = lstatSync(current);
       if (stat.isSymbolicLink()) {
-        throw new TypeError(
-          `calibration workspace has a symbolic link ancestor: ${current}`,
-        );
-      }
-      if (current !== root && !stat.isDirectory()) {
+        const rootOwnedSystemAncestor = current !== root && stat.uid === 0;
+        if (!rootOwnedSystemAncestor) {
+          throw new TypeError(
+            `calibration workspace has a symbolic link ancestor: ${current}`,
+          );
+        }
+      } else if (current !== root && !stat.isDirectory()) {
         throw new TypeError(
           `calibration workspace ancestor must be a directory: ${current}`,
         );
       }
-      break;
     } catch (error) {
-      if (
+      if (!(
         error instanceof Error &&
         "code" in error &&
         error.code === "ENOENT"
-      ) {
-        const parent = dirname(current);
-        if (parent === current) {
-          throw new TypeError(
-            "calibration workspace must have an existing parent directory",
-          );
-        }
-        current = parent;
-        continue;
+      )) {
+        throw error;
       }
-      throw error;
     }
+    const parent = dirname(current);
+    if (parent === current) {
+      if (!existsSync(current)) {
+        throw new TypeError(
+          "calibration workspace must have an existing parent directory",
+        );
+      }
+      break;
+    }
+    current = parent;
   }
   if (existsSync(root)) {
     const stat = lstatSync(root);
