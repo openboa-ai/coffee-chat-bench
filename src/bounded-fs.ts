@@ -34,7 +34,10 @@ export function readUtf8File(
 
   let descriptor: number | undefined;
   try {
-    descriptor = openSync(path, constants.O_RDONLY | constants.O_NOFOLLOW);
+    descriptor = openSync(
+      path,
+      constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK,
+    );
     const before = fstatSync(descriptor, { bigint: true });
     if (!before.isFile()) {
       throw new TypeError(`${label} must be a regular file`);

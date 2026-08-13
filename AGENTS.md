@@ -39,13 +39,15 @@ Chat. Its current repository status is `not_active`.
   as a benchmark-integrity boundary: admission, calibration, materialization,
   metrics, validity, and inactive-state decisions are sensitive even when they
   do not call a provider or external process directly.
-- Required CI installs the integrity-pinned parser under
-  `.github/policy-parser` and runs structural policy before installing root
-  dependencies. Treat its manifest, lockfile, checker, and workflow ordering as
-  one sensitive bootstrap boundary.
+- Required CI authenticates the exact parser manifest and lock with built-in
+  Node.js code, installs that integrity-pinned parser under
+  `.github/policy-parser`, and only then loads it to enforce structural policy
+  before installing root dependencies. Treat the bootstrap, manifest, lockfile,
+  checker, and workflow ordering as one sensitive boundary.
 - After a clean checkout, run `npm ci --ignore-scripts` for root dependencies;
-  `npm test` and `npm run ci:policy` install the isolated parser through the
-  exact `policy:install` command before loading the checker or fixtures.
+  `npm test` and `npm run ci:policy` authenticate and install the isolated
+  parser through the exact `policy:install` command before loading the checker
+  or fixtures.
 - Root dependency updates stay on the GitHub-native path only when package
   names, exact versions, npm registry tarball identities, and sha512 lockfile
   integrities pass that protected policy.

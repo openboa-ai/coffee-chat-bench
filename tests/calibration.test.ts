@@ -414,6 +414,23 @@ test("calibration rejects a missing case without shrinking the 288-condition den
       readFileSync(join(target, "owner.txt"), "utf8"),
       "target is private\n",
     );
+
+    const existing = join(target, "existing");
+    mkdirSync(existing);
+    const nestedSymlinked = runCli([
+      "calibrate-bank",
+      bank,
+      join(linked, "existing", "workspace"),
+    ]);
+    assert.equal(nestedSymlinked.status, 1, nestedSymlinked.stderr);
+    const nestedReport = JSON.parse(nestedSymlinked.stdout) as {
+      readonly failures: ReadonlyArray<{ readonly message: string }>;
+    };
+    assert.match(
+      nestedReport.failures.map(({ message }) => message).join(" "),
+      /symbolic link.*ancestor/i,
+    );
+    assert.deepEqual(readdirSync(existing), []);
   } finally {
     rmSync(root, { force: true, recursive: true });
   }
