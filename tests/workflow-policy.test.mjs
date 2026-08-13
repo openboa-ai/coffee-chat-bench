@@ -96,8 +96,8 @@ test("rejects flow-style escaped unpinned actions", async () => {
       replace(
         fixture,
         ".github/workflows/quality.yml",
-        "    steps:\n      - name: Check out repository without persisted credentials",
-        '    steps:\n      - { "u\\u0073es": actions/checkout@v7 }\n      - name: Check out repository without persisted credentials',
+        "      - name: Check out repository without persisted credentials",
+        '      - { "u\\u0073es": actions/checkout@v7 }\n      - name: Check out repository without persisted credentials',
       ),
     /unapproved action/u,
   );
@@ -109,8 +109,8 @@ test("rejects aliased unpinned actions", async () => {
       replace(
         fixture,
         ".github/workflows/quality.yml",
-        "    steps:\n      - name: Check out repository without persisted credentials",
-        "    steps:\n      - &unpinned\n        uses: actions/checkout@v7\n      - *unpinned\n      - name: Check out repository without persisted credentials",
+        "      - name: Check out repository without persisted credentials",
+        "      - &unpinned\n        uses: actions/checkout@v7\n      - *unpinned\n      - name: Check out repository without persisted credentials",
       ),
     /unapproved action/u,
   );
