@@ -1,18 +1,41 @@
 name: Bench CodeQL
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
   merge_group:
 
 permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.event.merge_group.head_sha || github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  eligibility:
+    name: Bench author eligibility
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Decide author eligibility
+        env:
+          AUTHOR_ASSOCIATION: ${{ github.event.pull_request.author_association }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          case "$EVENT_NAME" in
+            merge_group) exit 0 ;;
+            pull_request)
+              case "$AUTHOR_ASSOCIATION" in OWNER|MEMBER) exit 0 ;; *) exit 1 ;; esac
+              ;;
+            *) exit 1 ;;
+          esac
+
   analyze:
     name: Bench CodeQL JavaScript-TypeScript
+    needs: eligibility
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     permissions:
       contents: read
       actions: read

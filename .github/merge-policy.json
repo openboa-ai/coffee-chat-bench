@@ -1,0 +1,26 @@
+{
+  "repository_role": "bench",
+  "merge_method": "squash",
+  "auto_merge": "github-native",
+  "required_events": ["pull_request", "merge_group"],
+  "eligible_author_associations": ["OWNER", "MEMBER"],
+  "required_approvals": 0,
+  "required_checks": [
+    { "context": "Bench required", "integration_id": 15368 },
+    { "context": "Bench dependency review", "integration_id": 15368 },
+    { "context": "Secret boundary", "integration_id": 15368 },
+    {
+      "context": "Bench CodeQL JavaScript-TypeScript",
+      "integration_id": 15368
+    }
+  ],
+  "protected_paths": [
+    "/.github/**",
+    "/AGENTS.md",
+    "/CODEOWNERS",
+    "/SECURITY.md",
+    "/config/judges/**",
+    "/harbor/**",
+    "/src/openai-judge.ts"
+  ]
+}
