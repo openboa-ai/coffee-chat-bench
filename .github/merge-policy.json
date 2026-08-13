@@ -8,14 +8,17 @@
   "eligible_bot_logins": ["dependabot[bot]"],
   "required_approvals": 0,
   "required_checks": [
-    { "context": "Bench required", "integration_id": 15368 },
-    { "context": "Bench dependency review", "integration_id": 15368 },
-    { "context": "Secret boundary", "integration_id": 15368 },
     {
-      "context": "Bench CodeQL JavaScript-TypeScript",
+      "context": "OpenBoa Coffee trusted required / OpenBoa Coffee trusted required",
       "integration_id": 15368
     }
   ],
+  "sensitive_review": {
+    "enforcement": "github_environment",
+    "environment": "coffee-security",
+    "required_approvals": 1,
+    "prevent_self_review": false
+  },
   "protected_paths": [
     "/.github/**",
     "/.githooks/**",

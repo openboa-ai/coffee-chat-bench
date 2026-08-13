@@ -12,15 +12,16 @@ validity claim.
 Keep the machine-stable inactive boundary observable while assigning semantic
 decisions to exact-head review.
 
-| Property                                                                                                                       | Primary oracle                       | Honest evidence boundary                                            |
-| ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------ | ------------------------------------------------------------------- |
-| Role-labelled experimental roots, canonical `not_active` markers, candidate independence, and bounded no-claim tripwires       | Deterministic checker and Node tests | Local/PR contract evidence only                                     |
-| Workflow self-change semantics, hidden executable behavior inside approved control modules, and natural-language claim meaning | Exact-head Codex review              | Semantic review of the complete changed surface and execution graph |
+| Property                                                                                                                        | Primary oracle                                     | Honest evidence boundary                                            |
+| ------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------- |
+| Role-labelled experimental roots, canonical `not_active` markers, candidate independence, and bounded no-claim tripwires        | Deterministic checker and Node tests               | Local/PR contract evidence only                                     |
+| Central-gate or wrapper changes, hidden executable behavior inside approved control modules, and natural-language claim meaning | Exact-head Codex review plus protected Environment | Semantic review of the complete changed surface and execution graph |
 
-Native auto-merge is enabled only after Codex review of the exact current head
-is complete and all material review conversations are resolved. Passing local
-CI does not make the repository active, establish validity, report a measured
-result, or replace that semantic review.
+The pinned central gate runs deterministic checks for every exact head. Routine
+changes remain eligible for native auto-merge; sensitive paths also require the
+protected Environment confirmation. Passing local or central CI does not make
+the repository active, establish validity, report a measured result, or replace
+that semantic review.
 
 ## Task 2 contract and metric evidence
 

@@ -54,53 +54,6 @@ const experimentalRootFixtures = [
   ["tests/experimental-contract.mjs", "export {}\n"],
   ["tests/fixtures/experimental-case.json", "{}\n"],
 ];
-const qualityWorkflow = join(root, ".github", "workflows", "quality.yml");
-
-function workflowStep(name) {
-  const lines = readFileSync(qualityWorkflow, "utf8").split("\n");
-  const start = lines.indexOf(`      - name: ${name}`);
-  assert.notEqual(start, -1, `missing workflow step: ${name}`);
-  const next = lines.findIndex(
-    (line, index) => index > start && line.startsWith("      - name: "),
-  );
-  const block = lines.slice(start + 1, next === -1 ? lines.length : next);
-  const condition = block
-    .find((line) => line.startsWith("        if: "))
-    ?.slice("        if: ".length);
-  const run = block.indexOf("        run: |");
-  assert.notEqual(run, -1, `missing workflow script: ${name}`);
-  const script = block
-    .slice(run + 1)
-    .filter((line) => line.startsWith("          ") || line === "")
-    .map((line) => line.slice(10))
-    .join("\n");
-  return { condition, script };
-}
-
-function runAuthorGate({
-  event,
-  association,
-  login,
-  actor = login,
-  headRepository = "openboa-ai/coffee-chat-bench",
-}) {
-  const gate = workflowStep("Decide author eligibility");
-  assert.equal(gate.condition, undefined);
-  const env = { ...process.env };
-  env.BASE_REPOSITORY = "openboa-ai/coffee-chat-bench";
-  env.HEAD_REPOSITORY = headRepository;
-  env.EVENT_NAME = event;
-  if (association === undefined) delete env.AUTHOR_ASSOCIATION;
-  else env.AUTHOR_ASSOCIATION = association;
-  if (actor === undefined) delete env.ACTOR;
-  else env.ACTOR = actor;
-  if (login === undefined) delete env.PR_AUTHOR_LOGIN;
-  else env.PR_AUTHOR_LOGIN = login;
-  return spawnSync("bash", ["-e", "-o", "pipefail", "-c", gate.script], {
-    encoding: "utf8",
-    env,
-  });
-}
 function check(repository) {
   return spawnSync(
     process.execPath,
@@ -430,93 +383,20 @@ test("ignores Python dynamic-import text in comments and ordinary strings", () =
   });
 });
 
-test("enforces exact member and Dependabot author eligibility", () => {
-  const scenarios = [
-    [
-      "owner",
-      { event: "pull_request", association: "OWNER", login: "owner" },
-      true,
-    ],
-    [
-      "member",
-      { event: "pull_request", association: "MEMBER", login: "member" },
-      true,
-    ],
-    [
-      "different actor updating owner PR",
-      {
-        event: "pull_request",
-        association: "OWNER",
-        login: "owner",
-        actor: "different-maintainer",
-      },
-      false,
-    ],
-    [
-      "owner fork",
-      {
-        event: "pull_request",
-        association: "OWNER",
-        login: "owner",
-        headRepository: "owner/coffee-chat-bench",
-      },
-      false,
-    ],
-    [
-      "collaborator",
-      { event: "pull_request", association: "COLLABORATOR" },
-      false,
-    ],
-    [
-      "contributor",
-      { event: "pull_request", association: "CONTRIBUTOR" },
-      false,
-    ],
-    ["none", { event: "pull_request", association: "NONE" }, false],
-    ["missing association", { event: "pull_request" }, false],
-    [
-      "Dependabot",
-      {
-        event: "pull_request",
-        association: "NONE",
-        login: "dependabot[bot]",
-      },
-      true,
-    ],
-    [
-      "openboa login with none",
-      { event: "pull_request", association: "NONE", login: "openboa" },
-      false,
-    ],
-    [
-      "spoofed Dependabot author",
-      {
-        event: "pull_request",
-        association: "NONE",
-        login: "dependabot[bot]",
-        actor: "openboa",
-      },
-      false,
-    ],
-    [
-      "Dependabot fork",
-      {
-        event: "pull_request",
-        association: "NONE",
-        login: "dependabot[bot]",
-        headRepository: "attacker/coffee-chat-bench",
-      },
-      false,
-    ],
-    ["merge group", { event: "merge_group" }, false],
-  ];
-
-  for (const [name, input, allowed] of scenarios) {
-    const result = runAuthorGate(input);
-    if (allowed) assert.equal(result.status, 0, result.stderr || name);
-    else assert.notEqual(result.status, 0, name);
-  }
+test("delegates author eligibility to the immutable central gate", () => {
+  const wrapper = readFileSync(
+    join(root, ".github", "workflows", "trusted.yml"),
+    "utf8",
+  );
+  const controlSha = wrapper.match(
+    /uses: openboa-ai\/\.github\/\.github\/workflows\/coffee-trusted-gate\.yml@([0-9a-f]{40})/u,
+  )?.[1];
+  assert.ok(controlSha);
+  assert.match(wrapper, /pull_request_target:/u);
+  assert.match(wrapper, new RegExp(`control_sha: ${controlSha}`, "u"));
+  assert.doesNotMatch(wrapper, /^\s*run:/mu);
 });
+
 test("requires the public not_active status in each public boundary document", () => {
   for (const path of ["AGENTS.md", "README.md"]) {
     withFixture((repository) => {
