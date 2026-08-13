@@ -1,0 +1,43 @@
+{
+  "repository_role": "bench",
+  "merge_method": "squash",
+  "auto_merge": "github-native",
+  "merge_queue": false,
+  "required_events": ["pull_request"],
+  "eligible_author_associations": ["OWNER", "MEMBER"],
+  "eligible_bot_logins": ["dependabot[bot]"],
+  "required_approvals": 0,
+  "required_checks": [
+    { "context": "Bench required", "integration_id": 15368 },
+    { "context": "Bench dependency review", "integration_id": 15368 },
+    { "context": "Secret boundary", "integration_id": 15368 },
+    {
+      "context": "Bench CodeQL JavaScript-TypeScript",
+      "integration_id": 15368
+    }
+  ],
+  "protected_paths": [
+    "/.github/**",
+    "/.githooks/**",
+    "/.gitleaksignore",
+    "/.gitleaks.toml",
+    "/AGENTS.md",
+    "/CODEOWNERS",
+    "/SECURITY.md",
+    "/config/judges/**",
+    "/harbor/**",
+    "/schemas/judge-campaign.schema.json",
+    "/src/bank.ts",
+    "/src/bounded-fs.ts",
+    "/src/cli.ts",
+    "/src/contracts.ts",
+    "/src/digest.ts",
+    "/src/identity.ts",
+    "/src/judge-campaign.ts",
+    "/src/judge-config.ts",
+    "/src/judge-panel.ts",
+    "/src/judgment.ts",
+    "/src/openai-judge.ts",
+    "/src/projector.ts"
+  ]
+}

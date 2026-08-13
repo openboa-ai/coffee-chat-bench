@@ -17,6 +17,7 @@ import { pathToFileURL } from "node:url";
 import test from "node:test";
 
 import { parseCaseBundle, parseJudgeVote } from "../src/contracts.ts";
+import { stableDigest } from "../src/identity.ts";
 import {
   buildCanonicalJudgePanelInput,
   createAttestationMac,
@@ -206,6 +207,116 @@ test("accepted Oracle projection calls exactly Terra and Luna and emits only pub
     ]) {
       assert.equal(serialized.includes(forbidden), false, forbidden);
     }
+  });
+});
+
+test("rejects oversized artifacts before model calls and Harbor parsing", async () => {
+  await withProjection(async (root, projection) => {
+    const oracle = artifact(root, projection, "oracle");
+    writeFileSync(
+      oracle,
+      `${" ".repeat(1024 * 1024)}${readFileSync(oracle, "utf8")}`,
+      "utf8",
+    );
+    const signedAttestation = attestation(root, projection, oracle);
+    let calls = 0;
+
+    const result = await judgeProjection({
+      projectionRoot: projection,
+      artifactPath: oracle,
+      attestationPath: signedAttestation,
+      capabilityKey,
+      transport: {
+        async request() {
+          calls += 1;
+          throw new Error("provider must not run");
+        },
+      },
+    });
+
+    assert.equal(result.state, "candidate_invalid");
+    assert.equal(result.deterministic.reasonCode, "artifact_invalid");
+    assert.equal(calls, 0);
+
+    const verifier = spawnSync(
+      "python3",
+      [
+        join(repositoryRoot, "harbor", "verifier.py"),
+        "--judgment",
+        join(projection, "harbor", "tests", "judgment.json"),
+        "--artifact",
+        oracle,
+      ],
+      { encoding: "utf8" },
+    );
+    assert.equal(verifier.status, 1, verifier.stderr);
+    assert.match(verifier.stdout, /candidate_invalid/);
+    assert.match(verifier.stdout, /exceeds.*byte limit/i);
+  });
+});
+
+test("stops candidate projection enumeration at the declared file budget", async () => {
+  await withProjection(async (root, projection) => {
+    const oracle = artifact(root, projection, "oracle");
+    const signedAttestation = attestation(root, projection, oracle);
+    writeFileSync(join(projection, "candidate", "unexpected.json"), "{}\n");
+    let calls = 0;
+
+    await assert.rejects(
+      judgeProjection({
+        projectionRoot: projection,
+        artifactPath: oracle,
+        attestationPath: signedAttestation,
+        capabilityKey,
+        transport: {
+          async request() {
+            calls += 1;
+            throw new Error("provider must not run");
+          },
+        },
+      }),
+      /candidate projection exceeds 4 entry limit/i,
+    );
+    assert.equal(calls, 0);
+  });
+});
+
+test("rejects an oversized artifact response before model calls", async () => {
+  await withProjection(async (root, projection) => {
+    const oracle = artifact(root, projection, "oracle");
+    const value = JSON.parse(readFileSync(oracle, "utf8")) as {
+      manifest: Record<string, unknown>;
+      response: string;
+      accessedPaths: string[];
+    };
+    value.response = "x".repeat(192 * 1024);
+    const manifestWithoutDigest = Object.fromEntries(
+      Object.entries(value.manifest).filter(
+        ([key]) => key !== "artifactDigest",
+      ),
+    );
+    value.manifest.artifactDigest = stableDigest({
+      ...value,
+      manifest: manifestWithoutDigest,
+    });
+    writeFileSync(oracle, JSON.stringify(value), "utf8");
+    let calls = 0;
+
+    const result = await judgeProjection({
+      projectionRoot: projection,
+      artifactPath: oracle,
+      attestationPath: attestation(root, projection, oracle),
+      capabilityKey,
+      transport: {
+        async request() {
+          calls += 1;
+          throw new Error("provider must not run");
+        },
+      },
+    });
+
+    assert.equal(result.state, "candidate_invalid");
+    assert.equal(calls, 0);
   });
 });
 

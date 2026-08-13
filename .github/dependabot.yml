@@ -1,6 +1,31 @@
 version: 2
 
 updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: deps
+    allow:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-minor
+          - version-update:semver-patch
+    groups:
+      security:
+        applies-to: security-updates
+        patterns:
+          - "*"
+      production:
+        applies-to: version-updates
+        dependency-type: production
+        update-types: [minor, patch]
+      development:
+        applies-to: version-updates
+        dependency-type: development
+        update-types: [minor, patch]
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
@@ -8,6 +33,11 @@ updates:
     open-pull-requests-limit: 5
     commit-message:
       prefix: deps
+    allow:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-minor
+          - version-update:semver-patch
     groups:
       security:
         applies-to: security-updates
@@ -15,5 +45,6 @@ updates:
           - "*"
       versions:
         applies-to: version-updates
+        update-types: [minor, patch]
         patterns:
           - "*"

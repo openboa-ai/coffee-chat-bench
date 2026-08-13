@@ -547,6 +547,45 @@ test("project emits the standalone Harbor verifier build context", () => {
   });
 });
 
+test("verifier rejects a regular file mutated during its bounded read", () => {
+  withTemporaryDirectory((root) => {
+    const mutable = join(root, "mutable.json");
+    writeFileSync(mutable, JSON.stringify({ payload: "a".repeat(192 * 1024) }));
+    const program = `import importlib.util, os, sys
+source, path = sys.argv[1:]
+spec = importlib.util.spec_from_file_location("bench_verifier", source)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+original_read = os.read
+mutated = False
+def guarded_read(descriptor, count):
+    global mutated
+    chunk = original_read(descriptor, count)
+    if chunk and not mutated:
+        mutated = True
+        with open(path, "wb") as target:
+            target.write(b'{"payload":"' + (b'b' * (192 * 1024)) + b'"}')
+        current = os.stat(path)
+        os.utime(path, ns=(current.st_atime_ns, current.st_mtime_ns + 1_000_000_000))
+    return chunk
+module.os.read = guarded_read
+try:
+    module.load_json(path, "artifact")
+except ValueError as error:
+    print(error)
+    raise SystemExit(0 if "changed while it was read" in str(error) else 2)
+raise SystemExit(1)
+`;
+    const result = spawnSync(
+      "python3",
+      ["-c", program, join(repositoryRoot, "harbor", "verifier.py"), mutable],
+      { encoding: "utf8" },
+    );
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    assert.match(result.stdout, /changed while it was read/u);
+  });
+});
+
 test("project omits perspective for none and uses only the irrelevant control", () => {
   withTemporaryDirectory((root) => {
     project(join(root, "none"), "none");
@@ -658,6 +697,37 @@ test("the real Harbor verifier accepts Oracle and rejects each critical candidat
       assert.equal(parsed.state, verdict.state, name);
       assert.equal(parsed.criticalFailure, verdict.criticalFailure, name);
     }
+  });
+});
+
+test("the verifier fails closed on an over-depth sealed judgment", () => {
+  withTemporaryDirectory((root) => {
+    const projectionRoot = join(root, "projection");
+    project(projectionRoot);
+    const judgmentPath = join(
+      projectionRoot,
+      "harbor",
+      "tests",
+      "judgment.json",
+    );
+    const judgment = JSON.parse(readFileSync(judgmentPath, "utf8")) as Record<
+      string,
+      unknown
+    >;
+    let nested: Record<string, unknown> = { leaf: "bounded" };
+    for (let depth = 0; depth < 40; depth += 1) nested = { nested };
+    (judgment.candidateProjection as Record<string, unknown>).nested = nested;
+    writeFileSync(judgmentPath, JSON.stringify(judgment), "utf8");
+
+    const result = runHarborVerifier(
+      projectionRoot,
+      copyProjectedOracle(root, projectionRoot),
+    );
+
+    assert.equal(result.status, 1, result.stderr);
+    const verdict = JSON.parse(result.stdout) as Record<string, unknown>;
+    assert.equal(verdict.state, "verifier_failure");
+    assert.match(JSON.stringify(verdict.reasons), /depth.*limit/i);
   });
 });
 

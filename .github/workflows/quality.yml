@@ -2,38 +2,60 @@ name: Bench quality
 
 on:
   pull_request:
-  merge_group:
 
 permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  quality:
-    name: Bench deterministic quality
+  eligibility:
+    name: Bench author eligibility
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     permissions:
       contents: read
     steps:
-      - name: Verify trusted pull request author
-        if: github.event_name == 'pull_request'
+      - name: Decide author eligibility
         env:
+          ACTOR: ${{ github.actor }}
           AUTHOR_ASSOCIATION: ${{ github.event.pull_request.author_association }}
+          BASE_REPOSITORY: ${{ github.repository }}
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+          PR_AUTHOR_LOGIN: ${{ github.event.pull_request.user.login }}
         run: |
-          case "$AUTHOR_ASSOCIATION" in
-            OWNER|MEMBER)
-              printf '%s\n' 'author=trusted_member'
+          case "$EVENT_NAME" in
+            pull_request)
+              case "$AUTHOR_ASSOCIATION" in
+                OWNER|MEMBER)
+                  test "$ACTOR" = "$PR_AUTHOR_LOGIN"
+                  test "$HEAD_REPOSITORY" = "$BASE_REPOSITORY"
+                  ;;
+                *)
+                  test "$ACTOR" = 'dependabot[bot]'
+                  test "$PR_AUTHOR_LOGIN" = 'dependabot[bot]'
+                  test "$HEAD_REPOSITORY" = "$BASE_REPOSITORY"
+                  ;;
+              esac
               ;;
-            *)
-              printf '%s\n' 'author=untrusted' >&2
-              exit 1
-              ;;
+            *) exit 1 ;;
           esac
+
+  quality:
+    name: Bench deterministic quality
+    needs: eligibility
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
       - name: Check out repository without persisted credentials
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
           persist-credentials: false
-          ref: ${{ github.event.pull_request.head.sha ||
-            github.event.merge_group.head_sha || github.sha }}
       - name: Install immutable Gitleaks
         run: .github/scripts/install-gitleaks.sh
       - name: Scan complete Git history
@@ -50,46 +72,30 @@ jobs:
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: 24
-      - name: Install locked Node.js dependencies
-        run: npm ci
-      - name: Verify inactive boundary
-        run: node scripts/check-inactive-boundary.mjs --root .
-      - name: Typecheck deterministic TypeScript
-        run: npm run typecheck
-      - name: Run deterministic tests
-        run: node --experimental-strip-types --test tests/*.test.mjs tests/*.test.ts
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm audit --audit-level=moderate
+      - run: npm run format:check
+      - run: npm run check:inactive
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run ci:policy
 
   aggregate:
     name: Bench required
     if: always()
     needs:
+      - eligibility
       - quality
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     permissions:
       contents: read
     steps:
-      - name: Interpret required lane state
+      - name: Require every applicable lane
         env:
+          ELIGIBILITY_RESULT: ${{ needs.eligibility.result }}
           QUALITY_RESULT: ${{ needs.quality.result }}
         run: |
-          case "$QUALITY_RESULT" in
-            success)
-              printf '%s\n' 'quality=succeeded'
-              ;;
-            failure)
-              printf '%s\n' 'quality=failed' >&2
-              exit 1
-              ;;
-            skipped)
-              printf '%s\n' 'quality=skipped' >&2
-              exit 1
-              ;;
-            cancelled)
-              printf '%s\n' 'quality=unavailable' >&2
-              exit 1
-              ;;
-            *)
-              printf '%s\n' 'quality=invalid' >&2
-              exit 1
-              ;;
-          esac
+          test "$ELIGIBILITY_RESULT" = success
+          test "$QUALITY_RESULT" = success

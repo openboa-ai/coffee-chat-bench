@@ -1,18 +1,53 @@
 name: Bench CodeQL
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
-  merge_group:
 
 permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  eligibility:
+    name: Bench author eligibility
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Decide author eligibility
+        env:
+          ACTOR: ${{ github.actor }}
+          AUTHOR_ASSOCIATION: ${{ github.event.pull_request.author_association }}
+          BASE_REPOSITORY: ${{ github.repository }}
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+          PR_AUTHOR_LOGIN: ${{ github.event.pull_request.user.login }}
+        run: |
+          case "$EVENT_NAME" in
+            pull_request)
+              case "$AUTHOR_ASSOCIATION" in
+                OWNER|MEMBER)
+                  test "$ACTOR" = "$PR_AUTHOR_LOGIN"
+                  test "$HEAD_REPOSITORY" = "$BASE_REPOSITORY"
+                  ;;
+                *)
+                  test "$ACTOR" = 'dependabot[bot]'
+                  test "$PR_AUTHOR_LOGIN" = 'dependabot[bot]'
+                  test "$HEAD_REPOSITORY" = "$BASE_REPOSITORY"
+                  ;;
+              esac
+              ;;
+            *) exit 1 ;;
+          esac
+
   analyze:
     name: Bench CodeQL JavaScript-TypeScript
+    needs: eligibility
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     permissions:
       contents: read
       actions: read
