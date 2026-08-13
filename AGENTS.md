@@ -41,9 +41,10 @@ Chat. Its current repository status is `not_active`.
   do not call a provider or external process directly.
 - Required CI authenticates the exact parser manifest and lock with built-in
   Node.js code, installs that integrity-pinned parser under
-  `.github/policy-parser`, and only then loads it to enforce structural policy
-  before installing root dependencies. Treat the bootstrap, manifest, lockfile,
-  checker, and workflow ordering as one sensitive boundary.
+  `.github/policy-parser`, audits that dependency tree independently, and only
+  then loads it to enforce structural policy before installing root
+  dependencies. Treat the bootstrap, manifest, lockfile, checker, and workflow
+  ordering as one sensitive boundary.
 - After a clean checkout, run `npm ci --ignore-scripts` for root dependencies;
   `npm test` and `npm run ci:policy` authenticate and install the isolated
   parser through the exact `policy:install` command before loading the checker
