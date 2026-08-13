@@ -26,6 +26,11 @@
     "/SECURITY.md",
     "/config/judges/**",
     "/harbor/**",
+    "/src/cli.ts",
+    "/src/judge-campaign.ts",
+    "/src/judge-config.ts",
+    "/src/judge-panel.ts",
+    "/src/judgment.ts",
     "/src/openai-judge.ts"
   ]
 }

@@ -48,6 +48,48 @@ const eligibilityEnv = {
   HEAD_REPOSITORY: "${{ github.event.pull_request.head.repo.full_name }}",
   PR_AUTHOR_LOGIN: "${{ github.event.pull_request.user.login }}",
 };
+const qualitySecretScan = [
+  "test ! -e .gitleaks.toml",
+  "test ! -e .gitleaksignore",
+  'gitleaks git --config "$GITLEAKS_TRUSTED_CONFIG" \\',
+  "  --gitleaks-ignore-path /dev/null --ignore-gitleaks-allow \\",
+  "  --redact --no-banner .",
+  'gitleaks dir --config "$GITLEAKS_TRUSTED_CONFIG" \\',
+  "  --gitleaks-ignore-path /dev/null --ignore-gitleaks-allow \\",
+  "  --redact --no-banner .",
+  "",
+].join("\n");
+const boundarySecretScan = [
+  "set -o pipefail",
+  "test ! -e candidate/.gitleaks.toml",
+  "test ! -e candidate/.gitleaksignore",
+  "ignore_path=/dev/null",
+  'gitleaks git --config "$GITLEAKS_TRUSTED_CONFIG" \\',
+  '  --gitleaks-ignore-path "$ignore_path" --ignore-gitleaks-allow \\',
+  '  --redact --no-banner "$GITHUB_WORKSPACE/candidate"',
+  'gitleaks dir --config "$GITLEAKS_TRUSTED_CONFIG" \\',
+  '  --gitleaks-ignore-path "$ignore_path" --ignore-gitleaks-allow \\',
+  '  --redact --no-banner "$GITHUB_WORKSPACE/candidate"',
+  'blob_dir="$(mktemp -d)"',
+  'if test -n "$BASE_SHA"; then',
+  "  git -C candidate fetch --no-tags --depth=1 \\",
+  '    "https://github.com/$BASE_REPOSITORY.git" "$BASE_SHA"',
+  '  object_range="$BASE_SHA..$HEAD_SHA"',
+  "else",
+  '  object_range="$HEAD_SHA"',
+  "fi",
+  'git -C candidate rev-list --objects "$object_range" |',
+  "  cut -d' ' -f1 |",
+  "  git -C candidate cat-file --batch-check='%(objectname) %(objecttype)' |",
+  "  awk '$2 == \"blob\" { print $1 }' |",
+  "  while read -r object_id; do",
+  '    git -C candidate cat-file blob "$object_id" > "$blob_dir/$object_id"',
+  "  done",
+  'gitleaks dir --config "$GITLEAKS_TRUSTED_CONFIG" \\',
+  '  --gitleaks-ignore-path "$ignore_path" --ignore-gitleaks-allow \\',
+  '  --redact --no-banner "$blob_dir"',
+  "",
+].join("\n");
 
 function fail(message) {
   failures.push(message);
@@ -200,6 +242,14 @@ function validateCodeql(workflow) {
   validateEligibility(eligibility, "codeql.yml");
   if (
     !isRecord(analyze) ||
+    !exactKeys(analyze, [
+      "name",
+      "needs",
+      "runs-on",
+      "timeout-minutes",
+      "permissions",
+      "steps",
+    ]) ||
     analyze.name !== "Bench CodeQL JavaScript-TypeScript" ||
     analyze.needs !== "eligibility" ||
     analyze["runs-on"] !== "ubuntu-24.04" ||
@@ -213,14 +263,22 @@ function validateCodeql(workflow) {
   }
   const codeqlSteps = steps(analyze);
   if (
-    codeqlSteps[0]?.uses !==
-      "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" ||
-    codeqlSteps[1]?.uses !==
-      "github/codeql-action/init@5595ccaf912efad79be6eef63a5619ff05969be3" ||
-    codeqlSteps[1]?.with?.languages !== "javascript-typescript" ||
-    codeqlSteps[1]?.with?.["build-mode"] !== "none" ||
-    codeqlSteps[2]?.uses !==
-      "github/codeql-action/analyze@5595ccaf912efad79be6eef63a5619ff05969be3"
+    !equal(codeqlSteps, [
+      {
+        name: "Check out repository without persisted credentials",
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+        with: { "persist-credentials": false },
+      },
+      {
+        name: "Initialize CodeQL",
+        uses: "github/codeql-action/init@5595ccaf912efad79be6eef63a5619ff05969be3",
+        with: { languages: "javascript-typescript", "build-mode": "none" },
+      },
+      {
+        name: "Analyze with CodeQL",
+        uses: "github/codeql-action/analyze@5595ccaf912efad79be6eef63a5619ff05969be3",
+      },
+    ])
   ) {
     fail("codeql.yml: exact CodeQL actions");
   }
@@ -232,6 +290,13 @@ function validateDependencyReview(workflow) {
     fail("policy.yml: exact jobs");
   if (
     !isRecord(review) ||
+    !exactKeys(review, [
+      "name",
+      "runs-on",
+      "timeout-minutes",
+      "permissions",
+      "steps",
+    ]) ||
     review.name !== "Bench dependency review" ||
     review["runs-on"] !== "ubuntu-24.04" ||
     !equal(review.permissions, { contents: "read" })
@@ -263,6 +328,14 @@ function validateQuality(workflow) {
   validateEligibility(eligibility, "quality.yml");
   if (
     !isRecord(quality) ||
+    !exactKeys(quality, [
+      "name",
+      "needs",
+      "runs-on",
+      "timeout-minutes",
+      "permissions",
+      "steps",
+    ]) ||
     quality.name !== "Bench deterministic quality" ||
     quality.needs !== "eligibility" ||
     !equal(quality.permissions, { contents: "read" })
@@ -270,27 +343,29 @@ function validateQuality(workflow) {
     fail("quality.yml: candidate checkout requires eligibility");
   }
   const qualitySteps = steps(quality);
-  const checkout = qualitySteps.findIndex((step) =>
-    step?.uses?.startsWith("actions/checkout@"),
-  );
-  const install = runIndex(qualitySteps, "npm ci --ignore-scripts");
-  const audit = runIndex(qualitySteps, "npm audit --audit-level=moderate");
-  const commands = requiredCommands.map((command) =>
-    runIndex(qualitySteps, command),
-  );
   if (
-    checkout < 0 ||
-    install < 0 ||
-    audit < install ||
-    commands.some((index) => index < 0 || index < audit) ||
-    commands.at(-1) !== qualitySteps.length - 1
+    !equal(qualitySteps, [
+      {
+        name: "Check out repository without persisted credentials",
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+        with: { "fetch-depth": 0, "persist-credentials": false },
+      },
+      {
+        name: "Install immutable Gitleaks",
+        run: ".github/scripts/install-gitleaks.sh",
+      },
+      { name: "Scan complete Git history", run: qualitySecretScan },
+      {
+        name: "Set up Node.js",
+        uses: "actions/setup-node@820762786026740c76f36085b0efc47a31fe5020",
+        with: { "node-version": 24, cache: "npm" },
+      },
+      { run: "npm ci --ignore-scripts" },
+      { run: "npm audit --audit-level=moderate" },
+      ...requiredCommands.map((run) => ({ run })),
+    ])
   ) {
-    fail(
-      "quality.yml: immutable install and moderate audit precede repository scripts",
-    );
-  }
-  if (runIndex(qualitySteps, "npm run ci:policy") < 0) {
-    fail("quality.yml: quality job runs the policy command");
+    fail("quality.yml: exact fail-closed candidate quality steps");
   }
   if (
     collectRuns(quality).some((command) =>
@@ -303,10 +378,29 @@ function validateQuality(workflow) {
   }
   if (
     !isRecord(aggregate) ||
+    !exactKeys(aggregate, [
+      "name",
+      "if",
+      "needs",
+      "runs-on",
+      "timeout-minutes",
+      "permissions",
+      "steps",
+    ]) ||
     aggregate.name !== "Bench required" ||
     aggregate.if !== "always()" ||
     !equal(aggregate.needs, ["eligibility", "quality"]) ||
-    !equal(aggregate.permissions, { contents: "read" })
+    !equal(aggregate.permissions, { contents: "read" }) ||
+    !equal(steps(aggregate), [
+      {
+        name: "Require every applicable lane",
+        env: {
+          ELIGIBILITY_RESULT: "${{ needs.eligibility.result }}",
+          QUALITY_RESULT: "${{ needs.quality.result }}",
+        },
+        run: 'test "$ELIGIBILITY_RESULT" = success\ntest "$QUALITY_RESULT" = success\n',
+      },
+    ])
   ) {
     fail("quality.yml: aggregate contract");
   }
@@ -332,36 +426,62 @@ function validateSecretBoundary(workflow) {
   const boundary = workflow.jobs?.["secret-boundary"];
   if (
     !isRecord(boundary) ||
+    !exactKeys(boundary, [
+      "name",
+      "if",
+      "runs-on",
+      "timeout-minutes",
+      "steps",
+    ]) ||
     boundary.name !== "Secret boundary" ||
-    boundary["runs-on"] !== "ubuntu-latest" ||
+    boundary["runs-on"] !== "ubuntu-24.04" ||
+    boundary["timeout-minutes"] !== 15 ||
     boundary.if !==
       "github.event_name == 'workflow_dispatch' || github.event.pull_request.author_association == 'OWNER' || github.event.pull_request.author_association == 'MEMBER' || (github.actor == 'dependabot[bot]' && github.event.pull_request.user.login == 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository)"
   ) {
     fail("secret-boundary.yml: trusted author boundary");
   }
   const boundarySteps = steps(boundary);
-  const trusted = boundarySteps.findIndex(
-    (step) => step?.with?.path === "trusted",
-  );
-  const candidate = boundarySteps.findIndex(
-    (step) => step?.with?.path === "candidate",
-  );
-  if (trusted !== 0 || candidate < 2) {
-    fail(
-      "secret-boundary.yml: trusted checkout before candidate data checkout",
-    );
-  }
-  const scan = boundarySteps.at(-1)?.run;
   if (
-    typeof scan !== "string" ||
-    !scan.includes("set -o pipefail") ||
-    !scan.includes("gitleaks git") ||
-    !scan.includes("gitleaks dir") ||
-    !scan.includes("git -C candidate fetch --no-tags --depth=1") ||
-    /(?:^|\s)(?:npm|node)\s/u.test(scan) ||
-    scan.includes("secrets.")
+    !equal(boundarySteps, [
+      {
+        name: "Check out trusted security controls",
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+        with: {
+          ref: "${{ github.event.pull_request.base.sha || github.sha }}",
+          "fetch-depth": 1,
+          "persist-credentials": false,
+          path: "trusted",
+        },
+      },
+      {
+        name: "Install immutable Gitleaks from trusted base",
+        run: "trusted/.github/scripts/install-gitleaks.sh",
+      },
+      {
+        name: "Check out candidate as data only",
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+        with: {
+          repository:
+            "${{ github.event.pull_request.head.repo.full_name || github.repository }}",
+          ref: "${{ github.event.pull_request.head.sha || github.sha }}",
+          "fetch-depth": 0,
+          "persist-credentials": false,
+          path: "candidate",
+        },
+      },
+      {
+        name: "Scan candidate without executing it",
+        env: {
+          BASE_SHA: "${{ github.event.pull_request.base.sha || '' }}",
+          BASE_REPOSITORY: "${{ github.repository }}",
+          HEAD_SHA: "${{ github.event.pull_request.head.sha || github.sha }}",
+        },
+        run: boundarySecretScan,
+      },
+    ])
   ) {
-    fail("secret-boundary.yml: complete trusted Gitleaks scan");
+    fail("secret-boundary.yml: exact fail-closed trusted Gitleaks scan");
   }
 }
 
@@ -405,8 +525,14 @@ function validateDependabot() {
     (update) => update?.["package-ecosystem"] === "github-actions",
   );
   const minorPatch = ["minor", "patch"];
-  const ignoreMajor = [
-    { "dependency-name": "*", "update-types": ["version-update:semver-major"] },
+  const compatibleVersionUpdates = [
+    {
+      "dependency-name": "*",
+      "update-types": [
+        "version-update:semver-minor",
+        "version-update:semver-patch",
+      ],
+    },
   ];
   if (
     !equal(npm?.groups?.production, {
@@ -423,7 +549,8 @@ function validateDependabot() {
       "applies-to": "security-updates",
       patterns: ["*"],
     }) ||
-    !equal(npm?.ignore, ignoreMajor)
+    !equal(npm?.allow, compatibleVersionUpdates) ||
+    Object.hasOwn(npm, "ignore")
   ) {
     fail("dependabot.yml: npm update policy");
   }
@@ -437,7 +564,8 @@ function validateDependabot() {
       "applies-to": "security-updates",
       patterns: ["*"],
     }) ||
-    !equal(actions?.ignore, ignoreMajor)
+    !equal(actions?.allow, compatibleVersionUpdates) ||
+    Object.hasOwn(actions, "ignore")
   ) {
     fail("dependabot.yml: GitHub Actions update policy");
   }
@@ -490,6 +618,11 @@ function validateMergePolicy() {
       "/SECURITY.md",
       "/config/judges/**",
       "/harbor/**",
+      "/src/cli.ts",
+      "/src/judge-campaign.ts",
+      "/src/judge-config.ts",
+      "/src/judge-panel.ts",
+      "/src/judgment.ts",
       "/src/openai-judge.ts",
     ])
   ) {

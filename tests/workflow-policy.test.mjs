@@ -260,7 +260,7 @@ test("rejects removal or relocation of the quality policy step", async () => {
       "jobs:\n",
       "jobs:\n  auxiliary:\n    runs-on: ubuntu-24.04\n    timeout-minutes: 15\n    permissions:\n      contents: read\n    steps:\n      - run: npm run ci:policy\n\n",
     );
-  }, /quality job runs the policy command/u);
+  }, /exact fail-closed candidate quality steps/u);
 });
 
 test("rejects required CI live-model execution", async () => {
@@ -273,6 +273,92 @@ test("rejects required CI live-model execution", async () => {
         "      - run: node --experimental-strip-types src/cli.ts judge live-input\n      - run: npm run check:inactive\n",
       ),
     /live model execution/u,
+  );
+});
+
+for (const [name, workflow, before, after] of [
+  [
+    "CodeQL write-capable job",
+    ".github/workflows/codeql.yml",
+    "      - name: Analyze with CodeQL\n",
+    "      - run: echo unexpected\n      - name: Analyze with CodeQL\n",
+  ],
+  [
+    "candidate quality job",
+    ".github/workflows/quality.yml",
+    "      - run: npm run ci:policy\n",
+    "      - run: echo unexpected\n      - run: npm run ci:policy\n",
+  ],
+  [
+    "trusted secret boundary",
+    ".github/workflows/secret-boundary.yml",
+    "    steps:\n",
+    "    env:\n      LEAK: ${{ secrets.OPENAI_API_KEY }}\n    steps:\n",
+  ],
+]) {
+  test(`rejects added executable behavior in the ${name}`, async () => {
+    await expectRejected(
+      (fixture) => replace(fixture, workflow, before, after),
+      /exact|secret|CodeQL/u,
+    );
+  });
+}
+
+test("rejects a failure-tolerant trusted secret scan", async () => {
+  await expectRejected(
+    (fixture) =>
+      replace(
+        fixture,
+        ".github/workflows/secret-boundary.yml",
+        "      - name: Scan candidate without executing it\n",
+        "      - name: Scan candidate without executing it\n        continue-on-error: true\n",
+      ),
+    /exact|Gitleaks/u,
+  );
+});
+
+for (const path of [
+  "/src/cli.ts",
+  "/src/judge-campaign.ts",
+  "/src/judge-config.ts",
+  "/src/judge-panel.ts",
+  "/src/judgment.ts",
+]) {
+  test(`rejects removing sensitive judgment path ${path}`, async () => {
+    await expectRejected(
+      (fixture) =>
+        replace(fixture, ".github/merge-policy.json", `    "${path}",\n`, ""),
+      /exact sensitive paths/u,
+    );
+  });
+}
+
+test("checked-in policy protects every judgment trust boundary", async () => {
+  const policy = JSON.parse(
+    await readFile(join(repositoryRoot, ".github/merge-policy.json"), "utf8"),
+  );
+  for (const path of [
+    "/src/cli.ts",
+    "/src/judge-campaign.ts",
+    "/src/judge-config.ts",
+    "/src/judge-panel.ts",
+    "/src/judgment.ts",
+    "/src/openai-judge.ts",
+  ]) {
+    assert.ok(policy.protected_paths.includes(path), path);
+  }
+});
+
+test("rejects a Dependabot ignore that can suppress security updates", async () => {
+  await expectRejected(
+    (fixture) =>
+      replace(
+        fixture,
+        ".github/dependabot.yml",
+        "    groups:\n",
+        '    ignore:\n      - dependency-name: "*"\n        update-types: [version-update:semver-major]\n    groups:\n',
+      ),
+    /update policy|parse uniquely/u,
   );
 });
 
