@@ -15,10 +15,10 @@
     "check:inactive": "node scripts/check-inactive-boundary.mjs --root ."
   },
   "devDependencies": {
-    "@types/node": "24.5.2",
+    "@types/node": "24.13.3",
     "ajv": "8.20.0",
     "prettier": "3.9.6",
-    "typescript": "5.9.2",
+    "typescript": "5.9.3",
     "yaml": "2.9.0"
   }
 }
