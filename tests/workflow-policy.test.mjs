@@ -18,6 +18,33 @@ import { promisify } from "node:util";
 const execFileAsync = promisify(execFile);
 const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
 const checker = join(repositoryRoot, ".github/ci-policy.mjs");
+const trustedControlSha = "f2e0db9ee5fc67c63fe789d0e80bb3061436bc6c";
+const executableQualityInputs = [
+  "/package.json",
+  "/package-lock.json",
+  "/prettier.config.mjs",
+  "/tests/**",
+];
+const expectedProtectedPaths = [
+  "/.github/**",
+  "/.githooks/**",
+  "/.gitleaksignore",
+  "/.gitleaks.toml",
+  "/AGENTS.md",
+  "/CODEOWNERS",
+  "/SECURITY.md",
+  "/.npmrc",
+  "/npm-shrinkwrap.json",
+  "/package.json",
+  "/package-lock.json",
+  "/prettier.config.mjs",
+  "/config/judges/**",
+  "/harbor/**",
+  "/scripts/check-inactive-boundary.mjs",
+  "/schemas/judge-campaign.schema.json",
+  "/src/**",
+  "/tests/**",
+];
 
 async function withFixture(mutate, check) {
   const fixture = await mkdtemp(join(tmpdir(), "bench-policy-"));
@@ -101,6 +128,42 @@ test("merge policy binds the trusted aggregate and protected Environment", async
   });
 });
 
+test("merge policy protects the exact executable quality inputs", async () => {
+  const mergePolicy = JSON.parse(
+    await readFile(join(repositoryRoot, ".github/merge-policy.json"), "utf8"),
+  );
+  assert.deepEqual(mergePolicy.protected_paths, expectedProtectedPaths);
+});
+
+test("trusted wrapper pins the merged central controls", async () => {
+  const source = await readFile(
+    join(repositoryRoot, ".github/workflows/trusted.yml"),
+    "utf8",
+  );
+  assert.equal(
+    source,
+    `name: OpenBoa Coffee trusted gate
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions: {}
+
+jobs:
+  trusted:
+    name: OpenBoa Coffee trusted required
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    uses: openboa-ai/.github/.github/workflows/coffee-trusted-gate.yml@${trustedControlSha}
+    with:
+      control_sha: ${trustedControlSha}
+`,
+  );
+});
+
 test("target repository exposes only the exact trusted wrapper", async () => {
   assert.deepEqual(
     (await readdir(join(repositoryRoot, ".github/workflows")))
@@ -141,6 +204,15 @@ await expectRejected(
   },
 );
 
+await expectRejected(
+  "rejects an internally consistent stale trusted control pin",
+  async (root) => {
+    const path = join(root, ".github/workflows/trusted.yml");
+    const source = await readFile(path, "utf8");
+    await writeFile(path, source.replaceAll(trustedControlSha, "0".repeat(40)));
+  },
+);
+
 for (const relativePath of [
   ".npmrc",
   "npm-shrinkwrap.json",
@@ -173,6 +245,19 @@ await expectRejected(
     });
   },
 );
+
+for (const protectedPath of executableQualityInputs) {
+  await expectRejected(
+    `rejects removing executable quality input ${protectedPath}`,
+    async (root) => {
+      await mutateJson(root, ".github/merge-policy.json", (value) => {
+        value.protected_paths = value.protected_paths.filter(
+          (candidate) => candidate !== protectedPath,
+        );
+      });
+    },
+  );
+}
 
 await expectRejected("rejects a dependency registry redirect", async (root) => {
   await replaceOnce(
