@@ -30,11 +30,18 @@ Chat. Its current repository status is `not_active`.
   `npm run ci:policy`.
 - Mark whether the pull request changes a sensitive path: repository or
   workflow policy, `AGENTS.md`, `CODEOWNERS`, `SECURITY.md`, judge
-  configuration or schema, external execution, resource bounds, canonical
-  digests, sealed judgment, projection, or `harbor/**`. The exact list lives in
-  `.github/merge-policy.json`; the central classifier sends those paths to the
-  protected `coffee-security` Environment. Ordinary changes remain eligible
-  for zero-review required-CI native auto-merge.
+  configuration or schema, executable quality input, external execution,
+  resource bounds, canonical digests, sealed judgment, projection, or
+  `harbor/**`. The exact list lives in `.github/merge-policy.json`; the
+  central classifier sends those paths to the protected `coffee-security`
+  Environment.
+  Ordinary changes remain eligible for zero-review required-CI native
+  auto-merge.
+- Treat `package.json`, `package-lock.json`, `prettier.config.mjs`, and
+  `tests/**` as executable quality inputs. Solo-maintainer OWNER/MEMBER changes
+  to them require the protected Environment; only exact in-repository
+  Dependabot package-only updates receive the central routine-maintenance
+  exception after exact base policy succeeds.
 - Treat every current `src/**` module and `scripts/check-inactive-boundary.mjs`
   as a benchmark-integrity boundary: admission, calibration, materialization,
   metrics, validity, and inactive-state decisions are sensitive even when they

@@ -287,11 +287,15 @@ function validateMergePolicy() {
       "/SECURITY.md",
       "/.npmrc",
       "/npm-shrinkwrap.json",
+      "/package.json",
+      "/package-lock.json",
+      "/prettier.config.mjs",
       "/config/judges/**",
       "/harbor/**",
       "/scripts/check-inactive-boundary.mjs",
       "/schemas/judge-campaign.schema.json",
       "/src/**",
+      "/tests/**",
     ])
   ) {
     fail("merge policy must preserve exact sensitive paths");
@@ -309,6 +313,9 @@ function validateCodeowners() {
 /README.md @openboa
 /.npmrc @openboa-ai/security-maintainers
 /npm-shrinkwrap.json @openboa-ai/security-maintainers
+/package.json @openboa-ai/security-maintainers
+/package-lock.json @openboa-ai/security-maintainers
+/prettier.config.mjs @openboa-ai/security-maintainers
 /SECURITY.md @openboa-ai/security-maintainers
 /config/judges/** @openboa-ai/security-maintainers
 /harbor/** @openboa-ai/security-maintainers
@@ -316,7 +323,7 @@ function validateCodeowners() {
 /src/** @openboa-ai/security-maintainers
 /scripts/** @openboa
 /scripts/check-inactive-boundary.mjs @openboa-ai/security-maintainers
-/tests/** @openboa
+/tests/** @openboa-ai/security-maintainers
 /docs/validity/** @openboa
 /docs/quality-map.md @openboa
 `;
@@ -336,12 +343,8 @@ const trustedWorkflowSource = readFileSync(
   resolve(workflowRoot, "trusted.yml"),
   "utf8",
 );
-const trustedControlSha = trustedWorkflowSource.match(
-  /uses: openboa-ai\/\.github\/\.github\/workflows\/coffee-trusted-gate\.yml@([0-9a-f]{40})/u,
-)?.[1];
-const expectedTrustedWorkflow =
-  trustedControlSha &&
-  `name: OpenBoa Coffee trusted gate
+const trustedControlSha = "f2e0db9ee5fc67c63fe789d0e80bb3061436bc6c";
+const expectedTrustedWorkflow = `name: OpenBoa Coffee trusted gate
 
 on:
   pull_request_target:
@@ -360,7 +363,7 @@ jobs:
     with:
       control_sha: ${trustedControlSha}
 `;
-if (!trustedControlSha || trustedWorkflowSource !== expectedTrustedWorkflow) {
+if (trustedWorkflowSource !== expectedTrustedWorkflow) {
   fail("trusted wrapper must remain exact");
 }
 

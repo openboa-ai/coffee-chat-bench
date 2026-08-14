@@ -29,10 +29,14 @@
     "/SECURITY.md",
     "/.npmrc",
     "/npm-shrinkwrap.json",
+    "/package.json",
+    "/package-lock.json",
+    "/prettier.config.mjs",
     "/config/judges/**",
     "/harbor/**",
     "/scripts/check-inactive-boundary.mjs",
     "/schemas/judge-campaign.schema.json",
-    "/src/**"
+    "/src/**",
+    "/tests/**"
   ]
 }
