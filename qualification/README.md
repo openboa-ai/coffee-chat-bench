@@ -67,5 +67,6 @@ JSON serialization. A new evaluator process must reload the frozen study, bank,
 raw human records, and model votes, then derive the report and configuration
 again. A serialized configuration object alone is not judge authority.
 
-See [the annotation and qualification protocol](PROTOCOL.md) and
-[the excluded practice procedure](PRACTICE.md) for the frozen procedure.
+See [the annotation and qualification protocol](PROTOCOL.md),
+[the reliability analysis protocol](RELIABILITY.md), and [the excluded
+practice procedure](PRACTICE.md) for the frozen procedure.
