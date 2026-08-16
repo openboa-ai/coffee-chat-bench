@@ -18,7 +18,7 @@ import { promisify } from "node:util";
 const execFileAsync = promisify(execFile);
 const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
 const checker = join(repositoryRoot, ".github/ci-policy.mjs");
-const trustedControlSha = "f2e0db9ee5fc67c63fe789d0e80bb3061436bc6c";
+const trustedControlSha = "1195ad3068c8b4441aa53c1dd5595e2875c0df99";
 const executableQualityInputs = [
   "/package.json",
   "/package-lock.json",
