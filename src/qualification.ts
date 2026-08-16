@@ -1050,7 +1050,9 @@ export function createHumanAnnotation(
   return { ...semantic, recordDigest: stableDigest(semantic) };
 }
 
-function parseHumanAnnotationRecord(value: unknown): HumanAnnotationRecord {
+export function parseHumanAnnotationRecord(
+  value: unknown,
+): HumanAnnotationRecord {
   const parsed = record(value, "human annotation record");
   const state = literal(
     parsed.state,

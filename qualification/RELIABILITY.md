@@ -23,8 +23,10 @@ nominal verdicts, and explicitly permitted missing or abstained records.
 - The study contains 88 blind items, six disjoint annotator groups, and three
   assigned annotators per item.
 - Pointwise items use `pass`/`fail`; pairwise items use `left`/`right`/`tie`.
-- `abstain`, missing records, false attestations, and malformed records are
-  retained as explicit states. They are not converted to agreement or failure.
+- `abstain` and missing records are retained as explicit states. A malformed or
+  falsely attested record fails the derivation contract and remains outside the
+  evidence set; it is never repaired, converted to abstention, agreement, or
+  failure.
 - Reliability is reported separately for every form × mode × dimension cell.
   Dialogue and professional-artifact forms are never pooled by default, and
   pointwise and pairwise verdict spaces are never pooled.
@@ -97,6 +99,24 @@ After genuine annotation collection, the evidence bundle must contain:
 - a machine-readable reliability report;
 - a human-readable audit with cell-level counts and limitations; and
 - the exact software/protocol provenance used to derive the report.
+
+The machine-readable report is produced with:
+
+```bash
+node --experimental-strip-types src/cli.ts reliability \
+  --study qualification/study.json \
+  --bank bank \
+  --annotations /path/to/human-annotations.json
+```
+
+It reports one cell for each observed form × mode × dimension combination,
+including complete, missing, ambiguous, abstained, disagreement, raw
+agreement, and nominal Krippendorff alpha counts. The report records the
+method name, study digest, criterion digest, and release CalVer. `not_estimable`
+is a value-bearing state with a reason, never an implicit zero or perfect
+reliability. A malformed record or invalid attestation makes the command fail
+closed and must be retained as an invalid collection attempt outside the
+report.
 
 No example, replayed, project-agent-authored, or model-authored record may be
 placed in the human evidence path. Until this bundle exists, the activation
