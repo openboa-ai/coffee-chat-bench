@@ -9,11 +9,13 @@ Repository status: `not_active`.
 
 The repository now has compact offline contracts, a complete public synthetic
 bank, a candidate-neutral Harbor task projection, and a fixed blind
-judge-qualification package. The projection has completed a two-condition
-installed-Harbor Oracle control in Eval, but it still has no candidate result,
+judge-qualification package. Eval has completed two installed-Harbor Oracle
+controls and 48 isolated Codex candidate trials across the 12 scored
+release/form families under task-only and one diagnostic condition. Those
+receipts are structural execution evidence only: no semantic candidate result,
 independently reviewed human labels, qualified judge evidence, leaderboard, or
-activation decision. Passing code checks and Oracle controls
-establishes implementation behavior and file consistency only; it does not
+activation decision exists. Passing code checks and execution controls
+establish implementation behavior and file consistency only; they do not
 establish benchmark validity, authentic-human transfer, population validity,
 or product performance.
 
