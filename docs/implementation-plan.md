@@ -16,10 +16,9 @@ The candidate-neutral Harbor task/environment/artifact/verifier projection now
 materializes the exact bank as 80 digest-named, no-network tasks. Its structural
 Oracle and verifier have parity with the objective artifact contract and do not
 call a provider, select a system, or contain credentials. This completes the
-implementation boundary only. Eval has exercised one task-only/diagnostic pair
-with installed-Harbor Oracle controls. Independent human semantic review and
-candidate execution remain later evidence; Eval owns system adapters and
-execution.
+Bench implementation boundary only. Eval owns system adapters, execution, and
+receipts; its current Harbor evidence is recorded separately and does not
+activate this repository or establish a benchmark result.
 
 ## 2. Human labels, judge qualification, QPCFR, and validity
 
@@ -35,16 +34,22 @@ Run reliability, calibration, bias, and falsification studies. Establish only
 the fixed-synthetic claim supported by the evidence; do not substitute model
 agreement for human criterion evidence.
 
-## 3. Eval Codex adapter and one candidate run
+## 3. Eval Codex adapter and structural baseline — implemented boundary
 
-In `coffee-chat-eval`, the Bench commit, bank digest, two-condition selection,
-and Harbor Oracle receipt path are now executable. The remaining work is a
-credential-isolated Codex adapter and one candidate run with exact isolation,
-session-order, leakage, cleanup, output, and receipt evidence. No provider
-transport or candidate adapter belongs in Bench.
+In `coffee-chat-eval`, the pinned Bench commit, bank/projection digests,
+two-condition selection, and Harbor receipt path have now been exercised. The
+merged Eval path produced two fresh Docker Oracle controls and 48 Codex proxy
+trials across 12 release/form cases, two models, and task-only versus
+diagnostic-target conditions. Receipts preserve cleanup, separate verifier
+execution, the host-held provider boundary, and the absence of provider keys in
+candidate artifacts.
 
-The initial run validates the execution path and report binding. It does not
-activate the benchmark or establish a general candidate result.
+These are execution and isolation evidence only. Every candidate receipt remains
+`measurement=unmeasured`; no Harbor reward is a quality score and no judge vote
+is promoted to semantic measurement. Human criterion labels, judge
+qualification, reliability, contamination review, and validity evidence remain
+Bench-owned prerequisites. No provider transport or candidate adapter belongs in
+Bench.
 
 ## 4. Activation audit and public documentation
 
