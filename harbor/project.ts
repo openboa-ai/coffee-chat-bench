@@ -33,6 +33,7 @@ const TASK_FILES = [
   "instruction.md",
   "environment/Dockerfile",
   "solution/solve.sh",
+  "tests/Dockerfile",
   "tests/test.sh",
 ] as const;
 
@@ -236,6 +237,12 @@ function materializedFiles(
       path: "tests/test.sh",
       bytes: Buffer.from(verifierScript(task)),
       mode: 0o755,
+    },
+    {
+      path: "tests/Dockerfile",
+      bytes: Buffer.from(
+        `FROM ${PYTHON_IMAGE}\nWORKDIR /workspace\nCOPY test.sh /tests/test.sh\nRUN chmod 0755 /tests/test.sh\n`,
+      ),
     },
   ];
 }
@@ -444,7 +451,7 @@ async function verifyMaterialization(
     );
     await assertEntries(
       join(taskRoot, "tests"),
-      ["test.sh"],
+      ["Dockerfile", "test.sh"],
       task.manifest.directory,
     );
     for (const file of task.files) {
