@@ -265,6 +265,42 @@ test("qualification CLI derives explicit incomplete evidence without scoring", a
   assert.equal(report.judgeQualification.state, "unavailable");
 });
 
+test("reliability CLI emits cell-level missing and not-estimable states", async () => {
+  const directory = await mkdtemp(
+    join(tmpdir(), "coffee-chat-bench-reliability-cli-"),
+  );
+  const annotations = join(directory, "annotations.json");
+  await writeFile(annotations, "[]\n");
+
+  const result = cli(
+    "reliability",
+    "--study",
+    "qualification/study.json",
+    "--bank",
+    "bank",
+    "--annotations",
+    annotations,
+  );
+  assert.equal(result.status, 0, result.stderr);
+  const report = JSON.parse(result.stdout) as {
+    state: string;
+    cells: readonly {
+      missingItems: number;
+      alpha: { state: string; reason?: string };
+    }[];
+  };
+  assert.equal(report.state, "incomplete");
+  assert.ok(report.cells.length > 0);
+  assert.ok(report.cells.every(({ missingItems }) => missingItems > 0));
+  assert.ok(
+    report.cells.every(
+      ({ alpha }) =>
+        alpha.state === "not_estimable" &&
+        alpha.reason === "no_comparable_pairs",
+    ),
+  );
+});
+
 test("qualification-packet CLI exports one reproducible blinded assignment", () => {
   const args = [
     "qualification-packet",

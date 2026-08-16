@@ -22,6 +22,7 @@ import {
   projectAnnotationAssignments,
   type AnnotationGroup,
 } from "./qualification.ts";
+import { deriveReliabilityReport } from "./reliability.ts";
 
 async function readJson(path: string): Promise<unknown> {
   try {
@@ -39,7 +40,7 @@ function print(value: unknown) {
 
 function usage(): never {
   throw new TypeError(
-    "usage: validate-bank <bank-root> | render-case <case.json> <condition> <trial-id> | validate-output <case.json> <artifact> | report --fixture <fixture.json> | qualification-packet --study <study.json> --bank <bank-root> --group <group-id> | qualification --study <study.json> --bank <bank-root> --annotations <records.json> --votes <votes.json> | activation-audit --bank <bank-root> --evidence <evidence.json>",
+    "usage: validate-bank <bank-root> | render-case <case.json> <condition> <trial-id> | validate-output <case.json> <artifact> | report --fixture <fixture.json> | qualification-packet --study <study.json> --bank <bank-root> --group <group-id> | qualification --study <study.json> --bank <bank-root> --annotations <records.json> --votes <votes.json> | reliability --study <study.json> --bank <bank-root> --annotations <records.json> | activation-audit --bank <bank-root> --evidence <evidence.json>",
   );
 }
 
@@ -147,6 +148,21 @@ async function main(args: readonly string[]) {
         votes,
       ),
     };
+  }
+  if (operation === "reliability") {
+    if (
+      rest.length !== 6 ||
+      rest[0] !== "--study" ||
+      rest[2] !== "--bank" ||
+      rest[4] !== "--annotations"
+    )
+      usage();
+    const bank = await validateBank(rest[3]!);
+    const study = parseQualificationStudy(await readJson(rest[1]!), bank);
+    const annotations = await readJson(rest[5]!);
+    if (!Array.isArray(annotations))
+      throw new TypeError("reliability records must be an array");
+    return deriveReliabilityReport(study, bank, annotations);
   }
   if (operation === "activation-audit") {
     const paths = activationPaths(rest);
