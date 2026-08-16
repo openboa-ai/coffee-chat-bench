@@ -124,6 +124,7 @@ keywords = ["synthetic", "decision-context"]
 
 [verifier]
 timeout_sec = 30.0
+environment_mode = "separate"
 
 [agent]
 timeout_sec = 300.0
