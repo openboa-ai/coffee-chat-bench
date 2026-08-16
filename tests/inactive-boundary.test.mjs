@@ -146,6 +146,7 @@ test("rejects measured result roles before allowing JSON fixtures", () => {
 test("accepts malformed candidate-artifact fixtures without skipping role checks", () => {
   withFixture((repository) => {
     const path = "tests/fixtures/malformed-candidate-artifact.json";
+    mkdirSync(dirname(join(repository, path)), { recursive: true });
     writeFileSync(join(repository, path), '{"manifest":\n');
     execFileSync("git", ["add", path], { cwd: repository });
 
