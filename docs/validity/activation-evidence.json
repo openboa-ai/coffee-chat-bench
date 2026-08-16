@@ -34,8 +34,8 @@
     },
     "execution": {
       "state": "partial",
-      "source": "coffee-chat-eval reports/2026.8.12/oracle-control-1bc7160-receipt.json; codex-baseline-receipts.json",
-      "note": "Two isolated Harbor Oracle controls and four isolated Codex candidate trials exist for one selected case; complete release/form coverage is pending."
+      "source": "coffee-chat-eval reports/2026.8.12/oracle-control-1bc7160-receipt.json; codex-baseline-coverage-report.md; codex-baseline-coverage-receipts.json",
+      "note": "Two isolated Harbor Oracle controls and 48 isolated Codex candidate trials cover all 12 scored release/form families under task_only and diagnostic_target_a. They remain structural execution evidence only; five-condition/full 16-family semantic coverage and measurement are pending."
     },
     "validity": {
       "state": "missing",
