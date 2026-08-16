@@ -4,7 +4,7 @@
   "gates": {
     "publicRights": {
       "state": "partial",
-      "source": "DATA-CARD.md; RIGHTS-PROVENANCE.jsonl",
+      "source": "LICENSE; DATA-CARD.md; RIGHTS-PROVENANCE.jsonl",
       "note": "MIT and provenance records are present; independent rights review is pending."
     },
     "bankIntegrity": {
@@ -19,8 +19,8 @@
     },
     "judgeQualification": {
       "state": "missing",
-      "source": "qualification/README.md; qualification/PROTOCOL.md",
-      "note": "Terra, Luna, and Sol have no human-referenced qualification report."
+      "source": "qualification/README.md; qualification/PROTOCOL.md; coffee-chat-eval judge probe",
+      "note": "No human-referenced qualification report exists; the transport probe obtained Terra/Luna votes but Sol is unavailable to the configured project."
     },
     "reliability": {
       "state": "missing",
@@ -34,8 +34,8 @@
     },
     "execution": {
       "state": "partial",
-      "source": "coffee-chat-eval Oracle receipt",
-      "note": "Installed-Harbor Oracle controls exist; candidate execution and complete release coverage are pending."
+      "source": "coffee-chat-eval reports/2026.8.12/oracle-control-1bc7160-receipt.json; codex-baseline-receipts.json",
+      "note": "Two isolated Harbor Oracle controls and four isolated Codex candidate trials exist for one selected case; complete release/form coverage is pending."
     },
     "validity": {
       "state": "missing",
