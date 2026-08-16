@@ -14,10 +14,9 @@ controls and 48 isolated Codex candidate trials across the 12 scored
 release/form families under task-only and one diagnostic condition. Those
 receipts are structural execution evidence only: no semantic candidate result,
 independently reviewed human labels, qualified judge evidence, leaderboard, or
-activation decision exists. Passing code checks and execution controls
-establish implementation behavior and file consistency only; they do not
-establish benchmark validity, authentic-human transfer, population validity,
-or product performance.
+activation decision exists. Passing code checks and execution controls establish implementation
+behavior and file consistency only; this does not establish benchmark validity,
+authentic-human transfer, population validity, or product performance.
 
 ## Research question and bounded claim
 
