@@ -20,7 +20,7 @@
     "judgeQualification": {
       "state": "missing",
       "source": "qualification/README.md; qualification/PROTOCOL.md; coffee-chat-eval judge probe",
-      "note": "No human-referenced qualification report exists; the transport probe obtained Terra/Luna votes but Sol is unavailable to the configured project."
+      "note": "No human-referenced qualification report exists; the host-held transport probe obtained structured votes from Terra, Luna, and Sol, but the models disagreed (Sol/Terra left; Luna right), so the probe remains unqualified and unmeasured."
     },
     "reliability": {
       "state": "missing",
