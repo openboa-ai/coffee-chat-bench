@@ -264,3 +264,56 @@ test("qualification CLI derives explicit incomplete evidence without scoring", a
   });
   assert.equal(report.judgeQualification.state, "unavailable");
 });
+
+test("qualification-packet CLI exports one reproducible blinded assignment", () => {
+  const args = [
+    "qualification-packet",
+    "--study",
+    "qualification/study.json",
+    "--bank",
+    "bank",
+    "--group",
+    "group-01",
+  ];
+  const first = cli(...args);
+  const second = cli(...args);
+  assert.equal(first.status, 0, first.stderr);
+  assert.equal(second.status, 0, second.stderr);
+  assert.equal(first.stdout, second.stdout);
+
+  const packet = JSON.parse(first.stdout) as {
+    groupId: string;
+    items: readonly Record<string, unknown>[];
+  };
+  assert.equal(packet.groupId, "group-01");
+  assert.ok(packet.items.length > 0);
+  for (const item of packet.items) {
+    assert.deepEqual(Object.keys(item).sort(), [
+      "annotationItemDigest",
+      "blindItemId",
+      "dimension",
+      "evidence",
+      "mode",
+      "outputs",
+      "rubric",
+      "task",
+      "verdicts",
+    ]);
+    assert.equal("caseId" in item, false);
+    assert.equal("condition" in item, false);
+    assert.equal("constructionHypothesis" in item, false);
+    assert.equal("generator" in item, false);
+  }
+
+  const invalid = cli(
+    "qualification-packet",
+    "--study",
+    "qualification/study.json",
+    "--bank",
+    "bank",
+    "--group",
+    "unknown-group",
+  );
+  assert.notEqual(invalid.status, 0);
+  assert.match(invalid.stderr, /group.*one of/i);
+});

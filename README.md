@@ -131,6 +131,12 @@ node --experimental-strip-types src/cli.ts qualification \
   --annotations /path/to/human-annotations.json \
   --votes /path/to/judge-votes.json
 
+# export one blinded human-annotation packet (offline; no provider call)
+node --experimental-strip-types src/cli.ts qualification-packet \
+  --study qualification/study.json \
+  --bank bank \
+  --group group-01 > /path/to/group-01-packet.json
+
 # activation evidence audit (offline; does not activate the repository)
 node --experimental-strip-types src/cli.ts activation-audit \
   --bank bank \

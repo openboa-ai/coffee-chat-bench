@@ -15,9 +15,12 @@ import {
 } from "./contracts.ts";
 import { deriveBenchmarkReport } from "./metrics.ts";
 import {
+  ANNOTATION_GROUPS,
   deriveHumanCriterion,
   deriveJudgeQualifications,
   parseQualificationStudy,
+  projectAnnotationAssignments,
+  type AnnotationGroup,
 } from "./qualification.ts";
 
 async function readJson(path: string): Promise<unknown> {
@@ -36,7 +39,7 @@ function print(value: unknown) {
 
 function usage(): never {
   throw new TypeError(
-    "usage: validate-bank <bank-root> | render-case <case.json> <condition> <trial-id> | validate-output <case.json> <artifact> | report --fixture <fixture.json> | qualification --study <study.json> --bank <bank-root> --annotations <records.json> --votes <votes.json> | activation-audit --bank <bank-root> --evidence <evidence.json>",
+    "usage: validate-bank <bank-root> | render-case <case.json> <condition> <trial-id> | validate-output <case.json> <artifact> | report --fixture <fixture.json> | qualification-packet --study <study.json> --bank <bank-root> --group <group-id> | qualification --study <study.json> --bank <bank-root> --annotations <records.json> --votes <votes.json> | activation-audit --bank <bank-root> --evidence <evidence.json>",
   );
 }
 
@@ -60,6 +63,23 @@ function qualificationPaths(args: readonly string[]) {
     annotations: args[5]!,
     votes: args[7]!,
   };
+}
+
+function qualificationPacketPaths(args: readonly string[]) {
+  if (
+    args.length !== 6 ||
+    args[0] !== "--study" ||
+    args[2] !== "--bank" ||
+    args[4] !== "--group"
+  )
+    usage();
+  return { study: args[1]!, bank: args[3]!, group: args[5]! };
+}
+
+function parseAnnotationGroup(value: string): AnnotationGroup {
+  if (!ANNOTATION_GROUPS.includes(value as AnnotationGroup))
+    throw new TypeError(`group must be one of ${ANNOTATION_GROUPS.join(", ")}`);
+  return value as AnnotationGroup;
 }
 
 function activationPaths(args: readonly string[]) {
@@ -96,6 +116,16 @@ async function main(args: readonly string[]) {
   }
   if (operation === "report") {
     return deriveBenchmarkReport(await readJson(fixturePath(rest)));
+  }
+  if (operation === "qualification-packet") {
+    const paths = qualificationPacketPaths(rest);
+    const bank = await validateBank(paths.bank);
+    const study = parseQualificationStudy(await readJson(paths.study), bank);
+    const assignment = projectAnnotationAssignments(study, bank).find(
+      ({ groupId }) => groupId === parseAnnotationGroup(paths.group),
+    );
+    if (!assignment) throw new TypeError("qualification assignment is missing");
+    return assignment;
   }
   if (operation === "qualification") {
     const paths = qualificationPaths(rest);
