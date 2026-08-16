@@ -29,7 +29,7 @@
     },
     "contamination": {
       "state": "inconclusive",
-      "source": "CONTAMINATION.jsonl; OVERLAP-REPORT.json",
+      "source": "CONTAMINATION.jsonl; OVERLAP-REPORT.json; docs/validity/contamination-protocol.md",
       "note": "Mechanical public-exposure and overlap records exist; training inclusion and independent semantic review remain unknown."
     },
     "execution": {
