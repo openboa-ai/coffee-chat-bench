@@ -1,112 +1,167 @@
 # Coffee Chat Bench
 
-Coffee Chat Bench is the official candidate-independent benchmark repository for
-Coffee Chat.
+Coffee Chat Bench is a candidate-independent benchmark runtime for fixed
+synthetic judgment-policy application in agents.
 
 ## Status
 
 Repository status: `not_active`.
 
-This trust base contains governance, an executable no-claim boundary,
-experimental candidate-independent design and implementation paths, and
-deferred activation criteria. It does not provide an active benchmark, measured result, leaderboard, Product-specific credit, or validity claim. Passing CI verifies those local contracts; it does not establish benchmark validity or activate this repository.
+The repository now has compact offline contracts, a complete public synthetic
+bank, a candidate-neutral Harbor task projection, and a fixed blind
+judge-qualification package. The projection has completed a two-condition
+installed-Harbor Oracle control in Eval, but it still has no candidate result,
+independently reviewed human labels, qualified judge evidence, leaderboard, or
+activation decision. Passing code checks and Oracle controls
+establishes implementation behavior and file consistency only; it does not
+establish benchmark validity, authentic-human transfer, population validity,
+or product performance.
 
-## Experimental boundary
+## Research question and bounded claim
 
-While the repository is `not_active`, the role-labelled roots `bank/`,
-`config/`, `docs/superpowers/`, `docs/validity/`, `harbor/`, `perspectives/`,
-`schemas/`, `src/`, and `tests/` may hold experimental benchmark design and
-implementation. Those public materials are candidate-independent and are not
-measured benchmark artifacts. The boundary rejects active status, measured
-results, leaderboards, Product-specific credit, candidate-specific imports,
-and unlabelled measurement-artifact paths.
+Given the same fixed synthetic evidence packet and task, does a declared
+synthetic target policy cause a candidate system to produce target-specific
+work while preserving task utility and integrity?
 
-The [activation criteria](docs/validity/activation-criteria.md) define the
-evidence required before this status may change. They do not define a Taste
-construct or make a capability claim.
+The initial claim is bounded to the fixed public synthetic bank. It does not
+claim to represent a person, transfer authentic human judgment, or generalize
+to an unseen population. Dialogue responses and professional task artifacts
+are separate forms and are never silently pooled.
+
+The scored candidate is neutral to implementation kind: model, harness,
+adaptation/context mechanism, tool policy, and configuration are recorded as
+observable provenance. Coffee Chat Product internals, commands, types, and
+private state cannot earn credit.
+
+## Current runtime and projection
+
+The candidate-result path has five contracts and six offline operations:
+
+```text
+CaseManifest + RunReceipt + JudgmentRecord + BenchmarkReport
+validate-bank -> render-case -> validate-output -> judge -> report
+```
+
+The separate qualification path projects six blinded human-annotation groups,
+preserves unanimous/ambiguous/missing references, and derives qualification for
+the two frozen primary judges plus one cross-validation judge. It performs no
+provider call and cannot create human evidence. A runtime judge configuration is
+derived only from a qualified report and digest-binds the release, judge
+protocol, study, model, and exact model-evidence record; evidence from another
+protocol or study is rejected.
+
+Each case family uses exactly five conditions:
+
+- `task_only`
+- `nondiagnostic_target_a`
+- `nondiagnostic_target_b`
+- `diagnostic_target_a`
+- `diagnostic_target_b`
+
+The sealed per-case judgment plan declares every pointwise and pairwise slot:
+its stable judgment ID, optional pair ID, dimension, orientation, ordered
+conditions, rubric projection, and expected verdict. Pairwise raw slots are
+canonical/mirrored diagnostics; the report collapses them by semantic artifact
+before comparing the declared expectation.
+
+Task-utility comparisons use non-inferiority: diagnostic context may improve or
+tie the task-only output, but it cannot pass by making the work less useful.
+Utility improvement remains a direction-free effect estimate rather than a
+predeclared correct answer.
+
+The two frozen primary judges, Terra and Luna, must agree and the independent
+cross-validation judge, Sol, must match their verdict for a numeric model
+judgment. Sol never adjudicates primary disagreement. Missing,
+invalid, unavailable, failed, abstained, disagreeing, leaked, or cleanup-failed
+evidence remains explicit and nonnumeric.
+
+Reports keep every form and release wave separate. `release_a` is the primary
+slice; public `release_b` is a second fixed robustness slice, not an untouched
+or independent replication. QPCFR is nonnumeric unless the complete family and
+all fixed score dimensions are declared and measured.
+
+The Harbor projector materializes the 16-family × five-condition census as 80
+digest-named, no-network tasks. Its Oracle and verifier prove only output-file
+plumbing and objective conformance. Their `1`/`0` reward is not semantic credit,
+a candidate result, or activation evidence. The task image is digest-pinned and
+includes the shell required by Harbor 0.21's script runner.
 
 ## Ownership boundary
 
-This repository owns candidate-independent experimental benchmark design and
-validity evidence. It does not own Coffee Chat implementation tests, private
-product internals, evaluator execution, or a complete Coffee Chat report.
+Bench owns the candidate-neutral bank contract, Harbor task projection,
+rendering, objective artifact validation, sealed judgment-plan parsing,
+provider-independent judge I/O, and derived report accounting. It exposes only
+`JudgeTransport` for external model calls.
 
-## Manual experimental judgment entrypoint
+Eval owns candidate and harness adapters, concrete provider transports and
+credentials, Harbor execution, host isolation evidence, and candidate-facing
+reports. This repository implements no live provider call, candidate adapter,
+or Coffee Chat Product integration.
 
-`node --experimental-strip-types src/cli.ts judge <projection-root> <artifact>
-<isolated-verifier-attestation>` is a bounded, manual experimental entrypoint
-for a single already-projected artifact. It never executes a projected verifier
-on the operator host. Eval, as the trusted caller, generates one random
-32-byte base64url capability key for that execution and injects it only as the
-inherited `COFFEE_CHAT_EVAL_ATTESTATION_KEY` environment variable of the
-host-side `judge` process after candidate shutdown. It never passes through
-Harbor, candidate arguments, candidate environment, or the CLI argv. The CLI
-copies the key into local memory and immediately deletes the environment entry.
-Its strict isolation attestation carries an `attestationMac`: an HMAC-SHA256
-over the canonical attestation fields excluding the MAC. That MAC covers the
-exact Bench commit and bank digest along with candidate, verifier, projection,
-and artifact digests, plus candidate-only mount, verifier-only judgment,
-output-only transfer, cleanup evidence, and the exact Harbor phase-network
-contract. The task baseline is `no-network`; setup is allowlisted only to
-`dl-cdn.alpinelinux.org` and `registry.npmjs.org`; the agent phase is
-allowlisted only to `api.openai.com`; and both the separate-verifier baseline
-and verifier phase remain `no-network`. Missing, reordered, duplicate,
-unknown, extra, or public-network values are `verifier_failure` with zero
-provider calls. Accepted phase-network fields remain in public provenance;
-capability keys and MACs are never logged or persisted in a judgment result.
+## Repository map
 
-The trusted Eval host creates that MAC through the public
-`attest <unsigned-attestation> <signed-attestation>` CLI. This keeps canonical
-authentication Bench-owned: Eval supplies observed execution fields and an
-environment-only capability, while neither importing Bench source nor
-reimplementing its MAC serialization. The signer creates a new owner-only file,
-never overwrites an existing path, and emits only `{ "state": "signed" }`.
+| Path                            | Purpose                                                               |
+| ------------------------------- | --------------------------------------------------------------------- |
+| `bank/`                         | Public synthetic cases and evaluator-only rubrics and plans           |
+| `harbor/`                       | Candidate-neutral task projection and structural verifier             |
+| `qualification/`                | Blind human-reference and three-model judge qualification package     |
+| `src/`                          | Candidate-result, activation, and qualification evidence contracts    |
+| `schemas/benchmark.schema.json` | Public JSON Schema authority                                          |
+| `tests/`                        | Contract, scenario, schema, CLI, policy, and inactive-boundary checks |
+| `docs/benchmark-design.md`      | Current construct and runtime authority                               |
+| `docs/implementation-plan.md`   | Completed projection boundary and remaining evidence units            |
+| `docs/validity/`                | Citation-backed prospective validity and related-work boundaries      |
+| `DATA-CARD.md`                  | Bank census, rights, limitations, and missing evidence                |
+| `PREREGISTRATION.md`            | Frozen contrasts, analysis boundary, and falsifiers                   |
 
-This capability authenticates the trusted Eval execution boundary against an
-untrusted candidate attempting path, projection, or attestation forgery. It is
-not a global signing PKI and does not claim to defend against a malicious Eval
-operator. Eval proves phase-network evidence from the actual Harbor result and
-network plan; Bench validates it without inventing host evidence. Bench retains
-the MAC-bound `benchCommit`, `bankDigest`, and phase-network fields as result
-provenance; Eval must pin those exact merged Bench values before execution.
-This package intentionally does not independently compare a bank digest to Git
-or a network source, so that final provenance selection remains a trusted
-operator responsibility rather than a false local proof.
+## Commands
 
-Only an accepted attestation is sent in memory to exactly the configured Terra
-and Luna panel, with a 32,768 UTF-8-byte request ceiling and a 1,024-token
-output ceiling per request. The CLI validates the projection, artifact,
-attestation, and MAC before it constructs a transport or reads
-`OPENAI_API_KEY`. The command emits one JSON result and returns zero only for a
-completed `measured` panel result; it is not invoked by CI.
+```bash
+npm run typecheck
+npm test
+npm run check:inactive
+npm run ci:policy
+npm run format:check
+git diff --check
 
-This command does not activate the repository, make a live benchmark result,
-or create Product-specific credit. It requires an explicit operator invocation
-and an `OPENAI_API_KEY`; tests use fake transports and make no provider call.
+# qualification evidence audit (offline; no provider call)
+node --experimental-strip-types src/cli.ts qualification \
+  --study qualification/study.json \
+  --bank bank \
+  --annotations /path/to/human-annotations.json \
+  --votes /path/to/judge-votes.json
 
-## Calibration boundary
+# activation evidence audit (offline; does not activate the repository)
+node --experimental-strip-types src/cli.ts activation-audit \
+  --bank bank \
+  --evidence docs/validity/activation-evidence.json
+```
 
-The public CLI has no single-projection `calibrate` command and never executes
-a caller-provided projected verifier on the Bench host. Candidate calibration
-that needs verifier execution belongs to Eval/Harbor isolation. Bench retains
-only `calibrate-bank` for deterministic control validation: it creates a fresh,
-validated empty workspace, regenerates projection JSON from trusted committed
-Bench code, and launches its local batch with only `PATH` and locale variables.
-The batch always imports the canonical sibling `harbor/verifier.py` derived
-from `harbor/calibrate.py` itself; projected verifier paths are never batch
-inputs or executable authority. No OpenAI key, Eval capability, host
-authentication, or provider environment is inherited by that subprocess or the
-canonical verifier it imports.
+The formatter covers every bank JSON file. JSONL evidence ledgers are validated
+as scenario inputs rather than rewritten into a different record format.
 
-## License
+## Before activation
 
-Governance and reusable documentation are licensed under the
-[MIT License](LICENSE), Copyright (c) 2026 Openboa AI.
+Activation requires all of the following, beyond passing implementation checks:
 
-## Security
+1. Independent human semantic and provenance review of the licensed public bank,
+   sealed author-hypothesis plans, preregistration, and controls.
+2. Independently blinded human labels plus qualification and reliability evidence
+   for the frozen judge configuration and each scored form/dimension.
+3. Eval-owned candidate execution with isolated Harbor evidence, exact receipts,
+   cleanup, fresh-session, and leakage evidence.
+4. A written activation audit that reports coverage, uncertainty, failures, and
+   the limited claim actually supported.
 
-Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
-Install Gitleaks, then enable staged-secret prevention with
-`git config core.hooksPath .githooks`. Run
-`gitleaks git --redact --no-banner .` for a complete history scan; required
-CI performs that scan independently.
+See [benchmark design](docs/benchmark-design.md), the
+[implementation plan](docs/implementation-plan.md), the
+[validity argument](docs/validity/validity-argument-and-evidence-plan.md), and
+[related work](docs/validity/related-work-and-discriminant-validity.md). The
+frozen annotation procedure is in
+[the qualification protocol](qualification/PROTOCOL.md).
+
+## Security and license
+
+Repository software and reusable documentation are MIT licensed. Future bank
+material requires an explicit redistribution basis before admission. Report
+vulnerabilities as described in [SECURITY.md](SECURITY.md).

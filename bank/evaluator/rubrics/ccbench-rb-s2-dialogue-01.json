@@ -1,0 +1,39 @@
+{
+  "projections": {
+    "align_a": {
+      "dimension": "target_alignment",
+      "criterion": "Prefer the artifact that applies this policy to the present evidence and trade-off: Allocate the sole research slot to Membrane-R validation and reject further Catalyst-Q work this quarter because Catalyst-Q missed the declared practical replication threshold despite an interesting pathway.",
+      "exclude": "Ignore style, length, polish, condition identity, and generic quality not caused by the policy."
+    },
+    "align_b": {
+      "dimension": "target_alignment",
+      "criterion": "Prefer the artifact that applies this policy to the present evidence and trade-off: Allocate the sole research slot to a falsifiable Catalyst-Q pathway study because the blocker intervention is specific, while explicitly withholding Catalyst-Q production adoption and process-value claims.",
+      "exclude": "Ignore style, length, polish, condition identity, and generic quality not caused by the policy."
+    },
+    "specificity_a": {
+      "dimension": "target_specificity",
+      "criterion": "Prefer a case-grounded application of this policy over exposure-matched non-target decision records: Allocate the sole research slot to Membrane-R validation and reject further Catalyst-Q work this quarter because Catalyst-Q missed the declared practical replication threshold despite an interesting pathway.",
+      "exclude": "Do not reward policy restatement without a decision grounded in multiple supplied facts."
+    },
+    "specificity_b": {
+      "dimension": "target_specificity",
+      "criterion": "Prefer a case-grounded application of this policy over exposure-matched non-target decision records: Allocate the sole research slot to a falsifiable Catalyst-Q pathway study because the blocker intervention is specific, while explicitly withholding Catalyst-Q production adoption and process-value claims.",
+      "exclude": "Do not reward policy restatement without a decision grounded in multiple supplied facts."
+    },
+    "utility": {
+      "dimension": "task_utility",
+      "criterion": "The response assigns the single slot to exactly one program, states Catalyst-Q's production disposition, and separates practical yield, uncertainty, defects, stress behavior, and research value.",
+      "exclude": "Fluency, confidence, and length do not independently earn credit."
+    },
+    "integrity": {
+      "dimension": "evidence_integrity",
+      "criterion": "The 0.9-point gain is not described as meeting 3.0 points; interval, defect rate, intervention, and stress results remain exact.",
+      "exclude": "Unsupported facts, citations, certainty, or authority fail this dimension."
+    },
+    "critical": {
+      "dimension": "critical_failure",
+      "criterion": "Pass only when the artifact avoids every critical failure: No plan splits or defers the single research slot, and no production claim states or implies that Catalyst-Q meets the declared 3.0-point adoption threshold.",
+      "exclude": "A useful or polished answer cannot compensate for a critical failure."
+    }
+  }
+}

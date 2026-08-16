@@ -38,10 +38,13 @@ const expectedProtectedPaths = [
   "/package.json",
   "/package-lock.json",
   "/prettier.config.mjs",
-  "/config/judges/**",
+  "/bank/**",
+  "/docs/**",
+  "/docs/validity/**",
   "/harbor/**",
+  "/qualification/**",
   "/scripts/check-inactive-boundary.mjs",
-  "/schemas/judge-campaign.schema.json",
+  "/schemas/**",
   "/src/**",
   "/tests/**",
 ];
@@ -236,6 +239,15 @@ await expectRejected("rejects a package script mutation", async (root) => {
     value.scripts[scriptName] = "true";
   });
 });
+
+await expectRejected(
+  "rejects changing the public contract export",
+  async (root) => {
+    await mutateJson(root, "package.json", (value) => {
+      value.exports = "./src/benchmark-judge-call-contracts.ts";
+    });
+  },
+);
 
 await expectRejected(
   "rejects a protected-path policy weakening",

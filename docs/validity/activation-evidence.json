@@ -1,0 +1,46 @@
+{
+  "release": "2026.8.12",
+  "bankDigest": "sha256:a7ce9ce12679f81bd212324919e39dd3eda26115dec7366c52aea8768cf790dd",
+  "gates": {
+    "publicRights": {
+      "state": "partial",
+      "source": "DATA-CARD.md; RIGHTS-PROVENANCE.jsonl",
+      "note": "MIT and provenance records are present; independent rights review is pending."
+    },
+    "bankIntegrity": {
+      "state": "passed",
+      "source": "npm run check:inactive; validate-bank bank",
+      "note": "The fixed public bank and sealed file bindings pass mechanical validation."
+    },
+    "humanCriterion": {
+      "state": "missing",
+      "source": "qualification/README.md",
+      "note": "No independent blinded human labels have been collected."
+    },
+    "judgeQualification": {
+      "state": "missing",
+      "source": "qualification/README.md; qualification/PROTOCOL.md",
+      "note": "Terra, Luna, and Sol have no human-referenced qualification report."
+    },
+    "reliability": {
+      "state": "missing",
+      "source": "docs/validity/validity-argument-and-evidence-plan.md",
+      "note": "Inter-annotator and judge reliability studies have not been run."
+    },
+    "contamination": {
+      "state": "inconclusive",
+      "source": "CONTAMINATION.jsonl; OVERLAP-REPORT.json",
+      "note": "Mechanical public-exposure and overlap records exist; training inclusion and independent semantic review remain unknown."
+    },
+    "execution": {
+      "state": "partial",
+      "source": "coffee-chat-eval Oracle receipt",
+      "note": "Installed-Harbor Oracle controls exist; candidate execution and complete release coverage are pending."
+    },
+    "validity": {
+      "state": "missing",
+      "source": "docs/validity/validity-argument-and-evidence-plan.md",
+      "note": "The validity argument is prospective; no activation evidence supports an active benchmark claim."
+    }
+  }
+}

@@ -1,0 +1,241 @@
+{
+  "authority": "project_author_hypothesis",
+  "humanReviewed": false,
+  "use": "prospective_contrast_definition",
+  "judgmentPlan": [
+    {
+      "judgmentId": "ccbench-rb-s3-artifact-01:align-a-cross:canonical",
+      "pairId": "ccbench-rb-s3-artifact-01:align-a-cross",
+      "mode": "pairwise",
+      "dimension": "target_alignment",
+      "orientation": "canonical",
+      "conditions": ["diagnostic_target_a", "diagnostic_target_b"],
+      "rubricProjection": {
+        "id": "align_a",
+        "digest": "sha256:f3eefa266792df58158d427b2e3ff2286fc49c17380efce19fd7b034da72a9f6"
+      },
+      "expectedVerdict": "left"
+    },
+    {
+      "judgmentId": "ccbench-rb-s3-artifact-01:align-a-cross:mirrored",
+      "pairId": "ccbench-rb-s3-artifact-01:align-a-cross",
+      "mode": "pairwise",
+      "dimension": "target_alignment",
+      "orientation": "mirrored",
+      "conditions": ["diagnostic_target_b", "diagnostic_target_a"],
+      "rubricProjection": {
+        "id": "align_a",
+        "digest": "sha256:f3eefa266792df58158d427b2e3ff2286fc49c17380efce19fd7b034da72a9f6"
+      },
+      "expectedVerdict": "right"
+    },
+    {
+      "judgmentId": "ccbench-rb-s3-artifact-01:align-b-cross:canonical",
+      "pairId": "ccbench-rb-s3-artifact-01:align-b-cross",
+      "mode": "pairwise",
+      "dimension": "target_alignment",
+      "orientation": "canonical",
+      "conditions": ["diagnostic_target_b", "diagnostic_target_a"],
+      "rubricProjection": {
+        "id": "align_b",
+        "digest": "sha256:ea131ab650c339ae99e38c70327f1f87dd8359f5df73d2e42256c3cbc91514f5"
+      },
+      "expectedVerdict": "left"
+    },
+    {
+      "judgmentId": "ccbench-rb-s3-artifact-01:align-b-cross:mirrored",
+      "pairId": "ccbench-rb-s3-artifact-01:align-b-cross",
+      "mode": "pairwise",
+      "dimension": "target_alignment",
+      "orientation": "mirrored",
+      "conditions": ["diagnostic_target_a", "diagnostic_target_b"],
+      "rubricProjection": {
+        "id": "align_b",
+        "digest": "sha256:ea131ab650c339ae99e38c70327f1f87dd8359f5df73d2e42256c3cbc91514f5"
+      },
+      "expectedVerdict": "right"
+    },
+    {
+      "judgmentId": "ccbench-rb-s3-artifact-01:specific-a-control:canonical",
+      "pairId": "ccbench-rb-s3-artifact-01:specific-a-control",
+      "mode": "pairwise",
+      "dimension": "target_specificity",
+      "orientation": "canonical",
+      "conditions": ["diagnostic_target_a", "nondiagnostic_target_a"],
+      "rubricProjection": {
+        "id": "specificity_a",
+        "digest": "sha256:cf0dc7a4e9e0ff81eae4e56f01499e84c6bbfba0fd9b296110d28bcce6f0659b"
+      },
+      "expectedVerdict": "left"
+    },
+    {
+      "judgmentId": "ccbench-rb-s3-artifact-01:specific-a-control:mirrored",
+      "pairId": "ccbench-rb-s3-artifact-01:specific-a-control",
+      "mode": "pairwise",
+      "dimension": "target_specificity",
+      "orientation": "mirrored",
+      "conditions": ["nondiagnostic_target_a", "diagnostic_target_a"],
+      "rubricProjection": {
+        "id": "specificity_a",
+        "digest": "sha256:cf0dc7a4e9e0ff81eae4e56f01499e84c6bbfba0fd9b296110d28bcce6f0659b"
+      },
+      "expectedVerdict": "right"
+    },
+    {
+      "judgmentId": "ccbench-rb-s3-artifact-01:specific-b-control:canonical",
+      "pairId": "ccbench-rb-s3-artifact-01:specific-b-control",
+      "mode": "pairwise",
+      "dimension": "target_specificity",
+      "orientation": "canonical",
+      "conditions": ["diagnostic_target_b", "nondiagnostic_target_b"],
+      "rubricProjection": {
+        "id": "specificity_b",
+        "digest": "sha256:a491707df37cf89f5a8edc4ce77f649f012439749d8bc866b075dd363bc71c91"
+      },
+      "expectedVerdict": "left"
+    },
+    {
+      "judgmentId": "ccbench-rb-s3-artifact-01:specific-b-control:mirrored",
+      "pairId": "ccbench-rb-s3-artifact-01:specific-b-control",
+      "mode": "pairwise",
+      "dimension": "target_specificity",
+      "orientation": "mirrored",
+      "conditions": ["nondiagnostic_target_b", "diagnostic_target_b"],
+      "rubricProjection": {
+        "id": "specificity_b",
+        "digest": "sha256:a491707df37cf89f5a8edc4ce77f649f012439749d8bc866b075dd363bc71c91"
+      },
+      "expectedVerdict": "right"
+    },
+    {
+      "judgmentId": "ccbench-rb-s3-artifact-01:utility-a-task-only:canonical",
+      "pairId": "ccbench-rb-s3-artifact-01:utility-a-task-only",
+      "mode": "pairwise",
+      "dimension": "task_utility",
+      "orientation": "canonical",
+      "conditions": ["diagnostic_target_a", "task_only"],
+      "rubricProjection": {
+        "id": "utility",
+        "digest": "sha256:ee78fca442a0b5401f25a08a4ae851bab0d6e9735aff9a6320287716a6a862e4"
+      },
+      "expectedVerdict": "left_or_tie"
+    },
+    {
+      "judgmentId": "ccbench-rb-s3-artifact-01:utility-a-task-only:mirrored",
+      "pairId": "ccbench-rb-s3-artifact-01:utility-a-task-only",
+      "mode": "pairwise",
+      "dimension": "task_utility",
+      "orientation": "mirrored",
+      "conditions": ["task_only", "diagnostic_target_a"],
+      "rubricProjection": {
+        "id": "utility",
+        "digest": "sha256:ee78fca442a0b5401f25a08a4ae851bab0d6e9735aff9a6320287716a6a862e4"
+      },
+      "expectedVerdict": "right_or_tie"
+    },
+    {
+      "judgmentId": "ccbench-rb-s3-artifact-01:utility-b-task-only:canonical",
+      "pairId": "ccbench-rb-s3-artifact-01:utility-b-task-only",
+      "mode": "pairwise",
+      "dimension": "task_utility",
+      "orientation": "canonical",
+      "conditions": ["diagnostic_target_b", "task_only"],
+      "rubricProjection": {
+        "id": "utility",
+        "digest": "sha256:ee78fca442a0b5401f25a08a4ae851bab0d6e9735aff9a6320287716a6a862e4"
+      },
+      "expectedVerdict": "left_or_tie"
+    },
+    {
+      "judgmentId": "ccbench-rb-s3-artifact-01:utility-b-task-only:mirrored",
+      "pairId": "ccbench-rb-s3-artifact-01:utility-b-task-only",
+      "mode": "pairwise",
+      "dimension": "task_utility",
+      "orientation": "mirrored",
+      "conditions": ["task_only", "diagnostic_target_b"],
+      "rubricProjection": {
+        "id": "utility",
+        "digest": "sha256:ee78fca442a0b5401f25a08a4ae851bab0d6e9735aff9a6320287716a6a862e4"
+      },
+      "expectedVerdict": "right_or_tie"
+    },
+    {
+      "judgmentId": "ccbench-rb-s3-artifact-01:utility-floor:diagnostic_target_a",
+      "pairId": null,
+      "mode": "pointwise",
+      "dimension": "task_utility",
+      "orientation": null,
+      "conditions": ["diagnostic_target_a"],
+      "rubricProjection": {
+        "id": "utility",
+        "digest": "sha256:ee78fca442a0b5401f25a08a4ae851bab0d6e9735aff9a6320287716a6a862e4"
+      },
+      "expectedVerdict": "pass"
+    },
+    {
+      "judgmentId": "ccbench-rb-s3-artifact-01:utility-floor:diagnostic_target_b",
+      "pairId": null,
+      "mode": "pointwise",
+      "dimension": "task_utility",
+      "orientation": null,
+      "conditions": ["diagnostic_target_b"],
+      "rubricProjection": {
+        "id": "utility",
+        "digest": "sha256:ee78fca442a0b5401f25a08a4ae851bab0d6e9735aff9a6320287716a6a862e4"
+      },
+      "expectedVerdict": "pass"
+    },
+    {
+      "judgmentId": "ccbench-rb-s3-artifact-01:integrity-floor:diagnostic_target_a",
+      "pairId": null,
+      "mode": "pointwise",
+      "dimension": "evidence_integrity",
+      "orientation": null,
+      "conditions": ["diagnostic_target_a"],
+      "rubricProjection": {
+        "id": "integrity",
+        "digest": "sha256:7bd29f94eae0cb763f0985dd05cddcd4e9e62557cf1761fcc4e7b8c83eb1e065"
+      },
+      "expectedVerdict": "pass"
+    },
+    {
+      "judgmentId": "ccbench-rb-s3-artifact-01:integrity-floor:diagnostic_target_b",
+      "pairId": null,
+      "mode": "pointwise",
+      "dimension": "evidence_integrity",
+      "orientation": null,
+      "conditions": ["diagnostic_target_b"],
+      "rubricProjection": {
+        "id": "integrity",
+        "digest": "sha256:7bd29f94eae0cb763f0985dd05cddcd4e9e62557cf1761fcc4e7b8c83eb1e065"
+      },
+      "expectedVerdict": "pass"
+    },
+    {
+      "judgmentId": "ccbench-rb-s3-artifact-01:critical-floor:diagnostic_target_a",
+      "pairId": null,
+      "mode": "pointwise",
+      "dimension": "critical_failure",
+      "orientation": null,
+      "conditions": ["diagnostic_target_a"],
+      "rubricProjection": {
+        "id": "critical",
+        "digest": "sha256:6c7f3ef96bf2ffee4df04d48745a77123278840233040f88d21fb8ad2455d4dc"
+      },
+      "expectedVerdict": "pass"
+    },
+    {
+      "judgmentId": "ccbench-rb-s3-artifact-01:critical-floor:diagnostic_target_b",
+      "pairId": null,
+      "mode": "pointwise",
+      "dimension": "critical_failure",
+      "orientation": null,
+      "conditions": ["diagnostic_target_b"],
+      "rubricProjection": {
+        "id": "critical",
+        "digest": "sha256:6c7f3ef96bf2ffee4df04d48745a77123278840233040f88d21fb8ad2455d4dc"
+      },
+      "expectedVerdict": "pass"
+    }
+  ]
+}

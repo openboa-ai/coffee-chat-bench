@@ -1,524 +1,585 @@
-import type {
-  CaseBundle,
-  ConditionLabel,
-  DecisionManifest,
-  EfficiencySample,
-  QualificationDimensions,
-  ResultState,
-  TrialVerdict,
+import { renderCase } from "./artifact.ts";
+import {
+  parseValidatedBank,
+  type JudgmentPlanSlot,
+  type ValidatedBank,
+} from "./bank.ts";
+import {
+  BENCHMARK_CONDITIONS,
+  BENCHMARK_FORMS,
+  JUDGE_DIMENSIONS,
+  parseCandidateIdentity,
+  parseJudgmentRecord,
+  parseRunReceipt,
+  stableDigest,
+  type BankSplit,
+  type BenchmarkCondition,
+  type BenchmarkReport,
+  type BenchmarkReportSemantic,
+  type CandidateIdentity,
+  type Digest,
+  type FormReport,
+  type JudgeDimension,
+  type JudgmentRecord,
+  type Rate,
+  type RunReceipt,
 } from "./contracts.ts";
-import { CONDITION_LABELS, RELEASE_ID, RESULT_STATES } from "./contracts.ts";
+import { parseJudgeConfiguration, type JudgeConfiguration } from "./judge.ts";
 
-export type StateCounts = Partial<Record<ResultState, number>>;
+const REPORT_KEYS = [
+  "benchCommit",
+  "candidate",
+  "bank",
+  "judgeConfiguration",
+  "receipts",
+  "judgments",
+] as const;
+type EligibleReceipt = Extract<RunReceipt, { readonly state: "succeeded" }>;
+type BoundJudgment = JudgmentRecord & { readonly slot: JudgmentPlanSlot };
+type FamilyState = "qualified" | "failed" | "unavailable";
 
-export interface TrialQualificationInput {
-  readonly state: ResultState;
-  readonly trialId: string;
-  readonly condition: ConditionLabel;
-  readonly caseBundle: CaseBundle;
-  readonly manifest?: DecisionManifest;
-  readonly assessment?: {
-    readonly dimensions: QualificationDimensions;
-    readonly evidenceRefs: readonly string[];
-  };
-  readonly evidenceRefs?: readonly string[];
-  readonly efficiency?: EfficiencySample;
+export interface DeriveBenchmarkReportInput {
+  readonly benchCommit: string;
+  readonly candidate: CandidateIdentity;
+  readonly bank: ValidatedBank;
+  readonly judgeConfiguration: JudgeConfiguration;
+  readonly receipts: readonly RunReceipt[];
+  readonly judgments: readonly JudgmentRecord[];
 }
 
-export interface FamilyQualificationInput {
-  readonly caseBundle: CaseBundle;
-  readonly trials: readonly TrialVerdict[];
+function exactObject(value: unknown, keys: readonly string[], label: string) {
+  if (value === null || typeof value !== "object" || Array.isArray(value))
+    throw new TypeError(`${label} must be an object`);
+  if (
+    JSON.stringify(Object.keys(value).sort()) !==
+    JSON.stringify([...keys].sort())
+  )
+    throw new TypeError(`${label} must contain exactly ${keys.join(", ")}`);
+  return value as Record<string, unknown>;
 }
 
-export interface FamilyVerdict {
-  readonly release: "2026.8.12";
-  readonly familyId: string;
-  readonly domain: string;
-  readonly operation: string;
-  readonly state: ResultState;
-  readonly qualified: boolean | null;
-  readonly conditionLabels: readonly ConditionLabel[];
-  readonly sensitiveContrast: boolean | null;
-  readonly invariantsPreserved: boolean | null;
-  readonly criticalFailure: boolean | null;
-  readonly trialStateCounts: StateCounts;
-  readonly efficiency: readonly EfficiencySample[];
+function array(value: unknown, label: string): readonly unknown[] {
+  if (!Array.isArray(value)) throw new TypeError(`${label} must be an array`);
+  return value;
 }
 
-export interface AggregateInput {
-  readonly release: "2026.8.12";
-  readonly families: readonly FamilyVerdict[];
-  readonly bootstrapSamples: readonly (readonly string[])[];
+function rate(numerator: number, denominator: number): Rate {
+  return denominator === 0
+    ? { state: "unmeasured", numerator: 0, denominator: 0, value: null }
+    : {
+        state: "measured",
+        numerator,
+        denominator,
+        value: numerator / denominator,
+      };
 }
 
-export interface StratumRate {
-  readonly key: string;
-  readonly state: "measured" | "unmeasured";
-  readonly numerator: number;
-  readonly denominator: number;
-  readonly value: number | null;
-}
-
-export interface MacroRate {
-  readonly state: "measured" | "unmeasured";
-  readonly value: number | null;
-  readonly strataMeasured: number;
-  readonly strataTotal: number;
-}
-
-export interface QpcfrReport {
-  readonly byDomain: readonly StratumRate[];
-  readonly byOperation: readonly StratumRate[];
-  readonly macroByDomain: MacroRate;
-  readonly macroByOperation: MacroRate;
-}
-
-export interface BootstrapInterval {
-  readonly lower: number;
-  readonly upper: number;
-}
-
-export interface BootstrapReport {
-  readonly unit: "case_family";
-  readonly samples: number;
-  readonly macroByDomain: BootstrapInterval | null;
-  readonly macroByOperation: BootstrapInterval | null;
-}
-
-export interface SummaryStatistic {
-  readonly mean: number;
-  readonly median: number;
-}
-
-export type EfficiencyReport =
-  | {
-      readonly state: "measured";
-      readonly sampleCount: number;
-      readonly wallTimeMs: SummaryStatistic;
-      readonly inputTokens: SummaryStatistic;
-      readonly outputTokens: SummaryStatistic;
-    }
-  | {
-      readonly state: "unmeasured";
-      readonly sampleCount: 0;
-      readonly wallTimeMs: null;
-      readonly inputTokens: null;
-      readonly outputTokens: null;
-    };
-
-export interface BenchmarkReport {
-  readonly release: "2026.8.12";
-  readonly familyStateCounts: StateCounts;
-  readonly trialStateCounts: StateCounts;
-  readonly qpcfr: QpcfrReport;
-  readonly bootstrap: BootstrapReport;
-  readonly efficiency: EfficiencyReport;
-}
-
-function requireRelease(release: string): void {
-  if (release !== RELEASE_ID) {
-    throw new TypeError(`release must be ${RELEASE_ID}`);
-  }
-}
-
-function emptyTrialVerdict(input: TrialQualificationInput): TrialVerdict {
-  const evidenceRefs = input.evidenceRefs ?? [];
+function parseInput(value: unknown): DeriveBenchmarkReportInput {
+  const parsed = exactObject(value, REPORT_KEYS, "report input");
+  if (
+    typeof parsed.benchCommit !== "string" ||
+    !/^[0-9a-f]{40}$/u.test(parsed.benchCommit)
+  )
+    throw new TypeError(
+      "report input.benchCommit must be a full Git commit SHA",
+    );
   return {
-    release: RELEASE_ID,
-    trialId: input.trialId,
-    caseId: input.caseBundle.caseId,
-    familyId: input.caseBundle.familyId,
-    domain: input.caseBundle.domain,
-    operation: input.caseBundle.operation,
-    condition: input.condition,
-    state: input.state,
-    qualified: null,
-    dimensions: null,
-    criticalFailure: null,
-    decisions: [],
-    evidenceRefs,
-    efficiency: input.efficiency ?? null,
+    benchCommit: parsed.benchCommit,
+    candidate: parseCandidateIdentity(parsed.candidate),
+    bank: parseValidatedBank(parsed.bank),
+    judgeConfiguration: parseJudgeConfiguration(parsed.judgeConfiguration),
+    receipts: array(parsed.receipts, "report input.receipts").map(
+      parseRunReceipt,
+    ),
+    judgments: array(parsed.judgments, "report input.judgments").map(
+      parseJudgmentRecord,
+    ),
   };
 }
 
-function assertDeclaredEvidence(
-  refs: readonly string[],
-  caseBundle: CaseBundle,
-  label: string,
-): void {
-  const declared = new Set(caseBundle.evidence.map((entry) => entry.ref));
-  for (const ref of refs) {
-    if (!declared.has(ref)) {
-      throw new TypeError(`${label} references undeclared evidence ${ref}`);
-    }
-  }
+function receiptKey(caseId: string, condition: BenchmarkCondition) {
+  return `${caseId}\u0000${condition}`;
 }
 
-export function qualifyTrial(input: TrialQualificationInput): TrialVerdict {
-  requireRelease(input.caseBundle.release);
-  if (input.state !== "measured") return emptyTrialVerdict(input);
-  if (input.manifest === undefined || input.assessment === undefined) {
-    throw new TypeError("measured trial requires a manifest and assessment");
-  }
+function isEligible(
+  receipt: RunReceipt | undefined,
+): receipt is EligibleReceipt {
+  return (
+    receipt?.state === "succeeded" &&
+    receipt.execution?.cleanup === "succeeded" &&
+    receipt.session.leakage === "passed"
+  );
+}
 
-  const { caseBundle, manifest, assessment } = input;
-  requireRelease(manifest.release);
-  if (manifest.trialId !== input.trialId) {
-    throw new TypeError("manifest trialId must match the trial");
+function bindReceipts(input: DeriveBenchmarkReportInput) {
+  const manifests = new Map(
+    input.bank.cases.map(({ manifest }) => [manifest.caseId, manifest]),
+  );
+  const byCaseCondition = new Map<string, RunReceipt>();
+  const byDigest = new Map<Digest, RunReceipt>();
+  for (const receipt of input.receipts) {
+    const manifest = manifests.get(receipt.caseId);
+    if (!manifest || receipt.manifestDigest !== manifest.manifestDigest)
+      throw new TypeError("report receipt must bind the exact bank census");
+    if (
+      receipt.benchCommit !== input.benchCommit ||
+      receipt.bankDigest !== input.bank.manifest.bankDigest ||
+      receipt.candidate.candidateDigest !== input.candidate.candidateDigest
+    )
+      throw new TypeError(
+        "report receipt does not bind the report candidate, bench, and bank",
+      );
+    if (
+      receipt.taskDigest !==
+      renderCase(manifest, {
+        trialId: receipt.trialId,
+        condition: receipt.condition,
+      }).taskDigest
+    )
+      throw new TypeError(
+        "report receipt task digest does not match its declared case, condition, and trial",
+      );
+    const key = receiptKey(receipt.caseId, receipt.condition);
+    if (byCaseCondition.has(key) || byDigest.has(receipt.receiptDigest))
+      throw new TypeError(
+        "report receipts must contain one receipt per bank case and condition",
+      );
+    byCaseCondition.set(key, receipt);
+    byDigest.set(receipt.receiptDigest, receipt);
   }
-  if (manifest.caseId !== caseBundle.caseId) {
-    throw new TypeError("manifest caseId must match the case bundle");
-  }
-  if (manifest.condition !== input.condition) {
-    throw new TypeError("manifest condition must match the trial condition");
-  }
+  return { byCaseCondition, byDigest };
+}
 
-  assertDeclaredEvidence(assessment.evidenceRefs, caseBundle, "assessment");
-  const manifestById = new Map(
-    manifest.decisions.map((decision) => [decision.decisionId, decision]),
+function same<T>(left: readonly T[], right: readonly T[]) {
+  return JSON.stringify(left) === JSON.stringify(right);
+}
+
+function bindJudgments(
+  input: DeriveBenchmarkReportInput,
+  receipts: ReadonlyMap<Digest, RunReceipt>,
+) {
+  const cases = new Map(
+    input.bank.cases.map((entry) => [entry.manifest.caseId, entry]),
+  );
+  const configurationDigest = stableDigest(input.judgeConfiguration);
+  const seenRecords = new Set<Digest>();
+  const seenSlots = new Set<string>();
+  const bound: BoundJudgment[] = [];
+  for (const judgment of input.judgments) {
+    const bankCase = cases.get(judgment.caseId);
+    if (!bankCase || seenRecords.has(judgment.recordDigest))
+      throw new TypeError(
+        "report judgments must be unique and bind the exact bank census",
+      );
+    seenRecords.add(judgment.recordDigest);
+    const slot = bankCase.judgmentPlan.find(
+      ({ judgmentId }) => judgmentId === judgment.judgmentId,
+    );
+    if (
+      !slot ||
+      seenSlots.has(`${judgment.caseId}\u0000${judgment.judgmentId}`)
+    )
+      throw new TypeError(
+        "report judgments must bind one unique declared judgment-plan slot",
+      );
+    seenSlots.add(`${judgment.caseId}\u0000${judgment.judgmentId}`);
+    if (
+      judgment.rubricDigest !== bankCase.manifest.sealed.rubricDigest ||
+      judgment.rubricProjectionId !== slot.rubricProjection.id ||
+      judgment.rubricProjectionDigest !== slot.rubricProjection.digest ||
+      judgment.judgeConfigurationDigest !== configurationDigest ||
+      !same(judgment.primaryJudges, input.judgeConfiguration.primaryJudges) ||
+      !same(
+        judgment.crossValidationJudges,
+        input.judgeConfiguration.crossValidationJudges,
+      ) ||
+      judgment.mode !== slot.mode ||
+      judgment.dimension !== slot.dimension ||
+      judgment.orientation !== slot.orientation
+    )
+      throw new TypeError(
+        "report judgment must bind its sealed slot, rubric projection, and frozen configuration",
+      );
+    const conditions: BenchmarkCondition[] = [];
+    for (const [index, receiptDigest] of judgment.runReceiptDigests.entries()) {
+      const receipt = receipts.get(receiptDigest);
+      if (!isEligible(receipt))
+        throw new TypeError(
+          "report judgment cannot score a run without succeeded isolation cleanup",
+        );
+      if (
+        judgment.caseId !== receipt.caseId ||
+        judgment.trialIds[index] !== receipt.trialId ||
+        judgment.artifactDigests[index] !== receipt.artifact.digest ||
+        judgment.artifactValidationDigests[index] !==
+          receipt.artifact.validationDigest
+      )
+        throw new TypeError(
+          "report judgment does not exactly bind its receipt, artifact, and validation evidence",
+        );
+      conditions.push(receipt.condition);
+    }
+    if (!same(conditions, slot.conditions))
+      throw new TypeError(
+        "report judgment conditions must match its exact declared slot ordering",
+      );
+    bound.push({ ...judgment, slot });
+  }
+  return bound;
+}
+
+type PlanOutcome = {
+  readonly dimension: JudgeDimension;
+  readonly state: "pass" | "fail" | null;
+};
+
+function winner(record: BoundJudgment) {
+  if (record.outcome.state !== "measured") return null;
+  if (
+    record.mode === "pairwise" &&
+    record.artifactDigests[0] === record.artifactDigests[1]
+  )
+    return "tie";
+  return record.outcome.verdict === "tie"
+    ? "tie"
+    : record.artifactDigests[record.outcome.verdict === "left" ? 0 : 1]!;
+}
+
+function matchesExpectedWinner(
+  slot: JudgmentPlanSlot,
+  record: BoundJudgment,
+  actual: string,
+) {
+  if (slot.expectedVerdict === "tie") return actual === "tie";
+  if (slot.expectedVerdict === "left_or_tie")
+    return actual === "tie" || actual === record.artifactDigests[0];
+  if (slot.expectedVerdict === "right_or_tie")
+    return actual === "tie" || actual === record.artifactDigests[1];
+  return (
+    actual === record.artifactDigests[slot.expectedVerdict === "left" ? 0 : 1]
+  );
+}
+
+function planOutcomes(
+  bankCase: ValidatedBank["cases"][number],
+  records: ReadonlyMap<string, BoundJudgment>,
+): readonly PlanOutcome[] {
+  const key = (judgmentId: string) =>
+    `${bankCase.manifest.caseId}\u0000${judgmentId}`;
+  const pointwise = bankCase.judgmentPlan
+    .filter(({ pairId }) => pairId === null)
+    .map((slot) => {
+      const record = records.get(key(slot.judgmentId));
+      return {
+        dimension: slot.dimension,
+        state:
+          record?.outcome.state === "measured"
+            ? record.outcome.verdict === slot.expectedVerdict
+              ? "pass"
+              : "fail"
+            : null,
+      } as PlanOutcome;
+    });
+  const pairs = Map.groupBy(
+    bankCase.judgmentPlan.filter(({ pairId }) => pairId !== null),
+    ({ pairId }) => pairId!,
+  );
+  return [
+    ...pointwise,
+    ...[...pairs.values()].map((slots) => {
+      const canonicalSlot = slots.find(
+        ({ orientation }) => orientation === "canonical",
+      )!;
+      const mirroredSlot = slots.find(
+        ({ orientation }) => orientation === "mirrored",
+      )!;
+      const canonical = records.get(key(canonicalSlot.judgmentId));
+      const mirrored = records.get(key(mirroredSlot.judgmentId));
+      const canonicalWinner = canonical ? winner(canonical) : null;
+      const mirroredWinner = mirrored ? winner(mirrored) : null;
+      if (
+        !canonical ||
+        !mirrored ||
+        canonicalWinner === null ||
+        mirroredWinner === null
+      )
+        return { dimension: canonicalSlot.dimension, state: null };
+      if (canonicalWinner !== mirroredWinner)
+        return { dimension: canonicalSlot.dimension, state: null };
+      return {
+        dimension: canonicalSlot.dimension,
+        state: matchesExpectedWinner(canonicalSlot, canonical, canonicalWinner)
+          ? "pass"
+          : "fail",
+      } as PlanOutcome;
+    }),
+  ];
+}
+
+function familyState(
+  bankCase: ValidatedBank["cases"][number],
+  receipts: ReadonlyMap<string, RunReceipt>,
+  records: ReadonlyMap<string, BoundJudgment>,
+): FamilyState {
+  const runs = BENCHMARK_CONDITIONS.map((condition) =>
+    receipts.get(receiptKey(bankCase.manifest.caseId, condition)),
   );
   if (
-    manifestById.size !== caseBundle.decisions.length ||
-    manifest.decisions.length !== caseBundle.decisions.length
-  ) {
-    throw new TypeError("manifest must cover each case decision exactly once");
-  }
-
-  const decisions = caseBundle.decisions.map((expected) => {
-    const actual = manifestById.get(expected.decisionId);
-    if (actual === undefined) {
-      throw new TypeError(
-        `manifest is missing decision ${expected.decisionId}`,
-      );
-    }
-    assertDeclaredEvidence(
-      actual.evidenceRefs,
-      caseBundle,
-      `decision ${actual.decisionId}`,
-    );
-    const evidenceComplete = expected.requiredEvidenceRefs.every(
-      (ref) =>
-        actual.evidenceRefs.includes(ref) &&
-        assessment.evidenceRefs.includes(ref),
-    );
-    return {
-      ...actual,
-      partition: expected.partition,
-      accepted: expected.acceptedRegions[input.condition].includes(
-        actual.selectedRegion,
+    runs.some((run) => !isEligible(run)) ||
+    new Set(runs.map((run) => run?.session.sessionDigest)).size !==
+      runs.length ||
+    !same(
+      [...runs.map((run) => run!.session.order)].sort(
+        (left, right) => left - right,
       ),
-      evidenceComplete,
-    };
-  });
+      [...BENCHMARK_CONDITIONS.keys()],
+    )
+  )
+    return "unavailable";
+  const outcomes = planOutcomes(bankCase, records);
+  if (
+    !JUDGE_DIMENSIONS.every((dimension) =>
+      outcomes.some(
+        (outcome) => outcome.dimension === dimension && outcome.state !== null,
+      ),
+    )
+  )
+    return "unavailable";
+  const results = outcomes.map(({ state }) => state);
+  if (results.some((result) => result === null)) return "unavailable";
+  return results.every((result) => result === "pass") ? "qualified" : "failed";
+}
 
-  const deterministicPass = decisions.every(
-    (decision) => decision.accepted && decision.evidenceComplete,
+function metricRate(
+  outcomes: readonly PlanOutcome[],
+  dimension: JudgeDimension,
+): Rate {
+  const measured = outcomes.filter(
+    (outcome) => outcome.dimension === dimension && outcome.state !== null,
   );
-  const dimensionsPass =
-    assessment.dimensions.taskAdequate &&
-    assessment.dimensions.evidenceIntegrity &&
-    assessment.dimensions.perspectiveAligned &&
-    assessment.dimensions.invariantsPreserved &&
-    !assessment.dimensions.criticalFailure;
-
-  return {
-    release: RELEASE_ID,
-    trialId: input.trialId,
-    caseId: caseBundle.caseId,
-    familyId: caseBundle.familyId,
-    domain: caseBundle.domain,
-    operation: caseBundle.operation,
-    condition: input.condition,
-    state: "measured",
-    qualified: deterministicPass && dimensionsPass,
-    dimensions: assessment.dimensions,
-    criticalFailure: assessment.dimensions.criticalFailure,
-    decisions,
-    evidenceRefs: assessment.evidenceRefs,
-    efficiency: input.efficiency ?? null,
-  };
-}
-
-function countStates(states: readonly ResultState[]): StateCounts {
-  const counts: StateCounts = {};
-  for (const state of states) counts[state] = (counts[state] ?? 0) + 1;
-  return counts;
-}
-
-function familyNonMeasuredState(trials: readonly TrialVerdict[]): ResultState {
-  for (const state of RESULT_STATES) {
-    if (state !== "measured" && trials.some((trial) => trial.state === state)) {
-      return state;
-    }
-  }
-  return "unmeasured";
-}
-
-function selection(
-  trial: TrialVerdict,
-  decisionId: string,
-): string | undefined {
-  return trial.decisions.find((decision) => decision.decisionId === decisionId)
-    ?.selectedRegion;
-}
-
-export function qualifyFamily(input: FamilyQualificationInput): FamilyVerdict {
-  requireRelease(input.caseBundle.release);
-  for (const trial of input.trials) {
-    if (trial.familyId !== input.caseBundle.familyId) {
-      throw new TypeError("all trials must belong to the case family");
-    }
-  }
-
-  const conditionLabels = CONDITION_LABELS.filter((condition) =>
-    input.trials.some((trial) => trial.condition === condition),
+  return rate(
+    measured.filter(({ state }) => state === "pass").length,
+    measured.length,
   );
-  const trialStateCounts = countStates(
-    input.trials.map((trial) => trial.state),
-  );
-  const efficiency = input.trials.flatMap((trial) =>
-    trial.efficiency === null ? [] : [trial.efficiency],
-  );
-  const a = input.trials.filter((trial) => trial.condition === "T1-A");
-  const b = input.trials.filter((trial) => trial.condition === "T1-B");
-  const completePair =
-    a.length === 1 &&
-    b.length === 1 &&
-    input.trials.every((trial) => trial.state === "measured");
-
-  if (!completePair) {
-    return {
-      release: RELEASE_ID,
-      familyId: input.caseBundle.familyId,
-      domain: input.caseBundle.domain,
-      operation: input.caseBundle.operation,
-      state: familyNonMeasuredState(input.trials),
-      qualified: null,
-      conditionLabels,
-      sensitiveContrast: null,
-      invariantsPreserved: null,
-      criticalFailure: null,
-      trialStateCounts,
-      efficiency,
-    };
-  }
-
-  const trialA = a[0];
-  const trialB = b[0];
-  if (trialA === undefined || trialB === undefined) {
-    throw new Error("complete A/B pair invariant violated");
-  }
-  const sensitive = input.caseBundle.decisions.filter(
-    (decision) => decision.partition === "sensitive",
-  );
-  const invariants = input.caseBundle.decisions.filter(
-    (decision) => decision.partition === "invariant",
-  );
-  const sensitiveContrast = sensitive.every(
-    (decision) =>
-      selection(trialA, decision.decisionId) !==
-      selection(trialB, decision.decisionId),
-  );
-  const invariantsPreserved = invariants.every(
-    (decision) =>
-      selection(trialA, decision.decisionId) ===
-      selection(trialB, decision.decisionId),
-  );
-  const criticalFailure = input.trials.some(
-    (trial) => trial.criticalFailure === true,
-  );
-  const qualified =
-    input.trials.every((trial) => trial.qualified === true) &&
-    sensitiveContrast &&
-    invariantsPreserved &&
-    !criticalFailure;
-
-  return {
-    release: RELEASE_ID,
-    familyId: input.caseBundle.familyId,
-    domain: input.caseBundle.domain,
-    operation: input.caseBundle.operation,
-    state: "measured",
-    qualified,
-    conditionLabels,
-    sensitiveContrast,
-    invariantsPreserved,
-    criticalFailure,
-    trialStateCounts,
-    efficiency,
-  };
 }
 
-function stratumRates(
-  families: readonly FamilyVerdict[],
-  selectKey: (family: FamilyVerdict) => string,
-): readonly StratumRate[] {
-  const keys = [...new Set(families.map(selectKey))].sort();
-  return keys.map((key) => {
-    const measured = families.filter(
-      (family) => family.state === "measured" && selectKey(family) === key,
-    );
-    const numerator = measured.filter(
-      (family) => family.qualified === true,
-    ).length;
-    const denominator = measured.length;
-    return {
-      key,
-      state: denominator === 0 ? "unmeasured" : "measured",
-      numerator,
-      denominator,
-      value: denominator === 0 ? null : numerator / denominator,
-    };
-  });
+function cleanup(receipt: RunReceipt | undefined) {
+  return receipt?.state === "succeeded"
+    ? (receipt.execution?.cleanup ?? "unavailable")
+    : "not_applicable";
 }
 
-function macroRate(strata: readonly StratumRate[]): MacroRate {
-  const measured = strata.filter(
-    (stratum): stratum is StratumRate & { readonly value: number } =>
-      stratum.value !== null,
-  );
-  return {
-    state: measured.length === 0 ? "unmeasured" : "measured",
-    value:
-      measured.length === 0
-        ? null
-        : measured.reduce((sum, stratum) => sum + stratum.value, 0) /
-          measured.length,
-    strataMeasured: measured.length,
-    strataTotal: strata.length,
-  };
-}
-
-function qpcfr(families: readonly FamilyVerdict[]): QpcfrReport {
-  const byDomain = stratumRates(families, (family) => family.domain);
-  const byOperation = stratumRates(families, (family) => family.operation);
-  return {
-    byDomain,
-    byOperation,
-    macroByDomain: macroRate(byDomain),
-    macroByOperation: macroRate(byOperation),
-  };
-}
-
-function quantile(values: readonly number[], probability: number): number {
-  const sorted = [...values].sort((left, right) => left - right);
-  const position = (sorted.length - 1) * probability;
-  const lowerIndex = Math.floor(position);
-  const upperIndex = Math.ceil(position);
-  const lower = sorted[lowerIndex];
-  const upper = sorted[upperIndex];
-  if (lower === undefined || upper === undefined) {
-    throw new TypeError("cannot compute a quantile for an empty sample");
-  }
-  return lower + (upper - lower) * (position - lowerIndex);
-}
-
-function interval(values: readonly number[]): BootstrapInterval | null {
-  if (values.length === 0) return null;
-  return { lower: quantile(values, 0.05), upper: quantile(values, 0.95) };
-}
-
-function bootstrap(
-  families: readonly FamilyVerdict[],
-  samples: readonly (readonly string[])[],
-): BootstrapReport {
-  const byId = new Map(families.map((family) => [family.familyId, family]));
-  const domainValues: number[] = [];
-  const operationValues: number[] = [];
-  for (const sample of samples) {
-    const selected = sample.map((familyId) => {
-      const family = byId.get(familyId);
-      if (family === undefined) {
-        throw new TypeError(`bootstrap references unknown family ${familyId}`);
-      }
-      return family;
-    });
-    const report = qpcfr(selected);
-    if (report.macroByDomain.value !== null) {
-      domainValues.push(report.macroByDomain.value);
-    }
-    if (report.macroByOperation.value !== null) {
-      operationValues.push(report.macroByOperation.value);
-    }
-  }
-  return {
-    unit: "case_family",
-    samples: samples.length,
-    macroByDomain: interval(domainValues),
-    macroByOperation: interval(operationValues),
-  };
-}
-
-function statistic(values: readonly number[]): SummaryStatistic {
-  const sorted = [...values].sort((left, right) => left - right);
-  const middle = Math.floor(sorted.length / 2);
-  const median =
-    sorted.length % 2 === 1
-      ? sorted[middle]
-      : ((sorted[middle - 1] ?? 0) + (sorted[middle] ?? 0)) / 2;
-  return {
-    mean: values.reduce((sum, value) => sum + value, 0) / values.length,
-    median: median ?? 0,
-  };
-}
-
-function efficiencyReport(
-  families: readonly FamilyVerdict[],
-): EfficiencyReport {
-  const samples = families.flatMap((family) => family.efficiency);
-  if (samples.length === 0) {
-    return {
-      state: "unmeasured",
-      sampleCount: 0,
-      wallTimeMs: null,
-      inputTokens: null,
-      outputTokens: null,
-    };
-  }
-  return {
-    state: "measured",
-    sampleCount: samples.length,
-    wallTimeMs: statistic(samples.map((sample) => sample.wallTimeMs)),
-    inputTokens: statistic(samples.map((sample) => sample.inputTokens)),
-    outputTokens: statistic(samples.map((sample) => sample.outputTokens)),
-  };
-}
-
-function mergeCounts(counts: readonly StateCounts[]): StateCounts {
-  const merged: StateCounts = {};
-  for (const count of counts) {
-    for (const state of RESULT_STATES) {
-      merged[state] = (merged[state] ?? 0) + (count[state] ?? 0);
-    }
-  }
-  for (const state of RESULT_STATES) {
-    if (merged[state] === 0) delete merged[state];
-  }
-  return merged;
-}
-
-export function aggregateBenchmark(input: AggregateInput): BenchmarkReport {
-  requireRelease(input.release);
-  for (const family of input.families) requireRelease(family.release);
-  const familyIds = input.families.map((family) => family.familyId);
-  if (new Set(familyIds).size !== familyIds.length) {
-    throw new TypeError("familyId values must be unique");
-  }
-  for (const [index, sample] of input.bootstrapSamples.entries()) {
-    if (sample.length === 0) {
-      throw new TypeError(`bootstrap fixture ${index} must not be empty`);
-    }
-  }
-  return {
-    release: RELEASE_ID,
-    familyStateCounts: countStates(
-      input.families.map((family) => family.state),
+function count(values: readonly string[]) {
+  return Object.fromEntries(
+    values.reduce(
+      (counts, value) => counts.set(value, (counts.get(value) ?? 0) + 1),
+      new Map<string, number>(),
     ),
-    trialStateCounts: mergeCounts(
-      input.families.map((family) => family.trialStateCounts),
+  );
+}
+
+function formReport(
+  split: Extract<BankSplit, "release_a" | "release_b">,
+  form: FormReport["form"],
+  cases: readonly ValidatedBank["cases"][number][],
+  allReceipts: readonly RunReceipt[],
+  records: readonly BoundJudgment[],
+  byCaseCondition: ReadonlyMap<string, RunReceipt>,
+): FormReport {
+  const recordMap = new Map(
+    records.map((record) => [
+      `${record.caseId}\u0000${record.judgmentId}`,
+      record,
+    ]),
+  );
+  const states = new Map(
+    cases.map((bankCase) => [
+      bankCase.manifest.caseId,
+      familyState(bankCase, byCaseCondition, recordMap),
+    ]),
+  );
+  const receipts = allReceipts.filter((receipt) => states.has(receipt.caseId));
+  const eligible = receipts.filter(isEligible);
+  const usage = eligible.filter((receipt) => receipt.usage !== null);
+  const qualified = [...states.values()].filter(
+    (state) => state === "qualified",
+  ).length;
+  const measured = [...states.values()].filter(
+    (state) => state !== "unavailable",
+  ).length;
+  const judgments = records.filter((record) => states.has(record.caseId));
+  const outcomes = cases.flatMap((bankCase) =>
+    planOutcomes(bankCase, recordMap),
+  );
+  const critical = judgments.filter(
+    (record) =>
+      record.dimension === "critical_failure" &&
+      record.mode === "pointwise" &&
+      record.outcome.state === "measured",
+  );
+  return {
+    split,
+    form,
+    census: {
+      families: cases.length,
+      measured,
+      receipts: count([
+        ...receipts.map((receipt) => receipt.state),
+        ...cases.flatMap(({ manifest }) =>
+          BENCHMARK_CONDITIONS.filter(
+            (condition) =>
+              !byCaseCondition.has(receiptKey(manifest.caseId, condition)),
+          ).map(() => "missing"),
+        ),
+      ]),
+      cleanup: count(
+        receipts.map(cleanup).filter((state) => state !== "not_applicable"),
+      ),
+      judgments: count([
+        ...judgments.map(({ outcome }) => outcome.state),
+        ...cases
+          .flatMap(({ manifest, judgmentPlan }) =>
+            judgmentPlan.filter(
+              ({ judgmentId }) =>
+                !recordMap.has(`${manifest.caseId}\u0000${judgmentId}`),
+            ),
+          )
+          .map(() => "missing"),
+      ]),
+      family: count([...states.values()]),
+    },
+    targetAlignment: metricRate(outcomes, "target_alignment"),
+    taskUtility: metricRate(outcomes, "task_utility"),
+    evidenceIntegrity: metricRate(outcomes, "evidence_integrity"),
+    targetSpecificity: metricRate(outcomes, "target_specificity"),
+    criticalFailureRate: rate(
+      critical.filter(
+        (record) =>
+          record.outcome.state === "measured" &&
+          record.outcome.verdict === "fail",
+      ).length,
+      critical.length,
     ),
-    qpcfr: qpcfr(input.families),
-    bootstrap: bootstrap(input.families, input.bootstrapSamples),
-    efficiency: efficiencyReport(input.families),
+    qpcfr: rate(qualified, measured),
+    efficiency:
+      eligible.length === 0
+        ? {
+            state: "unmeasured",
+            samples: 0,
+            durationMsMean: null,
+            inputTokensMean: null,
+            outputTokensMean: null,
+            costNanoUsdTotal: null,
+          }
+        : {
+            state: "measured",
+            samples: eligible.length,
+            durationMsMean:
+              eligible.reduce(
+                (total, receipt) => total + receipt.durationMs,
+                0,
+              ) / eligible.length,
+            inputTokensMean:
+              usage.length === 0
+                ? null
+                : usage.reduce(
+                    (total, receipt) => total + receipt.usage!.inputTokens,
+                    0,
+                  ) / usage.length,
+            outputTokensMean:
+              usage.length === 0
+                ? null
+                : usage.reduce(
+                    (total, receipt) => total + receipt.usage!.outputTokens,
+                    0,
+                  ) / usage.length,
+            costNanoUsdTotal:
+              usage.length === 0
+                ? null
+                : usage.reduce(
+                    (total, receipt) => total + receipt.usage!.costNanoUsd,
+                    0,
+                  ),
+          },
+    caseCensus: cases.map(({ manifest, judgmentPlan }) => ({
+      caseId: manifest.caseId,
+      familyId: manifest.familyId,
+      manifestDigest: manifest.manifestDigest,
+      familyState: states.get(manifest.caseId)!,
+      trials: BENCHMARK_CONDITIONS.map((condition) => {
+        const receipt = byCaseCondition.get(
+          receiptKey(manifest.caseId, condition),
+        );
+        return {
+          condition,
+          trialId: receipt?.trialId ?? null,
+          receiptDigest: receipt?.receiptDigest ?? null,
+          receiptState: receipt?.state ?? "missing",
+          artifactValidationDigest:
+            receipt?.state === "succeeded"
+              ? receipt.artifact.validationDigest
+              : null,
+          session: receipt?.session ?? null,
+          cleanup: cleanup(receipt),
+          judgmentRecordDigests: judgmentPlan
+            .filter((slot) => slot.conditions.includes(condition))
+            .map(
+              (slot) =>
+                recordMap.get(`${manifest.caseId}\u0000${slot.judgmentId}`)
+                  ?.recordDigest,
+            )
+            .filter((digest): digest is Digest => digest !== undefined),
+        };
+      }),
+    })),
+    coverage: {
+      observedReceipts: receipts.length,
+      semanticEligibleReceipts: eligible.length,
+      judgedRecords: judgments.length,
+      numericFamilies: measured,
+    },
+    uncertainty: {
+      unmeasuredFamilies: cases.length - measured,
+      qpcfrLowerBound: qualified / cases.length,
+      qpcfrUpperBound: (qualified + cases.length - measured) / cases.length,
+    },
   };
+}
+
+export function deriveBenchmarkReport(value: unknown): BenchmarkReport {
+  const input = parseInput(value);
+  const { byCaseCondition, byDigest } = bindReceipts(input);
+  const judgments = bindJudgments(input, byDigest);
+  const forms = (["release_a", "release_b"] as const).flatMap((split) =>
+    BENCHMARK_FORMS.flatMap((form) => {
+      const cases = input.bank.cases.filter(
+        ({ manifest }) => manifest.split === split && manifest.form === form,
+      );
+      return cases.length === 0
+        ? []
+        : [
+            formReport(
+              split,
+              form,
+              cases,
+              input.receipts,
+              judgments,
+              byCaseCondition,
+            ),
+          ];
+    }),
+  );
+  const semantic: BenchmarkReportSemantic = {
+    release: "2026.8.12",
+    benchCommit: input.benchCommit,
+    bankDigest: input.bank.manifest.bankDigest,
+    candidate: input.candidate,
+    provenance: {
+      bankId: input.bank.manifest.bankId,
+      protocolDigest: input.bank.manifest.protocolDigest,
+      judgeConfigurationDigest: stableDigest(input.judgeConfiguration),
+    },
+    forms,
+  };
+  return { ...semantic, reportDigest: stableDigest(semantic) };
 }

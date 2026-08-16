@@ -1,356 +1,366 @@
 import assert from "node:assert/strict";
-import { spawnSync } from "node:child_process";
-import {
-  cpSync,
-  lstatSync,
-  mkdirSync,
-  mkdtempSync,
-  readFileSync,
-  readdirSync,
-  realpathSync,
-  rmSync,
-  symlinkSync,
-  writeFileSync,
-} from "node:fs";
-import type { Dirent } from "node:fs";
+import { mkdtemp, mkdir, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
+import { join } from "node:path";
 import test from "node:test";
 
-import { type BankFileSystem, validateBank } from "../src/bank.ts";
+import { createBankManifest, validateBank } from "../src/bank.ts";
+import {
+  RELEASE_ID,
+  BENCHMARK_CONDITIONS,
+  createCaseManifest,
+  stableDigest,
+  type BankSplit,
+  type CaseManifest,
+} from "../src/contracts.ts";
+import { caseSemantic } from "./fixtures.ts";
 
-const repositoryRoot = resolve(import.meta.dirname, "..");
-const fixturesRoot = join(import.meta.dirname, "fixtures", "bank");
+const rubric = {
+  projections: {
+    general: { criteria: ["fixture"] },
+    alternate: { criteria: ["alternate fixture"] },
+  },
+};
+const defaultPlan = {
+  authority: "project_author_hypothesis" as const,
+  humanReviewed: false as const,
+  use: "prospective_contrast_definition" as const,
+  judgmentPlan: BENCHMARK_CONDITIONS.map((condition) => ({
+    judgmentId: `critical-${condition}`,
+    pairId: null,
+    mode: "pointwise",
+    dimension: "critical_failure",
+    orientation: null,
+    conditions: [condition],
+    rubricProjection: {
+      id: "general",
+      digest: stableDigest(rubric.projections.general),
+    },
+    expectedVerdict: "pass",
+  })),
+};
 
-function fixtureRoot(): string {
-  return mkdtempSync(join(tmpdir(), "coffee-chat-bank-"));
-}
+async function writeBank(
+  cases: readonly CaseManifest[],
+  paths?: readonly string[],
+  evaluator: { readonly rubric: object; readonly plan: object } = {
+    rubric,
+    plan: defaultPlan,
+  },
+) {
+  const root = await mkdtemp(join(tmpdir(), "coffee-chat-bench-bank-"));
+  await mkdir(join(root, "cases"), { recursive: true });
+  await mkdir(join(root, "evaluator", "rubrics"), { recursive: true });
+  await mkdir(join(root, "evaluator", "plans"), { recursive: true });
 
-function copyFixture(
-  root: string,
-  fixture: string,
-  destination = fixture,
-): void {
-  const target = join(root, destination);
-  mkdirSync(dirname(target), { recursive: true });
-  cpSync(join(fixturesRoot, fixture), target);
-}
-
-function withBank(assertion: (root: string) => void): void {
-  const root = fixtureRoot();
-  try {
-    assertion(root);
-  } finally {
-    rmSync(root, { force: true, recursive: true });
+  const entries = [];
+  for (const [index, manifest] of cases.entries()) {
+    const stem = `case-${index + 1}`;
+    const casePath = paths?.[index] ?? `cases/${stem}.json`;
+    await writeFile(join(root, casePath), `${JSON.stringify(manifest)}\n`);
+    await writeFile(
+      join(root, "evaluator", "rubrics", `${stem}.json`),
+      `${JSON.stringify(evaluator.rubric)}\n`,
+    );
+    await writeFile(
+      join(root, "evaluator", "plans", `${stem}.json`),
+      `${JSON.stringify(evaluator.plan)}\n`,
+    );
+    entries.push({
+      caseId: manifest.caseId,
+      familyId: manifest.familyId,
+      form: manifest.form,
+      split: manifest.split,
+      casePath,
+      manifestDigest: manifest.manifestDigest,
+      rubricPath: `evaluator/rubrics/${stem}.json`,
+      rubricDigest: stableDigest(evaluator.rubric),
+      judgmentPlanPath: `evaluator/plans/${stem}.json`,
+      judgmentPlanDigest: stableDigest(evaluator.plan),
+    });
   }
+  const bank = createBankManifest({
+    release: RELEASE_ID,
+    bankId: "public-synthetic-bank",
+    license: "MIT",
+    protocolDigest: stableDigest({ protocol: "prospective-2026.8.15" }),
+    cases: entries,
+  });
+  await writeFile(join(root, "bank.json"), `${JSON.stringify(bank)}\n`);
+  return { root, bank };
 }
 
-function runValidate(root: string) {
-  return spawnSync(
-    process.execPath,
-    ["--experimental-strip-types", "src/cli.ts", "validate", root],
-    { cwd: repositoryRoot, encoding: "utf8" },
+test("validate-bank admits an exact public census and binds sealed files", async () => {
+  const minimalPlan = {
+    ...defaultPlan,
+    judgmentPlan: [
+      {
+        ...defaultPlan.judgmentPlan[0],
+        dimension: "task_utility",
+        judgmentId: "task-utility",
+      },
+    ],
+  };
+  const semantic = caseSemantic();
+  const manifest = createCaseManifest({
+    ...semantic,
+    sealed: {
+      rubricDigest: stableDigest(rubric),
+      judgmentPlanDigest: stableDigest(minimalPlan),
+    },
+  });
+  const { root, bank } = await writeBank([manifest], undefined, {
+    rubric,
+    plan: minimalPlan,
+  });
+
+  const validated = await validateBank(root);
+  assert.deepEqual(validated.manifest, bank);
+  assert.equal(validated.cases.length, 1);
+  assert.equal(validated.cases[0]!.manifest.caseId, manifest.caseId);
+});
+
+test("validate-bank rejects lineage overlap across every split pair", async () => {
+  const sealed = {
+    rubricDigest: stableDigest(rubric),
+    judgmentPlanDigest: stableDigest(defaultPlan),
+  };
+  for (const [leftSplit, rightSplit] of [
+    ["judge_qualification", "release_a"],
+    ["judge_qualification", "release_b"],
+    ["release_a", "release_b"],
+  ] as const) {
+    const caseFor = (split: BankSplit, suffix: string) =>
+      createCaseManifest({
+        ...caseSemantic(),
+        caseId: `case-${suffix}`,
+        familyId: `family-${suffix}`,
+        targetPairBlockId: `target-block-${suffix}`,
+        split,
+        sealed,
+      });
+    const { root } = await writeBank([
+      caseFor(leftSplit, `${leftSplit}-left`),
+      caseFor(rightSplit, `${rightSplit}-right`),
+    ]);
+    await assert.rejects(
+      validateBank(root),
+      /lineage overlap.*source/i,
+      `${leftSplit}/${rightSplit}`,
+    );
+  }
+});
+
+test("validate-bank rejects a malformed mirrored semantic slot pair", async () => {
+  const malformedPlan = {
+    ...defaultPlan,
+    judgmentPlan: [
+      ...defaultPlan.judgmentPlan,
+      {
+        judgmentId: "pair-canonical",
+        pairId: "pair",
+        mode: "pairwise",
+        dimension: "target_alignment",
+        orientation: "canonical",
+        conditions: ["diagnostic_target_a", "nondiagnostic_target_a"],
+        rubricProjection: {
+          id: "general",
+          digest: stableDigest(rubric.projections.general),
+        },
+        expectedVerdict: "left",
+      },
+      {
+        judgmentId: "pair-mirrored",
+        pairId: "pair",
+        mode: "pairwise",
+        dimension: "target_alignment",
+        orientation: "mirrored",
+        conditions: ["nondiagnostic_target_a", "diagnostic_target_a"],
+        rubricProjection: {
+          id: "general",
+          digest: stableDigest(rubric.projections.general),
+        },
+        expectedVerdict: "left",
+      },
+    ],
+  };
+  const manifest = createCaseManifest({
+    ...caseSemantic(),
+    sealed: {
+      rubricDigest: stableDigest(rubric),
+      judgmentPlanDigest: stableDigest(malformedPlan),
+    },
+  });
+  const { root } = await writeBank([manifest], undefined, {
+    rubric,
+    plan: malformedPlan,
+  });
+
+  await assert.rejects(
+    validateBank(root),
+    /reverse conditions and expected verdicts/i,
   );
-}
-
-test("validates recursively discovered case files in deterministic order", () => {
-  withBank((root) => {
-    copyFixture(root, "valid/nested/bravo.json");
-    copyFixture(root, "valid/alpha.json");
-
-    const report = validateBank(root);
-
-    assert.equal(report.state, "valid");
-    assert.deepEqual(report.files, [
-      { file: "valid/alpha.json", state: "valid", errors: [] },
-      { file: "valid/nested/bravo.json", state: "valid", errors: [] },
-    ]);
-    assert.match(report.digest, /^sha256:[0-9a-f]{64}$/u);
-  });
 });
 
-test("rejects an oversized otherwise-valid case file before parsing", () => {
-  withBank((root) => {
-    const destination = join(root, "oversized.json");
-    writeFileSync(
-      destination,
-      `${" ".repeat(1024 * 1024)}${readFileSync(join(fixturesRoot, "valid/alpha.json"), "utf8")}`,
-      "utf8",
-    );
-
-    const report = validateBank(root);
-
-    assert.equal(report.state, "invalid");
-    assert.match(report.files[0]?.errors[0] ?? "", /exceeds.*byte limit/i);
-  });
-});
-
-test("rejects an otherwise-valid case file beyond the bank depth budget", () => {
-  withBank((root) => {
-    copyFixture(root, "valid/alpha.json", "a/b/c/d/e/f/g/h/i/alpha.json");
-
-    const report = validateBank(root);
-
-    assert.equal(report.state, "invalid");
-    assert.match(report.files[0]?.errors[0] ?? "", /depth.*limit/i);
-  });
-});
-
-test("stops lazy directory enumeration at the global bank entry budget", () => {
-  withBank((root) => {
-    let entriesYielded = 0;
-    const fileSystem: BankFileSystem = {
-      lstat: lstatSync,
-      readDirectory() {
-        return (function* (): Iterable<Dirent> {
-          for (let index = 0; index < 513; index += 1) {
-            entriesYielded += 1;
-            yield {
-              name: `${String(index).padStart(3, "0")}.json`,
-              isBlockDevice: () => false,
-              isCharacterDevice: () => false,
-              isDirectory: () => false,
-              isFIFO: () => false,
-              isFile: () => true,
-              isSocket: () => false,
-              isSymbolicLink: () => false,
-              parentPath: root,
-              path: root,
-            } as Dirent;
-          }
-          throw new Error("enumeration continued beyond the entry budget");
-        })();
+test("validate-bank rejects mirrored slots with different rubric projections", async () => {
+  const mismatchedPlan = {
+    ...defaultPlan,
+    judgmentPlan: [
+      ...defaultPlan.judgmentPlan,
+      {
+        judgmentId: "pair-canonical",
+        pairId: "pair",
+        mode: "pairwise",
+        dimension: "target_alignment",
+        orientation: "canonical",
+        conditions: ["diagnostic_target_a", "nondiagnostic_target_a"],
+        rubricProjection: {
+          id: "general",
+          digest: stableDigest(rubric.projections.general),
+        },
+        expectedVerdict: "left",
       },
-      readFile: () => {
-        throw new Error("entry metadata must not be read after budget failure");
+      {
+        judgmentId: "pair-mirrored",
+        pairId: "pair",
+        mode: "pairwise",
+        dimension: "target_alignment",
+        orientation: "mirrored",
+        conditions: ["nondiagnostic_target_a", "diagnostic_target_a"],
+        rubricProjection: {
+          id: "alternate",
+          digest: stableDigest(rubric.projections.alternate),
+        },
+        expectedVerdict: "right",
       },
-      realpath: realpathSync,
-    };
-
-    const report = validateBank(root, fileSystem);
-
-    assert.equal(entriesYielded, 513);
-    assert.match(report.files[0]?.errors[0] ?? "", /exceeds 512 entry limit/i);
+    ],
+  };
+  const manifest = createCaseManifest({
+    ...caseSemantic(),
+    sealed: {
+      rubricDigest: stableDigest(rubric),
+      judgmentPlanDigest: stableDigest(mismatchedPlan),
+    },
   });
+  const { root } = await writeBank([manifest], undefined, {
+    rubric,
+    plan: mismatchedPlan,
+  });
+
+  await assert.rejects(validateBank(root), /rubric projection/i);
 });
 
-test("rejects content that grows beyond the file budget after metadata", () => {
-  withBank((root) => {
-    copyFixture(root, "valid/alpha.json", "alpha.json");
-    const valid = readFileSync(join(root, "alpha.json"), "utf8");
-    const fileSystem: BankFileSystem = {
-      lstat: lstatSync,
-      readDirectory: (path) => readdirSync(path, { withFileTypes: true }),
-      readFile: () => `${" ".repeat(300 * 1024)}${valid}`,
-      realpath: realpathSync,
+test("validate-bank confines non-inferiority to diagnostic utility controls", async () => {
+  const invalidPairs = [
+    {
+      dimension: "target_alignment",
+      conditions: ["diagnostic_target_a", "task_only"],
+      expectedVerdict: "left_or_tie",
+    },
+    {
+      dimension: "task_utility",
+      conditions: ["diagnostic_target_a", "nondiagnostic_target_a"],
+      expectedVerdict: "left_or_tie",
+    },
+    {
+      dimension: "task_utility",
+      conditions: ["task_only", "diagnostic_target_a"],
+      expectedVerdict: "left_or_tie",
+    },
+  ] as const;
+  for (const [index, invalid] of invalidPairs.entries()) {
+    const plan = {
+      ...defaultPlan,
+      judgmentPlan: [
+        {
+          judgmentId: `noninferiority-${index}-canonical`,
+          pairId: `noninferiority-${index}`,
+          mode: "pairwise",
+          orientation: "canonical",
+          rubricProjection: {
+            id: "general",
+            digest: stableDigest(rubric.projections.general),
+          },
+          ...invalid,
+        },
+        {
+          judgmentId: `noninferiority-${index}-mirrored`,
+          pairId: `noninferiority-${index}`,
+          mode: "pairwise",
+          dimension: invalid.dimension,
+          orientation: "mirrored",
+          conditions: [...invalid.conditions].reverse(),
+          rubricProjection: {
+            id: "general",
+            digest: stableDigest(rubric.projections.general),
+          },
+          expectedVerdict: "right_or_tie",
+        },
+      ],
     };
-
-    const report = validateBank(root, fileSystem);
-
-    assert.equal(report.state, "invalid");
-    assert.match(report.files[0]?.errors[0] ?? "", /exceeds.*byte limit/i);
-  });
-});
-
-test("keeps the bank digest stable when filesystem creation order differs", () => {
-  const first = fixtureRoot();
-  const second = fixtureRoot();
-  try {
-    copyFixture(first, "valid/nested/bravo.json");
-    copyFixture(first, "valid/alpha.json");
-    copyFixture(second, "valid/alpha.json");
-    copyFixture(second, "valid/nested/bravo.json");
-
-    assert.equal(validateBank(first).digest, validateBank(second).digest);
-  } finally {
-    rmSync(first, { force: true, recursive: true });
-    rmSync(second, { force: true, recursive: true });
+    const manifest = createCaseManifest({
+      ...caseSemantic(),
+      sealed: {
+        rubricDigest: stableDigest(rubric),
+        judgmentPlanDigest: stableDigest(plan),
+      },
+    });
+    const { root } = await writeBank([manifest], undefined, { rubric, plan });
+    await assert.rejects(validateBank(root), /non-inferiority/u);
   }
 });
 
-test("rejects evidence content digest tampering at bank admission", () => {
-  withBank((root) => {
-    copyFixture(root, "valid/alpha.json", "alpha.json");
-    const path = join(root, "alpha.json");
-    const source = JSON.parse(readFileSync(path, "utf8")) as {
-      evidence: Array<{ digest: string }>;
-    };
-    source.evidence[0]!.digest = `sha256:${"f".repeat(64)}`;
-    writeFileSync(path, `${JSON.stringify(source, null, 2)}\n`, "utf8");
-
-    const report = validateBank(root);
-
-    assert.equal(report.state, "invalid");
-    assert.match(
-      report.files[0]?.errors[0] ?? "",
-      /evidence.*digest.*content/i,
-    );
+test("validate-bank permits a shared target block across release slices", async () => {
+  const sealed = {
+    rubricDigest: stableDigest(rubric),
+    judgmentPlanDigest: stableDigest(defaultPlan),
+  };
+  const releaseA = createCaseManifest({
+    ...caseSemantic(),
+    split: "release_a",
+    sealed,
   });
+  const releaseB = createCaseManifest({
+    ...caseSemantic(),
+    caseId: "case-talk-release-b-001",
+    familyId: "family-judgment-release-b-001",
+    split: "release_b",
+    lineage: {
+      sourceIds: ["release-b-source"],
+      templateId: "release-b-template",
+      rubricTemplateId: "release-b-rubric-template",
+    },
+    sealed,
+  });
+  const { root } = await writeBank([releaseA, releaseB]);
+  assert.equal((await validateBank(root)).cases.length, 2);
 });
 
-test("rejects perspective content digest tampering at bank admission", () => {
-  withBank((root) => {
-    copyFixture(root, "valid/alpha.json", "alpha.json");
-    const path = join(root, "alpha.json");
-    const source = JSON.parse(readFileSync(path, "utf8")) as {
-      perspectives: { A: { digest: string } };
-    };
-    source.perspectives.A.digest = `sha256:${"f".repeat(64)}`;
-    writeFileSync(path, `${JSON.stringify(source, null, 2)}\n`, "utf8");
-
-    const report = validateBank(root);
-
-    assert.equal(report.state, "invalid");
-    assert.match(
-      report.files[0]?.errors[0] ?? "",
-      /perspectives\.A.*digest.*content/i,
-    );
-  });
-});
-
-test("rejects source digest tampering at bank admission", () => {
-  withBank((root) => {
-    copyFixture(root, "valid/alpha.json", "alpha.json");
-    const path = join(root, "alpha.json");
-    const source = JSON.parse(readFileSync(path, "utf8")) as {
-      sourceDigest: string;
-    };
-    source.sourceDigest = `sha256:${"f".repeat(64)}`;
-    writeFileSync(path, `${JSON.stringify(source, null, 2)}\n`, "utf8");
-
-    const report = validateBank(root);
-
-    assert.equal(report.state, "invalid");
-    assert.match(report.files[0]?.errors[0] ?? "", /sourceDigest.*semantic/i);
-  });
-});
-
-test("reports a parse failure against its source file", () => {
-  withBank((root) => {
-    copyFixture(root, "malformed.json");
-
-    const report = validateBank(root);
-
-    assert.equal(report.state, "invalid");
-    assert.match(report.digest, /^sha256:[0-9a-f]{64}$/u);
-    assert.deepEqual(report.files, [
+test("validate-bank rejects paths outside the bank root", async () => {
+  const manifest = createCaseManifest(caseSemantic());
+  const { root } = await writeBank([manifest]);
+  const bankPath = join(root, "bank.json");
+  const escaped = createBankManifest({
+    release: RELEASE_ID,
+    bankId: "public-synthetic-bank",
+    license: "MIT",
+    protocolDigest: stableDigest({ protocol: "prospective-2026.8.15" }),
+    cases: [
       {
-        file: "malformed.json",
-        state: "invalid",
-        errors: ["sourceDigest must be a sha256 digest"],
+        caseId: manifest.caseId,
+        familyId: manifest.familyId,
+        form: manifest.form,
+        split: manifest.split,
+        casePath: "../case.json",
+        manifestDigest: manifest.manifestDigest,
+        rubricPath: "evaluator/rubrics/case-1.json",
+        rubricDigest: stableDigest(rubric),
+        judgmentPlanPath: "evaluator/plans/case-1.json",
+        judgmentPlanDigest: stableDigest(defaultPlan),
       },
-    ]);
+    ],
   });
-});
+  await writeFile(bankPath, `${JSON.stringify(escaped)}\n`);
 
-test("rejects a repeated case identity at the duplicate file", () => {
-  withBank((root) => {
-    copyFixture(root, "valid/alpha.json", "alpha.json");
-    copyFixture(root, "duplicate-case-id.json");
-
-    const report = validateBank(root);
-
-    assert.equal(report.state, "invalid");
-    assert.deepEqual(report.files.at(1), {
-      file: "duplicate-case-id.json",
-      state: "invalid",
-      errors: ['duplicate caseId "case-alpha"; first defined by alpha.json'],
-    });
-  });
-});
-
-test("rejects every duplicate family-condition tuple at the duplicate file", () => {
-  withBank((root) => {
-    copyFixture(root, "valid/alpha.json", "alpha.json");
-    copyFixture(root, "duplicate-family.json");
-
-    const report = validateBank(root);
-
-    assert.equal(report.state, "invalid");
-    assert.deepEqual(report.files.at(1), {
-      file: "duplicate-family.json",
-      state: "invalid",
-      errors: [
-        'duplicate family-condition tuple "family-alpha:T0"; first defined by alpha.json',
-        'duplicate family-condition tuple "family-alpha:T1-A"; first defined by alpha.json',
-        'duplicate family-condition tuple "family-alpha:T1-B"; first defined by alpha.json',
-      ],
-    });
-  });
-});
-
-test("rejects symlinked entries instead of resolving an ambiguous bank path", () => {
-  withBank((root) => {
-    symlinkSync(
-      join(fixturesRoot, "valid", "alpha.json"),
-      join(root, "linked.json"),
-    );
-
-    const report = validateBank(root);
-
-    assert.deepEqual(report.files, [
-      {
-        file: "linked.json",
-        state: "invalid",
-        errors: ["symbolic links are not permitted in a bank"],
-      },
-    ]);
-  });
-});
-
-test("preserves parsed file errors when a later directory traversal fails", () => {
-  withBank((root) => {
-    copyFixture(root, "malformed.json");
-    copyFixture(root, "valid/alpha.json", "z-blocked/alpha.json");
-    const fileSystem: BankFileSystem = {
-      lstat: lstatSync,
-      readDirectory(path) {
-        if (String(path).endsWith("/z-blocked")) {
-          throw new Error("fixture traversal denied");
-        }
-        return readdirSync(path, { withFileTypes: true });
-      },
-      readFile: (path) => readFileSync(path, "utf8"),
-      realpath: realpathSync,
-    };
-
-    const report = validateBank(root, fileSystem);
-
-    assert.equal(report.state, "invalid");
-    assert.deepEqual(report.files, [
-      {
-        file: "malformed.json",
-        state: "invalid",
-        errors: ["sourceDigest must be a sha256 digest"],
-      },
-      {
-        file: "z-blocked",
-        state: "invalid",
-        errors: ["fixture traversal denied"],
-      },
-    ]);
-  });
-});
-
-test("validate CLI emits repeatable JSON and fails invalid banks", () => {
-  withBank((root) => {
-    copyFixture(root, "valid/alpha.json", "alpha.json");
-    const first = runValidate(root);
-    const second = runValidate(root);
-
-    assert.equal(first.status, 0, first.stderr);
-    assert.equal(first.stdout, second.stdout);
-    assert.deepEqual(JSON.parse(first.stdout), validateBank(root));
-
-    copyFixture(root, "malformed.json");
-    const invalid = runValidate(root);
-
-    assert.equal(invalid.status, 1);
-    assert.equal(JSON.parse(invalid.stdout).state, "invalid");
-    assert.deepEqual(JSON.parse(invalid.stdout).files.at(1), {
-      file: "malformed.json",
-      state: "invalid",
-      errors: ["sourceDigest must be a sha256 digest"],
-    });
-  });
+  await assert.rejects(validateBank(root), /relative path|bank root/i);
 });

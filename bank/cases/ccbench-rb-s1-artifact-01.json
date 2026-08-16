@@ -1,0 +1,124 @@
+{
+  "release": "2026.8.12",
+  "caseId": "ccbench-rb-s1-artifact-01",
+  "familyId": "fam-rb-s1-artifact-01",
+  "targetPairBlockId": "policy-block-s1-learning-readiness",
+  "form": "professional_artifact",
+  "split": "release_b",
+  "task": {
+    "instruction": "Choose exactly one indivisible package for this cycle—diagnosis, workflow readiness, or mapping automation—within six engineer-weeks and 60 operations-hours. Produce a resource-allocation note with owners, timing, and a decision trigger. Cite the supplied evidence IDs.",
+    "environment": {
+      "kind": "workspace",
+      "fixtureDigest": "sha256:89603deb19605bd4e9dab4670ce5725b975400cd0079d88fdd4b9e3ec13f32c2",
+      "verifierDigest": "sha256:4b8792835faac4b4d25194aa4c02c371ade6b3586c0ccb18336850cd799adfc6"
+    },
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 4800,
+      "requiredReferenceIds": [
+        "rb-s1a-stalls",
+        "rb-s1a-budget",
+        "rb-s1a-pilot",
+        "rb-s1a-governance"
+      ]
+    }
+  },
+  "evidence": [
+    {
+      "id": "rb-s1a-stalls",
+      "content": "Of 73 suppliers, 31 stalled: 14 mapping, 9 legal, 8 missing documents; 7 had multiple blockers.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-rb-s1-artifact-01/rb-s1a-stalls",
+      "license": "MIT"
+    },
+    {
+      "id": "rb-s1a-budget",
+      "content": "The cycle budget is six engineer-weeks and 60 operations-hours. Governance permits exactly one indivisible package; unused capacity cannot fund a second package.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-rb-s1-artifact-01/rb-s1a-budget",
+      "license": "MIT"
+    },
+    {
+      "id": "rb-s1a-pilot",
+      "content": "Diagnosis costs one engineer-week and 60 operations-hours, samples 20 suppliers in ten days, and is reversible. Mapping automation costs five engineer-weeks and 20 operations-hours and addresses at most 14 stalls.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-rb-s1-artifact-01/rb-s1a-pilot",
+      "license": "MIT"
+    },
+    {
+      "id": "rb-s1a-governance",
+      "content": "Readiness costs three engineer-weeks and 60 operations-hours, names an exception owner, sets a two-day SLA, and rehearses the runbook. Currently there is no owner or SLA; median response is 6.2 days.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-rb-s1-artifact-01/rb-s1a-governance",
+      "license": "MIT"
+    },
+    {
+      "id": "rb-s1a-prior-01",
+      "content": "A prior 48-partner intake had 20 stalls, missing reason tags, and 36 hours of manual triage.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-rb-s1-artifact-01/rb-s1a-prior-01",
+      "license": "MIT"
+    },
+    {
+      "id": "rb-s1a-prior-02",
+      "content": "A prior 55-partner intake had 17 mapping errors, no owner, and a four-week automation estimate.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-rb-s1-artifact-01/rb-s1a-prior-02",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "task_only": [],
+    "nondiagnostic_target_a": [
+      {
+        "id": "history-01",
+        "content": "2026-04-16 — Decision: Spend 36 hours classifying the 20 partner stalls before building. Reason: Missing reason tags make the four-week estimate causally premature. Evidence: [rb-s1a-prior-01]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-05-14 — Decision: Assign an intake owner before addressing the 17 mapping errors. Reason: The absent owner makes exception response non-repeatable. Evidence: [rb-s1a-prior-02]."
+      }
+    ],
+    "nondiagnostic_target_b": [
+      {
+        "id": "history-01",
+        "content": "2026-04-16 — Decision: Name a triage owner before sampling the 20 stalled partners. Reason: Accountability can stabilize intake while 36 hours remain available. Evidence: [rb-s1a-prior-01]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-05-14 — Decision: Sample ten mapping errors before committing four engineer-weeks. Reason: Seventeen errors do not establish one automatable cause. Evidence: [rb-s1a-prior-02]."
+      }
+    ],
+    "diagnostic_target_a": [
+      {
+        "id": "history-01",
+        "content": "2026-04-16 — Decision: Spend 36 hours classifying the 20 partner stalls before building. Reason: Missing reason tags make the four-week estimate causally premature. Evidence: [rb-s1a-prior-01]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-05-14 — Decision: Sample ten mapping errors before committing four engineer-weeks. Reason: Seventeen errors do not establish one automatable cause. Evidence: [rb-s1a-prior-02]."
+      }
+    ],
+    "diagnostic_target_b": [
+      {
+        "id": "history-01",
+        "content": "2026-04-16 — Decision: Name a triage owner before sampling the 20 stalled partners. Reason: Accountability can stabilize intake while 36 hours remain available. Evidence: [rb-s1a-prior-01]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-05-14 — Decision: Assign an intake owner before addressing the 17 mapping errors. Reason: The absent owner makes exception response non-repeatable. Evidence: [rb-s1a-prior-02]."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": [
+      "ccbench-rb-s1-artifact-01:rb-s1a-stalls",
+      "ccbench-rb-s1-artifact-01:rb-s1a-budget",
+      "ccbench-rb-s1-artifact-01:rb-s1a-pilot",
+      "ccbench-rb-s1-artifact-01:rb-s1a-governance",
+      "ccbench-rb-s1-artifact-01:rb-s1a-prior-01",
+      "ccbench-rb-s1-artifact-01:rb-s1a-prior-02"
+    ],
+    "templateId": "template:ccbench-rb-s1-artifact-01",
+    "rubricTemplateId": "rubric-template:ccbench-rb-s1-artifact-01"
+  },
+  "sealed": {
+    "rubricDigest": "sha256:6e64159330c7dbdb09d836261d677f44875c2d5f8525de44f7ecdd999b90ae27",
+    "judgmentPlanDigest": "sha256:c96480310566a7b8e5c3b726a234a919bbaa642e3534ba97485919ab53985a21"
+  },
+  "manifestDigest": "sha256:4d01b8122b46785a84029014a6908c65cad383b95565287b1a934dc056569516"
+}

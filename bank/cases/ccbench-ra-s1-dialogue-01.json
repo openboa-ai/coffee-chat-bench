@@ -1,0 +1,110 @@
+{
+  "release": "2026.8.12",
+  "caseId": "ccbench-ra-s1-dialogue-01",
+  "familyId": "fam-ra-s1-dialogue-01",
+  "targetPairBlockId": "policy-block-s1-learning-readiness",
+  "form": "dialogue",
+  "split": "release_a",
+  "task": {
+    "instruction": "Choose the next 14-day move: a 12-account concierge test, a four-week automation build, or a pause. Give one recommendation, two reasons, the main counter-risk, and a stop/continue criterion. Cite the supplied evidence IDs.",
+    "environment": {
+      "kind": "conversation"
+    },
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 2600,
+      "requiredReferenceIds": ["ra-s1d-funnel", "ra-s1d-ops", "ra-s1d-options"]
+    }
+  },
+  "evidence": [
+    {
+      "id": "ra-s1d-funnel",
+      "content": "Invited 96 accounts; 38 activated; 25 completed; 13 did not complete; 9 of the 13 reported permission issues.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-ra-s1-dialogue-01/ra-s1d-funnel",
+      "license": "MIT"
+    },
+    {
+      "id": "ra-s1d-ops",
+      "content": "Manual CSV mapping occurred in 17 of 25 completions; median help time was 11 minutes; no data loss occurred.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-ra-s1-dialogue-01/ra-s1d-ops",
+      "license": "MIT"
+    },
+    {
+      "id": "ra-s1d-options",
+      "content": "A 12-account concierge test lasts 14 days, costs at most four staff-hours daily, and is reversible. Automation costs four engineer-weeks and its schema becomes irreversible after its first write.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-ra-s1-dialogue-01/ra-s1d-options",
+      "license": "MIT"
+    },
+    {
+      "id": "ra-s1d-prior-01",
+      "content": "A prior 40-account cohort had 18 completions, 11 import stalls, two staff-hours of manual help daily, and no data loss.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-ra-s1-dialogue-01/ra-s1d-prior-01",
+      "license": "MIT"
+    },
+    {
+      "id": "ra-s1d-prior-02",
+      "content": "A prior 22-account cohort had 14 completions, four duplicate submissions, no named owner, and a ten-minute rollback.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-ra-s1-dialogue-01/ra-s1d-prior-02",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "task_only": [],
+    "nondiagnostic_target_a": [
+      {
+        "id": "history-01",
+        "content": "2026-01-15 — Decision: Run an eight-account assisted mapping replay before changing intake. Reason: Eleven stalls and two daily help-hours leave the bottleneck unresolved. Evidence: [ra-s1d-prior-01]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-02-12 — Decision: Hold the 22-account cohort until an owner completes one rollback drill. Reason: Four duplicate submissions and missing ownership make recovery unready. Evidence: [ra-s1d-prior-02]."
+      }
+    ],
+    "nondiagnostic_target_b": [
+      {
+        "id": "history-01",
+        "content": "2026-01-15 — Decision: Assign an import owner before reopening the 40-account cohort. Reason: Eleven stalls and two daily help-hours require repeatable exception handling. Evidence: [ra-s1d-prior-01]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-02-12 — Decision: Run a six-account duplicate replay before changing the schema. Reason: Four duplicates and a ten-minute rollback permit bounded diagnosis. Evidence: [ra-s1d-prior-02]."
+      }
+    ],
+    "diagnostic_target_a": [
+      {
+        "id": "history-01",
+        "content": "2026-01-15 — Decision: Run an eight-account assisted mapping replay before changing intake. Reason: Eleven stalls leave causal friction unresolved; two daily help-hours cap the probe. Evidence: [ra-s1d-prior-01]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-02-12 — Decision: Run a six-account duplicate replay before changing the schema. Reason: Four duplicates and a ten-minute rollback permit diagnosis before commitment. Evidence: [ra-s1d-prior-02]."
+      }
+    ],
+    "diagnostic_target_b": [
+      {
+        "id": "history-01",
+        "content": "2026-01-15 — Decision: Name an import owner and freeze new intake. Reason: Eleven stalls and two daily help-hours show recovery is not repeatable. Evidence: [ra-s1d-prior-01]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-02-12 — Decision: Require an idempotency runbook and one rollback drill. Reason: Four duplicates without ownership make the ten-minute recovery unreliable. Evidence: [ra-s1d-prior-02]."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": [
+      "ccbench-ra-s1-dialogue-01:ra-s1d-funnel",
+      "ccbench-ra-s1-dialogue-01:ra-s1d-ops",
+      "ccbench-ra-s1-dialogue-01:ra-s1d-options",
+      "ccbench-ra-s1-dialogue-01:ra-s1d-prior-01",
+      "ccbench-ra-s1-dialogue-01:ra-s1d-prior-02"
+    ],
+    "templateId": "template:ccbench-ra-s1-dialogue-01",
+    "rubricTemplateId": "rubric-template:ccbench-ra-s1-dialogue-01"
+  },
+  "sealed": {
+    "rubricDigest": "sha256:43d441a6656776b16fc34d273440fcab638f7cbc640023ec60a2aa49f6cb7ca4",
+    "judgmentPlanDigest": "sha256:da2b9746ad91a97e5882854c82fa66437a49da004ce96f1895b07f0a7d52c876"
+  },
+  "manifestDigest": "sha256:77f236813b53f61243b7a47a32df98176dcf73f96019f8ba7aa30e1d443ec7b7"
+}

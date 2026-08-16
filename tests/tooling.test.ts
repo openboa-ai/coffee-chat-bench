@@ -25,25 +25,29 @@ test("Git ignores installed dependencies and normal generated outputs", () => {
   assert.deepEqual(result.stdout.trim().split("\n"), paths);
 });
 
-test("public CLI has no single-projection calibration and judge is its only provider-capable branch", () => {
-  const cli = readFileSync(new URL("../src/cli.ts", import.meta.url), "utf8");
-  const publicUsage = [
-    new URL("../README.md", import.meta.url),
-    new URL(
-      "../docs/superpowers/plans/2026-08-12-pcda-judgment-entrypoint.md",
-      import.meta.url,
-    ),
-  ].map((path) => readFileSync(path, "utf8"));
+test("package tooling exposes only the contract boundary and deterministic scripts", () => {
+  const manifest = JSON.parse(
+    readFileSync(new URL("../package.json", import.meta.url), "utf8"),
+  ) as { exports?: unknown; scripts?: Record<string, string> };
 
-  assert.equal(cli.includes('command === "calibrate"'), false);
-  assert.equal(cli.includes("runCalibration"), false);
-  assert.equal(cli.includes("node:child_process"), false);
-  assert.equal(
-    [...publicUsage, cli].some((source) =>
-      source.includes("calibrate <projection-root> <artifact>"),
-    ),
-    false,
+  assert.deepEqual(manifest.exports, {
+    ".": "./src/benchmark-contracts.ts",
+    "./schema": "./schemas/benchmark.schema.json",
+  });
+  assert.deepEqual(Object.keys(manifest.scripts ?? {}).sort(), [
+    "check:inactive",
+    "ci:policy",
+    "format",
+    "format:check",
+    "test",
+    "typecheck",
+  ]);
+  assert.match(
+    manifest.scripts?.["ci:policy"] ?? "",
+    /workflow-policy\.test\.mjs.*\.github\/ci-policy\.mjs/u,
   );
-  assert.match(cli, /async function runJudge\(/u);
-  assert.match(cli, /createTransport: createOpenAiResponsesTransport/u);
+  assert.doesNotMatch(
+    Object.values(manifest.scripts ?? {}).join("\n"),
+    /openai|provider|harbor\s+run|judge|calibrat/iu,
+  );
 });

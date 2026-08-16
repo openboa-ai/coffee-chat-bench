@@ -1,0 +1,124 @@
+{
+  "release": "2026.8.12",
+  "caseId": "ccbench-ra-s2-artifact-01",
+  "familyId": "fam-ra-s2-artifact-01",
+  "targetPairBlockId": "policy-block-s2-robustness-mechanism",
+  "form": "professional_artifact",
+  "split": "release_a",
+  "task": {
+    "instruction": "Write an experiment review choosing the incumbent, a bounded QueueCast mechanism probe, or a production trial. State the decision, evidence, limitation, and next measurement. Cite the supplied evidence IDs.",
+    "environment": {
+      "kind": "workspace",
+      "fixtureDigest": "sha256:99d34d5910b583d0605f48a035cb61f5a96e6c8f6a4896e193589811aca12ca8",
+      "verifierDigest": "sha256:8ba1718820efd30e1c00df7aa6c0ca66abc0ded6f1a65c60a64dd9c15b204d38"
+    },
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 4800,
+      "requiredReferenceIds": [
+        "ra-s2a-mechanism",
+        "ra-s2a-performance",
+        "ra-s2a-stress",
+        "ra-s2a-constraint"
+      ]
+    }
+  },
+  "evidence": [
+    {
+      "id": "ra-s2a-mechanism",
+      "content": "QueueCast uses queue conservation; intervention direction was correct in 11 of 12 cases; required service-time CV is at most 1.2 and observed CV is 1.1.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-ra-s2-artifact-01/ra-s2a-mechanism",
+      "license": "MIT"
+    },
+    {
+      "id": "ra-s2a-performance",
+      "content": "QueueCast RMSE was 14.2 versus incumbent 13.5; calibration slope was .78 versus .96.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-ra-s2-artifact-01/ra-s2a-performance",
+      "license": "MIT"
+    },
+    {
+      "id": "ra-s2a-stress",
+      "content": "Under a 10% demand shift QueueCast RMSE was 17.8 versus incumbent 14.1.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-ra-s2-artifact-01/ra-s2a-stress",
+      "license": "MIT"
+    },
+    {
+      "id": "ra-s2a-constraint",
+      "content": "A three-week probe is permitted for human planning only.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-ra-s2-artifact-01/ra-s2a-constraint",
+      "license": "MIT"
+    },
+    {
+      "id": "ra-s2a-prior-01",
+      "content": "A soil-moisture rule predicted 8 of 8 irrigation responses but had 2% worse weekly error than the field forecast; a three-plot perturbation was permitted.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-ra-s2-artifact-01/ra-s2a-prior-01",
+      "license": "MIT"
+    },
+    {
+      "id": "ra-s2a-prior-02",
+      "content": "A cold-room alert varied less than 1% across four depots and passed calibration, but compressor cycling had no validated causal account.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-ra-s2-artifact-01/ra-s2a-prior-02",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "task_only": [],
+    "nondiagnostic_target_a": [
+      {
+        "id": "history-01",
+        "content": "2026-01-15 — Decision: Use the lower-error field forecast for weekly irrigation schedules. Reason: Its 2% advantage protects operations while the interpretable rule enters three plots. Evidence: [ra-s2a-prior-01]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-02-12 — Decision: Vary compressor cycles before expanding the cold-room alert. Reason: Sub-1% site variation does not establish why alarms transfer across four depots. Evidence: [ra-s2a-prior-02]."
+      }
+    ],
+    "nondiagnostic_target_b": [
+      {
+        "id": "history-01",
+        "content": "2026-01-15 — Decision: Run the three-plot soil perturbation before changing irrigation rules. Reason: Eight correct response directions justify mechanism study despite 2% worse error. Evidence: [ra-s2a-prior-01]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-02-12 — Decision: Use the calibrated alert for depot triage only. Reason: Sub-1% variation across four depots supports prediction without a causal claim. Evidence: [ra-s2a-prior-02]."
+      }
+    ],
+    "diagnostic_target_a": [
+      {
+        "id": "history-01",
+        "content": "2026-01-15 — Decision: Use the lower-error field forecast for weekly irrigation schedules. Reason: Its 2% advantage protects operations while the soil rule remains under study. Evidence: [ra-s2a-prior-01]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-02-12 — Decision: Use the calibrated alert for depot triage only. Reason: Sub-1% variation across four depots supports prediction without a causal claim. Evidence: [ra-s2a-prior-02]."
+      }
+    ],
+    "diagnostic_target_b": [
+      {
+        "id": "history-01",
+        "content": "2026-01-15 — Decision: Run the three-plot soil perturbation before changing irrigation rules. Reason: Eight correct response directions justify mechanism study despite 2% worse error. Evidence: [ra-s2a-prior-01]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-02-12 — Decision: Vary compressor cycles before expanding the cold-room alert. Reason: Stable calibration across four depots does not establish why the alarms transfer. Evidence: [ra-s2a-prior-02]."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": [
+      "ccbench-ra-s2-artifact-01:ra-s2a-mechanism",
+      "ccbench-ra-s2-artifact-01:ra-s2a-performance",
+      "ccbench-ra-s2-artifact-01:ra-s2a-stress",
+      "ccbench-ra-s2-artifact-01:ra-s2a-constraint",
+      "ccbench-ra-s2-artifact-01:ra-s2a-prior-01",
+      "ccbench-ra-s2-artifact-01:ra-s2a-prior-02"
+    ],
+    "templateId": "template:ccbench-ra-s2-artifact-01",
+    "rubricTemplateId": "rubric-template:ccbench-ra-s2-artifact-01"
+  },
+  "sealed": {
+    "rubricDigest": "sha256:147a1f7ba9e1df06ac741eef77f45a6d4690e9284b3a13d0ca2b73ec42057d4e",
+    "judgmentPlanDigest": "sha256:f930928f95bec368c000c82ce374dec221d55872d0da3ba22ad03da4a9941eb3"
+  },
+  "manifestDigest": "sha256:f09b9aebba3a859bff5010b6fedf79812fc35c8e5b20612c5bafee8abd7ff607"
+}
