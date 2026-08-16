@@ -1,4 +1,5 @@
 # Local credentials
+/.superpowers/
 .env
 .env.*
 !.env.example

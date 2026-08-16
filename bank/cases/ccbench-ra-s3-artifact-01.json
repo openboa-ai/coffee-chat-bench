@@ -1,0 +1,124 @@
+{
+  "release": "2026.8.12",
+  "caseId": "ccbench-ra-s3-artifact-01",
+  "familyId": "fam-ra-s3-artifact-01",
+  "targetPairBlockId": "policy-block-s3-coordination-ownership",
+  "form": "professional_artifact",
+  "split": "release_a",
+  "task": {
+    "instruction": "Design an operating model for regional filter-threshold changes. Assign final approval, evidence access, audit, and emergency rollback. Cite the supplied evidence IDs.",
+    "environment": {
+      "kind": "workspace",
+      "fixtureDigest": "sha256:bb14d54d421ae78aaf5aeff96687b61aff216bdf1bbf7fdfd78a4847238a0a8b",
+      "verifierDigest": "sha256:a98edc70b733fc13d14074ec2166f0d1460838b0ac7c083782e80dcb75e9dece"
+    },
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 4800,
+      "requiredReferenceIds": [
+        "ra-s3a-access",
+        "ra-s3a-isolation",
+        "ra-s3a-latency",
+        "ra-s3a-envelope"
+      ]
+    }
+  },
+  "evidence": [
+    {
+      "id": "ra-s3a-access",
+      "content": "Six local teams see complaints and language examples; the central trust team has 2,400 labeled false-positive audits; local teams receive only aggregates.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-ra-s3-artifact-01/ra-s3a-access",
+      "license": "MIT"
+    },
+    {
+      "id": "ra-s3a-isolation",
+      "content": "Each region has a sandbox and signed schema; no cross-region effects occurred for 60 days; rollback takes two minutes.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-ra-s3-artifact-01/ra-s3a-isolation",
+      "license": "MIT"
+    },
+    {
+      "id": "ra-s3a-latency",
+      "content": "Central approval median is nine days; seven urgent changes occur per quarter; five missed a four-hour goal.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-ra-s3-artifact-01/ra-s3a-latency",
+      "license": "MIT"
+    },
+    {
+      "id": "ra-s3a-envelope",
+      "content": "False-positive rate must be at most 2.0%, complaint rate at most .8%, with daily aggregate audit.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-ra-s3-artifact-01/ra-s3a-envelope",
+      "license": "MIT"
+    },
+    {
+      "id": "ra-s3a-prior-01",
+      "content": "A water district had 600 central pressure audits, no local residual traces, an eight-day valve review, and a signed 2.0-bar operating envelope.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-ra-s3-artifact-01/ra-s3a-prior-01",
+      "license": "MIT"
+    },
+    {
+      "id": "ra-s3a-prior-02",
+      "content": "A microgrid operator held 900 local inverter traces, showed no feeder spillover for 60 days, and demonstrated two-minute rollback under a signed limit.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-ra-s3-artifact-01/ra-s3a-prior-02",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "task_only": [],
+    "nondiagnostic_target_a": [
+      {
+        "id": "history-01",
+        "content": "2026-01-15 — Decision: Keep valve review central until districts receive residual traces. Reason: Six hundred central audits cannot substitute for local evidence inside 2.0 bars. Evidence: [ra-s3a-prior-01]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-02-12 — Decision: Authorize inverter tuning inside the signed feeder limit. Reason: Nine hundred local traces and two-minute rollback support bounded local authority. Evidence: [ra-s3a-prior-02]."
+      }
+    ],
+    "nondiagnostic_target_b": [
+      {
+        "id": "history-01",
+        "content": "2026-01-15 — Decision: Authorize valve changes inside the 2.0-bar signed envelope. Reason: Eight-day review creates cost while central audits keep the boundary legible. Evidence: [ra-s3a-prior-01]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-02-12 — Decision: Retain central approval for inverter changes this cycle. Reason: Sixty quiet days do not eliminate portfolio review of feeder interactions. Evidence: [ra-s3a-prior-02]."
+      }
+    ],
+    "diagnostic_target_a": [
+      {
+        "id": "history-01",
+        "content": "2026-01-15 — Decision: Authorize valve changes inside the 2.0-bar signed envelope. Reason: Eight-day review creates cost while 600 central audits keep the boundary legible. Evidence: [ra-s3a-prior-01]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-02-12 — Decision: Retain quarterly feeder review while operators tune locally. Reason: A signed limit and two-minute rollback expose coordination cost across microgrids. Evidence: [ra-s3a-prior-02]."
+      }
+    ],
+    "diagnostic_target_b": [
+      {
+        "id": "history-01",
+        "content": "2026-01-15 — Decision: Keep valve review central until districts receive residual traces. Reason: Six hundred central audits cannot substitute for local evidence inside 2.0 bars. Evidence: [ra-s3a-prior-01]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-02-12 — Decision: Authorize inverter tuning inside the signed feeder limit. Reason: Nine hundred local traces and two-minute rollback support bounded local authority. Evidence: [ra-s3a-prior-02]."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": [
+      "ccbench-ra-s3-artifact-01:ra-s3a-access",
+      "ccbench-ra-s3-artifact-01:ra-s3a-isolation",
+      "ccbench-ra-s3-artifact-01:ra-s3a-latency",
+      "ccbench-ra-s3-artifact-01:ra-s3a-envelope",
+      "ccbench-ra-s3-artifact-01:ra-s3a-prior-01",
+      "ccbench-ra-s3-artifact-01:ra-s3a-prior-02"
+    ],
+    "templateId": "template:ccbench-ra-s3-artifact-01",
+    "rubricTemplateId": "rubric-template:ccbench-ra-s3-artifact-01"
+  },
+  "sealed": {
+    "rubricDigest": "sha256:dc4e106285cd1de5b2521a7ca23533d014cff6af3b16ca5923f1eb9027bb4eb1",
+    "judgmentPlanDigest": "sha256:6ce113bc2dabbd415cd1879fbf77ad67c2b5984b379ae70ad17038588e12f57a"
+  },
+  "manifestDigest": "sha256:24c76698da725f686ca290c86f54fe63a74d9e4050c1afc8a58c64b83a7475ae"
+}

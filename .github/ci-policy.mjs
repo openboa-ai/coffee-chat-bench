@@ -290,10 +290,13 @@ function validateMergePolicy() {
       "/package.json",
       "/package-lock.json",
       "/prettier.config.mjs",
-      "/config/judges/**",
+      "/bank/**",
+      "/docs/**",
+      "/docs/validity/**",
       "/harbor/**",
+      "/qualification/**",
       "/scripts/check-inactive-boundary.mjs",
-      "/schemas/judge-campaign.schema.json",
+      "/schemas/**",
       "/src/**",
       "/tests/**",
     ])
@@ -317,14 +320,16 @@ function validateCodeowners() {
 /package-lock.json @openboa-ai/security-maintainers
 /prettier.config.mjs @openboa-ai/security-maintainers
 /SECURITY.md @openboa-ai/security-maintainers
-/config/judges/** @openboa-ai/security-maintainers
+/bank/** @openboa-ai/security-maintainers
+/docs/** @openboa-ai/security-maintainers
+/docs/validity/** @openboa-ai/security-maintainers
 /harbor/** @openboa-ai/security-maintainers
-/schemas/judge-campaign.schema.json @openboa-ai/security-maintainers
+/qualification/** @openboa-ai/security-maintainers
+/schemas/** @openboa-ai/security-maintainers
 /src/** @openboa-ai/security-maintainers
 /scripts/** @openboa
 /scripts/check-inactive-boundary.mjs @openboa-ai/security-maintainers
 /tests/** @openboa-ai/security-maintainers
-/docs/validity/** @openboa
 /docs/quality-map.md @openboa
 `;
   if (readFileSync(resolve(root, "CODEOWNERS"), "utf8") !== expected) {
@@ -382,9 +387,9 @@ const expectedPackageScripts = {
   test: "node --experimental-strip-types --test tests/*.test.mjs tests/*.test.ts",
   typecheck: "tsc --noEmit",
   format:
-    'prettier --write package.json package-lock.json tsconfig.json prettier.config.mjs docs/quality-map.md docs/validity/*.md perspectives/*.json "bank/**/*.json" schemas/*.json scripts/*.mjs src/*.ts tests/*.test.mjs tests/*.test.ts tests/fixtures/**/*.json tests/fixtures/projection/artifacts/echo.json tests/fixtures/projection/artifacts/judgment-access.json tests/fixtures/projection/artifacts/list-all.json tests/fixtures/projection/artifacts/no-op.json tests/fixtures/projection/artifacts/oracle.json',
+    'prettier --write AGENTS.md README.md DATA-CARD.md PREREGISTRATION.md OVERLAP-REPORT.json package.json package-lock.json tsconfig.json prettier.config.mjs docs/*.md docs/validity/*.md harbor/*.md qualification/*.md qualification/*.json "bank/**/*.json" harbor/*.ts schemas/*.json scripts/*.mjs src/*.ts tests/*.mjs tests/*.ts',
   "format:check":
-    'prettier --check package.json package-lock.json tsconfig.json prettier.config.mjs docs/quality-map.md docs/validity/*.md perspectives/*.json "bank/**/*.json" schemas/*.json scripts/*.mjs src/*.ts tests/*.test.mjs tests/*.test.ts tests/fixtures/**/*.json tests/fixtures/projection/artifacts/echo.json tests/fixtures/projection/artifacts/judgment-access.json tests/fixtures/projection/artifacts/list-all.json tests/fixtures/projection/artifacts/no-op.json tests/fixtures/projection/artifacts/oracle.json',
+    'prettier --check AGENTS.md README.md DATA-CARD.md PREREGISTRATION.md OVERLAP-REPORT.json package.json package-lock.json tsconfig.json prettier.config.mjs docs/*.md docs/validity/*.md harbor/*.md qualification/*.md qualification/*.json "bank/**/*.json" harbor/*.ts schemas/*.json scripts/*.mjs src/*.ts tests/*.mjs tests/*.ts',
   "check:inactive": "node scripts/check-inactive-boundary.mjs --root .",
 };
 if (
@@ -405,6 +410,7 @@ if (
     "private",
     "version",
     "type",
+    "exports",
     "engines",
     "scripts",
     "devDependencies",
@@ -413,6 +419,10 @@ if (
   packageJson.private !== true ||
   packageJson.version !== "2026.8.12" ||
   packageJson.type !== "module" ||
+  !equal(packageJson.exports, {
+    ".": "./src/benchmark-contracts.ts",
+    "./schema": "./schemas/benchmark.schema.json",
+  }) ||
   !equal(packageJson.engines, { node: ">=24" })
 ) {
   fail("package metadata must remain exact");

@@ -32,10 +32,13 @@
     "/package.json",
     "/package-lock.json",
     "/prettier.config.mjs",
-    "/config/judges/**",
+    "/bank/**",
+    "/docs/**",
+    "/docs/validity/**",
     "/harbor/**",
+    "/qualification/**",
     "/scripts/check-inactive-boundary.mjs",
-    "/schemas/judge-campaign.schema.json",
+    "/schemas/**",
     "/src/**",
     "/tests/**"
   ]

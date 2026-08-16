@@ -1,0 +1,140 @@
+{
+  "release": "2026.8.12",
+  "caseId": "jqc-work-digitization-coaching-01",
+  "familyId": "jqf-work-digitization-coaching-01",
+  "targetPairBlockId": "qualification-block-digitization-coaching",
+  "form": "professional_artifact",
+  "split": "judge_qualification",
+  "task": {
+    "instruction": "Write a 180–220 word supervisor memo with the exact headings Observed, Next shift, and Checkpoint. Choose exactly one ten-rescan protocol for 90 minutes: the supervisor-assigned calibration sequence or the apprentice-selected sequence with oral rationale. Keep Box 4 local-only, preserve the date as circa 1908, and define a measurable checkpoint. Cite evidence IDs.",
+    "environment": {
+      "kind": "workspace",
+      "fixtureDigest": "sha256:3392cb114d1f5b27537b204806d0e66526129c46ebba08d34470e1fb14ac6e10",
+      "verifierDigest": "sha256:8730ff0a6c4b33176377d60b7ade4c4ce76bacf85fb5135e5643bb5cfc058ed7"
+    },
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 4800,
+      "requiredReferenceIds": [
+        "DIG-E1",
+        "DIG-E2",
+        "DIG-E3",
+        "DIG-E4",
+        "DIG-E5",
+        "DIG-E6"
+      ]
+    }
+  },
+  "evidence": [
+    {
+      "id": "DIG-E1",
+      "content": "Twenty-four scans were completed; 22 are sharp and two crop the page margin.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/jqc-work-digitization-coaching-01/DIG-E1",
+      "license": "MIT"
+    },
+    {
+      "id": "DIG-E2",
+      "content": "Six scans omit the required color target.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/jqc-work-digitization-coaching-01/DIG-E2",
+      "license": "MIT"
+    },
+    {
+      "id": "DIG-E3",
+      "content": "The envelope says c. 1908; metadata currently says 1908.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/jqc-work-digitization-coaching-01/DIG-E3",
+      "license": "MIT"
+    },
+    {
+      "id": "DIG-E4",
+      "content": "Box 4 contains unredacted phone numbers and must not be uploaded outside the local workspace.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/jqc-work-digitization-coaching-01/DIG-E4",
+      "license": "MIT"
+    },
+    {
+      "id": "DIG-E5",
+      "content": "The next shift is 90 minutes and permits exactly ten rescans. The training register accepts one indivisible protocol: a supervisor-assigned calibration sequence or an apprentice-selected sequence with oral rationale; mixing protocols invalidates the checkpoint.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/jqc-work-digitization-coaching-01/DIG-E5",
+      "license": "MIT"
+    },
+    {
+      "id": "DIG-E6",
+      "content": "The apprentice reports confidence in scan order but uncertainty about color calibration.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/jqc-work-digitization-coaching-01/DIG-E6",
+      "license": "MIT"
+    },
+    {
+      "id": "DIG-H1",
+      "content": "A print apprentice completed 18 proofs; six missed the gray target, and one 45-minute block allowed either an eight-sheet calibration ladder or a self-selected correction set.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/jqc-work-digitization-coaching-01/DIG-H1",
+      "license": "MIT"
+    },
+    {
+      "id": "DIG-H2",
+      "content": "An audio trainee completed 20 transfers; three clipped peaks, and one 60-minute block allowed either a fixed gain drill or a trainee-chosen sequence with explanation.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/jqc-work-digitization-coaching-01/DIG-H2",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "task_only": [],
+    "nondiagnostic_target_a": [
+      {
+        "id": "history-01",
+        "content": "2026-03-04 — Decision: Assign the eight-sheet print calibration ladder. Reason: Six missed targets identify a measurable gap within the 45-minute block. Evidence: [DIG-H1]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-03-18 — Decision: Let the audio trainee choose the 20-transfer review order. Reason: Three clipped peaks remain bounded by a required oral explanation. Evidence: [DIG-H2]."
+      }
+    ],
+    "nondiagnostic_target_b": [
+      {
+        "id": "history-01",
+        "content": "2026-03-04 — Decision: Let the print apprentice choose the eight correction sheets. Reason: Six missed targets remain measurable through an explained selection. Evidence: [DIG-H1]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-03-18 — Decision: Assign the fixed gain drill before further audio transfer. Reason: Three clipped peaks identify the root skill gap within 60 minutes. Evidence: [DIG-H2]."
+      }
+    ],
+    "diagnostic_target_a": [
+      {
+        "id": "history-01",
+        "content": "2026-03-04 — Decision: Assign the eight-sheet print calibration ladder. Reason: Six missed targets identify a measurable gap within the 45-minute block. Evidence: [DIG-H1]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-03-18 — Decision: Assign the fixed gain drill before further audio transfer. Reason: Three clipped peaks identify the root skill gap within 60 minutes. Evidence: [DIG-H2]."
+      }
+    ],
+    "diagnostic_target_b": [
+      {
+        "id": "history-01",
+        "content": "2026-03-04 — Decision: Let the print apprentice choose the eight correction sheets. Reason: Six missed targets remain measurable through an explained selection. Evidence: [DIG-H1]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-03-18 — Decision: Let the audio trainee choose the 20-transfer review order. Reason: Three clipped peaks remain bounded by a required oral explanation. Evidence: [DIG-H2]."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": [
+      "jqc-work-digitization-coaching-01:DIG-E1",
+      "jqc-work-digitization-coaching-01:DIG-E2",
+      "jqc-work-digitization-coaching-01:DIG-E3",
+      "jqc-work-digitization-coaching-01:DIG-E4",
+      "jqc-work-digitization-coaching-01:DIG-E5",
+      "jqc-work-digitization-coaching-01:DIG-E6",
+      "jqc-work-digitization-coaching-01:DIG-H1",
+      "jqc-work-digitization-coaching-01:DIG-H2"
+    ],
+    "templateId": "template:jqc-work-digitization-coaching-01",
+    "rubricTemplateId": "rubric-template:jqc-work-digitization-coaching-01"
+  },
+  "sealed": {
+    "rubricDigest": "sha256:c746a87f5166fdc0d3ec830323afd7621fccc6bf09b19c1eb1d63789a25a0700",
+    "judgmentPlanDigest": "sha256:2deccbf84ec55a84852bb5a2ee35a50be84a7b395c69b637fc3aa3fc09519e19"
+  },
+  "manifestDigest": "sha256:d9677be41f7a8c1f3c4b95b55dac87505445572e35662f42fbd657dd83707db7"
+}

@@ -1,0 +1,124 @@
+{
+  "release": "2026.8.12",
+  "caseId": "ccbench-rb-s2-artifact-01",
+  "familyId": "fam-rb-s2-artifact-01",
+  "targetPairBlockId": "policy-block-s2-robustness-mechanism",
+  "form": "professional_artifact",
+  "split": "release_b",
+  "task": {
+    "instruction": "Write a method-selection note for the next 90-day human-reviewed bridge inspection experiment. Select the mechanistic Hazard-H dye protocol, the predictive Gradient-G acoustic protocol, or neither; state evidence, limitation, and guardrails. Cite the supplied evidence IDs.",
+    "environment": {
+      "kind": "workspace",
+      "fixtureDigest": "sha256:308a57bedc64e2889daaadc1a0113824478bc9e02e6ba36466b586e36c0d8d59",
+      "verifierDigest": "sha256:2f9a4e53cb256f574fb92e5f45bd19c1ef9a2aa0a04053a0a5e809a73d32c4e5"
+    },
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 4800,
+      "requiredReferenceIds": [
+        "rb-s2a-hazard",
+        "rb-s2a-gradient",
+        "rb-s2a-stability",
+        "rb-s2a-constraint"
+      ]
+    }
+  },
+  "evidence": [
+    {
+      "id": "rb-s2a-hazard",
+      "content": "Hazard-H dye-path AUCPR was .412, .405, and .418 across three bridges; calibration error was .055, .060, and .052; controlled crack opening changed the indicated path correctly in 7 of 8 trials.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-rb-s2-artifact-01/rb-s2a-hazard",
+      "license": "MIT"
+    },
+    {
+      "id": "rb-s2a-gradient",
+      "content": "Gradient-G acoustic AUCPR was .493, .481, and .501 across the bridges; calibration error was .028, .031, and .030; with 8% sensor dropout AUCPR was .472.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-rb-s2-artifact-01/rb-s2a-gradient",
+      "license": "MIT"
+    },
+    {
+      "id": "rb-s2a-stability",
+      "content": "Gradient-G's top-five frequency-band overlap across repeats was .32 and no physical crack mechanism was validated.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-rb-s2-artifact-01/rb-s2a-stability",
+      "license": "MIT"
+    },
+    {
+      "id": "rb-s2a-constraint",
+      "content": "The experiment lasts 90 days, requires human review, and permits no automated safety action.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-rb-s2-artifact-01/rb-s2a-constraint",
+      "license": "MIT"
+    },
+    {
+      "id": "rb-s2a-prior-01",
+      "content": "A roof-membrane tracer had AUCPR .39 versus .45 for thermal imaging and followed 6 of 7 controlled leak paths.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-rb-s2-artifact-01/rb-s2a-prior-01",
+      "license": "MIT"
+    },
+    {
+      "id": "rb-s2a-prior-02",
+      "content": "A rail-joint acoustic screen reached AUCPR .47 across three depots, calibration error .03, and frequency explanations that changed between repeats.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/ccbench-rb-s2-artifact-01/rb-s2a-prior-02",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "task_only": [],
+    "nondiagnostic_target_a": [
+      {
+        "id": "history-01",
+        "content": "2026-04-16 — Decision: Use thermal imaging for guarded roof screening. Reason: Its .45 AUCPR exceeds .39 while the tracer enters seven controlled leaks. Evidence: [rb-s2a-prior-01]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-05-14 — Decision: Perturb rail joints before explaining the acoustic alerts. Reason: An AUCPR of .47 and .03 calibration do not stabilize frequency attribution. Evidence: [rb-s2a-prior-02]."
+      }
+    ],
+    "nondiagnostic_target_b": [
+      {
+        "id": "history-01",
+        "content": "2026-04-16 — Decision: Use the tracer for a seven-leak mechanism study. Reason: Six correct paths support causal inquiry despite its .39 AUCPR. Evidence: [rb-s2a-prior-01]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-05-14 — Decision: Use the rail acoustic screen for human triage. Reason: An AUCPR of .47 across three depots supports prediction without explanation claims. Evidence: [rb-s2a-prior-02]."
+      }
+    ],
+    "diagnostic_target_a": [
+      {
+        "id": "history-01",
+        "content": "2026-04-16 — Decision: Use thermal imaging for guarded roof screening. Reason: Its .45 AUCPR exceeds .39 while the tracer remains under study. Evidence: [rb-s2a-prior-01]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-05-14 — Decision: Use the rail acoustic screen for human triage. Reason: An AUCPR of .47 across three depots supports prediction without explanation claims. Evidence: [rb-s2a-prior-02]."
+      }
+    ],
+    "diagnostic_target_b": [
+      {
+        "id": "history-01",
+        "content": "2026-04-16 — Decision: Use the tracer for a seven-leak mechanism study. Reason: Six correct paths support causal inquiry despite its .39 AUCPR. Evidence: [rb-s2a-prior-01]."
+      },
+      {
+        "id": "history-02",
+        "content": "2026-05-14 — Decision: Perturb rail joints before explaining the acoustic alerts. Reason: A .03 calibration error does not stabilize frequency attribution across repeats. Evidence: [rb-s2a-prior-02]."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": [
+      "ccbench-rb-s2-artifact-01:rb-s2a-hazard",
+      "ccbench-rb-s2-artifact-01:rb-s2a-gradient",
+      "ccbench-rb-s2-artifact-01:rb-s2a-stability",
+      "ccbench-rb-s2-artifact-01:rb-s2a-constraint",
+      "ccbench-rb-s2-artifact-01:rb-s2a-prior-01",
+      "ccbench-rb-s2-artifact-01:rb-s2a-prior-02"
+    ],
+    "templateId": "template:ccbench-rb-s2-artifact-01",
+    "rubricTemplateId": "rubric-template:ccbench-rb-s2-artifact-01"
+  },
+  "sealed": {
+    "rubricDigest": "sha256:9f5193d955611b0bbbca07653ebc8d924e215cf9936fc431bbec297510cb025a",
+    "judgmentPlanDigest": "sha256:96022b66d6592334f555d64d40ead2f7e27a4b6f10f391c745ef767f5a81028e"
+  },
+  "manifestDigest": "sha256:add0312d9f8361a9dabb248462486d2266678092581ec6d67dc6a9cd9fba3443"
+}

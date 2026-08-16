@@ -6,6 +6,7 @@ import {
   mkdtempSync,
   readFileSync,
   rmSync,
+  symlinkSync,
   writeFileSync,
 } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -31,7 +32,10 @@ const publicDocumentClaims = [
   ["README.md", "\n## Dataset\n"],
   ["SECURITY.md", "\nMetric = 0.92\n"],
   ["docs/quality-map.md", "\nScore: 95\n"],
-  ["docs/validity/activation-criteria.md", "\nResult = accepted\n"],
+  [
+    "docs/validity/validity-argument-and-evidence-plan.md",
+    "\nResult = accepted\n",
+  ],
   [".github/PULL_REQUEST_TEMPLATE.md", "\n## Leaderboard\n"],
 ];
 const markdownClaimVariants = [
@@ -44,11 +48,10 @@ const markdownClaimVariants = [
 ];
 const experimentalRootFixtures = [
   ["bank/experimental-case.md", "# Experimental case\n"],
-  ["config/experimental-config.json", "{}\n"],
-  ["docs/superpowers/specs/experimental-design.md", "# Experimental design\n"],
+  ["docs/experimental-design.md", "# Experimental design\n"],
   ["docs/validity/experimental-method.md", "# Experimental method\n"],
   ["harbor/experimental-verifier.py", "print('experimental')\n"],
-  ["perspectives/experimental-perspective.md", "# Experimental perspective\n"],
+  ["qualification/experimental-protocol.md", "# Experimental protocol\n"],
   ["schemas/experimental.schema.json", "{}\n"],
   ["src/experimental-boundary.mjs", "export const status = 'not_active';\n"],
   ["tests/experimental-contract.mjs", "export {}\n"],
@@ -73,6 +76,11 @@ function fixture() {
     filter: (path) =>
       ![".git", "node_modules"].includes(path.split("/").at(-1)),
   });
+  symlinkSync(
+    join(root, "node_modules"),
+    join(directory, "node_modules"),
+    "dir",
+  );
   execFileSync("git", ["init", "--quiet"], { cwd: repository });
   execFileSync("git", ["add", "--all"], { cwd: repository });
   return { directory, repository };
@@ -100,26 +108,6 @@ test("accepts each declared experimental root while not_active", () => {
       writeFileSync(join(repository, path), content);
       execFileSync("git", ["add", path], { cwd: repository });
     }
-
-    const result = check(repository);
-    assert.equal(result.status, 0, result.stderr || result.stdout);
-  });
-});
-
-test("accepts committed SDD task evidence without treating it as benchmark evidence", () => {
-  withFixture((repository) => {
-    const path = ".superpowers/sdd/example/task-4c2-report.md";
-    mkdirSync(dirname(join(repository, path)), { recursive: true });
-    writeFileSync(
-      join(repository, path),
-      "# Task 4C2 report\n\nThis is implementation evidence, not a benchmark result.\n",
-    );
-    const ledger = ".superpowers/sdd/example/progress.md";
-    writeFileSync(
-      join(repository, ledger),
-      "# SDD ledger\n\nTask 4C2: complete.\n",
-    );
-    execFileSync("git", ["add", "-f", path, ledger], { cwd: repository });
 
     const result = check(repository);
     assert.equal(result.status, 0, result.stderr || result.stdout);
@@ -197,8 +185,8 @@ test("accepts a results schema in the schema role", () => {
   });
 });
 
-test("rejects measured benchmark payloads under source and config roots", () => {
-  for (const rootName of ["bank", "config", "perspectives"]) {
+test("rejects measured benchmark payloads under source roots", () => {
+  for (const rootName of ["bank", "qualification"]) {
     withFixture((repository) => {
       const path = `${rootName}/run-001.json`;
       mkdirSync(join(repository, rootName), { recursive: true });
@@ -219,19 +207,15 @@ test("rejects measured benchmark payloads under source and config roots", () => 
   }
 });
 
-test("accepts legitimate source and configuration JSON by declared role", () => {
+test("accepts legitimate source JSON by declared role", () => {
   const artifacts = [
     [
       "bank/run-001.json",
       '{"artifact_type":"case_source","case_id":"case-001"}\n',
     ],
     [
-      "config/results.json",
-      '{"artifact_type":"judge_configuration","models":[]}\n',
-    ],
-    [
-      "perspectives/catalog.json",
-      '{"artifact_type":"perspective_source","pairs":[]}\n',
+      "qualification/control.json",
+      '{"artifact_type":"qualification_source","models":[]}\n',
     ],
   ];
 
@@ -247,6 +231,46 @@ test("accepts legitimate source and configuration JSON by declared role", () => 
   }
 });
 
+test("rejects result-bearing fields in fixed public bank evidence", () => {
+  for (const [path, mutate] of [
+    [
+      "OVERLAP-REPORT.json",
+      (content) => ({ ...JSON.parse(content), result_state: "measured" }),
+    ],
+    [
+      "CONTAMINATION.jsonl",
+      (content) => {
+        const rows = content.trim().split("\n").map(JSON.parse);
+        rows[0].score = 1;
+        return rows;
+      },
+    ],
+    [
+      "RIGHTS-PROVENANCE.jsonl",
+      (content) => {
+        const rows = content.trim().split("\n").map(JSON.parse);
+        rows[0].artifact_type = "benchmark_result";
+        return rows;
+      },
+    ],
+  ]) {
+    withFixture((repository) => {
+      const target = join(repository, path);
+      const mutated = mutate(readFileSync(target, "utf8"));
+      writeFileSync(
+        target,
+        path.endsWith(".jsonl")
+          ? `${mutated.map(JSON.stringify).join("\n")}\n`
+          : `${JSON.stringify(mutated)}\n`,
+      );
+
+      const result = check(repository);
+      assert.notEqual(result.status, 0, path);
+      assert.match(result.stderr, /invalid public bank evidence/u, path);
+    });
+  }
+});
+
 test("rejects concrete claims in experimental documentation", () => {
   const claims = [
     ["active", "\nRepository status: active\n"],
@@ -257,15 +281,9 @@ test("rejects concrete claims in experimental documentation", () => {
 
   for (const [name, claim] of claims) {
     withFixture((repository) => {
-      const document = join(
-        repository,
-        "docs",
-        "superpowers",
-        "specs",
-        "claim.md",
-      );
+      const document = join(repository, "docs", "claim.md");
       writeFileSync(document, `# Experimental claim fixture\n${claim}`);
-      execFileSync("git", ["add", "docs/superpowers/specs/claim.md"], {
+      execFileSync("git", ["add", "docs/claim.md"], {
         cwd: repository,
       });
 
@@ -294,11 +312,6 @@ test("rejects candidate and Product-specific module imports in every executable 
       'export { candidate } from "candidate-private";\n',
     ],
     [
-      "dynamic import",
-      "config/experimental-loader.mjs",
-      'await import("coffee-chat");\n',
-    ],
-    [
       "Harbor",
       "harbor/experimental-verifier.py",
       "from candidate_private import verify\n",
@@ -316,6 +329,221 @@ test("rejects candidate and Product-specific module imports in every executable 
       assert.match(
         result.stderr,
         /forbidden candidate or Product-specific import/u,
+        name,
+      );
+    });
+  }
+});
+
+test("rejects an untracked non-ignored candidate or Product import", () => {
+  withFixture((repository) => {
+    const path = join(repository, "src", "untracked-product-import.mjs");
+    writeFileSync(path, 'import product from "coffee-chat";\n');
+
+    const result = check(repository);
+    assert.notEqual(result.status, 0);
+    assert.match(
+      result.stderr,
+      /forbidden candidate or Product-specific import: src\/untracked-product-import\.mjs/u,
+    );
+  });
+});
+
+test("rejects untracked nonliteral JavaScript dynamic imports", () => {
+  for (const [name, source] of [
+    ["import", "const name = process.env.MODULE; await import(name);\n"],
+    ["require", "const name = process.env.MODULE; require(name);\n"],
+  ]) {
+    withFixture((repository) => {
+      const path = join(repository, "src", `computed-${name}.mjs`);
+      writeFileSync(path, source);
+
+      const result = check(repository);
+      assert.notEqual(result.status, 0, name);
+      assert.match(
+        result.stderr,
+        new RegExp(
+          `nonliteral dynamic import: src/computed-${name}\\.mjs`,
+          "u",
+        ),
+        name,
+      );
+    });
+  }
+});
+
+for (const [name, source] of [
+  [
+    "initializer",
+    'const r = require;\nconst moduleApi = r("node:module");\nconst makeRequire = moduleApi.createRequire;\nmakeRequire(__filename)("coffee-chat");\n',
+  ],
+  ["assignment", 'let load;\nload = require;\nload("coffee-chat");\n'],
+  [
+    "destructuring",
+    'const { load } = { load: require };\nload("coffee-chat");\n',
+  ],
+  [
+    "argument",
+    'const keep = (value) => value;\nconst load = keep(require);\nload("coffee-chat");\n',
+  ],
+  [
+    "return",
+    'function expose() { return require; }\nexpose()("coffee-chat");\n',
+  ],
+  ["export", "export { require };\n"],
+]) {
+  test(`rejects an untracked bare global require ${name} capability`, () => {
+    withFixture((repository) => {
+      const fixturePath = `src/require-capability-${name}.cjs`;
+      writeFileSync(join(repository, fixturePath), source);
+
+      const result = check(repository);
+      assert.notEqual(result.status, 0);
+      assert.match(
+        result.stderr,
+        new RegExp(`global require capability: ${fixturePath}\\b`, "u"),
+      );
+    });
+  });
+}
+
+test("accepts direct literal require and lexically shadowed require identifiers", () => {
+  withFixture((repository) => {
+    writeFileSync(
+      join(repository, "src", "literal-require.cjs"),
+      'const fs = require("node:fs");\n',
+    );
+    writeFileSync(
+      join(repository, "src", "require-syntax-only.mjs"),
+      'const record = { require: "metadata" };\nrecord.require;\n',
+    );
+    writeFileSync(
+      join(repository, "src", "local-require.cjs"),
+      'const require = (specifier) => specifier;\nconst load = require;\nload("coffee-chat");\nrequire("coffee-chat");\n',
+    );
+    writeFileSync(
+      join(repository, "src", "parameter-require.mjs"),
+      'export function load(require) {\n  const alias = require;\n  return [alias("coffee-chat"), require("coffee-chat")];\n}\n',
+    );
+
+    const result = check(repository);
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+  });
+});
+
+test("rejects untracked createRequire capabilities and aliases", () => {
+  for (const [name, source] of [
+    [
+      "direct",
+      'import { createRequire } from "node:module";\nconst load = createRequire(import.meta.url);\n',
+    ],
+    [
+      "aliased",
+      'import { createRequire as makeRequire } from "module";\nconst load = makeRequire(import.meta.url);\n',
+    ],
+    [
+      "namespace",
+      'import * as moduleApi from "node:module";\nconst load = moduleApi.createRequire(import.meta.url);\n',
+    ],
+  ]) {
+    withFixture((repository) => {
+      const path = join(repository, "src", `create-require-${name}.ts`);
+      writeFileSync(path, source);
+
+      const result = check(repository);
+      assert.notEqual(result.status, 0, name);
+      assert.match(
+        result.stderr,
+        new RegExp(
+          `createRequire capability: src/create-require-${name}\\.ts`,
+          "u",
+        ),
+        name,
+      );
+    });
+  }
+});
+
+test("accepts normal named node:module imports", () => {
+  withFixture((repository) => {
+    writeFileSync(
+      join(repository, "src", "static-node-module.ts"),
+      'import { builtinModules, isBuiltin } from "node:module";\nexport const builtins = builtinModules.filter(isBuiltin);\n',
+    );
+
+    const result = check(repository);
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+  });
+});
+
+test("rejects untracked nonliteral Python dynamic imports", () => {
+  for (const [name, source] of [
+    [
+      "importlib",
+      "import importlib\nname = get_module_name()\nimportlib.import_module(name)\n",
+    ],
+    ["dunder", "name = get_module_name()\n__import__(name)\n"],
+  ]) {
+    withFixture((repository) => {
+      const path = join(repository, "src", `computed-${name}.py`);
+      writeFileSync(path, source);
+
+      const result = check(repository);
+      assert.notEqual(result.status, 0, name);
+      assert.match(
+        result.stderr,
+        new RegExp(`nonliteral dynamic import: src/computed-${name}\\.py`, "u"),
+        name,
+      );
+    });
+  }
+});
+
+test("accepts literal JavaScript dynamic imports and normal static Python imports", () => {
+  withFixture((repository) => {
+    writeFileSync(
+      join(repository, "src", "literal-dynamic.mjs"),
+      'await import("node:path");\nawait import(`node:url`);\nawait import("fixture.json", { with: { type: "json" } });\nrequire("node:crypto");\n',
+    );
+    writeFileSync(
+      join(repository, "src", "literal_dynamic.py"),
+      "import json\nfrom pathlib import Path\n",
+    );
+
+    const result = check(repository);
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+  });
+});
+
+test("rejects untracked Python dynamic-loader imports and aliases", () => {
+  for (const [name, source] of [
+    [
+      "from-import",
+      "from importlib import import_module\nname = get_module_name()\nimport_module(name)\n",
+    ],
+    [
+      "aliased-from-import",
+      "from importlib import import_module as load\nname = get_module_name()\nload(name)\n",
+    ],
+    [
+      "aliased-module",
+      "import importlib as loader\nname = get_module_name()\nloader.import_module(name)\n",
+    ],
+    [
+      "aliased-builtins",
+      "from builtins import __import__ as load\nname = get_module_name()\nload(name)\n",
+    ],
+    ["direct", "name = get_module_name()\nimport_module(name)\n"],
+  ]) {
+    withFixture((repository) => {
+      const path = join(repository, "src", `loader-${name}.py`);
+      writeFileSync(path, source);
+
+      const result = check(repository);
+      assert.notEqual(result.status, 0, name);
+      assert.match(
+        result.stderr,
+        new RegExp(`dynamic (?:import|loader).*src/loader-${name}\\.py`, "u"),
         name,
       );
     });
@@ -347,7 +575,7 @@ test("rejects Python dynamic and comma-separated candidate imports in every exec
     ["comma-separated import", "import safe_module, candidate_private\n"],
   ];
 
-  for (const rootName of ["config", "harbor", "src", "tests"]) {
+  for (const rootName of ["harbor", "src", "tests"]) {
     for (const [name, source] of sources) {
       withFixture((repository) => {
         const path = `${rootName}/experimental_import.py`;
@@ -412,6 +640,20 @@ test("requires the public not_active status in each public boundary document", (
     });
   }
 });
+
+test("keeps the current authority documents explicitly non-activating", () => {
+  for (const path of [
+    "README.md",
+    "docs/benchmark-design.md",
+    "docs/implementation-plan.md",
+    "docs/quality-map.md",
+    "docs/validity/validity-argument-and-evidence-plan.md",
+  ]) {
+    const content = readFileSync(join(root, path), "utf8");
+    assert.match(content, /not_active/u, path);
+    assert.doesNotMatch(content, /Repository status:\s*`?active`?/iu, path);
+  }
+});
 test("rejects concrete benchmark claims in every public document", () => {
   for (const [path, claim] of publicDocumentClaims) {
     withFixture((repository) => {
@@ -456,11 +698,7 @@ test("rejects every unlabelled benchmark-bearing directory category", () => {
   for (const directory of forbiddenBenchmarkDirectories) {
     withFixture((repository) => {
       mkdirSync(join(repository, directory));
-      writeFileSync(
-        join(repository, directory, "placeholder.md"),
-        "absent\n",
-        {},
-      );
+      writeFileSync(join(repository, directory, "evidence.md"), "absent\n", {});
       execFileSync("git", ["add", directory], { cwd: repository });
 
       const result = check(repository);

@@ -1,371 +1,188 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import {
-  caseSourceDigest,
-  parseCaseBundle,
-  parseDecisionManifest,
-  parseJudgeVote,
+  APPROVED_JUDGE_MODELS,
+  CROSS_VALIDATION_JUDGE_MODELS,
+  RELEASE_ID,
+  createCandidateIdentity,
+  createCaseManifest,
+  createJudgmentRecord,
+  createRunReceipt,
+  parseCaseManifest,
+  parseJudgmentRecord,
+  parseRunReceipt,
+  stableDigest,
 } from "../src/contracts.ts";
-import { stableDigest } from "../src/digest.ts";
+import { caseSemantic } from "./fixtures.ts";
 
-const digestA = `sha256:${"a".repeat(64)}`;
-const digestB = `sha256:${"b".repeat(64)}`;
-const digestC = `sha256:${"c".repeat(64)}`;
-
-const calendarContent =
-  "A two-hour focus block ends thirty minutes before an optional meeting.";
-const notesContent = "The summary must cite the supplied source material.";
-const perspectiveAContent =
-  "Protect uninterrupted work blocks and move optional meetings when deadlines are near.";
-const perspectiveBContent =
-  "Use optional meetings to align early when coordination risk is high.";
-const irrelevantPerspectiveContent =
-  "Prefer short written updates before recurring status meetings.";
-
-const caseSemanticFields = {
-  release: "2026.8.12",
-  caseId: "case-alpha",
-  familyId: "family-alpha",
-  domain: "workplace",
-  operation: "prioritize",
-  difficulty: "standard",
-  task: {
-    instruction:
-      "Choose one region for each decision using the evidence and any supplied perspective.",
-    deliverable:
-      "Write /app/output.json with the declared decision manifest and a concise evidence-grounded response.",
-  },
-  evidence: [
-    {
-      ref: "source-calendar",
-      content: calendarContent,
-      digest: stableDigest(calendarContent),
-    },
-    {
-      ref: "source-notes",
-      content: notesContent,
-      digest: stableDigest(notesContent),
-    },
-  ],
-  perspectives: {
-    A: {
-      id: "perspective-alpha-a",
-      pairId: "perspective-pair-alpha",
-      content: perspectiveAContent,
-      digest: stableDigest(perspectiveAContent),
-    },
-    B: {
-      id: "perspective-alpha-b",
-      pairId: "perspective-pair-alpha",
-      content: perspectiveBContent,
-      digest: stableDigest(perspectiveBContent),
-    },
-    irrelevant: {
-      id: "perspective-unrelated",
-      pairId: "perspective-pair-unrelated",
-      content: irrelevantPerspectiveContent,
-      digest: stableDigest(irrelevantPerspectiveContent),
-    },
-  },
-  decisions: [
-    {
-      decisionId: "decision-focus",
-      prompt: "How should the focus block and optional meeting be handled?",
-      regionOptions: [
-        "neutral",
-        "protect-focus",
-        "defer-meeting",
-        "attend-meeting",
-        "move-focus",
-      ],
-      partition: "sensitive",
-      acceptedRegions: {
-        T0: ["neutral"],
-        "T1-A": ["protect-focus", "defer-meeting"],
-        "T1-B": ["attend-meeting", "move-focus"],
-      },
-      requiredEvidenceRefs: ["source-calendar"],
-    },
-    {
-      decisionId: "decision-deadline",
-      prompt: "How should the deadline be handled?",
-      regionOptions: ["keep-deadline", "move-deadline-with-approval"],
-      partition: "invariant",
-      acceptedRegions: {
-        T0: ["keep-deadline", "move-deadline-with-approval"],
-        "T1-A": ["keep-deadline", "move-deadline-with-approval"],
-        "T1-B": ["keep-deadline", "move-deadline-with-approval"],
-      },
-      requiredEvidenceRefs: ["source-notes"],
-    },
-  ],
-  nonGoal: "Predict a real person's behavior.",
-} as const;
-const caseBundle = {
-  ...caseSemanticFields,
-  sourceDigest: stableDigest(caseSemanticFields),
-} as const;
-
-const manifest = {
-  release: "2026.8.12",
-  trialId: `trial-${"1".repeat(64)}`,
-  caseId: "case-alpha",
-  condition: "T1-A",
-  artifactDigest: digestA,
-  decisions: [
-    {
-      decisionId: "decision-focus",
-      selectedRegion: "protect-focus",
-      evidenceRefs: ["source-calendar"],
-    },
-    {
-      decisionId: "decision-deadline",
-      selectedRegion: "keep-deadline",
-      evidenceRefs: ["source-notes"],
-    },
-  ],
-} as const;
-
-const judgeVote = {
-  release: "2026.8.12",
-  trialId: `trial-${"1".repeat(64)}`,
-  judgeId: "judge-sol-1",
-  requestedModelId: "gpt-fixture-sol",
-  resolvedModelId: "gpt-fixture-sol-2026-08-12",
-  promptDigest: digestB,
-  responseDigest: digestC,
-  state: "measured",
-  dimensions: {
-    taskAdequate: true,
-    evidenceIntegrity: true,
-    perspectiveAligned: true,
-    invariantsPreserved: true,
-    criticalFailure: false,
-  },
-  evidenceRefs: ["source-calendar", "source-notes"],
-} as const;
-
-test("public contract parsers accept complete literal artifacts", () => {
-  assert.deepEqual(parseCaseBundle(caseBundle), caseBundle);
-  assert.deepEqual(parseDecisionManifest(manifest), manifest);
-  assert.deepEqual(parseJudgeVote(judgeVote), judgeVote);
-});
-
-test("case parsing rejects incomplete partitions and dangling evidence", () => {
+test("case, receipt, and judgment contracts bind their exact content", () => {
+  const manifest = createCaseManifest(caseSemantic());
+  assert.deepEqual(parseCaseManifest(manifest), manifest);
   assert.throws(
     () =>
-      parseCaseBundle({
-        ...caseBundle,
-        decisions: [caseBundle.decisions[0]],
-      }),
-    /sensitive and invariant/i,
-  );
-
-  assert.throws(
-    () =>
-      parseCaseBundle({
-        ...caseBundle,
-        decisions: [
-          caseBundle.decisions[0],
-          {
-            ...caseBundle.decisions[1],
-            requiredEvidenceRefs: ["source-missing"],
-          },
-        ],
-      }),
-    /evidence/i,
-  );
-});
-
-test("case parsing rejects digest, pair-provenance, and accepted-region tampering", () => {
-  assert.throws(
-    () =>
-      parseCaseBundle({
-        ...caseBundle,
-        evidence: [
-          { ...caseBundle.evidence[0], digest: digestA },
-          caseBundle.evidence[1],
-        ],
-      }),
-    /digest.*content/i,
-  );
-  assert.throws(
-    () =>
-      parseCaseBundle({
-        ...caseBundle,
-        perspectives: {
-          ...caseBundle.perspectives,
-          B: { ...caseBundle.perspectives.B, pairId: "different-pair" },
-        },
-      }),
-    /pair provenance/i,
-  );
-  assert.throws(
-    () =>
-      parseCaseBundle({
-        ...caseBundle,
-        decisions: [
-          {
-            ...caseBundle.decisions[0],
-            acceptedRegions: {
-              ...caseBundle.decisions[0].acceptedRegions,
-              T0: ["undeclared"],
-            },
-          },
-          caseBundle.decisions[1],
-        ],
-      }),
-    /undeclared region/i,
-  );
-});
-
-test("source digest deterministically covers public and hidden semantic fields", () => {
-  assert.equal(caseSourceDigest(caseBundle), caseBundle.sourceDigest);
-  const mutations = [
-    { ...caseBundle, domain: "different-domain" },
-    {
-      ...caseBundle,
-      task: { ...caseBundle.task, instruction: "Different instruction." },
-    },
-    {
-      ...caseBundle,
-      evidence: [
-        {
-          ...caseBundle.evidence[0],
-          ref: "different-evidence-reference",
-        },
-        caseBundle.evidence[1],
-      ],
-    },
-    {
-      ...caseBundle,
-      perspectives: {
-        ...caseBundle.perspectives,
-        A: { ...caseBundle.perspectives.A, id: "different-perspective" },
-      },
-    },
-    {
-      ...caseBundle,
-      decisions: [
-        {
-          ...caseBundle.decisions[0],
-          prompt: "Different decision prompt.",
-        },
-        caseBundle.decisions[1],
-      ],
-    },
-    { ...caseBundle, nonGoal: "Different non-goal." },
-  ] as const;
-  for (const mutation of mutations) {
-    assert.notEqual(caseSourceDigest(mutation), caseBundle.sourceDigest);
-  }
-});
-
-test("manifest parsing enforces exact condition labels and unique decisions", () => {
-  assert.throws(
-    () => parseDecisionManifest({ ...manifest, condition: "CC" }),
-    /condition/i,
-  );
-  assert.throws(
-    () =>
-      parseDecisionManifest({
+      parseCaseManifest({
         ...manifest,
-        decisions: [manifest.decisions[0], manifest.decisions[0]],
+        task: { ...manifest.task, instruction: "substituted task" },
       }),
-    /unique/i,
+    /manifestDigest/i,
   );
+
+  const candidate = createCandidateIdentity({
+    candidateId: "neutral-system",
+    harness: "external-harness",
+    model: "external-model",
+    host: "external-host",
+    adaptation: "context-adapter",
+    configurationDigest: stableDigest({ configuration: "2026.8.15" }),
+    toolPolicyDigest: stableDigest({ tools: [] }),
+  });
+  const outputDigest = stableDigest({ output: "answer [source-001]" });
+  const receipt = createRunReceipt({
+    release: RELEASE_ID,
+    benchCommit: "a".repeat(40),
+    bankDigest: stableDigest({ bank: "fixture" }),
+    trialId: "trial-001",
+    caseId: manifest.caseId,
+    manifestDigest: manifest.manifestDigest,
+    taskDigest: stableDigest({ task: "trial-001" }),
+    condition: "diagnostic_target_a",
+    candidate,
+    session: {
+      sessionDigest: stableDigest({ session: "trial-001" }),
+      order: 0,
+      leakage: "passed",
+      leakageCheckDigest: stableDigest({ leakage: "trial-001" }),
+    },
+    execution: {
+      kind: "conversation",
+      hostReceiptDigest: stableDigest({ host: "trial-001" }),
+      transcriptDigest: stableDigest({ transcript: "trial-001" }),
+      turnCount: 1,
+      termination: "completed",
+      cleanup: "succeeded",
+    },
+    state: "succeeded",
+    artifact: {
+      digest: outputDigest,
+      bytes: 19,
+      mediaType: "text/plain",
+      validationDigest: stableDigest({ validation: "trial-001" }),
+    },
+    durationMs: 12,
+    usage: null,
+  });
+  assert.deepEqual(parseRunReceipt(receipt), receipt);
+  if (receipt.state !== "succeeded") throw new Error("fixture receipt failed");
+
+  const judgment = createJudgmentRecord({
+    release: RELEASE_ID,
+    judgmentId: "judgment-001",
+    trialIds: [receipt.trialId],
+    caseId: manifest.caseId,
+    runReceiptDigests: [receipt.receiptDigest],
+    mode: "pointwise",
+    dimension: "task_utility",
+    orientation: null,
+    artifactDigests: [outputDigest],
+    artifactValidationDigests: [receipt.artifact.validationDigest],
+    rubricDigest: manifest.sealed.rubricDigest,
+    rubricProjectionId: "fixture",
+    rubricProjectionDigest: stableDigest({ projection: "fixture" }),
+    judgeConfigurationDigest: stableDigest({ judges: "qualified" }),
+    primaryJudges: ["gpt-5.6-terra", "gpt-5.6-luna"],
+    crossValidationJudges: CROSS_VALIDATION_JUDGE_MODELS,
+    votes: APPROVED_JUDGE_MODELS.map((model, index) => ({
+      model,
+      resolvedModel: model,
+      promptDigest: stableDigest({ model, prompt: 1 }),
+      responseDigest: stableDigest({ model, response: 1 }),
+      state: "measured" as const,
+      verdict: "pass" as const,
+      usage: null,
+    })),
+  });
+  assert.deepEqual(parseJudgmentRecord(judgment), judgment);
+  assert.deepEqual(judgment.outcome, { state: "measured", verdict: "pass" });
 });
 
-test("judge votes use explicit measured and unavailable branches", () => {
-  const unavailable = {
-    release: "2026.8.12",
-    trialId: `trial-${"2".repeat(64)}`,
-    judgeId: "judge-terra-1",
-    requestedModelId: "gpt-fixture-terra",
-    state: "judge_unavailable",
-    reason: "fixture transport unavailable",
-    evidenceRefs: [],
-  } as const;
+test("failure, abstention, disagreement, and unavailable judgments stay explicit", () => {
+  const candidate = createCandidateIdentity({
+    candidateId: "neutral-system",
+    harness: "external-harness",
+    model: "external-model",
+    host: "external-host",
+    adaptation: "context-adapter",
+    configurationDigest: stableDigest({ configuration: "2026.8.15" }),
+    toolPolicyDigest: stableDigest({ tools: [] }),
+  });
+  const failed = createRunReceipt({
+    release: RELEASE_ID,
+    benchCommit: "b".repeat(40),
+    bankDigest: stableDigest({ bank: "fixture" }),
+    trialId: "trial-failed",
+    caseId: "case-talk-001",
+    manifestDigest: stableDigest({ manifest: "case-talk-001" }),
+    taskDigest: stableDigest({ task: "trial-failed" }),
+    condition: "task_only",
+    candidate,
+    session: {
+      sessionDigest: stableDigest({ session: "failed" }),
+      order: 0,
+      leakage: "unavailable",
+      leakageCheckDigest: stableDigest({ leakage: "failed" }),
+    },
+    execution: null,
+    state: "host_failed",
+    cause: "isolated host did not start",
+  });
+  assert.equal(parseRunReceipt(failed).state, "host_failed");
+  assert.equal("artifact" in failed, false);
 
-  assert.deepEqual(parseJudgeVote(unavailable), unavailable);
-  assert.throws(
-    () =>
-      parseJudgeVote({
-        ...unavailable,
-        dimensions: judgeVote.dimensions,
-      }),
-    /judge_unavailable/i,
-  );
-});
-
-test("public JSON schemas preserve exact labels, states, and separate metrics", async () => {
-  const schemaNames = [
-    "case",
-    "decision-manifest",
-    "judge-vote",
-    "verdict",
-    "report",
-  ] as const;
-  const schemas = Object.fromEntries(
-    await Promise.all(
-      schemaNames.map(async (name) => [
-        name,
-        JSON.parse(
-          await readFile(
-            new URL(`../schemas/${name}.schema.json`, import.meta.url),
-            {
-              encoding: "utf8",
-            },
-          ),
-        ) as Record<string, unknown>,
-      ]),
+  const base = {
+    release: RELEASE_ID,
+    judgmentId: "judgment-unavailable",
+    trialIds: ["trial-left", "trial-right"],
+    caseId: "case-talk-001",
+    runReceiptDigests: [stableDigest("left"), stableDigest("right")],
+    mode: "pairwise" as const,
+    dimension: "target_alignment" as const,
+    orientation: "canonical" as const,
+    artifactDigests: [stableDigest("left"), stableDigest("right")] as const,
+    artifactValidationDigests: [
+      stableDigest("left validation"),
+      stableDigest("right validation"),
+    ] as const,
+    rubricDigest: stableDigest("rubric"),
+    rubricProjectionId: "fixture",
+    rubricProjectionDigest: stableDigest("projection"),
+    judgeConfigurationDigest: stableDigest("configuration"),
+    primaryJudges: ["gpt-5.6-terra", "gpt-5.6-luna"] as const,
+    crossValidationJudges: CROSS_VALIDATION_JUDGE_MODELS,
+  };
+  const unavailable = createJudgmentRecord({
+    ...base,
+    votes: APPROVED_JUDGE_MODELS.map((model, index) =>
+      index === 0
+        ? {
+            model,
+            state: "measured" as const,
+            resolvedModel: model,
+            promptDigest: stableDigest({ model, prompt: 2 }),
+            responseDigest: stableDigest({ model, response: 2 }),
+            verdict: "left" as const,
+            usage: null,
+          }
+        : {
+            model,
+            state: "unavailable" as const,
+            resolvedModel: null,
+            promptDigest: stableDigest({ model, prompt: 2 }),
+            responseDigest: null,
+            cause: "provider unavailable",
+            usage: null,
+          },
     ),
-  ) as Record<(typeof schemaNames)[number], Record<string, unknown>>;
-
-  for (const name of schemaNames) {
-    assert.equal(
-      schemas[name].$id,
-      `https://openboa.ai/coffee-chat-bench/2026.8.12/schemas/${name}.schema.json`,
-    );
-    assert.equal(schemas[name].additionalProperties, false);
-  }
-
-  assert.deepEqual(
-    (
-      schemas["decision-manifest"].properties as Record<
-        string,
-        Record<string, unknown>
-      >
-    ).condition?.enum,
-    ["T0", "T1-A", "T1-B"],
-  );
-  const resultState = (
-    schemas.verdict.$defs as Record<string, Record<string, unknown> | undefined>
-  ).resultState;
-  assert.ok(resultState);
-  assert.deepEqual(resultState.enum, [
-    "measured",
-    "candidate_invalid",
-    "candidate_failure",
-    "host_failure",
-    "verifier_failure",
-    "judge_disagreement",
-    "judge_unavailable",
-    "skipped",
-    "unavailable",
-    "unmeasured",
-  ]);
-  const reportProperties = schemas.report.properties as Record<string, unknown>;
-  assert.deepEqual(Object.keys(reportProperties).sort(), [
-    "bootstrap",
-    "efficiency",
-    "familyStateCounts",
-    "qpcfr",
-    "release",
-    "trialStateCounts",
-  ]);
-  assert.equal("score" in reportProperties, false);
-  assert.equal("weightedScore" in reportProperties, false);
+  });
+  assert.deepEqual(unavailable.outcome, { state: "unavailable" });
 });
