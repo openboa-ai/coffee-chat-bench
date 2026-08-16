@@ -8,7 +8,11 @@ The projector emits the current Harbor single-step task shape documented in
 [Task Structure](https://www.harborframework.com/docs/tasks): `task.toml` with
 external schema `1.4`, an instruction, a no-network pinned container, a
 declared `/workspace/answer.txt` artifact, a structural Oracle, and a structural
-verifier. The verifier accepts only a bounded regular file and writes
+verifier. The task's `tests/` directory contains its own copy of the pinned
+Dockerfile so Harbor's `environment_mode = "separate"` can build the verifier in
+a fresh container rather than reusing the candidate environment; that image
+copies only the verifier script into `/tests`. The verifier accepts only a
+bounded regular file and writes
 `/logs/verifier/reward.txt`; `1` means the response satisfies the objective
 byte, UTF-8, and reference contract. It is never semantic benchmark credit.
 

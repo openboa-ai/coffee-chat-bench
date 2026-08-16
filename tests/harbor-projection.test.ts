@@ -73,6 +73,7 @@ test("projects the exact public bank into a sealed candidate-neutral Harbor data
           "instruction.md",
           "environment/Dockerfile",
           "solution/solve.sh",
+          "tests/Dockerfile",
           "tests/test.sh",
         ].map((path) => readFile(join(taskRoot, path), "utf8")),
       );
@@ -130,6 +131,10 @@ test("projects the exact public bank into a sealed candidate-neutral Harbor data
       assert.match(
         await readFile(join(taskRoot, "environment/Dockerfile"), "utf8"),
         /^FROM python:3\.13\.7-slim-bookworm@sha256:adafcc17694d715c905b4c7bebd96907a1fd5cf183395f0ebc4d3428bd22d92d$/mu,
+      );
+      assert.match(
+        await readFile(join(taskRoot, "tests/Dockerfile"), "utf8"),
+        /^FROM python:3\.13\.7-slim-bookworm@sha256:adafcc17694d715c905b4c7bebd96907a1fd5cf183395f0ebc4d3428bd22d92d\nWORKDIR \/workspace\nCOPY test\.sh \/tests\/test\.sh\nRUN chmod 0755 \/tests\/test\.sh\n$/mu,
       );
     }
 
