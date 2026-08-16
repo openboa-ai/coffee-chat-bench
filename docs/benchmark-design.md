@@ -75,9 +75,12 @@ evidence manifest to the bank and preserves missing or inconclusive gates.
 The Bench-owned projector turns the validated 16-family bank into exactly 80
 digest-named Harbor tasks. A task contains one rendered condition, a pinned
 no-network environment, an objective output contract, a structural Oracle, and
-a structural verifier. Condition and target identities, other contexts,
-rubrics, judgment plans, expected directions, system identities, and
-credentials remain outside every task directory.
+a structural verifier configured with
+`[verifier] environment_mode = "separate"`. Harbor therefore resolves the
+verifier in a fresh container rather than the candidate environment. Condition
+and target identities, other contexts, rubrics, judgment plans, expected
+directions, system identities, and credentials remain outside every task
+directory.
 
 The Harbor reward is only structural conformance with `validate-output`: file
 presence, byte limit, UTF-8 without a byte-order mark, and required evidence

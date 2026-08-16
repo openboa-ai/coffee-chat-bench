@@ -81,10 +81,12 @@ or independent replication. QPCFR is nonnumeric unless the complete family and
 all fixed score dimensions are declared and measured.
 
 The Harbor projector materializes the 16-family × five-condition census as 80
-digest-named, no-network tasks. Its Oracle and verifier prove only output-file
-plumbing and objective conformance. Their `1`/`0` reward is not semantic credit,
-a candidate result, or activation evidence. The task image is digest-pinned and
-includes the shell required by Harbor 0.21's script runner.
+digest-named, no-network tasks. Each task explicitly requests Harbor's
+`[verifier] environment_mode = "separate"`, so the verifier runs in a fresh
+container rather than the candidate environment. Its Oracle and verifier prove
+only output-file plumbing and objective conformance. Their `1`/`0` reward is not
+semantic credit, a candidate result, or activation evidence. The task image is
+digest-pinned and includes the shell required by Harbor 0.21's script runner.
 
 ## Ownership boundary
 

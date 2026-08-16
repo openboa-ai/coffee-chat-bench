@@ -124,6 +124,7 @@ test("projects the exact public bank into a sealed candidate-neutral Harbor data
       const toml = await readFile(join(taskRoot, "task.toml"), "utf8");
       assert.match(toml, /schema_version = "1\.4"/u);
       assert.match(toml, /artifacts = \["\/workspace\/answer\.txt"\]/u);
+      assert.match(toml, /environment_mode = "separate"/u);
       assert.match(toml, /network_mode = "no-network"/u);
       assert.doesNotMatch(toml, /\benv\s*=/u);
       assert.match(
