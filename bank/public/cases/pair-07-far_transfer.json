@@ -2,34 +2,53 @@
   "release": "2026.8.17",
   "caseId": "pair-07-far_transfer",
   "pairId": "pair-07",
-  "form": "dialogue",
-  "domain": "education_coaching",
+  "form": "professional_artifact",
+  "domain": "product_service_operations",
   "transferType": "far_transfer",
-  "taskArchetype": "allocation_prioritization",
-  "taskMode": "open_ended",
+  "taskArchetype": "critique_revision",
+  "taskMode": "bounded",
   "split": "public",
   "task": {
-    "instruction": "A learning program has several possible support interventions and limited coaching time.\n\nExplain how you would prioritize them while preserving fair access and learning evidence.",
+    "instruction": "Revise a customer-support onboarding plan that removes trainee choice but lacks a stable proficiency standard.\n\nReturn a revised two-week plan with trainee input, a common proficiency criterion, support provisions, and an escalation point.",
     "environment": {
-      "kind": "conversation"
+      "kind": "workspace",
+      "fixtureDigest": "sha256:24b96cf1bdeadfd31fcb6b3a483788db1deb6ea130e09c4ca66be48affdaa500",
+      "verifierDigest": "sha256:1f6b96642a33ae6f30980ab8443fdeb1dedb70368f0e91d4ab24453fc6592c3e"
     },
     "output": {
       "mediaType": "text/plain",
       "maxBytes": 4000,
-      "requiredReferenceIds": ["evidence-02-01", "evidence-02-02"]
+      "requiredReferenceIds": [
+        "evidence-02-01",
+        "evidence-02-02",
+        "evidence-02-03",
+        "evidence-02-04"
+      ]
     }
   },
   "evidence": [
     {
       "id": "evidence-02-01",
-      "content": "The task supplies the stated alternatives and constraints for this allocation_prioritization decision.",
+      "content": "Draft plan: Every trainee must follow the same daily practice sequence; managers may advance anyone they believe is ready.",
       "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/0b098d5307a7818b",
       "license": "MIT"
     },
     {
       "id": "evidence-02-02",
-      "content": "The response must remain grounded in the supplied task record.",
+      "content": "Trainees report that the 09:00 practice conflicts with two approved schedules, while 14:00 and asynchronous sessions cover the same cases.",
       "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/12a57cf64777115f",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-02-03",
+      "content": "A validated rubric scores privacy handling, issue diagnosis, and escalation accuracy across any practice format.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/2a5fc0dd86779d4a",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-02-04",
+      "content": "The team needs ten qualified agents in two weeks; twelve trainees are enrolled and all approved supports can continue.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/a87413a00d833883",
       "license": "MIT"
     }
   ],
@@ -39,84 +58,84 @@
       {
         "id": "record-01",
         "format": "decision_note",
-        "content": "Situation: A learner is struggling and a coach can impose a strict plan or try a small change.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Discuss the process and preserve support before changing the plan.\nReasoning: People affected by the choice should be able to inspect how it was reached."
+        "content": "Situation: A learner is behind in algebra and must choose how to use four weekly support-hours.\nEvidence:\n[history-01-e1] The learner reports that evening sessions conflict with caregiving and proposes two longer weekend sessions that preserve all four support-hours while allowing the learner to choose the practice order.\n[history-01-e2] The standard four-session sequence has the strongest completion evidence and covers prerequisite skills in a fixed order.\nDecision: Use the learner's two-session weekend plan and review progress after two weeks.\nReasoning: A support plan the learner can actually sustain is more useful than nominal adherence to an inaccessible schedule."
       },
       {
         "id": "record-02",
         "format": "message_excerpt",
-        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given a group activity has unequal participation and limited context about why, the next decision is: Use a fair process to make participation visible.\nReasoning: Keep a buffer so a bad outcome does not remove the next safe option."
+        "content": "Situation: A group project has unequal participation, but the reason is uncertain.\nMessage: We considered [history-02-e1] Learners ask to choose written, spoken, or facilitation roles and to review contribution expectations together. [history-02-e2] A common rubric with four observable contribution steps has improved role clarity in five prior groups. The decision is Let the group choose contribution modes and co-review how each mode meets the shared objective.\nReasoning: Agency over the form can expose barriers while preserving responsibility for the outcome."
       },
       {
         "id": "record-03",
         "format": "retrospective",
-        "content": "Looking back at a performance signal is low but may reflect a mismatch in assessment, the recorded choice was Review the assessment process with the learner. The record points to [history-03-e1] and [history-03-e2].\nReasoning: A shared path prevents the same decision work from being repeated across teams."
+        "content": "Situation: A learner's low written score may reflect either weak understanding or an assessment-format mismatch.\nRecord: [history-03-e1] The learner can explain two concepts orally and requests an oral demonstration for the third. [history-03-e2] The course's validated rubric requires evidence of all three concepts, permits either a learner-designed demonstration or a standard oral assessment, and does not require writing.\nRecorded decision: Co-design the third-concept demonstration with the learner and review together how it meets the rubric.\nReasoning: The learner should have a reviewable route to show the required understanding without an unsupported format assumption."
       },
       {
         "id": "record-04",
         "format": "structured_log",
-        "content": "context=A support resource is scarce and several learners need it; evidence=[history-04-e1],[history-04-e2]; decision=Use an explainable support rule with an appeal route.\nReasoning: Keep the decision process explainable to those who must live with its effects."
+        "content": "situation=A coaching program has one scarce advanced workshop and more eligible learners than places. evidence=[history-04-e1] Learners request a published appeal route for caregiving, accessibility, and schedule constraints. [history-04-e2] A common prerequisite assessment predicts completion and can rank every eligible applicant on the same three skills. decision=Use the assessment with a published learner review and constraint-appeal process.\nReasoning: A scarce opportunity needs a process learners can inspect and challenge when the measure misses a real constraint."
       },
       {
         "id": "record-05",
         "format": "decision_note",
-        "content": "Situation: A proposed intervention would share private learner detail to coordinate help.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Protect privacy and use the minimum necessary information."
+        "content": "Situation: A learner can choose a personally meaningful project or follow a sequenced project that covers two missing prerequisites.\nEvidence:\n[history-05-e1] The learner-designed project can cover both prerequisites if the learner adds a measurement and reflection section.\n[history-05-e2] The sequenced project has explicit examples and a 78% completion rate for learners missing the same prerequisites.\nDecision: Approve the learner-designed project with the measurement and reflection requirements."
       },
       {
         "id": "record-06",
         "format": "message_excerpt",
-        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed learner intervention would expose private information or remove necessary support without evidence, and a safeguarded alternative is available, the next decision is: Stop the intervention and restore privacy and support."
+        "content": "Situation: A proposed coaching dashboard would publish individual disability information to the whole class.\nMessage: We considered [history-06-e1] The disability information is private and is not needed to coordinate the learning activity. [history-06-e2] An aggregate support-status view provides the needed staffing signal without identifying learners. The decision is Reject the individual disclosure and use the aggregate support-status view."
       },
       {
         "id": "record-07",
         "format": "retrospective",
-        "content": "Looking back at two coaching approaches meet the immediate objective, the recorded choice was Choose a coaching approach that meets the objective without removing learner support. The record points to [history-07-e1] and [history-07-e2]."
+        "content": "Situation: A faster mastery sequence would remove captioning from required video lessons.\nRecord: [history-07-e1] Captioning is an approved accommodation for four learners in the cohort. [history-07-e2] A captioned version can be ready two days later without changing the mastery sequence.\nRecorded decision: Delay two days and use the captioned lessons."
       },
       {
         "id": "record-08",
         "format": "structured_log",
-        "content": "context=A routine lesson adjustment has known support requirements; evidence=[history-08-e1],[history-08-e2]; decision=Use the agreed support process and record the outcome."
+        "content": "situation=A learner has completed the agreed prerequisite and requests the standard next module. evidence=[history-08-e1] The completion evidence meets the published criterion. [history-08-e2] The learner confirms the next-module schedule and requires no additional support change. decision=Enroll the learner in the standard next module."
       }
     ],
     "target_b": [
       {
         "id": "record-01",
         "format": "decision_note",
-        "content": "Situation: A learner is struggling and a coach can impose a strict plan or try a small change.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Try the smallest change and observe the learner's response.\nReasoning: Use the next step to learn what matters before accepting a costly commitment."
+        "content": "Situation: A learner is behind in algebra and must choose how to use four weekly support-hours.\nEvidence:\n[history-01-e1] The learner reports that evening sessions conflict with caregiving and proposes two longer weekend sessions that preserve all four support-hours while allowing the learner to choose the practice order.\n[history-01-e2] The standard four-session sequence has the strongest completion evidence and covers prerequisite skills in a fixed order.\nDecision: Keep the four-step prerequisite sequence and deliver it in two longer weekend sessions.\nReasoning: Scheduling can adapt without discarding the evidence-backed order needed for later topics."
       },
       {
         "id": "record-02",
         "format": "message_excerpt",
-        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given a group activity has unequal participation and limited context about why, the next decision is: Test a small format change and learn from participation.\nReasoning: Leave an exit available before making the commitment durable."
+        "content": "Situation: A group project has unequal participation, but the reason is uncertain.\nMessage: We considered [history-02-e1] Learners ask to choose written, spoken, or facilitation roles and to review contribution expectations together. [history-02-e2] A common rubric with four observable contribution steps has improved role clarity in five prior groups. The decision is Use the common four-step rubric and let learners select roles within each required step.\nReasoning: A stable progression makes participation comparable while leaving room for role choice."
       },
       {
         "id": "record-03",
         "format": "retrospective",
-        "content": "Looking back at a performance signal is low but may reflect a mismatch in assessment, the recorded choice was Try a reversible assessment variation. The record points to [history-03-e1] and [history-03-e2].\nReasoning: Judge the choice over the full period it will affect, not only the immediate step."
+        "content": "Situation: A learner's low written score may reflect either weak understanding or an assessment-format mismatch.\nRecord: [history-03-e1] The learner can explain two concepts orally and requests an oral demonstration for the third. [history-03-e2] The course's validated rubric requires evidence of all three concepts, permits either a learner-designed demonstration or a standard oral assessment, and does not require writing.\nRecorded decision: Use the standard rubric-scored oral assessment for the third concept before advancing.\nReasoning: The evidence format may change, but the mastery progression should remain consistent."
       },
       {
         "id": "record-04",
         "format": "structured_log",
-        "content": "context=A support resource is scarce and several learners need it; evidence=[history-04-e1],[history-04-e2]; decision=Pilot a support schedule and inspect unmet needs.\nReasoning: Choose the action that can resolve the open question with the least irreversible cost."
+        "content": "situation=A coaching program has one scarce advanced workshop and more eligible learners than places. evidence=[history-04-e1] Learners request a published appeal route for caregiving, accessibility, and schedule constraints. [history-04-e2] A common prerequisite assessment predicts completion and can rank every eligible applicant on the same three skills. decision=Allocate places by the common prerequisite assessment and publish the next progression step for others.\nReasoning: The same mastery evidence should govern entry while every learner receives a path to qualify later."
       },
       {
         "id": "record-05",
         "format": "decision_note",
-        "content": "Situation: A proposed intervention would share private learner detail to coordinate help.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Do not run a test that exposes private information."
+        "content": "Situation: A learner can choose a personally meaningful project or follow a sequenced project that covers two missing prerequisites.\nEvidence:\n[history-05-e1] The learner-designed project can cover both prerequisites if the learner adds a measurement and reflection section.\n[history-05-e2] The sequenced project has explicit examples and a 78% completion rate for learners missing the same prerequisites.\nDecision: Use the sequenced project and let the learner choose its application context."
       },
       {
         "id": "record-06",
         "format": "message_excerpt",
-        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed learner intervention would expose private information or remove necessary support without evidence, and a safeguarded alternative is available, the next decision is: Stop the intervention and restore privacy and support."
+        "content": "Situation: A proposed coaching dashboard would publish individual disability information to the whole class.\nMessage: We considered [history-06-e1] The disability information is private and is not needed to coordinate the learning activity. [history-06-e2] An aggregate support-status view provides the needed staffing signal without identifying learners. The decision is Reject the individual disclosure and use the aggregate support-status view."
       },
       {
         "id": "record-07",
         "format": "retrospective",
-        "content": "Looking back at two coaching approaches meet the immediate objective, the recorded choice was Choose a coaching approach that meets the objective without removing learner support. The record points to [history-07-e1] and [history-07-e2]."
+        "content": "Situation: A faster mastery sequence would remove captioning from required video lessons.\nRecord: [history-07-e1] Captioning is an approved accommodation for four learners in the cohort. [history-07-e2] A captioned version can be ready two days later without changing the mastery sequence.\nRecorded decision: Delay two days and use the captioned lessons."
       },
       {
         "id": "record-08",
         "format": "structured_log",
-        "content": "context=A routine lesson adjustment has known support requirements; evidence=[history-08-e1],[history-08-e2]; decision=Use the agreed support process and record the outcome."
+        "content": "situation=A learner has completed the agreed prerequisite and requests the standard next module. evidence=[history-08-e1] The completion evidence meets the published criterion. [history-08-e2] The learner confirms the next-module schedule and requires no additional support change. decision=Enroll the learner in the standard next module."
       }
     ]
   },
@@ -124,5 +143,5 @@
     "sourceIds": ["synthetic:pair-07-far_transfer"],
     "templateId": "judgment-history/far_transfer"
   },
-  "manifestDigest": "sha256:45223149ae862295a858e03448399b6a47650441980e89b2a5da618278bf04e8"
+  "manifestDigest": "sha256:8f4db69ffc87b6508b40a839f2224c2856ec576f59ebea43b846ac0acde9052e"
 }

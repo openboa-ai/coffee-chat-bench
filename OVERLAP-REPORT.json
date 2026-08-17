@@ -1,16 +1,16 @@
 {
   "reportId": "public-bank-overlap-audit-2026.8.17",
   "bankId": "public_judgment_history_bank",
-  "bankDigest": "sha256:2e05fd79aa95d09834e944168d5ddacbb232013ea5a32ff590c6faeafd1db073",
+  "bankDigest": "sha256:56b459747320c24393daf1dec19334b794279de762fa9540b931c759ae0f3999",
   "caseCount": 32,
   "scope": "mechanical lineage and duplicate audit",
-  "state": "pending_independent_review",
+  "state": "project_construction_reviewed",
   "checks": {
     "caseIndexComplete": true,
     "sourceLineageUnique": true,
     "crossCaseExactDuplicates": false,
-    "semanticOverlap": "not_assessed",
-    "answerLeakage": "pending_independent_review"
+    "semanticOverlap": "not_independently_assessed",
+    "answerLeakage": "no_direct_copy_found_in_project_review"
   },
   "claimBoundary": "Counts and exact-duplicate checks do not establish semantic matching, human agreement, AI-judge qualification, construct validity, or activation."
 }

@@ -9,27 +9,44 @@
   "taskMode": "bounded",
   "split": "public",
   "task": {
-    "instruction": "A support team must choose between a staged rollout and a full rollout for a change with uncertain adoption.\n\nRecommend one option and state the next observation that would change the recommendation.",
+    "instruction": "Choose the rollout plan for a new support-triage model before a contractual launch date.\n\nRecommend staged rollout or full rollout. State the first checkpoint and the observation that would change the recommendation.",
     "environment": {
       "kind": "conversation"
     },
     "output": {
       "mediaType": "text/plain",
       "maxBytes": 4000,
-      "requiredReferenceIds": ["evidence-01-01", "evidence-01-02"]
+      "requiredReferenceIds": [
+        "evidence-01-01",
+        "evidence-01-02",
+        "evidence-01-03",
+        "evidence-01-04"
+      ]
     }
   },
   "evidence": [
     {
       "id": "evidence-01-01",
-      "content": "A staged rollout can be reversed after each cohort.",
+      "content": "A 20% staged rollout can run for five business days, has a ten-minute rollback, and will delay a common workflow by one week.",
       "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/769cda9cf7e0a382",
       "license": "MIT"
     },
     {
       "id": "evidence-01-02",
-      "content": "A full rollout reduces coordination overhead but makes rollback costly.",
+      "content": "A full rollout meets the contractual date and removes 90 staff-hours of parallel queue management each week.",
       "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/69d862ca4083b6d8",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-01-03",
+      "content": "Offline tests show equal average accuracy, but only 120 escalated tickets represent the highest-risk queue.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/3b4101e388a28f6f",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-01-04",
+      "content": "Both options preserve customer-data controls and use the same audited model version.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/f476003a7b3b9562",
       "license": "MIT"
     }
   ],
@@ -39,84 +56,84 @@
       {
         "id": "record-01",
         "format": "decision_note",
-        "content": "Situation: A service degradation can be mitigated by a reversible traffic split or a permanent routing change.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Use the split first and record the signal needed for the next move.\nReasoning: Keep a safe way to change course if the next signal disagrees."
+        "content": "Situation: A payments team must replace a routing rule before a seasonal traffic peak.\nEvidence:\n[history-01-e1] A 10% canary would reveal error-rate changes within six hours and can be rolled back in four minutes.\n[history-01-e2] A single cutover would eliminate 60 staff-hours of dual-route support, but rollback would take one day.\nDecision: Run the 10% canary and expand only after the six-hour error review.\nReasoning: The canary buys decision-relevant evidence while preserving a fast exit."
       },
       {
         "id": "record-02",
         "format": "message_excerpt",
-        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given a launch has uncertain demand and a fixed capacity commitment, the next decision is: Stage the commitment and learn from early demand.\nReasoning: Keep a buffer so a bad outcome does not remove the next safe option."
+        "content": "Situation: A buyer must choose how to onboard a packaging supplier whose quality is promising but not yet proven at volume.\nMessage: We considered [history-02-e1] A 30-day order covers current demand and can be cancelled without penalty. [history-02-e2] An annual order is 18% cheaper and reserves the only production slot that supports the planned launch date. The decision is Place the 30-day order and inspect defect rates before reserving the annual slot.\nReasoning: The short order tests the uncertain quality claim without locking the launch into it."
       },
       {
         "id": "record-03",
         "format": "retrospective",
-        "content": "Looking back at a customer workflow has two plausible causes and one safe diagnostic, the recorded choice was Run the diagnostic that preserves rollback. The record points to [history-03-e1] and [history-03-e2].\nReasoning: Use the next step to learn what matters before accepting a costly commitment."
+        "content": "Situation: Four support teams need one intake workflow, but the two proposed workflows have only small-sample evidence.\nRecord: [history-03-e1] A two-week trial can compare resolution time on 80 tickets without changing existing queues. [history-03-e2] Maintaining both workflows costs each team five hours per week and produces inconsistent customer handoffs.\nRecorded decision: Trial both workflows for two weeks and choose using resolution and handoff results.\nReasoning: The available comparison can resolve the open question before the organization commits."
       },
       {
         "id": "record-04",
         "format": "structured_log",
-        "content": "context=A partner dependency is late while a lower quality substitute is available; evidence=[history-04-e1],[history-04-e2]; decision=Use the substitute only as a reversible bridge.\nReasoning: Leave an exit available before making the commitment durable."
+        "content": "situation=A city must decide whether to expand a weekend permit service after a crowded one-day event. evidence=[history-04-e1] A four-week district pilot would measure repeat demand for $24,000 and can use existing staff. [history-04-e2] A citywide schedule would cost $110,000 but would give residents one consistent rule before the holiday season. decision=Run the district pilot and publish the demand threshold for citywide expansion.\nReasoning: One busy event is not enough to justify a permanent schedule when a bounded test is available."
       },
       {
         "id": "record-05",
         "format": "decision_note",
-        "content": "Situation: An incident record contains incomplete evidence about a failed handoff.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Collect the missing signal before locking a process change."
+        "content": "Situation: An editorial team must book contributors for either a two-episode trial or an eight-part season.\nEvidence:\n[history-05-e1] The trial can be produced with current staff and would reveal completion and audience-retention rates.\n[history-05-e2] The full season secures all contributors now, but cancellation would forfeit 35% of the production budget.\nDecision: Produce the two-episode trial before exercising the season option."
       },
       {
         "id": "record-06",
         "format": "message_excerpt",
-        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed response would expose customer data or conceal a material incident to speed the fix, and a controlled alternative is available, the next decision is: Reject the unsafe response and add the needed control before proceeding."
+        "content": "Situation: An emergency hotfix could restore checkout quickly by sending unredacted payment logs to a shared channel.\nMessage: We considered [history-06-e1] The shared channel is accessible to contractors who are not authorized to view payment data. [history-06-e2] A redacted diagnostic takes 25 minutes longer and preserves the existing access controls. The decision is Reject the unredacted hotfix and use the redacted diagnostic path."
       },
       {
         "id": "record-07",
         "format": "retrospective",
-        "content": "Looking back at two remediation options meet the stated service-level target, the recorded choice was Choose an option that meets the service-level target without violating the safety boundary. The record points to [history-07-e1] and [history-07-e2]."
+        "content": "Situation: A school can run a fast scheduling experiment only by removing a student's required accessibility support for one week.\nRecord: [history-07-e1] The support is part of the student's approved accommodation plan. [history-07-e2] A slower scheduling test can preserve the support and still produce results within three weeks.\nRecorded decision: Keep the required support and use the slower scheduling test."
       },
       {
         "id": "record-08",
         "format": "structured_log",
-        "content": "context=A routine maintenance choice has equal operational evidence either way; evidence=[history-08-e1],[history-08-e2]; decision=Use the routine path and record the outcome."
+        "content": "situation=A routine dependency patch has passed the standard regression suite and does not change team workflows. evidence=[history-08-e1] The approved maintenance window includes an automated rollback. [history-08-e2] No customer data, staffing dependency, or unresolved performance question is involved. decision=Apply the patch through the approved maintenance path."
       }
     ],
     "target_b": [
       {
         "id": "record-01",
         "format": "decision_note",
-        "content": "Situation: A service degradation can be mitigated by a reversible traffic split or a permanent routing change.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Make the routing change so all teams can coordinate on one path.\nReasoning: Judge the choice over the full period it will affect, not only the immediate step."
+        "content": "Situation: A payments team must replace a routing rule before a seasonal traffic peak.\nEvidence:\n[history-01-e1] A 10% canary would reveal error-rate changes within six hours and can be rolled back in four minutes.\n[history-01-e2] A single cutover would eliminate 60 staff-hours of dual-route support, but rollback would take one day.\nDecision: Use the single cutover with the documented one-day rollback plan.\nReasoning: Keeping two routes through the peak would impose a larger coordination burden on the support teams."
       },
       {
         "id": "record-02",
         "format": "message_excerpt",
-        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given a launch has uncertain demand and a fixed capacity commitment, the next decision is: Commit enough capacity to avoid repeated coordination work.\nReasoning: Account for the work and confusion the choice can create for people outside the immediate task."
+        "content": "Situation: A buyer must choose how to onboard a packaging supplier whose quality is promising but not yet proven at volume.\nMessage: We considered [history-02-e1] A 30-day order covers current demand and can be cancelled without penalty. [history-02-e2] An annual order is 18% cheaper and reserves the only production slot that supports the planned launch date. The decision is Reserve the annual slot and bind the quality checkpoints into the contract.\nReasoning: Losing the shared production window would create the larger and less recoverable coordination failure."
       },
       {
         "id": "record-03",
         "format": "retrospective",
-        "content": "Looking back at a customer workflow has two plausible causes and one safe diagnostic, the recorded choice was Choose the cause supported by the existing operational record. The record points to [history-03-e1] and [history-03-e2].\nReasoning: Use a basis that another reviewer can trace before relying on the conclusion."
+        "content": "Situation: Four support teams need one intake workflow, but the two proposed workflows have only small-sample evidence.\nRecord: [history-03-e1] A two-week trial can compare resolution time on 80 tickets without changing existing queues. [history-03-e2] Maintaining both workflows costs each team five hours per week and produces inconsistent customer handoffs.\nRecorded decision: Adopt the workflow already used by three teams and schedule a 30-day review.\nReasoning: A common path removes the current handoff cost while retaining a defined review point."
       },
       {
         "id": "record-04",
         "format": "structured_log",
-        "content": "context=A partner dependency is late while a lower quality substitute is available; evidence=[history-04-e1],[history-04-e2]; decision=Set a firm shared deadline and select the durable partner path.\nReasoning: Prefer the path that remains workable after the initial urgency has passed."
+        "content": "situation=A city must decide whether to expand a weekend permit service after a crowded one-day event. evidence=[history-04-e1] A four-week district pilot would measure repeat demand for $24,000 and can use existing staff. [history-04-e2] A citywide schedule would cost $110,000 but would give residents one consistent rule before the holiday season. decision=Adopt the citywide holiday schedule and review it after the season.\nReasoning: A single public schedule avoids district confusion during the period that matters most."
       },
       {
         "id": "record-05",
         "format": "decision_note",
-        "content": "Situation: An incident record contains incomplete evidence about a failed handoff.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Adopt the process change that makes ownership legible across teams."
+        "content": "Situation: An editorial team must book contributors for either a two-episode trial or an eight-part season.\nEvidence:\n[history-05-e1] The trial can be produced with current staff and would reveal completion and audience-retention rates.\n[history-05-e2] The full season secures all contributors now, but cancellation would forfeit 35% of the production budget.\nDecision: Book the full season so contributors and production staff can work from one calendar."
       },
       {
         "id": "record-06",
         "format": "message_excerpt",
-        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed response would expose customer data or conceal a material incident to speed the fix, and a controlled alternative is available, the next decision is: Reject the unsafe response and add the needed control before proceeding."
+        "content": "Situation: An emergency hotfix could restore checkout quickly by sending unredacted payment logs to a shared channel.\nMessage: We considered [history-06-e1] The shared channel is accessible to contractors who are not authorized to view payment data. [history-06-e2] A redacted diagnostic takes 25 minutes longer and preserves the existing access controls. The decision is Reject the unredacted hotfix and use the redacted diagnostic path."
       },
       {
         "id": "record-07",
         "format": "retrospective",
-        "content": "Looking back at two remediation options meet the stated service-level target, the recorded choice was Choose an option that meets the service-level target without violating the safety boundary. The record points to [history-07-e1] and [history-07-e2]."
+        "content": "Situation: A school can run a fast scheduling experiment only by removing a student's required accessibility support for one week.\nRecord: [history-07-e1] The support is part of the student's approved accommodation plan. [history-07-e2] A slower scheduling test can preserve the support and still produce results within three weeks.\nRecorded decision: Keep the required support and use the slower scheduling test."
       },
       {
         "id": "record-08",
         "format": "structured_log",
-        "content": "context=A routine maintenance choice has equal operational evidence either way; evidence=[history-08-e1],[history-08-e2]; decision=Use the routine path and record the outcome."
+        "content": "situation=A routine dependency patch has passed the standard regression suite and does not change team workflows. evidence=[history-08-e1] The approved maintenance window includes an automated rollback. [history-08-e2] No customer data, staffing dependency, or unresolved performance question is involved. decision=Apply the patch through the approved maintenance path."
       }
     ]
   },
@@ -124,5 +141,5 @@
     "sourceIds": ["synthetic:pair-01-near_transfer"],
     "templateId": "judgment-history/near_transfer"
   },
-  "manifestDigest": "sha256:45be391bc0ba724dbe26ca539ae74c31bedd343db3ff7621d929471186a154fb"
+  "manifestDigest": "sha256:1f47303f75caf9a8e75abdf02a203e7c113ee9aa8afe7bbcddc96c45ccd19d18"
 }

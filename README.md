@@ -100,9 +100,10 @@ remain explicit; they must not become zero or success.
 
 Repository status: `not_active`.
 
-This bank is a construction-ready synthetic benchmark, not an activated public
-score. Passing tests proves contract consistency and projection integrity. It
-does not establish construct validity, criterion validity, human agreement,
+The complete synthetic construction corpus is present, but this is not an
+activated public score. Passing tests and the project-side content review show
+that the authored cases are internally complete and contract-consistent. They
+do not establish construct validity, criterion validity, human agreement,
 population validity, unseen-task generalization, agent performance, or a
 leaderboard. Public exposure also means that no permanent secrecy or
 contamination-free holdout claim is made.
@@ -158,6 +159,7 @@ candidate or activate a benchmark score.
 - [Terminology map](docs/terminology.md) — research-standard terms and scope boundaries
 - [Preregistration](PREREGISTRATION.md) — fixed conditions, falsifiers, and claim limits
 - [Validity evidence plan](docs/validity/validity-argument-and-evidence-plan.md)
+- [Construction review](docs/validity/bank-development-review.md) — direct review, resolved defects, and remaining evidence
 - [Related work](docs/validity/related-work-and-discriminant-validity.md)
 - [Human-criterion protocol](qualification/README.md) — future judge qualification
 

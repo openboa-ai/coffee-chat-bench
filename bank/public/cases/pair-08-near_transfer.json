@@ -2,34 +2,53 @@
   "release": "2026.8.17",
   "caseId": "pair-08-near_transfer",
   "pairId": "pair-08",
-  "form": "dialogue",
+  "form": "professional_artifact",
   "domain": "procurement_portfolio_allocation",
   "transferType": "near_transfer",
-  "taskArchetype": "recommendation",
-  "taskMode": "bounded",
+  "taskArchetype": "critique_revision",
+  "taskMode": "open_ended",
   "split": "public",
   "task": {
-    "instruction": "A procurement team must choose between a long supplier commitment and a small trial when continuity evidence is incomplete.\n\nRecommend a path and state the evidence or review condition required before scaling.",
+    "instruction": "Revise a supplier-allocation recommendation that overreacts to one strong performance record.\n\nReturn a complete 100% allocation with rationale, dependency boundary, and review trigger.",
     "environment": {
-      "kind": "conversation"
+      "kind": "workspace",
+      "fixtureDigest": "sha256:d5ce94724a1ffbbe4598cd63fb96ea284b0451c34f7aaabf6cdd2c34443e258b",
+      "verifierDigest": "sha256:fa606a29be808e8bb26453508499bc1826bf658a38d9bcb45a76c7339bcf233f"
     },
     "output": {
       "mediaType": "text/plain",
       "maxBytes": 4000,
-      "requiredReferenceIds": ["evidence-01-01", "evidence-01-02"]
+      "requiredReferenceIds": [
+        "evidence-01-01",
+        "evidence-01-02",
+        "evidence-01-03",
+        "evidence-01-04"
+      ]
     }
   },
   "evidence": [
     {
       "id": "evidence-01-01",
-      "content": "The task supplies the stated alternatives and constraints for this recommendation decision.",
+      "content": "Draft recommendation: Give Supplier Atlas 100% of annual volume because it has a 99% on-time rate across 20 months.",
       "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/d271c302115e2d82",
       "license": "MIT"
     },
     {
       "id": "evidence-01-02",
-      "content": "The response must remain grounded in the supplied task record.",
+      "content": "Supplier Atlas uses the same port and raw-material region as the incumbent and offers the lowest cost.",
       "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/87ac63af99879b5c",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-01-03",
+      "content": "Supplier Boreal has a 95% on-time rate, costs 6% more, and uses an independent port and raw-material region.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/f5b1f1fe03ae04ac",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-01-04",
+      "content": "Both suppliers are certified for the planned allocation and Boreal can take up to 35%; after contracts are set, an emergency shift more than 15 percentage points above plan requires a six-week review.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/4eb0b97aaaf9df7e",
       "license": "MIT"
     }
   ],
@@ -39,84 +58,84 @@
       {
         "id": "record-01",
         "format": "decision_note",
-        "content": "Situation: A buyer can sign a long contract or place a small trial order with an uncertain supplier.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Assess the full-horizon resilience and review process first.\nReasoning: Judge the choice over the full period it will affect, not only the immediate step."
+        "content": "Situation: A manufacturer must allocate annual volume between two qualified suppliers.\nEvidence:\n[history-01-e1] Supplier North has a 98% on-time rate over 18 months and can cover all demand at the lowest unit cost.\n[history-01-e2] Supplier South has a 94% on-time rate, costs 7% more, and uses a different shipping route and raw-material source.\nDecision: Split volume 70% to North and 30% to South to preserve an independent supply path.\nReasoning: The modest cost premium buys recovery capacity against a failure North's record cannot rule out."
       },
       {
         "id": "record-02",
         "format": "message_excerpt",
-        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given a vendor has a low price but limited evidence about continuity, the next decision is: Use the continuity evidence and a defensible review rule.\nReasoning: Keep a buffer so a bad outcome does not remove the next safe option."
+        "content": "Situation: A research program must allocate one year of funding across three hypotheses.\nMessage: We considered [history-02-e1] Hypothesis Cedar has two preregistered replications, needs at least 70% of the budget for a decisive study, and can use the full budget for a second site and higher precision. [history-02-e2] Hypotheses Birch and Ash each have one small exploratory result and can run useful pilots with 15% of the budget. The decision is Allocate 70% to Cedar and 15% to each exploratory pilot.\nReasoning: The portfolio preserves two independent learning paths without preventing the strongest study."
       },
       {
         "id": "record-03",
         "format": "retrospective",
-        "content": "Looking back at a portfolio has two assets with different horizon and liquidity profiles, the recorded choice was Choose the allocation that remains resilient across the horizon. The record points to [history-03-e1] and [history-03-e2].\nReasoning: People affected by the choice should be able to inspect how it was reached."
+        "content": "Situation: An editorial team must choose next year's mix after one investigation format outperforms all others.\nRecord: [history-03-e1] The investigation format has three years of strong subscriber retention but depends on one specialist editor. [history-03-e2] The remaining 30% of the annual budget can either fund two smaller formats produced by different staff or train a second specialist editor and expand the investigation format.\nRecorded decision: Use 70% for the investigation and 15% for each smaller format to retain independent staff and audience paths.\nReasoning: The portfolio should not make one editor or audience assumption a single point of failure."
       },
       {
         "id": "record-04",
         "format": "structured_log",
-        "content": "context=A supplier proposal includes a favorable claim that is not independently supported; evidence=[history-04-e1],[history-04-e2]; decision=Do not rely on the unsupported claim; use the review process.\nReasoning: Prefer the path that remains workable after the initial urgency has passed."
+        "content": "situation=A school must select digital resources for a new mathematics curriculum. evidence=[history-04-e1] Platform One has two controlled studies showing mastery gains and covers every required unit. [history-04-e2] Platforms Two and Three each cover half the units, use different teaching modes, and have only observational evidence. decision=Use Platform One for core units and retain one alternative mode for targeted support.\nReasoning: A second mode protects learners for whom the dominant platform's assumptions fail."
       },
       {
         "id": "record-05",
         "format": "decision_note",
-        "content": "Situation: A procurement change would simplify coordination but lock in one dependency.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Protect the portfolio from concentration and review the trade-off."
+        "content": "Situation: A service team must decide whether to keep two search providers or standardize on the higher-performing one.\nEvidence:\n[history-05-e1] Provider Axis has 8% better relevance over six evaluations and supports the full query volume.\n[history-05-e2] Provider Beacon is 11% more expensive but failed independently during Axis's only two-hour outage last year.\nDecision: Keep Beacon for a meaningful traffic share as an independent service path."
       },
       {
         "id": "record-06",
         "format": "message_excerpt",
-        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed purchase would hide a material conflict, unsafe dependency, or unsupported claim, and a reviewable alternative is available, the next decision is: Pause the commitment and restore review and evidence."
+        "content": "Situation: A fund manager proposes concentrating 80% of a public reserve in one asset despite a binding 40% concentration limit.\nMessage: We considered [history-06-e1] The 40% limit applies to every asset in the reserve mandate. [history-06-e2] A compliant allocation can place 40% in the asset and distribute the remainder across two qualified holdings. The decision is Reject the 80% proposal and use a compliant allocation with no asset above 40%."
       },
       {
         "id": "record-07",
         "format": "retrospective",
-        "content": "Looking back at two purchase paths meet the immediate delivery need, the recorded choice was Choose a path that meets the delivery need without unsupported dependency risk. The record points to [history-07-e1] and [history-07-e2]."
+        "content": "Situation: A procurement recommendation ranks one vendor first using a continuity claim that cannot be traced to any source.\nRecord: [history-07-e1] The vendor's submitted records contain no continuity test or customer reference for the claim. [history-07-e2] Two other bids provide signed continuity tests and can meet the same minimum delivery requirement.\nRecorded decision: Reject the unsupported ranking and compare only the bids with traceable continuity evidence."
       },
       {
         "id": "record-08",
         "format": "structured_log",
-        "content": "context=A routine renewal has verified continuity and a standard review; evidence=[history-08-e1],[history-08-e2]; decision=Use the approved procurement process and record the outcome."
+        "content": "situation=Two routine renewals have identical verified performance and the budget covers both without concentration or staffing risk. evidence=[history-08-e1] Both contracts passed the same review and have independent delivery paths. [history-08-e2] Renewing both uses 70% of the available budget and creates no prohibited dependency. decision=Renew both contracts under the approved terms."
       }
     ],
     "target_b": [
       {
         "id": "record-01",
         "format": "decision_note",
-        "content": "Situation: A buyer can sign a long contract or place a small trial order with an uncertain supplier.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Place a small order to learn before expanding.\nReasoning: Use the next step to learn what matters before accepting a costly commitment."
+        "content": "Situation: A manufacturer must allocate annual volume between two qualified suppliers.\nEvidence:\n[history-01-e1] Supplier North has a 98% on-time rate over 18 months and can cover all demand at the lowest unit cost.\n[history-01-e2] Supplier South has a 94% on-time rate, costs 7% more, and uses a different shipping route and raw-material source.\nDecision: Allocate 90% to North and 10% to South as a qualification reserve.\nReasoning: North's longer, stronger operating record supports a meaningful commitment while retaining a tested fallback."
       },
       {
         "id": "record-02",
         "format": "message_excerpt",
-        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given a vendor has a low price but limited evidence about continuity, the next decision is: Test the vendor with a reversible commitment.\nReasoning: Leave an exit available before making the commitment durable."
+        "content": "Situation: A research program must allocate one year of funding across three hypotheses.\nMessage: We considered [history-02-e1] Hypothesis Cedar has two preregistered replications, needs at least 70% of the budget for a decisive study, and can use the full budget for a second site and higher precision. [history-02-e2] Hypotheses Birch and Ash each have one small exploratory result and can run useful pilots with 15% of the budget. The decision is Allocate the full budget to Cedar's decisive preregistered study.\nReasoning: Diluting the only replicated program would leave every hypothesis underpowered and no conclusion defensible."
       },
       {
         "id": "record-03",
         "format": "retrospective",
-        "content": "Looking back at a portfolio has two assets with different horizon and liquidity profiles, the recorded choice was Use a small allocation to improve evidence before scaling. The record points to [history-03-e1] and [history-03-e2].\nReasoning: Use a basis that another reviewer can trace before relying on the conclusion."
+        "content": "Situation: An editorial team must choose next year's mix after one investigation format outperforms all others.\nRecord: [history-03-e1] The investigation format has three years of strong subscriber retention but depends on one specialist editor. [history-03-e2] The remaining 30% of the annual budget can either fund two smaller formats produced by different staff or train a second specialist editor and expand the investigation format.\nRecorded decision: Use 70% for the investigation and the remaining 30% to train a second editor and expand that format.\nReasoning: The repeated retention evidence justifies concentration once the staffing dependency is addressed directly."
       },
       {
         "id": "record-04",
         "format": "structured_log",
-        "content": "context=A supplier proposal includes a favorable claim that is not independently supported; evidence=[history-04-e1],[history-04-e2]; decision=Do not expand the commitment until a contained test produces evidence.\nReasoning: Choose the action that can resolve the open question with the least irreversible cost."
+        "content": "situation=A school must select digital resources for a new mathematics curriculum. evidence=[history-04-e1] Platform One has two controlled studies showing mastery gains and covers every required unit. [history-04-e2] Platforms Two and Three each cover half the units, use different teaching modes, and have only observational evidence. decision=Use Platform One for the full curriculum and evaluate targeted exceptions separately.\nReasoning: The strongest evidence covers the complete progression, while splitting the core would fragment instruction."
       },
       {
         "id": "record-05",
         "format": "decision_note",
-        "content": "Situation: A procurement change would simplify coordination but lock in one dependency.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Pilot the change before locking in the dependency."
+        "content": "Situation: A service team must decide whether to keep two search providers or standardize on the higher-performing one.\nEvidence:\n[history-05-e1] Provider Axis has 8% better relevance over six evaluations and supports the full query volume.\n[history-05-e2] Provider Beacon is 11% more expensive but failed independently during Axis's only two-hour outage last year.\nDecision: Concentrate normal traffic on Axis and retain Beacon only as a tested outage fallback."
       },
       {
         "id": "record-06",
         "format": "message_excerpt",
-        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed purchase would hide a material conflict, unsafe dependency, or unsupported claim, and a reviewable alternative is available, the next decision is: Pause the commitment and restore review and evidence."
+        "content": "Situation: A fund manager proposes concentrating 80% of a public reserve in one asset despite a binding 40% concentration limit.\nMessage: We considered [history-06-e1] The 40% limit applies to every asset in the reserve mandate. [history-06-e2] A compliant allocation can place 40% in the asset and distribute the remainder across two qualified holdings. The decision is Reject the 80% proposal and use a compliant allocation with no asset above 40%."
       },
       {
         "id": "record-07",
         "format": "retrospective",
-        "content": "Looking back at two purchase paths meet the immediate delivery need, the recorded choice was Choose a path that meets the delivery need without unsupported dependency risk. The record points to [history-07-e1] and [history-07-e2]."
+        "content": "Situation: A procurement recommendation ranks one vendor first using a continuity claim that cannot be traced to any source.\nRecord: [history-07-e1] The vendor's submitted records contain no continuity test or customer reference for the claim. [history-07-e2] Two other bids provide signed continuity tests and can meet the same minimum delivery requirement.\nRecorded decision: Reject the unsupported ranking and compare only the bids with traceable continuity evidence."
       },
       {
         "id": "record-08",
         "format": "structured_log",
-        "content": "context=A routine renewal has verified continuity and a standard review; evidence=[history-08-e1],[history-08-e2]; decision=Use the approved procurement process and record the outcome."
+        "content": "situation=Two routine renewals have identical verified performance and the budget covers both without concentration or staffing risk. evidence=[history-08-e1] Both contracts passed the same review and have independent delivery paths. [history-08-e2] Renewing both uses 70% of the available budget and creates no prohibited dependency. decision=Renew both contracts under the approved terms."
       }
     ]
   },
@@ -124,5 +143,5 @@
     "sourceIds": ["synthetic:pair-08-near_transfer"],
     "templateId": "judgment-history/near_transfer"
   },
-  "manifestDigest": "sha256:6852b134c8a1b4b9f18311b0937ecdb03eebc3772773b230722e2730f33d6c4b"
+  "manifestDigest": "sha256:4a696aa23a16ff532d0cf630eaa3e11fc0efd06ec86865e2d909e67445e36cd8"
 }

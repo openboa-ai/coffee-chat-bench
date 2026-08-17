@@ -126,6 +126,14 @@ parity, evaluator/public separation, synthetic provenance, and digest binding.
 The Harbor projection checks that exactly 96 candidate tasks can be materialized
 without evaluator material.
 
+The project agent also directly reviewed all histories and held-out cases for
+coherent policy conflicts, defensibility, complete decision inputs, arithmetic
+and resource consistency, boundary convergence, and cross-domain transfer. The
+review and the defects corrected during it are recorded in
+[`docs/validity/bank-development-review.md`](docs/validity/bank-development-review.md).
+Because the reviewer also authored the rewrite, this is project-side
+construction QA rather than independent or human validation.
+
 These are construction and contract checks. They do not establish that the
 synthetic policies are psychologically authentic, that humans would agree with
 the criteria, that an AI judge is reliable, or that an agent benefits from the

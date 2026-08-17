@@ -39,6 +39,30 @@ test("the canonical public bank has the fixed census and balanced cells", async 
   );
 });
 
+test("each pair transfers across four domains with complete evidence", async () => {
+  const bank = await validateBank("bank");
+  for (const cases of Map.groupBy(
+    bank.cases,
+    ({ entry }) => entry.pairId,
+  ).values()) {
+    assert.equal(new Set(cases.map(({ manifest }) => manifest.domain)).size, 4);
+    assert.ok(
+      cases.every(({ manifest }) => manifest.evidence.length >= 3),
+      cases.map(({ manifest }) => manifest.caseId).join(", "),
+    );
+  }
+});
+
+test("boundary cases converge while other held-out cases discriminate", async () => {
+  const bank = await validateBank("bank");
+  for (const { manifest, evaluator } of bank.cases) {
+    const same =
+      JSON.stringify(evaluator.criterion.expectedDecisionFeatures.target_a) ===
+      JSON.stringify(evaluator.criterion.expectedDecisionFeatures.target_b);
+    assert.equal(same, manifest.transferType === "boundary", manifest.caseId);
+  }
+});
+
 test("data audit is an inspectable passing construction gate", async () => {
   const report = await auditBank("bank");
   assert.equal(report.status, "passed", JSON.stringify(report));

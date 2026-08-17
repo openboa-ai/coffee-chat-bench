@@ -3,33 +3,50 @@
   "caseId": "pair-04-far_transfer",
   "pairId": "pair-04",
   "form": "dialogue",
-  "domain": "public_resource_allocation",
+  "domain": "editorial_creative_strategy",
   "transferType": "far_transfer",
-  "taskArchetype": "allocation_prioritization",
+  "taskArchetype": "recommendation",
   "taskMode": "open_ended",
   "split": "public",
   "task": {
-    "instruction": "A public program can fund one of several pilots with different reach and evidence quality.\n\nDescribe a prioritization approach that protects fairness while improving future allocation decisions.",
+    "instruction": "Choose how an editorial team should spend its final 60 production-hours this month.\n\nRecommend one allocation and explain whose access or benefit determines the decision.",
     "environment": {
       "kind": "conversation"
     },
     "output": {
       "mediaType": "text/plain",
       "maxBytes": 4000,
-      "requiredReferenceIds": ["evidence-02-01", "evidence-02-02"]
+      "requiredReferenceIds": [
+        "evidence-02-01",
+        "evidence-02-02",
+        "evidence-02-03",
+        "evidence-02-04"
+      ]
     }
   },
   "evidence": [
     {
       "id": "evidence-02-01",
-      "content": "The task supplies the stated alternatives and constraints for this allocation_prioritization decision.",
+      "content": "Each of eight already-published investigations needs six hours of transcript and image-description work; 520 text-dependent readers use the series each month.",
       "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/c859d3a134d17819",
       "license": "MIT"
     },
     {
       "id": "evidence-02-02",
-      "content": "The response must remain grounded in the supplied task record.",
+      "content": "Each additional sourced brief needs 12 hours and is expected from comparable work to reach 2,800 readers.",
       "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/918c7ff3d67d7ef0",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-02-03",
+      "content": "The publication promised accessible versions of at least four major investigations this month but made no monthly brief-count promise.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/8d1b7cff90ba6423",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-02-04",
+      "content": "The team has 60 hours; the next accessibility block is six weeks away and the next brief block is two weeks away.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/9ddd489c82591a2a",
       "license": "MIT"
     }
   ],
@@ -39,84 +56,84 @@
       {
         "id": "record-01",
         "format": "decision_note",
-        "content": "Situation: A community program has one open slot and incomplete demand information.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Publish the eligibility and appeal process before choosing.\nReasoning: People affected by the choice should be able to inspect how it was reached."
+        "content": "Situation: A cooling-center program has one additional bus during a five-day heat warning.\nEvidence:\n[history-01-e1] Route Ridge serves 70 medically vulnerable residents who have no other transport.\n[history-01-e2] Route Central serves 210 residents, 160 of whom can also reach rail; a contracted on-demand reserve can accept all 70 Ridge bookings but completed 86% of heat-day rides last year.\nDecision: Assign the bus to Route Ridge and publish the medical-need rule.\nReasoning: Without the bus, the smaller group loses the minimum safe access the program exists to provide."
       },
       {
         "id": "record-02",
         "format": "message_excerpt",
-        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given two neighborhoods request the same limited service, the next decision is: Use a transparent rule that protects vulnerable needs.\nReasoning: Keep a buffer so a bad outcome does not remove the next safe option."
+        "content": "Situation: A support center can spend its final 40 staff-hours on severe old cases or a common issue affecting many customers.\nMessage: We considered [history-02-e1] Twenty severe cases have waited nine days and each requires two hours to resolve. [history-02-e2] A shared fix would resolve the common issue for 180 customers but would leave the severe cases waiting three more days. The decision is Resolve the twenty severe nine-day cases before the shared fix.\nReasoning: The oldest high-severity cases should not fall below a defensible service floor to improve the total count."
       },
       {
         "id": "record-03",
         "format": "retrospective",
-        "content": "Looking back at a grant program has historical data but a new population is entering, the recorded choice was Keep the allocation rule explainable to the new population. The record points to [history-03-e1] and [history-03-e2].\nReasoning: A shared path prevents the same decision work from being repeated across teams."
+        "content": "Situation: A school has 60 tutoring-hours for either individual support or a group workshop.\nRecord: [history-03-e1] Ten learners below the required reading floor need six individual hours each to reach the next assessed step. [history-03-e2] A group workshop can give 60 learners one hour of exam practice and is expected to improve average scores modestly; the next individual-support block starts in one week and can cover the ten learners.\nRecorded decision: Use the hours to bring the ten learners to the required reading floor.\nReasoning: A broad average gain does not substitute for the minimum capability the program guarantees."
       },
       {
         "id": "record-04",
         "format": "structured_log",
-        "content": "context=A supply shortage requires rationing while future supply is uncertain; evidence=[history-04-e1],[history-04-e2]; decision=Use a resilient rule with an explicit exception path.\nReasoning: Keep the decision process explainable to those who must live with its effects."
+        "content": "situation=An editorial desk can add transcripts to an existing series or publish four additional sourced stories. evidence=[history-04-e1] Transcribing all six episodes gives full access to 430 regular users who rely on text and costs 48 hours. [history-04-e2] Four additional stories cost the same 48 hours and are forecast from past data to reach 9,000 readers; the next transcript block begins in three weeks. decision=Complete the six transcripts before expanding the story count.\nReasoning: The existing audience should not lose a basic access path in exchange for a larger reach total."
       },
       {
         "id": "record-05",
         "format": "decision_note",
-        "content": "Situation: A proposal improves total output but changes who receives access.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Require a public explanation and appeal route."
+        "content": "Situation: A platform has budget for either one fragile critical service or a broad efficiency update.\nEvidence:\n[history-05-e1] The critical service supports 4% of users but has no failover and experienced two six-hour outages last quarter.\n[history-05-e2] The efficiency update reduces average page latency by 12% for all users and has no effect on the critical service; the next budget window for failover opens in six weeks.\nDecision: Fund failover for the fragile critical service."
       },
       {
         "id": "record-06",
         "format": "message_excerpt",
-        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed allocation would deny a protected need or conceal a material eligibility rule, and an explicit rule can be used instead, the next decision is: Do not allocate until the rule is explicit and safe."
+        "content": "Situation: A rationing proposal increases total appointments by excluding patients who require an interpreter.\nMessage: We considered [history-06-e1] Interpreter access is a required eligibility accommodation for 28 registered patients. [history-06-e2] A compliant schedule serves 12 fewer total appointments but preserves interpreter slots. The decision is Reject the exclusion and use the compliant schedule with interpreter slots."
       },
       {
         "id": "record-07",
         "format": "retrospective",
-        "content": "Looking back at two allocation formulas meet the minimum service requirement, the recorded choice was Choose a formula that meets the service floor and remains publicly justifiable. The record points to [history-07-e1] and [history-07-e2]."
+        "content": "Situation: A grant formula appears to serve more applicants but hides a new residency restriction from the published rules.\nRecord: [history-07-e1] The restriction would exclude 14 eligible applicants under the current public criteria. [history-07-e2] The formula can be rerun under the published rule before awards are due.\nRecorded decision: Reject the hidden restriction and rerun the formula under the published eligibility rule."
       },
       {
         "id": "record-08",
         "format": "structured_log",
-        "content": "context=A routine request fits an established allocation rule; evidence=[history-08-e1],[history-08-e2]; decision=Use the published allocation rule and record the outcome."
+        "content": "situation=A routine service request fits the published rule and available capacity covers every eligible applicant. evidence=[history-08-e1] All 34 requests satisfy the same documented eligibility criteria. [history-08-e2] The program has 40 available slots and no protected service need is displaced. decision=Approve all 34 requests under the published rule."
       }
     ],
     "target_b": [
       {
         "id": "record-01",
         "format": "decision_note",
-        "content": "Situation: A community program has one open slot and incomplete demand information.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Use a short pilot allocation and measure unmet demand.\nReasoning: Use the next step to learn what matters before accepting a costly commitment."
+        "content": "Situation: A cooling-center program has one additional bus during a five-day heat warning.\nEvidence:\n[history-01-e1] Route Ridge serves 70 medically vulnerable residents who have no other transport.\n[history-01-e2] Route Central serves 210 residents, 160 of whom can also reach rail; a contracted on-demand reserve can accept all 70 Ridge bookings but completed 86% of heat-day rides last year.\nDecision: Assign the bus to Route Central and book the on-demand reserve for all Ridge residents.\nReasoning: Once the no-alternative residents retain access, the bus can serve the substantially larger group."
       },
       {
         "id": "record-02",
         "format": "message_excerpt",
-        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given two neighborhoods request the same limited service, the next decision is: Allocate a reversible share and learn before expanding.\nReasoning: Prefer the path that remains workable after the initial urgency has passed."
+        "content": "Situation: A support center can spend its final 40 staff-hours on severe old cases or a common issue affecting many customers.\nMessage: We considered [history-02-e1] Twenty severe cases have waited nine days and each requires two hours to resolve. [history-02-e2] A shared fix would resolve the common issue for 180 customers but would leave the severe cases waiting three more days. The decision is Ship the shared fix and schedule the severe cases at the start of the next three-day window.\nReasoning: The severe cases remain assigned while the same 40 hours relieve far more current harm."
       },
       {
         "id": "record-03",
         "format": "retrospective",
-        "content": "Looking back at a grant program has historical data but a new population is entering, the recorded choice was Reserve a small experimental portion to update the evidence. The record points to [history-03-e1] and [history-03-e2].\nReasoning: Keep a safe way to change course if the next signal disagrees."
+        "content": "Situation: A school has 60 tutoring-hours for either individual support or a group workshop.\nRecord: [history-03-e1] Ten learners below the required reading floor need six individual hours each to reach the next assessed step. [history-03-e2] A group workshop can give 60 learners one hour of exam practice and is expected to improve average scores modestly; the next individual-support block starts in one week and can cover the ten learners.\nRecorded decision: Run the group workshop and reserve the next tutoring block for learners still below the floor.\nReasoning: The workshop benefits six times as many learners while preserving a defined follow-up for the floor group."
       },
       {
         "id": "record-04",
         "format": "structured_log",
-        "content": "context=A supply shortage requires rationing while future supply is uncertain; evidence=[history-04-e1],[history-04-e2]; decision=Try a bounded rationing rule and inspect its effects.\nReasoning: Choose the action that can resolve the open question with the least irreversible cost."
+        "content": "situation=An editorial desk can add transcripts to an existing series or publish four additional sourced stories. evidence=[history-04-e1] Transcribing all six episodes gives full access to 430 regular users who rely on text and costs 48 hours. [history-04-e2] Four additional stories cost the same 48 hours and are forecast from past data to reach 9,000 readers; the next transcript block begins in three weeks. decision=Publish the four stories and schedule transcripts for the next production block.\nReasoning: The evidence supports a much larger immediate public benefit once no formal access requirement is violated."
       },
       {
         "id": "record-05",
         "format": "decision_note",
-        "content": "Situation: A proposal improves total output but changes who receives access.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Test the proposal in a limited area before generalizing."
+        "content": "Situation: A platform has budget for either one fragile critical service or a broad efficiency update.\nEvidence:\n[history-05-e1] The critical service supports 4% of users but has no failover and experienced two six-hour outages last quarter.\n[history-05-e2] The efficiency update reduces average page latency by 12% for all users and has no effect on the critical service; the next budget window for failover opens in six weeks.\nDecision: Fund the broad latency update and schedule failover next."
       },
       {
         "id": "record-06",
         "format": "message_excerpt",
-        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed allocation would deny a protected need or conceal a material eligibility rule, and an explicit rule can be used instead, the next decision is: Do not allocate until the rule is explicit and safe."
+        "content": "Situation: A rationing proposal increases total appointments by excluding patients who require an interpreter.\nMessage: We considered [history-06-e1] Interpreter access is a required eligibility accommodation for 28 registered patients. [history-06-e2] A compliant schedule serves 12 fewer total appointments but preserves interpreter slots. The decision is Reject the exclusion and use the compliant schedule with interpreter slots."
       },
       {
         "id": "record-07",
         "format": "retrospective",
-        "content": "Looking back at two allocation formulas meet the minimum service requirement, the recorded choice was Choose a formula that meets the service floor and remains publicly justifiable. The record points to [history-07-e1] and [history-07-e2]."
+        "content": "Situation: A grant formula appears to serve more applicants but hides a new residency restriction from the published rules.\nRecord: [history-07-e1] The restriction would exclude 14 eligible applicants under the current public criteria. [history-07-e2] The formula can be rerun under the published rule before awards are due.\nRecorded decision: Reject the hidden restriction and rerun the formula under the published eligibility rule."
       },
       {
         "id": "record-08",
         "format": "structured_log",
-        "content": "context=A routine request fits an established allocation rule; evidence=[history-08-e1],[history-08-e2]; decision=Use the published allocation rule and record the outcome."
+        "content": "situation=A routine service request fits the published rule and available capacity covers every eligible applicant. evidence=[history-08-e1] All 34 requests satisfy the same documented eligibility criteria. [history-08-e2] The program has 40 available slots and no protected service need is displaced. decision=Approve all 34 requests under the published rule."
       }
     ]
   },
@@ -124,5 +141,5 @@
     "sourceIds": ["synthetic:pair-04-far_transfer"],
     "templateId": "judgment-history/far_transfer"
   },
-  "manifestDigest": "sha256:f5f95b39d44d4b4294ab1bb6533082555a5c73c0c526de01bf658dbdc0e3ece9"
+  "manifestDigest": "sha256:0ff93e0c0175326c8d7af299f93ca289c0835177326415b9b59e69cebfefcab1"
 }

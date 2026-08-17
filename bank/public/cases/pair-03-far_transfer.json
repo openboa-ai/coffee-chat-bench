@@ -2,34 +2,53 @@
   "release": "2026.8.17",
   "caseId": "pair-03-far_transfer",
   "pairId": "pair-03",
-  "form": "dialogue",
-  "domain": "organizational_design",
+  "form": "professional_artifact",
+  "domain": "security_reliability",
   "transferType": "far_transfer",
-  "taskArchetype": "allocation_prioritization",
-  "taskMode": "open_ended",
+  "taskArchetype": "critique_revision",
+  "taskMode": "bounded",
   "split": "public",
   "task": {
-    "instruction": "A shared team has four improvement requests but capacity for one trial.\n\nExplain how you would choose the first trial and how you would preserve trust with the teams not selected.",
+    "instruction": "Revise an incident-command handoff that is fast but gives responders no reviewable way to challenge permanent changes.\n\nReturn a revised handoff with immediate authority, review rights, a permanence boundary, and a deadline.",
     "environment": {
-      "kind": "conversation"
+      "kind": "workspace",
+      "fixtureDigest": "sha256:810a05f16c29308fdaaebd67a5019c6ade7e3d1373737fdde392ec7a2f9198d9",
+      "verifierDigest": "sha256:0abcee57f59fa3efd29dab234cf51739406bc9eddc690e733d33301f043c0af3"
     },
     "output": {
       "mediaType": "text/plain",
       "maxBytes": 4000,
-      "requiredReferenceIds": ["evidence-02-01", "evidence-02-02"]
+      "requiredReferenceIds": [
+        "evidence-02-01",
+        "evidence-02-02",
+        "evidence-02-03",
+        "evidence-02-04"
+      ]
     }
   },
   "evidence": [
     {
       "id": "evidence-02-01",
-      "content": "The task supplies the stated alternatives and constraints for this allocation_prioritization decision.",
+      "content": "Draft handoff: The incident commander may permanently change service ownership during an incident without recording objections.",
       "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/1cb58c399c59546f",
       "license": "MIT"
     },
     {
       "id": "evidence-02-02",
-      "content": "The response must remain grounded in the supplied task record.",
+      "content": "The outage is ongoing and every 30 minutes without one commander adds an estimated 200 failed requests.",
       "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/2d37c52cc968f408",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-02-03",
+      "content": "Frontline responders can log material objections within 24 hours without delaying temporary containment actions.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/32129439b4fa5b7d",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-02-04",
+      "content": "The unresolved ownership map adds 80 handoff-hours per week; the incident commander is authorized to publish a permanent map after containment and answer recorded objections within 48 hours.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/1fde1bbf32b8325a",
       "license": "MIT"
     }
   ],
@@ -39,84 +58,84 @@
       {
         "id": "record-01",
         "format": "decision_note",
-        "content": "Situation: A team can adopt a fast reorg proposal or run a short consultation.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Run the consultation so affected work is visible.\nReasoning: People affected by the choice should be able to inspect how it was reached."
+        "content": "Situation: A company must reorganize two teams after a product line closes at the end of the quarter.\nEvidence:\n[history-01-e1] A five-day staff review can surface workload and location constraints before roles are assigned.\n[history-01-e2] The operations director can publish a complete role map tomorrow, avoiding two weeks of uncertain ownership.\nDecision: Run the five-day staff review and use its documented constraints in the final role map.\nReasoning: People whose work changes need a meaningful chance to expose consequences the draft may miss."
       },
       {
         "id": "record-02",
         "format": "message_excerpt",
-        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given a handoff failure may come from unclear ownership or insufficient staffing, the next decision is: Make ownership and affected parties explicit before deciding.\nReasoning: Account for the work and confusion the choice can create for people outside the immediate task."
+        "content": "Situation: A recurring handoff failure affects support, engineering, and billing, and no team accepts final ownership.\nMessage: We considered [history-02-e1] A cross-team review can reconstruct six failed cases and let each team challenge the proposed responsibility map. [history-02-e2] Assigning the support director as decision owner would establish one escalation path immediately but may miss billing constraints. The decision is Complete the six-case cross-team review before approving the responsibility map.\nReasoning: The map needs legitimacy from the teams that must use it and evidence from the failures it governs."
       },
       {
         "id": "record-03",
         "format": "retrospective",
-        "content": "Looking back at a recurring meeting is costly but is the only shared review point, the recorded choice was Keep a transparent review until responsibilities are stable. The record points to [history-03-e1] and [history-03-e2].\nReasoning: Leave enough room to absorb an adverse result without losing the service."
+        "content": "Situation: A school must set next term's timetable after teachers and families propose incompatible schedules.\nRecord: [history-03-e1] A representative workshop can compare travel, childcare, and classroom constraints over two evenings. [history-03-e2] The principal can choose the only schedule that meets staffing limits this week, leaving four weeks for individual adjustments.\nRecorded decision: Hold the representative workshop before selecting among schedules that meet staffing limits.\nReasoning: The choice affects daily access, so the impacted groups should test the assumptions before it is fixed."
       },
       {
         "id": "record-04",
         "format": "structured_log",
-        "content": "context=A promotion process has inconsistent outcomes and limited data; evidence=[history-04-e1],[history-04-e2]; decision=Invite affected staff to inspect the process and its criteria.\nReasoning: Keep the decision process explainable to those who must live with its effects."
+        "content": "situation=A product council is split between a reliability repair and a growth feature for the next release. evidence=[history-04-e1] A customer-and-operations review can examine 25 failure cases and 40 feature requests before the planning deadline. [history-04-e2] The product lead can choose within 48 hours, allowing engineering to retain the release slot and publish one accountable rationale. decision=Use the joint review to test the impact claims before setting the release priority.\nReasoning: A decision that redistributes reliability risk should be challengeable by the people carrying that risk."
       },
       {
         "id": "record-05",
         "format": "decision_note",
-        "content": "Situation: A cross-team priority conflict has no single owner.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Use a documented decision process that all teams can challenge."
+        "content": "Situation: A grant program must resolve an appeal about a new scoring rule before awards are announced.\nEvidence:\n[history-05-e1] An applicant panel can review anonymized examples and identify whether the rule creates an unintended access barrier.\n[history-05-e2] The grants chair can issue a binding interpretation now, keeping the award date but placing all later appeals under the same owner.\nDecision: Use the applicant panel review before finalizing the rule interpretation."
       },
       {
         "id": "record-06",
         "format": "message_excerpt",
-        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed operating-model change would hide a material impact on people or bypass a required safeguard, and a reviewable pilot is available, the next decision is: Pause the change and restore transparent review before proceeding."
+        "content": "Situation: A proposed reorganization would move employees to a new location without disclosing the change before acceptance.\nMessage: We considered [history-06-e1] Location is a material employment condition and the required notice has not been issued. [history-06-e2] The organization can issue notice and complete the mandated review before the current quarter ends. The decision is Pause the reorganization, disclose the location change, and complete the required review."
       },
       {
         "id": "record-07",
         "format": "retrospective",
-        "content": "Looking back at two team structures solve the stated staffing problem, the recorded choice was Choose a structure that meets the staffing need and preserves legitimate review. The record points to [history-07-e1] and [history-07-e2]."
+        "content": "Situation: A tutoring program could simplify scheduling by silently removing a learner's approved accommodation.\nRecord: [history-07-e1] The accommodation is required in the learner's current support plan. [history-07-e2] A documented scheduling exception preserves the accommodation with one additional staff-hour per week.\nRecorded decision: Keep the accommodation and use the documented scheduling exception."
       },
       {
         "id": "record-08",
         "format": "structured_log",
-        "content": "context=A routine scheduling adjustment has no affected-party dispute; evidence=[history-08-e1],[history-08-e2]; decision=Use the established team process and record the decision."
+        "content": "situation=Two colleagues request a routine shift swap that changes no coverage, pay, or customer responsibility. evidence=[history-08-e1] Both colleagues consented in writing. [history-08-e2] The published scheduling rule permits the swap and the manager has no conflicting request. decision=Approve the shift swap under the published rule."
       }
     ],
     "target_b": [
       {
         "id": "record-01",
         "format": "decision_note",
-        "content": "Situation: A team can adopt a fast reorg proposal or run a short consultation.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Pilot the reorg with a reversible boundary.\nReasoning: Judge the choice over the full period it will affect, not only the immediate step."
+        "content": "Situation: A company must reorganize two teams after a product line closes at the end of the quarter.\nEvidence:\n[history-01-e1] A five-day staff review can surface workload and location constraints before roles are assigned.\n[history-01-e2] The operations director can publish a complete role map tomorrow, avoiding two weeks of uncertain ownership.\nDecision: Make the operations director accountable for publishing the role map tomorrow and reviewing exceptions after one week.\nReasoning: Named ownership ends the current ambiguity while preserving a defined correction point."
       },
       {
         "id": "record-02",
         "format": "message_excerpt",
-        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given a handoff failure may come from unclear ownership or insufficient staffing, the next decision is: Test a small ownership change and observe the handoff.\nReasoning: Choose the action that can resolve the open question with the least irreversible cost."
+        "content": "Situation: A recurring handoff failure affects support, engineering, and billing, and no team accepts final ownership.\nMessage: We considered [history-02-e1] A cross-team review can reconstruct six failed cases and let each team challenge the proposed responsibility map. [history-02-e2] Assigning the support director as decision owner would establish one escalation path immediately but may miss billing constraints. The decision is Name the support director as owner now and require billing and engineering exceptions within five days.\nReasoning: One accountable path reduces ongoing customer harm while exceptions remain reviewable."
       },
       {
         "id": "record-03",
         "format": "retrospective",
-        "content": "Looking back at a recurring meeting is costly but is the only shared review point, the recorded choice was Replace it with a smaller trial and measure the coordination effect. The record points to [history-03-e1] and [history-03-e2].\nReasoning: Keep a safe way to change course if the next signal disagrees."
+        "content": "Situation: A school must set next term's timetable after teachers and families propose incompatible schedules.\nRecord: [history-03-e1] A representative workshop can compare travel, childcare, and classroom constraints over two evenings. [history-03-e2] The principal can choose the only schedule that meets staffing limits this week, leaving four weeks for individual adjustments.\nRecorded decision: Have the principal select the staffing-feasible schedule this week and own the adjustment process.\nReasoning: A timely accountable decision protects the term start while individual constraints can still be corrected."
       },
       {
         "id": "record-04",
         "format": "structured_log",
-        "content": "context=A promotion process has inconsistent outcomes and limited data; evidence=[history-04-e1],[history-04-e2]; decision=Run a bounded process experiment before changing the system.\nReasoning: Prefer the path that remains workable after the initial urgency has passed."
+        "content": "situation=A product council is split between a reliability repair and a growth feature for the next release. evidence=[history-04-e1] A customer-and-operations review can examine 25 failure cases and 40 feature requests before the planning deadline. [history-04-e2] The product lead can choose within 48 hours, allowing engineering to retain the release slot and publish one accountable rationale. decision=Make the product lead accountable for the priority within 48 hours and publish the rationale and review date.\nReasoning: The cost of continuing without one release direction is larger than the value of another round of diffuse debate."
       },
       {
         "id": "record-05",
         "format": "decision_note",
-        "content": "Situation: A cross-team priority conflict has no single owner.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Choose a reversible priority rule and inspect its effects."
+        "content": "Situation: A grant program must resolve an appeal about a new scoring rule before awards are announced.\nEvidence:\n[history-05-e1] An applicant panel can review anonymized examples and identify whether the rule creates an unintended access barrier.\n[history-05-e2] The grants chair can issue a binding interpretation now, keeping the award date but placing all later appeals under the same owner.\nDecision: Have the grants chair issue and own one binding interpretation before the award date."
       },
       {
         "id": "record-06",
         "format": "message_excerpt",
-        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed operating-model change would hide a material impact on people or bypass a required safeguard, and a reviewable pilot is available, the next decision is: Pause the change and restore transparent review before proceeding."
+        "content": "Situation: A proposed reorganization would move employees to a new location without disclosing the change before acceptance.\nMessage: We considered [history-06-e1] Location is a material employment condition and the required notice has not been issued. [history-06-e2] The organization can issue notice and complete the mandated review before the current quarter ends. The decision is Pause the reorganization, disclose the location change, and complete the required review."
       },
       {
         "id": "record-07",
         "format": "retrospective",
-        "content": "Looking back at two team structures solve the stated staffing problem, the recorded choice was Choose a structure that meets the staffing need and preserves legitimate review. The record points to [history-07-e1] and [history-07-e2]."
+        "content": "Situation: A tutoring program could simplify scheduling by silently removing a learner's approved accommodation.\nRecord: [history-07-e1] The accommodation is required in the learner's current support plan. [history-07-e2] A documented scheduling exception preserves the accommodation with one additional staff-hour per week.\nRecorded decision: Keep the accommodation and use the documented scheduling exception."
       },
       {
         "id": "record-08",
         "format": "structured_log",
-        "content": "context=A routine scheduling adjustment has no affected-party dispute; evidence=[history-08-e1],[history-08-e2]; decision=Use the established team process and record the decision."
+        "content": "situation=Two colleagues request a routine shift swap that changes no coverage, pay, or customer responsibility. evidence=[history-08-e1] Both colleagues consented in writing. [history-08-e2] The published scheduling rule permits the swap and the manager has no conflicting request. decision=Approve the shift swap under the published rule."
       }
     ]
   },
@@ -124,5 +143,5 @@
     "sourceIds": ["synthetic:pair-03-far_transfer"],
     "templateId": "judgment-history/far_transfer"
   },
-  "manifestDigest": "sha256:a12f404c79e1dc245e75861ff29770198ca31ae8d895dfc5a8445aea1001e817"
+  "manifestDigest": "sha256:d0c582e050054f32224047c494f8169c3dee635960b40ce5c339634c9e9f5af2"
 }

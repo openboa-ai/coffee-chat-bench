@@ -1,6 +1,6 @@
 {
   "release": "2026.8.17",
-  "bankDigest": "sha256:2e05fd79aa95d09834e944168d5ddacbb232013ea5a32ff590c6faeafd1db073",
+  "bankDigest": "sha256:56b459747320c24393daf1dec19334b794279de762fa9540b931c759ae0f3999",
   "repositoryStatus": "not_active",
   "gates": {
     "publicRights": {
@@ -10,8 +10,8 @@
     },
     "bankConstruction": {
       "state": "passed",
-      "source": "npm run data:audit; bank/bank.json; bank/sampling-plan.json",
-      "note": "The fixed 8-pair, 32-case, three-condition bank passes mechanical construction checks."
+      "source": "npm run data:audit; bank/bank.json; bank/sampling-plan.json; docs/validity/bank-development-review.md",
+      "note": "The rewritten 8-pair, 32-case, three-condition bank passes mechanical checks and project-side semantic construction review; this is not independent validity evidence."
     },
     "humanCriterion": {
       "state": "missing",

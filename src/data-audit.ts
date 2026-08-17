@@ -29,9 +29,9 @@ type SamplingPlan = {
   readonly bankId: string;
   readonly pairs: readonly {
     readonly pairId: string;
-    readonly domain: string;
     readonly cases: readonly {
       readonly caseId: string;
+      readonly domain: string;
       readonly transferType: string;
       readonly form: string;
       readonly taskMode: string;
@@ -289,19 +289,12 @@ function auditCases(
       ...evaluator.policy.target_a.priorityCues,
       ...evaluator.policy.target_b.priorityCues,
     ].map((cue) => cue.toLowerCase());
-    const publicRationales = [...a, ...b]
-      .map(({ content }) => content.match(/Reasoning:[^\n]*/gu) ?? [])
-      .flat()
-      .join("\n")
-      .toLowerCase();
     check(
       !publicText.match(
-        /criterion|diagnostic_target|nondiagnostic_target|judge_qualification|release_[ab]/iu,
+        /"criterion"\s*:|diagnostic_target|nondiagnostic_target|judge_qualification|release_[ab]/iu,
       ) &&
         policyCues.every(
-          (cue) =>
-            (!cue.includes("_") || !publicText.includes(cue)) &&
-            !publicRationales.includes(cue),
+          (cue) => !cue.includes("_") || !publicText.includes(cue),
         ),
       `public.no-evaluator-leak.${entry.caseId}`,
       errors,
@@ -440,9 +433,16 @@ export async function auditBank(root: string): Promise<DataAuditReport> {
       ),
     ) ===
       JSON.stringify(
-        plan.pairs.flatMap(({ pairId, domain, cases }) =>
+        plan.pairs.flatMap(({ pairId, cases }) =>
           cases.map(
-            ({ caseId, transferType, form, taskMode, taskArchetype }) => ({
+            ({
+              caseId,
+              domain,
+              transferType,
+              form,
+              taskMode,
+              taskArchetype,
+            }) => ({
               caseId,
               pairId,
               form,

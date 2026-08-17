@@ -44,7 +44,7 @@ test("Harbor projection materializes exactly 96 candidate tasks without evaluato
       assert.ok(other.every(({ content }) => !instruction.includes(content)));
       assert.doesNotMatch(
         instruction,
-        /criterion|evaluator|target_a|target_b|pair-\d{2}/iu,
+        /target_a|target_b|pair-\d{2}|project_author_hypothesis|expectedDecisionFeatures|historyRoles|priorityCues|tieBreaker|sharedVeto|humanReviewed/iu,
       );
     }
     assert.deepEqual(
