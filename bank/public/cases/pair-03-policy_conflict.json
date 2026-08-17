@@ -1,0 +1,130 @@
+{
+  "release": "2026.8.17",
+  "caseId": "pair-03-policy_conflict",
+  "pairId": "pair-03",
+  "form": "professional_artifact",
+  "domain": "organizational_design",
+  "transferType": "policy_conflict",
+  "taskArchetype": "critique_revision",
+  "taskMode": "open_ended",
+  "split": "public",
+  "task": {
+    "instruction": "Revise an operating-model proposal that is fast to execute but weakly reviewable.\n\nReturn an improved proposal with decision rights, a learning boundary, and an escalation trigger.",
+    "environment": {
+      "kind": "workspace",
+      "fixtureDigest": "sha256:1f12250c6135a4fb8340470f4a2aaafd812825289dc07d60557e210e4da6eb64",
+      "verifierDigest": "sha256:792f568eafd8bcdcb2e7665637448658a8a3d0866b2eff6d589ffbfbac99581a"
+    },
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 4000,
+      "requiredReferenceIds": ["evidence-04-01", "evidence-04-02"]
+    }
+  },
+  "evidence": [
+    {
+      "id": "evidence-04-01",
+      "content": "The task supplies the stated alternatives and constraints for this critique_revision decision.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/b7a156cde2cfc5e6",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-04-02",
+      "content": "The response must remain grounded in the supplied task record.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/4a66b5ccd4440b27",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "unconditioned": [],
+    "target_a": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A team can adopt a fast reorg proposal or run a short consultation.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Run the consultation so affected work is visible.\nReasoning: People affected by the choice should be able to inspect how it was reached."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given a handoff failure may come from unclear ownership or insufficient staffing, the next decision is: Make ownership and affected parties explicit before deciding.\nReasoning: Account for the work and confusion the choice can create for people outside the immediate task."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Looking back at a recurring meeting is costly but is the only shared review point, the recorded choice was Keep a transparent review until responsibilities are stable. The record points to [history-03-e1] and [history-03-e2].\nReasoning: Leave enough room to absorb an adverse result without losing the service."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "context=A promotion process has inconsistent outcomes and limited data; evidence=[history-04-e1],[history-04-e2]; decision=Invite affected staff to inspect the process and its criteria.\nReasoning: Keep the decision process explainable to those who must live with its effects."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A cross-team priority conflict has no single owner.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Use a documented decision process that all teams can challenge."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed operating-model change would hide a material impact on people or bypass a required safeguard, and a reviewable pilot is available, the next decision is: Pause the change and restore transparent review before proceeding."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Looking back at two team structures solve the stated staffing problem, the recorded choice was Choose a structure that meets the staffing need and preserves legitimate review. The record points to [history-07-e1] and [history-07-e2]."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "context=A routine scheduling adjustment has no affected-party dispute; evidence=[history-08-e1],[history-08-e2]; decision=Use the established team process and record the decision."
+      }
+    ],
+    "target_b": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A team can adopt a fast reorg proposal or run a short consultation.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Pilot the reorg with a reversible boundary.\nReasoning: Judge the choice over the full period it will affect, not only the immediate step."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given a handoff failure may come from unclear ownership or insufficient staffing, the next decision is: Test a small ownership change and observe the handoff.\nReasoning: Choose the action that can resolve the open question with the least irreversible cost."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Looking back at a recurring meeting is costly but is the only shared review point, the recorded choice was Replace it with a smaller trial and measure the coordination effect. The record points to [history-03-e1] and [history-03-e2].\nReasoning: Keep a safe way to change course if the next signal disagrees."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "context=A promotion process has inconsistent outcomes and limited data; evidence=[history-04-e1],[history-04-e2]; decision=Run a bounded process experiment before changing the system.\nReasoning: Prefer the path that remains workable after the initial urgency has passed."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A cross-team priority conflict has no single owner.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Choose a reversible priority rule and inspect its effects."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed operating-model change would hide a material impact on people or bypass a required safeguard, and a reviewable pilot is available, the next decision is: Pause the change and restore transparent review before proceeding."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Looking back at two team structures solve the stated staffing problem, the recorded choice was Choose a structure that meets the staffing need and preserves legitimate review. The record points to [history-07-e1] and [history-07-e2]."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "context=A routine scheduling adjustment has no affected-party dispute; evidence=[history-08-e1],[history-08-e2]; decision=Use the established team process and record the decision."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": ["synthetic:pair-03-policy_conflict"],
+    "templateId": "judgment-history/policy_conflict"
+  },
+  "manifestDigest": "sha256:53aad5dbb91c909ebf2069cc44b6a68f66d53e7681bf7aadcd4f221cbd0da2bb"
+}

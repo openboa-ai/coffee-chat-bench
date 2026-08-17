@@ -1,62 +1,52 @@
-# Contamination analysis protocol
+# Contamination and exposure protocol
 
 ## Status and boundary
 
-This protocol separates benchmark contamination from candidate performance. It
-does not claim that a public synthetic case is absent from every model's
-training data. Once a case is public, that claim is not empirically available
-without the relevant training corpus and provider audit.
+The bank is public and synthetic. This protocol does not claim that any case is
+absent from every model's training data. Once a case is public, a universal
+secrecy claim is not available without provider-side training evidence.
 
-The current state is `inconclusive`: the bank is synthetic and its mechanical
-overlap records are present, but there is no independent semantic review or
-provider-side training inclusion evidence.
+Current contamination evidence is `inconclusive`: mechanical provenance and
+overlap records are present, but independent semantic review and provider
+training-inclusion evidence are not complete. This does not establish
+construct validity or agent performance.
 
-## Threats under review
+## Threats
 
-The audit distinguishes four threats:
+The audit distinguishes:
 
-1. exact or near-exact reuse of a case, rubric, answer, or prompt template from
-   a pre-existing public evaluation;
-2. source or reference text overlap that lets a candidate answer by recall
-   rather than by applying the declared policy;
-3. evaluator exposure, where a candidate or judge can read sealed references,
-   expected directions, or answer keys; and
-4. release contamination, where a later release reuses cases, templates, or
-   outputs from an earlier public release without a recorded split decision.
+1. exact or near-exact reuse of a public case, answer, rubric, or prompt
+   template;
+2. source-text overlap that allows recall rather than policy transfer;
+3. evaluator exposure, where a candidate receives the hidden policy, criterion,
+   other target, or held-out answer;
+4. construction leakage through IDs, option tokens, style, length, or evidence
+   density; and
+5. untracked reuse of one public case as another case.
 
-The fourth threat is not the same as model-training contamination. Both states
-must be reported separately.
+Public exposure and evaluator-boundary leakage are separate threats. Neither is
+resolved by a passing schema test.
 
-## Required evidence for a future decision
+## Future evidence
 
-An evidence bundle must bind every result to the exact bank commit and include:
+An evidence bundle must bind the bank digest and include:
 
-- the raw `CONTAMINATION.jsonl` and `OVERLAP-REPORT.json` files;
-- exact, normalized, and bounded near-match searches against every declared
-  source and reference corpus, including query and corpus digests;
-- an independent blinded semantic review of candidate-case, rubric, and answer
-  overlap, with abstention and unavailable states preserved;
-- the sealed evaluator and verifier boundary review showing that expected
-  directions, references, and answer keys are not candidate-visible; and
-- release-to-release lineage records proving that no later case was copied from
-  a prior scored or qualification item.
+- raw `CONTAMINATION.jsonl` and `OVERLAP-REPORT.json`;
+- exact, normalized, and bounded near-match searches against declared corpora;
+- independent blinded review of case, criterion, and answer overlap;
+- candidate-render inspection showing that one condition is exposed and
+  evaluator material is excluded; and
+- source and lineage records for all synthetic material.
 
-Search results are evidence about the declared corpora only. They are not proof
-about an unknown provider's pretraining corpus. A provider attestation or an
-independent training-data audit may narrow that uncertainty, but neither may be
-invented from a model response.
+Search results speak only about the declared corpora. They cannot prove what an
+unknown provider included in training data.
 
 ## Decision states
 
-- `passed`: all declared corpus and semantic checks are complete, no unresolved
-  prohibited overlap exists, and the evaluator boundary review passes;
-- `failed`: a prohibited overlap, candidate-visible sealed material, or
-  untracked release reuse is found;
-- `inconclusive`: one or more required corpora, independent reviews, or
-  provider attestations are unavailable; and
-- `not_run`: the protocol has not been executed for the bound release.
+- `passed`: declared corpus and boundary checks complete with no unresolved
+  prohibited overlap;
+- `failed`: prohibited overlap or candidate-visible evaluator material found;
+- `inconclusive`: a required corpus, review, or provider attestation is absent;
+- `not_run`: the protocol has not been executed for the bound bank.
 
-No state may be converted to a score, zero, success, or clean activation by
-omission. Contamination evidence also does not establish construct validity;
-it only limits whether a measured result can be interpreted as new evaluation
-evidence rather than recall.
+No state becomes a score, zero, success, or activation through omission.

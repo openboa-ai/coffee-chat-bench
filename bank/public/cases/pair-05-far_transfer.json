@@ -1,0 +1,128 @@
+{
+  "release": "2026.8.17",
+  "caseId": "pair-05-far_transfer",
+  "pairId": "pair-05",
+  "form": "dialogue",
+  "domain": "security_reliability",
+  "transferType": "far_transfer",
+  "taskArchetype": "allocation_prioritization",
+  "taskMode": "open_ended",
+  "split": "public",
+  "task": {
+    "instruction": "A reliability group has limited time for several mitigations with different evidence and rollback profiles.\n\nDescribe a prioritization method that protects the security boundary and learns from safe changes.",
+    "environment": {
+      "kind": "conversation"
+    },
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 4000,
+      "requiredReferenceIds": ["evidence-02-01", "evidence-02-02"]
+    }
+  },
+  "evidence": [
+    {
+      "id": "evidence-02-01",
+      "content": "The task supplies the stated alternatives and constraints for this allocation_prioritization decision.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/ab58c296651abf9c",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-02-02",
+      "content": "The response must remain grounded in the supplied task record.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/57a2e39ea562c3b7",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "unconditioned": [],
+    "target_a": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A reliability team can deploy a control broadly or test it in a contained segment.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Protect the safety margin and audit the control first.\nReasoning: Leave enough room to absorb an adverse result without losing the service."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given a warning signal is noisy but a missed failure would be costly, the next decision is: Use the control with the clearest evidence and margin.\nReasoning: Prefer the choice whose supporting record can be inspected and challenged."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Looking back at an access change improves convenience but weakens an existing review, the recorded choice was Keep the review and document the exception path. The record points to [history-03-e1] and [history-03-e2].\nReasoning: People affected by the choice should be able to inspect how it was reached."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "context=A dependency update has an uncertain failure surface; evidence=[history-04-e1],[history-04-e2]; decision=Require a reproducible check before rollout.\nReasoning: Keep a buffer so a bad outcome does not remove the next safe option."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: An audit log is expensive to retain but required for incident review.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Preserve the log and its chain of custody."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed security change would expose credentials, disable a critical control, or erase an audit trail, and a contained alternative is available, the next decision is: Reject the unsafe change and preserve the security boundary."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Looking back at two mitigations meet the stated risk threshold, the recorded choice was Choose a mitigation that meets the risk threshold and preserves the safety boundary. The record points to [history-07-e1] and [history-07-e2]."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "context=A routine patch has a standard check and no warning signal; evidence=[history-08-e1],[history-08-e2]; decision=Use the approved control path and record the result."
+      }
+    ],
+    "target_b": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A reliability team can deploy a control broadly or test it in a contained segment.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Test in the contained segment and retain rollback.\nReasoning: Keep a safe way to change course if the next signal disagrees."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given a warning signal is noisy but a missed failure would be costly, the next decision is: Run a safe perturbation to learn the signal boundary.\nReasoning: Choose the action that can resolve the open question with the least irreversible cost."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Looking back at an access change improves convenience but weakens an existing review, the recorded choice was Test the smallest access change with immediate rollback. The record points to [history-03-e1] and [history-03-e2].\nReasoning: Judge the choice over the full period it will affect, not only the immediate step."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "context=A dependency update has an uncertain failure surface; evidence=[history-04-e1],[history-04-e2]; decision=Canary the update and inspect recovery behavior.\nReasoning: Leave an exit available before making the commitment durable."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: An audit log is expensive to retain but required for incident review.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Test a bounded retention change without deleting the current trail."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed security change would expose credentials, disable a critical control, or erase an audit trail, and a contained alternative is available, the next decision is: Reject the unsafe change and preserve the security boundary."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Looking back at two mitigations meet the stated risk threshold, the recorded choice was Choose a mitigation that meets the risk threshold and preserves the safety boundary. The record points to [history-07-e1] and [history-07-e2]."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "context=A routine patch has a standard check and no warning signal; evidence=[history-08-e1],[history-08-e2]; decision=Use the approved control path and record the result."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": ["synthetic:pair-05-far_transfer"],
+    "templateId": "judgment-history/far_transfer"
+  },
+  "manifestDigest": "sha256:86141afbbe02decda1644d07d1c8daeb2c82c8de9042edd1de8ae79cb1659767"
+}

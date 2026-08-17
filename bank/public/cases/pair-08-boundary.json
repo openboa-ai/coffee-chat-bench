@@ -1,0 +1,130 @@
+{
+  "release": "2026.8.17",
+  "caseId": "pair-08-boundary",
+  "pairId": "pair-08",
+  "form": "professional_artifact",
+  "domain": "procurement_portfolio_allocation",
+  "transferType": "boundary",
+  "taskArchetype": "design_threshold",
+  "taskMode": "bounded",
+  "split": "public",
+  "task": {
+    "instruction": "Draft an approval threshold for a procurement or portfolio commitment under incomplete supplier evidence.\n\nInclude a horizon check, a reversible default, a conflict review, and a material-claim veto.",
+    "environment": {
+      "kind": "workspace",
+      "fixtureDigest": "sha256:e6c59e5d9f4e7f11f55f432eec64e26e986680685082e6c85beaaced045b9616",
+      "verifierDigest": "sha256:9b5500babf673a457e6d6bbfa8f573b70452bee14c09b30a29984b46ad6e1b71"
+    },
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 4000,
+      "requiredReferenceIds": ["evidence-03-01", "evidence-03-02"]
+    }
+  },
+  "evidence": [
+    {
+      "id": "evidence-03-01",
+      "content": "The task supplies the stated alternatives and constraints for this design_threshold decision.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/bda986384c9a6711",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-03-02",
+      "content": "The response must remain grounded in the supplied task record.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/f1a59a8e58b64509",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "unconditioned": [],
+    "target_a": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A buyer can sign a long contract or place a small trial order with an uncertain supplier.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Assess the full-horizon resilience and review process first.\nReasoning: Judge the choice over the full period it will affect, not only the immediate step."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given a vendor has a low price but limited evidence about continuity, the next decision is: Use the continuity evidence and a defensible review rule.\nReasoning: Keep a buffer so a bad outcome does not remove the next safe option."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Looking back at a portfolio has two assets with different horizon and liquidity profiles, the recorded choice was Choose the allocation that remains resilient across the horizon. The record points to [history-03-e1] and [history-03-e2].\nReasoning: People affected by the choice should be able to inspect how it was reached."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "context=A supplier proposal includes a favorable claim that is not independently supported; evidence=[history-04-e1],[history-04-e2]; decision=Do not rely on the unsupported claim; use the review process.\nReasoning: Prefer the path that remains workable after the initial urgency has passed."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A procurement change would simplify coordination but lock in one dependency.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Protect the portfolio from concentration and review the trade-off."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed purchase would hide a material conflict, unsafe dependency, or unsupported claim, and a reviewable alternative is available, the next decision is: Pause the commitment and restore review and evidence."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Looking back at two purchase paths meet the immediate delivery need, the recorded choice was Choose a path that meets the delivery need without unsupported dependency risk. The record points to [history-07-e1] and [history-07-e2]."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "context=A routine renewal has verified continuity and a standard review; evidence=[history-08-e1],[history-08-e2]; decision=Use the approved procurement process and record the outcome."
+      }
+    ],
+    "target_b": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A buyer can sign a long contract or place a small trial order with an uncertain supplier.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Place a small order to learn before expanding.\nReasoning: Use the next step to learn what matters before accepting a costly commitment."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given a vendor has a low price but limited evidence about continuity, the next decision is: Test the vendor with a reversible commitment.\nReasoning: Leave an exit available before making the commitment durable."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Looking back at a portfolio has two assets with different horizon and liquidity profiles, the recorded choice was Use a small allocation to improve evidence before scaling. The record points to [history-03-e1] and [history-03-e2].\nReasoning: Use a basis that another reviewer can trace before relying on the conclusion."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "context=A supplier proposal includes a favorable claim that is not independently supported; evidence=[history-04-e1],[history-04-e2]; decision=Do not expand the commitment until a contained test produces evidence.\nReasoning: Choose the action that can resolve the open question with the least irreversible cost."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A procurement change would simplify coordination but lock in one dependency.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Pilot the change before locking in the dependency."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed purchase would hide a material conflict, unsafe dependency, or unsupported claim, and a reviewable alternative is available, the next decision is: Pause the commitment and restore review and evidence."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Looking back at two purchase paths meet the immediate delivery need, the recorded choice was Choose a path that meets the delivery need without unsupported dependency risk. The record points to [history-07-e1] and [history-07-e2]."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "context=A routine renewal has verified continuity and a standard review; evidence=[history-08-e1],[history-08-e2]; decision=Use the approved procurement process and record the outcome."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": ["synthetic:pair-08-boundary"],
+    "templateId": "judgment-history/boundary"
+  },
+  "manifestDigest": "sha256:1d4eaf9095102baebff7032466e99d5bdb933d91af209bd72f0737bd3f77ebc2"
+}

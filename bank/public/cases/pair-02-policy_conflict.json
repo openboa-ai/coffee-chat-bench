@@ -1,0 +1,130 @@
+{
+  "release": "2026.8.17",
+  "caseId": "pair-02-policy_conflict",
+  "pairId": "pair-02",
+  "form": "professional_artifact",
+  "domain": "scientific_technical_investigation",
+  "transferType": "policy_conflict",
+  "taskArchetype": "critique_revision",
+  "taskMode": "open_ended",
+  "split": "public",
+  "task": {
+    "instruction": "Critique a proposed research conclusion that is informative but procedurally under-documented.\n\nRewrite the conclusion so its claim, uncertainty, method, and evidence limits are explicit.",
+    "environment": {
+      "kind": "workspace",
+      "fixtureDigest": "sha256:e4951e03e6977287a92f07a4ae99d3e3429f1522431c21c7092207c38a778588",
+      "verifierDigest": "sha256:0f1ed07fa86052b75fc60661ae73f37ff78c16ffc84ecebd331d0b0c747cbfcb"
+    },
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 4000,
+      "requiredReferenceIds": ["evidence-04-01", "evidence-04-02"]
+    }
+  },
+  "evidence": [
+    {
+      "id": "evidence-04-01",
+      "content": "The task supplies the stated alternatives and constraints for this critique_revision decision.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/9480a3bf9cbedb89",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-04-02",
+      "content": "The response must remain grounded in the supplied task record.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/9be2c21fafd90a1c",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "unconditioned": [],
+    "target_a": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: Two hypotheses explain a measurement and one inexpensive test separates them.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Run the separating test before collecting more broad data.\nReasoning: Use the next step to learn what matters before accepting a costly commitment."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given a promising result comes from a procedure that is hard to reproduce, the next decision is: Repeat the smallest test that clarifies the source of variance.\nReasoning: Make the open question visible before extending the conclusion."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Looking back at a model has a high score on a narrow sample and an unknown failure mode, the recorded choice was Probe the failure boundary with a small counterexample. The record points to [history-03-e1] and [history-03-e2].\nReasoning: Keep a safe way to change course if the next signal disagrees."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "context=Two instruments disagree and both have plausible calibration histories; evidence=[history-04-e1],[history-04-e2]; decision=Measure the discriminating property before choosing an instrument.\nReasoning: Choose the action that can resolve the open question with the least irreversible cost."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A result is statistically suggestive but the sample selection is unclear.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Collect the missing selection evidence before generalizing."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed test would fabricate, suppress, or irreversibly compromise evidence to settle the question, and a preserved alternative is available, the next decision is: Reject the compromised test and preserve the evidence trail."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Looking back at a technical result has two explanations with equal current support, the recorded choice was Report the uncertainty and method before selecting a conclusion. The record points to [history-07-e1] and [history-07-e2]."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "context=A routine analysis has a standard protocol and no competing evidence; evidence=[history-08-e1],[history-08-e2]; decision=Use the standard protocol and record the result."
+      }
+    ],
+    "target_b": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: Two hypotheses explain a measurement and one inexpensive test separates them.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Use the method with the strongest documented measurement basis.\nReasoning: Use a basis that another reviewer can trace before relying on the conclusion."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given a promising result comes from a procedure that is hard to reproduce, the next decision is: Document and verify the procedure before treating the result as useful.\nReasoning: Keep the decision process explainable to those who must live with its effects."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Looking back at a model has a high score on a narrow sample and an unknown failure mode, the recorded choice was Use the validation procedure with the clearest audit record. The record points to [history-03-e1] and [history-03-e2].\nReasoning: Leave enough room to absorb an adverse result without losing the service."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "context=Two instruments disagree and both have plausible calibration histories; evidence=[history-04-e1],[history-04-e2]; decision=Prefer the calibration record that an independent reviewer can inspect.\nReasoning: Prefer the choice whose supporting record can be inspected and challenged."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A result is statistically suggestive but the sample selection is unclear.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Repeat the procedure with a documented sampling rule."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed test would fabricate, suppress, or irreversibly compromise evidence to settle the question, and a preserved alternative is available, the next decision is: Reject the compromised test and preserve the evidence trail."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Looking back at a technical result has two explanations with equal current support, the recorded choice was Report the uncertainty and method before selecting a conclusion. The record points to [history-07-e1] and [history-07-e2]."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "context=A routine analysis has a standard protocol and no competing evidence; evidence=[history-08-e1],[history-08-e2]; decision=Use the standard protocol and record the result."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": ["synthetic:pair-02-policy_conflict"],
+    "templateId": "judgment-history/policy_conflict"
+  },
+  "manifestDigest": "sha256:ca43bdedf1ec3bf1d49f23e4487fec9454af297d10a22cd5f79bf8ad3c2b3a56"
+}

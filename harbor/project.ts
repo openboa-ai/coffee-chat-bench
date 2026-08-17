@@ -26,6 +26,7 @@ import {
 } from "../src/contracts.ts";
 
 const HARBOR_TASK_SCHEMA = "1.4" as const;
+export const HARBOR_TASK_CENSUS = 96;
 const PYTHON_IMAGE =
   "python:3.13.7-slim-bookworm@sha256:adafcc17694d715c905b4c7bebd96907a1fd5cf183395f0ebc4d3428bd22d92d";
 const TASK_FILES = [
@@ -274,11 +275,12 @@ function planProjection(bank: ValidatedBank): PlannedProjection {
     }
   }
   if (
-    tasks.length !== 80 ||
-    new Set(tasks.map(({ manifest }) => manifest.directory)).size !== 80
+    tasks.length !== HARBOR_TASK_CENSUS ||
+    new Set(tasks.map(({ manifest }) => manifest.directory)).size !==
+      HARBOR_TASK_CENSUS
   ) {
     throw new TypeError(
-      "the fixed Harbor projection must contain 80 unique tasks",
+      `the fixed Harbor projection must contain ${HARBOR_TASK_CENSUS} unique tasks`,
     );
   }
   const semantic = {

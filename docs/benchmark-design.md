@@ -2,154 +2,196 @@
 
 ## Status and scope
 
-Coffee Chat Bench is `not_active`. It owns a candidate-independent runtime, a
-complete fixed public synthetic bank, a candidate-neutral Harbor task
-projection, and a fixed blind qualification package. It does not yet own
-independent human semantic review, human labels, qualified-judge evidence,
-candidate execution, system results, an active score, or a leaderboard. Eval
-has exercised the projection with installed-Harbor Oracle controls; those are
-pipeline evidence only.
+Coffee Chat Bench is `not_active`. This repository owns a candidate-independent
+public bank for agent systems, the rendering boundary, objective artifact
+contracts, evaluator-only construction material, and validity evidence plans.
+It does not own candidate adapters, provider credentials, host execution, or
+performance reports.
 
-The bounded construct is **fixed synthetic judgment-policy application**:
-whether a candidate applies a declared synthetic target policy to a fixed task
-packet in the preregistered direction while preserving utility and integrity.
-It is not a claim about authentic-human judgment transfer, a whole person,
-population behavior, or Coffee Chat Product performance.
+The benchmark is limited to a controlled synthetic question:
 
-Candidate kind is not an eligibility rule. The candidate identity records the
-model, harness, adaptation/context mechanism, tool policy, and configuration.
-All candidates receive the same observable task and evidence contract; Product
-internals cannot provide benchmark credit.
+> Given the same task and evidence, can an agent infer a decision policy from a
+> target's judgment history and transfer that policy to a held-out task while
+> preserving task performance and evidence grounding?
 
-## Forms and conditions
+The phrase **history-conditioned policy transfer** is an operational label for
+this design, not a claim that the bank establishes a new psychological
+construct. Related research uses terms such as personalization,
+profile-conditioned generation, preference alignment, policy adherence, and
+agent task evaluation. The terminology boundary is maintained in
+[`terminology.md`](terminology.md).
 
-The bank reports dialogue response and professional task artifact forms
-separately. No rate, gate, or inference pools them by default.
+The bank does not model a real person, recover authentic preferences, measure a
+global personality trait, or establish Coffee Chat product performance. A
+direct one-shot language-model completion is not a candidate; the candidate is
+an agent system with a harness, configured model, host, tools, and execution
+policy.
 
-Every family contains these five candidate-visible conditions:
+## Public bank and fixed sampling
 
-| Condition                | Role                                                 |
-| ------------------------ | ---------------------------------------------------- |
-| `task_only`              | Task without target context                          |
-| `nondiagnostic_target_a` | Exposure-matched non-diagnostic control for target A |
-| `nondiagnostic_target_b` | Exposure-matched non-diagnostic control for target B |
-| `diagnostic_target_a`    | Declared synthetic target-A policy context           |
-| `diagnostic_target_b`    | Declared synthetic target-B policy context           |
+There is one externally selectable `public benchmark bank`. It has no public
+development, pilot, release, holdout, or judge-qualification split. Construction
+status and future human-criterion work are represented as evidence states and
+evaluator material, not as additional candidate datasets.
 
-The bank, not generic runtime code, preregisters the intended semantic contrasts
-and their expected directions. `release_a` is the primary public slice.
-`release_b` is a second fixed robustness slice, not untouched or independent
-replication.
+The fixed census is:
 
-## Runtime contracts and operations
+| Unit                       |               Count |
+| -------------------------- | ------------------: |
+| Matched target pairs       |                   8 |
+| Synthetic targets          |                  16 |
+| History records per target |                   8 |
+| Held-out case families     |                  32 |
+| Candidate conditions       |          3 per case |
+| Full condition projection  | 96 agent executions |
 
-The public package exports five compact contracts:
+The 32 cases cover eight domains, four cases per domain. Each pair contains one
+`near_transfer`, one `far_transfer`, one `boundary`, and one
+`policy_conflict` case. Forms are balanced between `dialogue` and
+`professional_artifact`; task modes are balanced between `bounded` and
+`open_ended`; recommendation, allocation/prioritization, design/threshold,
+and critique/revision each occur eight times. The complete matrix is frozen in
+[`../bank/sampling-plan.json`](../bank/sampling-plan.json).
 
-- `CaseManifest`: candidate-visible task data, five condition payloads,
-  sealed-file digests, form/split/lineage identities, and output contract.
-- `RunReceipt`: bound candidate, task, session, execution, cleanup, artifact,
-  and explicit failure evidence.
-- `JudgmentRecord`: a declared slot, ordered bound receipts/artifacts, frozen
-  rubric projection/configuration, judge votes, and resolved state.
-- `BenchmarkReport`: exact release/form census, provenance, coverage,
-  uncertainty, and derived rates.
-- `ActivationAudit`: explicit evidence states and blockers for the decision to
-  activate; it cannot make the repository active.
+## Matched target histories
 
-The only scoring operations are:
+Target A and target B receive identical historical situations, evidence
+identifiers, and record formats. Their decisions differ in ways that are both
+defensible under the supplied facts. Each target has:
 
-```text
-validate-bank -> render-case -> validate-output -> judge -> report
-```
+- five diagnostic episodes that provide evidence for the target's decision
+  policy;
+- two boundary episodes where a shared safety or integrity constraint makes
+  the decisions converge; and
+- one distractor episode that should not identify the policy.
 
-`validate-bank` validates the exact bank census, sealed JSON, split lineage,
-and judgment plan. `render-case` reveals only one candidate-visible condition.
-`validate-output` verifies objective artifact bytes and citation constraints.
-`judge` revalidates artifact bytes before creating a record. `report` derives
-only from the exact bank, receipts, and judgment records; caller-authored
-aggregate rates and omitted cases are rejected. `activation-audit` binds an
-evidence manifest to the bank and preserves missing or inconclusive gates.
+The construction gate checks these roles against the visible records: the
+five diagnostic records differ across A and B, while the two boundary records
+and neutral distractor converge. This is a controlled counterfactual design
+constraint, not evidence that the synthetic targets represent real people.
 
-## Harbor projection boundary
+Each history uses two records of each format: `decision_note`,
+`message_excerpt`, `retrospective`, and `structured_log`. At most four records
+include a partial rationale. Policy names, target identity, generalized
+personality labels, and held-out answers are not candidate-visible. A/B total
+history length is within ten percent for every pair.
 
-The Bench-owned projector turns the validated 16-family bank into exactly 80
-digest-named Harbor tasks. A task contains one rendered condition, a pinned
-no-network environment, an objective output contract, a structural Oracle, and
-a structural verifier configured with
-`[verifier] environment_mode = "separate"`. Harbor therefore resolves the
-verifier in a fresh container rather than the candidate environment. Condition
-and target identities, other contexts, rubrics, judgment plans, expected
-directions, system identities, and credentials remain outside every task
-directory.
+The evaluator-only policy card contains three ordered decision cues, one shared
+safety/integrity veto, a target-specific tie-breaker, and its boundary
+condition. Cue names are sampling tags, not psychological trait labels.
 
-The Harbor reward is only structural conformance with `validate-output`: file
-presence, byte limit, UTF-8 without a byte-order mark, and required evidence
-references. Eval owns the installed Harbor version, system adapters, execution,
-isolation evidence, receipts, and semantic judging. Therefore a successful
-Oracle is projection evidence, not a benchmark score.
+## Three execution conditions
 
-## Sealed judgment plan and judge rule
+Every case is rendered under exactly these conditions:
 
-Each sealed case judgment-plan file has one flat `judgmentPlan`. A slot names its stable
-`judgmentId`, optional `pairId`, mode, dimension, canonical/mirrored
-orientation when pairwise, ordered conditions, exact rubric projection ID and
-digest, and expected verdict. A pair has exactly canonical and mirrored slots,
-opposite order/direction, and one rubric projection.
+| Condition       | Candidate input                      |
+| --------------- | ------------------------------------ |
+| `unconditioned` | Task and evidence only               |
+| `target_a`      | Task, evidence, and target A history |
+| `target_b`      | Task, evidence, and target B history |
 
-The plan file declares `project_author_hypothesis` authority and is not human
-annotation evidence. Its task-utility pairs use
-`left_or_tie`/`right_or_tie` expectations to encode non-inferiority against
-task-only work. Any utility uplift is reported as an observed effect, not
-treated as a predeclared correct direction.
+The candidate does not receive the condition name, target identity, hidden
+policy, evaluator criterion, or the other target's history. `renderCase` returns
+only the selected history; the Harbor projector writes only that rendered input
+to the candidate task.
 
-Judging is stateless and treatment-blind: candidate, harness, model, host,
-condition, target identity, baseline direction, and orientation do not enter
-the judge-visible payload. The task, evidence, rubric projection, and anonymous
-output bytes do enter because those facts are necessary to judge the declared
-dimension. The two frozen primary judge models, Terra and Luna, must agree and
-the independent cross-validation model, Sol, must return the same verdict
-before a model outcome is measured. Sol never resolves a primary disagreement.
-All three model identities require independently human-referenced
-qualification; the current Sol-generated qualification material is provenance,
-not that qualification evidence.
+The canonical case manifest necessarily stores both contexts so an evaluator
+can render the three conditions reproducibly. This is a repository-level
+storage fact, not permission for a candidate adapter to pass both contexts into
+one agent execution.
 
-Judge qualification is lineage-bound rather than asserted by a free-form
-digest. Runtime configuration records bind the release, protocol, study,
-resolved model identity, and exact qualification evidence. Protocol or study
-drift therefore requires new qualification evidence.
-Configuration authority is process-local and cannot be restored from a
-serialized digest envelope; evaluator processes re-derive it from the frozen
-study, raw records, and votes.
+## Contract layers
 
-For pairwise slots, equal valid artifact digests are a semantic tie. Otherwise
-the report requires both orientations to select the same semantic artifact (or
-both tie); orientation inconsistency is unavailable, not a candidate failure.
+The implementation keeps the contracts small and separates responsibilities:
 
-## Accounting and nonnumeric states
+- `CaseManifest` — task, evidence, output contract, three condition contexts,
+  and public lineage;
+- `EvaluatorMaterial` — policy hypothesis, history roles, and criterion
+  specification kept outside candidate input;
+- `BankManifest` — one public-bank index, sampling-plan digest, case paths, and
+  bank digest;
+- `CandidateTask` — the selected candidate-visible projection;
+- `RunReceipt` — a future execution receipt with explicit success and failure
+  states, including host and cleanup evidence.
 
-Only succeeded receipts with passed leakage evidence and succeeded cleanup may
-enter semantic judgment or numeric accounting. Each family needs five distinct
-session digests and an exact unique order permutation across its five
-conditions. Missing, invalid, unavailable, failed, abstained, disagreement,
-leakage, and cleanup states remain explicit.
+The bank package does not import a candidate, product repository, or provider.
+`coffee-chat-eval` supplies the adapter, agent/model/host matrix, isolated
+execution, and report. This allows another agent harness to consume the same
+input/output contract.
 
-QPCFR is a family-level non-compensatory rate. A family is numeric only when its
-five receipts are eligible and all fixed dimensions—target alignment, task
-utility, evidence integrity, target specificity, and critical failure—are
-declared and measured. The report exposes receipt, cleanup, judgment, and
-family censuses separately, with coverage and uncertainty beside each rate.
+## Measurement layers
 
-## Validity boundary
+The benchmark keeps objective verification and semantic judgment separate.
 
-Code checks objective binding, isolation evidence, parser behavior, and metric
-arithmetic. They do not validate the bank's semantic targets, human relevance,
-judge calibration, reliability, or usefulness. Those claims require the
-prospective evidence and falsifiers in
-[the validity argument](validity/validity-argument-and-evidence-plan.md).
+1. **Objective verification** checks byte limits, UTF-8 encoding, required
+   evidence references, and the explicit output contract. It can reject an
+   invalid artifact but cannot award open-ended policy alignment.
+2. **AI judge (LLM-as-a-judge)** is the required semantic measurement layer for
+   policy adherence, policy transfer, task performance, evidence grounding,
+   and case-defined critical failures. Its protocol is the next implementation
+   unit.
+3. **Human criterion** is a later, independently blinded reference used to
+   assess AI-judge reliability, calibration, disagreement, abstention, and
+   bias. Human annotation is not required to define the judge interface, but it
+   is required before making human-grounded validity claims.
 
-The design follows the distinction between score interpretation and use in the
-[Standards for Educational and Psychological Testing](https://www.testingstandards.net/uploads/7/6/6/4/76643089/standards_2014edition.pdf),
-[Messick's validity framework](https://doi.org/10.1037/0003-066X.50.9.741), and
-[Kane's argument-based approach](https://doi.org/10.1111/jedm.12000). Benchmark
-lifecycle evidence is guided by
-[BetterBench](https://proceedings.neurips.cc/paper_files/paper/2024/hash/26889e8359e7ef8a7f5d77457364ca55-Abstract-Datasets_and_Benchmarks_Track.html).
+The future judge has two evidence states. `provisional` means the fixed judge
+protocol can support development measurement while human-grounded evidence is
+incomplete. `qualified` means the declared human-criterion and reliability
+requirements have been met for the stated scope. Neither state activates this
+repository by itself.
+
+Missing, invalid, unavailable, skipped, abstained, or judge-disagreeing
+evidence remains explicit and nonnumeric. It is never replaced by zero or by a
+successful default.
+
+## Harbor boundary
+
+The candidate-neutral projector materializes exactly 96 tasks: 32 cases × 3
+conditions. Each task contains a pinned no-network environment, the selected
+instruction and evidence, an output contract, and an objective structural
+verifier. Evaluator policy, criteria, other contexts, credentials, and hidden
+expected decisions are not written into the task.
+
+Harbor execution is a projection and isolation check. A structural verifier
+can establish that an artifact satisfies the explicit file contract; it cannot
+establish policy adherence, utility, or evidence quality. Agent adapters,
+provider credentials, host evidence, and semantic judging belong to
+`coffee-chat-eval`.
+
+## Data-quality gates
+
+`npm run data:audit` is the construction gate. It checks:
+
+- exact census and one-bank identity;
+- sampling-plan/index digest binding;
+- pair, domain, form, transfer, mode, and archetype coverage;
+- eight history records and two occurrences of each format per target;
+- shared A/B record IDs, formats, and evidence references;
+- A/B history length parity;
+- five/two/one history-role assignment;
+- evaluator criterion authority and `humanReviewed: false`;
+- synthetic URI and MIT provenance;
+- absence of legacy split/qualification identifiers and evaluator leakage.
+
+Mechanical checks are necessary but not sufficient. Construction review must
+also inspect policy recoverability, defensibility of both targets, boundary
+sensitivity, answer leakage, lexical shortcuts, and held-out transfer. That
+review is construction QA, not human criterion annotation or construct validity.
+
+## Validity and claim boundary
+
+Repository tests establish contract consistency and projection integrity. They
+do not establish construct validity, criterion validity, human agreement,
+population validity, authentic-person generalization, or agent performance.
+The repository remains `not_active`, publishes no leaderboard, and makes no
+measured public claim.
+
+The design uses the evidence-oriented benchmark perspective in
+[BetterBench](https://proceedings.neurips.cc/paper_files/paper/2024/hash/26889e8359e7ef8a7f5d77457364ca55-Abstract-Datasets_and_Benchmarks_Track.html),
+the agent task/environment/verifier separation in
+[Terminal-Bench](https://www.tbench.ai/) and
+[Harbor](https://www.harborframework.com/docs/tasks), and terminology from
+[LaMP](https://aclanthology.org/2024.acl-long.399/) and
+[personalized-alignment evaluation work](https://aclanthology.org/2024.emnlp-main.737/).
+These references motivate the design; they do not validate this synthetic bank.

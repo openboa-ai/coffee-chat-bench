@@ -1,0 +1,128 @@
+{
+  "release": "2026.8.17",
+  "caseId": "pair-04-far_transfer",
+  "pairId": "pair-04",
+  "form": "dialogue",
+  "domain": "public_resource_allocation",
+  "transferType": "far_transfer",
+  "taskArchetype": "allocation_prioritization",
+  "taskMode": "open_ended",
+  "split": "public",
+  "task": {
+    "instruction": "A public program can fund one of several pilots with different reach and evidence quality.\n\nDescribe a prioritization approach that protects fairness while improving future allocation decisions.",
+    "environment": {
+      "kind": "conversation"
+    },
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 4000,
+      "requiredReferenceIds": ["evidence-02-01", "evidence-02-02"]
+    }
+  },
+  "evidence": [
+    {
+      "id": "evidence-02-01",
+      "content": "The task supplies the stated alternatives and constraints for this allocation_prioritization decision.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/c859d3a134d17819",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-02-02",
+      "content": "The response must remain grounded in the supplied task record.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/918c7ff3d67d7ef0",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "unconditioned": [],
+    "target_a": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A community program has one open slot and incomplete demand information.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Publish the eligibility and appeal process before choosing.\nReasoning: People affected by the choice should be able to inspect how it was reached."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given two neighborhoods request the same limited service, the next decision is: Use a transparent rule that protects vulnerable needs.\nReasoning: Keep a buffer so a bad outcome does not remove the next safe option."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Looking back at a grant program has historical data but a new population is entering, the recorded choice was Keep the allocation rule explainable to the new population. The record points to [history-03-e1] and [history-03-e2].\nReasoning: A shared path prevents the same decision work from being repeated across teams."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "context=A supply shortage requires rationing while future supply is uncertain; evidence=[history-04-e1],[history-04-e2]; decision=Use a resilient rule with an explicit exception path.\nReasoning: Keep the decision process explainable to those who must live with its effects."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A proposal improves total output but changes who receives access.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Require a public explanation and appeal route."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed allocation would deny a protected need or conceal a material eligibility rule, and an explicit rule can be used instead, the next decision is: Do not allocate until the rule is explicit and safe."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Looking back at two allocation formulas meet the minimum service requirement, the recorded choice was Choose a formula that meets the service floor and remains publicly justifiable. The record points to [history-07-e1] and [history-07-e2]."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "context=A routine request fits an established allocation rule; evidence=[history-08-e1],[history-08-e2]; decision=Use the published allocation rule and record the outcome."
+      }
+    ],
+    "target_b": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A community program has one open slot and incomplete demand information.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Use a short pilot allocation and measure unmet demand.\nReasoning: Use the next step to learn what matters before accepting a costly commitment."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given two neighborhoods request the same limited service, the next decision is: Allocate a reversible share and learn before expanding.\nReasoning: Prefer the path that remains workable after the initial urgency has passed."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Looking back at a grant program has historical data but a new population is entering, the recorded choice was Reserve a small experimental portion to update the evidence. The record points to [history-03-e1] and [history-03-e2].\nReasoning: Keep a safe way to change course if the next signal disagrees."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "context=A supply shortage requires rationing while future supply is uncertain; evidence=[history-04-e1],[history-04-e2]; decision=Try a bounded rationing rule and inspect its effects.\nReasoning: Choose the action that can resolve the open question with the least irreversible cost."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A proposal improves total output but changes who receives access.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Test the proposal in a limited area before generalizing."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed allocation would deny a protected need or conceal a material eligibility rule, and an explicit rule can be used instead, the next decision is: Do not allocate until the rule is explicit and safe."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Looking back at two allocation formulas meet the minimum service requirement, the recorded choice was Choose a formula that meets the service floor and remains publicly justifiable. The record points to [history-07-e1] and [history-07-e2]."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "context=A routine request fits an established allocation rule; evidence=[history-08-e1],[history-08-e2]; decision=Use the published allocation rule and record the outcome."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": ["synthetic:pair-04-far_transfer"],
+    "templateId": "judgment-history/far_transfer"
+  },
+  "manifestDigest": "sha256:f5f95b39d44d4b4294ab1bb6533082555a5c73c0c526de01bf658dbdc0e3ece9"
+}

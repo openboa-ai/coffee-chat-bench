@@ -49,6 +49,7 @@ const experimentalRoots = [
   "harbor/",
   "qualification/",
   "schemas/",
+  "scripts/",
   "src/",
   "tests/",
 ];
@@ -65,7 +66,7 @@ const forbiddenBenchmarkRoots = new Set([
   "tasks",
   "verifiers",
 ]);
-const executableRoots = ["harbor/", "src/", "tests/"];
+const executableRoots = ["harbor/", "scripts/", "src/", "tests/"];
 const publicContracts = [
   {
     path: "AGENTS.md",

@@ -1,0 +1,286 @@
+{
+  "release": "2026.8.17",
+  "bankId": "public_judgment_history_bank",
+  "pairs": [
+    {
+      "pairId": "pair-01",
+      "domain": "product_service_operations",
+      "cases": [
+        {
+          "caseId": "pair-01-near_transfer",
+          "transferType": "near_transfer",
+          "form": "dialogue",
+          "taskMode": "bounded",
+          "taskArchetype": "recommendation"
+        },
+        {
+          "caseId": "pair-01-far_transfer",
+          "transferType": "far_transfer",
+          "form": "dialogue",
+          "taskMode": "open_ended",
+          "taskArchetype": "allocation_prioritization"
+        },
+        {
+          "caseId": "pair-01-boundary",
+          "transferType": "boundary",
+          "form": "professional_artifact",
+          "taskMode": "bounded",
+          "taskArchetype": "design_threshold"
+        },
+        {
+          "caseId": "pair-01-policy_conflict",
+          "transferType": "policy_conflict",
+          "form": "professional_artifact",
+          "taskMode": "open_ended",
+          "taskArchetype": "critique_revision"
+        }
+      ]
+    },
+    {
+      "pairId": "pair-02",
+      "domain": "scientific_technical_investigation",
+      "cases": [
+        {
+          "caseId": "pair-02-near_transfer",
+          "transferType": "near_transfer",
+          "form": "dialogue",
+          "taskMode": "bounded",
+          "taskArchetype": "recommendation"
+        },
+        {
+          "caseId": "pair-02-far_transfer",
+          "transferType": "far_transfer",
+          "form": "dialogue",
+          "taskMode": "open_ended",
+          "taskArchetype": "allocation_prioritization"
+        },
+        {
+          "caseId": "pair-02-boundary",
+          "transferType": "boundary",
+          "form": "professional_artifact",
+          "taskMode": "bounded",
+          "taskArchetype": "design_threshold"
+        },
+        {
+          "caseId": "pair-02-policy_conflict",
+          "transferType": "policy_conflict",
+          "form": "professional_artifact",
+          "taskMode": "open_ended",
+          "taskArchetype": "critique_revision"
+        }
+      ]
+    },
+    {
+      "pairId": "pair-03",
+      "domain": "organizational_design",
+      "cases": [
+        {
+          "caseId": "pair-03-near_transfer",
+          "transferType": "near_transfer",
+          "form": "dialogue",
+          "taskMode": "bounded",
+          "taskArchetype": "recommendation"
+        },
+        {
+          "caseId": "pair-03-far_transfer",
+          "transferType": "far_transfer",
+          "form": "dialogue",
+          "taskMode": "open_ended",
+          "taskArchetype": "allocation_prioritization"
+        },
+        {
+          "caseId": "pair-03-boundary",
+          "transferType": "boundary",
+          "form": "professional_artifact",
+          "taskMode": "bounded",
+          "taskArchetype": "design_threshold"
+        },
+        {
+          "caseId": "pair-03-policy_conflict",
+          "transferType": "policy_conflict",
+          "form": "professional_artifact",
+          "taskMode": "open_ended",
+          "taskArchetype": "critique_revision"
+        }
+      ]
+    },
+    {
+      "pairId": "pair-04",
+      "domain": "public_resource_allocation",
+      "cases": [
+        {
+          "caseId": "pair-04-near_transfer",
+          "transferType": "near_transfer",
+          "form": "dialogue",
+          "taskMode": "bounded",
+          "taskArchetype": "recommendation"
+        },
+        {
+          "caseId": "pair-04-far_transfer",
+          "transferType": "far_transfer",
+          "form": "dialogue",
+          "taskMode": "open_ended",
+          "taskArchetype": "allocation_prioritization"
+        },
+        {
+          "caseId": "pair-04-boundary",
+          "transferType": "boundary",
+          "form": "professional_artifact",
+          "taskMode": "bounded",
+          "taskArchetype": "design_threshold"
+        },
+        {
+          "caseId": "pair-04-policy_conflict",
+          "transferType": "policy_conflict",
+          "form": "professional_artifact",
+          "taskMode": "open_ended",
+          "taskArchetype": "critique_revision"
+        }
+      ]
+    },
+    {
+      "pairId": "pair-05",
+      "domain": "security_reliability",
+      "cases": [
+        {
+          "caseId": "pair-05-near_transfer",
+          "transferType": "near_transfer",
+          "form": "dialogue",
+          "taskMode": "bounded",
+          "taskArchetype": "recommendation"
+        },
+        {
+          "caseId": "pair-05-far_transfer",
+          "transferType": "far_transfer",
+          "form": "dialogue",
+          "taskMode": "open_ended",
+          "taskArchetype": "allocation_prioritization"
+        },
+        {
+          "caseId": "pair-05-boundary",
+          "transferType": "boundary",
+          "form": "professional_artifact",
+          "taskMode": "bounded",
+          "taskArchetype": "design_threshold"
+        },
+        {
+          "caseId": "pair-05-policy_conflict",
+          "transferType": "policy_conflict",
+          "form": "professional_artifact",
+          "taskMode": "open_ended",
+          "taskArchetype": "critique_revision"
+        }
+      ]
+    },
+    {
+      "pairId": "pair-06",
+      "domain": "editorial_creative_strategy",
+      "cases": [
+        {
+          "caseId": "pair-06-near_transfer",
+          "transferType": "near_transfer",
+          "form": "dialogue",
+          "taskMode": "bounded",
+          "taskArchetype": "recommendation"
+        },
+        {
+          "caseId": "pair-06-far_transfer",
+          "transferType": "far_transfer",
+          "form": "dialogue",
+          "taskMode": "open_ended",
+          "taskArchetype": "allocation_prioritization"
+        },
+        {
+          "caseId": "pair-06-boundary",
+          "transferType": "boundary",
+          "form": "professional_artifact",
+          "taskMode": "bounded",
+          "taskArchetype": "design_threshold"
+        },
+        {
+          "caseId": "pair-06-policy_conflict",
+          "transferType": "policy_conflict",
+          "form": "professional_artifact",
+          "taskMode": "open_ended",
+          "taskArchetype": "critique_revision"
+        }
+      ]
+    },
+    {
+      "pairId": "pair-07",
+      "domain": "education_coaching",
+      "cases": [
+        {
+          "caseId": "pair-07-near_transfer",
+          "transferType": "near_transfer",
+          "form": "dialogue",
+          "taskMode": "bounded",
+          "taskArchetype": "recommendation"
+        },
+        {
+          "caseId": "pair-07-far_transfer",
+          "transferType": "far_transfer",
+          "form": "dialogue",
+          "taskMode": "open_ended",
+          "taskArchetype": "allocation_prioritization"
+        },
+        {
+          "caseId": "pair-07-boundary",
+          "transferType": "boundary",
+          "form": "professional_artifact",
+          "taskMode": "bounded",
+          "taskArchetype": "design_threshold"
+        },
+        {
+          "caseId": "pair-07-policy_conflict",
+          "transferType": "policy_conflict",
+          "form": "professional_artifact",
+          "taskMode": "open_ended",
+          "taskArchetype": "critique_revision"
+        }
+      ]
+    },
+    {
+      "pairId": "pair-08",
+      "domain": "procurement_portfolio_allocation",
+      "cases": [
+        {
+          "caseId": "pair-08-near_transfer",
+          "transferType": "near_transfer",
+          "form": "dialogue",
+          "taskMode": "bounded",
+          "taskArchetype": "recommendation"
+        },
+        {
+          "caseId": "pair-08-far_transfer",
+          "transferType": "far_transfer",
+          "form": "dialogue",
+          "taskMode": "open_ended",
+          "taskArchetype": "allocation_prioritization"
+        },
+        {
+          "caseId": "pair-08-boundary",
+          "transferType": "boundary",
+          "form": "professional_artifact",
+          "taskMode": "bounded",
+          "taskArchetype": "design_threshold"
+        },
+        {
+          "caseId": "pair-08-policy_conflict",
+          "transferType": "policy_conflict",
+          "form": "professional_artifact",
+          "taskMode": "open_ended",
+          "taskArchetype": "critique_revision"
+        }
+      ]
+    }
+  ],
+  "census": {
+    "pairs": 8,
+    "targets": 16,
+    "historyRecordsPerTarget": 8,
+    "caseFamilies": 32,
+    "conditions": 3,
+    "agentExecutions": 96
+  }
+}

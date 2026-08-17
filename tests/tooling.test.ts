@@ -37,6 +37,7 @@ test("package tooling exposes only the contract boundary and deterministic scrip
   assert.deepEqual(Object.keys(manifest.scripts ?? {}).sort(), [
     "check:inactive",
     "ci:policy",
+    "data:audit",
     "format",
     "format:check",
     "test",

@@ -1,0 +1,130 @@
+{
+  "release": "2026.8.17",
+  "caseId": "pair-01-policy_conflict",
+  "pairId": "pair-01",
+  "form": "professional_artifact",
+  "domain": "product_service_operations",
+  "transferType": "policy_conflict",
+  "taskArchetype": "critique_revision",
+  "taskMode": "open_ended",
+  "split": "public",
+  "task": {
+    "instruction": "Revise the proposed incident response below so it works when learning speed and cross-team consistency pull in different directions.\n\nReturn a revised response with a decision, trade-off, evidence references, and an escalation condition.",
+    "environment": {
+      "kind": "workspace",
+      "fixtureDigest": "sha256:90c32e03d1f57c0880739bb219427f61c3abdbe97b173a571923dcb9250c4144",
+      "verifierDigest": "sha256:67c4fed427cf626ef03bc22eb899da78934e0024e7255a458e2ae7ac7ad9fa45"
+    },
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 4000,
+      "requiredReferenceIds": ["evidence-04-01", "evidence-04-02"]
+    }
+  },
+  "evidence": [
+    {
+      "id": "evidence-04-01",
+      "content": "The task supplies the stated alternatives and constraints for this critique_revision decision.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/f773a95645e03b05",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-04-02",
+      "content": "The response must remain grounded in the supplied task record.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/aa151d08d83dfb43",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "unconditioned": [],
+    "target_a": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A service degradation can be mitigated by a reversible traffic split or a permanent routing change.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Use the split first and record the signal needed for the next move.\nReasoning: Keep a safe way to change course if the next signal disagrees."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given a launch has uncertain demand and a fixed capacity commitment, the next decision is: Stage the commitment and learn from early demand.\nReasoning: Keep a buffer so a bad outcome does not remove the next safe option."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Looking back at a customer workflow has two plausible causes and one safe diagnostic, the recorded choice was Run the diagnostic that preserves rollback. The record points to [history-03-e1] and [history-03-e2].\nReasoning: Use the next step to learn what matters before accepting a costly commitment."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "context=A partner dependency is late while a lower quality substitute is available; evidence=[history-04-e1],[history-04-e2]; decision=Use the substitute only as a reversible bridge.\nReasoning: Leave an exit available before making the commitment durable."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: An incident record contains incomplete evidence about a failed handoff.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Collect the missing signal before locking a process change."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed response would expose customer data or conceal a material incident to speed the fix, and a controlled alternative is available, the next decision is: Reject the unsafe response and add the needed control before proceeding."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Looking back at two remediation options meet the stated service-level target, the recorded choice was Choose an option that meets the service-level target without violating the safety boundary. The record points to [history-07-e1] and [history-07-e2]."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "context=A routine maintenance choice has equal operational evidence either way; evidence=[history-08-e1],[history-08-e2]; decision=Use the routine path and record the outcome."
+      }
+    ],
+    "target_b": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A service degradation can be mitigated by a reversible traffic split or a permanent routing change.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Make the routing change so all teams can coordinate on one path.\nReasoning: Judge the choice over the full period it will affect, not only the immediate step."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given a launch has uncertain demand and a fixed capacity commitment, the next decision is: Commit enough capacity to avoid repeated coordination work.\nReasoning: Account for the work and confusion the choice can create for people outside the immediate task."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Looking back at a customer workflow has two plausible causes and one safe diagnostic, the recorded choice was Choose the cause supported by the existing operational record. The record points to [history-03-e1] and [history-03-e2].\nReasoning: Use a basis that another reviewer can trace before relying on the conclusion."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "context=A partner dependency is late while a lower quality substitute is available; evidence=[history-04-e1],[history-04-e2]; decision=Set a firm shared deadline and select the durable partner path.\nReasoning: Prefer the path that remains workable after the initial urgency has passed."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: An incident record contains incomplete evidence about a failed handoff.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Adopt the process change that makes ownership legible across teams."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed response would expose customer data or conceal a material incident to speed the fix, and a controlled alternative is available, the next decision is: Reject the unsafe response and add the needed control before proceeding."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Looking back at two remediation options meet the stated service-level target, the recorded choice was Choose an option that meets the service-level target without violating the safety boundary. The record points to [history-07-e1] and [history-07-e2]."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "context=A routine maintenance choice has equal operational evidence either way; evidence=[history-08-e1],[history-08-e2]; decision=Use the routine path and record the outcome."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": ["synthetic:pair-01-policy_conflict"],
+    "templateId": "judgment-history/policy_conflict"
+  },
+  "manifestDigest": "sha256:49fdf27cffa3bdafbaaf703d1828e472e6600abb2e3ed23a992bc9829d4b8d07"
+}

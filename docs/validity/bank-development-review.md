@@ -1,55 +1,57 @@
-# Public bank development review
+# Public bank construction review
 
 ## Decision boundary
 
-This record documents AI-assisted development review of the fixed synthetic
-bank. It is project QA, not independent human annotation, criterion validity,
-judge qualification, a benchmark result, or activation evidence. Repository
-status remains `not_active`.
+This document records construction QA for the synthetic public bank. It is not
+human criterion annotation, AI-judge qualification, construct validity,
+benchmark performance, or activation evidence. Repository status remains
+`not_active`.
 
-## Review method
+## Review scope
 
-An agent reviewer that did not author the cases inspected all 16 case families,
-their rubrics, and their author-hypothesis judgment plans. The review asked
-whether each family:
+The review must inspect all eight matched target pairs and their four held-out
+cases. It must ask whether:
 
-1. made both target policies defensible from the supplied evidence;
-2. required incompatible present decisions rather than allowing one hybrid
-   answer to satisfy both;
-3. used coherent exposure-matched nondiagnostic histories without leaking the
-   held-out answer; and
-4. supported the exact rubric directions while preserving task-utility
-   non-inferiority.
+1. both target policies are defensible from the supplied facts;
+2. the history contains enough evidence to recover the cue priorities, veto,
+   tie-breaker, and boundary without exposing the evaluator card;
+3. the held-out case changes wording and surface while preserving the intended
+   policy-transfer relation;
+4. no answer, policy name, option token, style, length, or evidence ID gives a
+   shortcut; and
+5. task performance and evidence grounding remain independently judgeable.
 
-The reviewer was instructed to report material semantic blockers and not to
-infer validity from schemas, tests, or implementation structure.
+Mechanical checks are reported by `npm run data:audit`. Independent model
+review is construction QA only. Model, prompt, and output provenance must be
+recorded when that review is run; no model-authored review may be described as
+human evidence.
 
-## Findings and repairs
+## Open evidence
 
-The first review returned NO-GO with three material issues:
+The implementation-side construction review completed the following checks on
+all 8 pairs and 32 cases:
 
-- regional retry ownership allowed a hybrid that satisfied both policies;
-- Catalyst-Q mechanism research was nested inside the practical-threshold
-  policy because no indivisible research allocation existed; and
-- the irrigation permit envelope included the same six-megaliter release that
-  had caused downstream harm and did not make authority exclusive.
+- all 5 diagnostic records differ between A and B;
+- both boundary records converge under a shared constraint;
+- the distractor record is neutral and converges;
+- all 64 task-evidence sources are unique;
+- no evaluator criterion decision feature is present in public case material;
+- history records contain no artificial trailing-space padding; and
+- the mechanical audit reports `passed` with the exact `8/16/32/3/96` census.
 
-The cases were repaired by making final authority indivisible, introducing one
-indivisible research slot, and replacing the harmful irrigation envelope with
-a tested two-megaliter limit plus an automatic turbidity interlock. A narrow
-rereview caught one remaining unsupported platform safety override in the
-regional-ownership rubric. Removing that override produced the final GO verdict:
-P0 = 0, P1 = 0, P2 = 0 for beginning human labeling and judge qualification.
+This review is implementation/construction QA by the agent building the bank;
+it is not independent human annotation, human agreement, or construct
+validity evidence.
 
-A subsequent complete corpus review found that one archive qualification
-rubric referred to an undefined alternate note term instead of the task-defined
-`curator note`. The wording and all affected digests were corrected; focused
-rereview returned GO with P0 = 0, P1 = 0, P2 = 0.
+The declared Terra, Luna, and Sol independent review was attempted but was
+unavailable because the model service account reached its usage limit. No
+model-authored review result is claimed; the independent review remains
+`pending` and the bank remains `not_active`.
 
-## Remaining evidence
+The following remain future work:
 
-This review does not establish that humans agree with the construction
-hypotheses or that model judges reproduce human judgments. Blinded human
-annotation, disagreement and abstention evidence, shortcut baselines, judge
-qualification, candidate execution, and the activation audit remain required.
-Installed-Harbor Oracle controls establish plumbing only.
+- independent construction review by the declared review models;
+- blinded human criterion annotation;
+- AI-judge reliability, calibration, perturbation, and bias evidence;
+- candidate execution receipts and performance reports; and
+- activation audit limited to evidence actually collected.

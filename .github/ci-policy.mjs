@@ -384,6 +384,7 @@ if (
 const expectedPackageScripts = {
   "ci:policy":
     "node --test tests/workflow-policy.test.mjs && node .github/ci-policy.mjs",
+  "data:audit": "node --experimental-strip-types scripts/data-audit.mjs bank",
   test: "node --experimental-strip-types --test tests/*.test.mjs tests/*.test.ts",
   typecheck: "tsc --noEmit",
   format:
@@ -417,7 +418,7 @@ if (
   ]) ||
   packageJson.name !== "@openboa-ai/coffee-chat-bench" ||
   packageJson.private !== true ||
-  packageJson.version !== "2026.8.12" ||
+  packageJson.version !== "2026.8.17" ||
   packageJson.type !== "module" ||
   !equal(packageJson.exports, {
     ".": "./src/benchmark-contracts.ts",

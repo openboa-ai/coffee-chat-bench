@@ -1,923 +1,150 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openboa.ai/schemas/coffee-chat-bench/benchmark.schema.json",
-  "title": "Coffee Chat Bench public contracts",
-  "description": "Candidate-neutral synthetic benchmark contracts; validation is not a measured result or validity claim.",
-  "oneOf": [
-    { "$ref": "#/$defs/CaseManifest" },
-    { "$ref": "#/$defs/RunReceipt" },
-    { "$ref": "#/$defs/JudgmentRecord" },
-    { "$ref": "#/$defs/BenchmarkReport" }
+  "$id": "https://github.com/openboa-ai/coffee-chat-bench/schema/2026-08-17",
+  "title": "Public judgment-history case",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "release",
+    "caseId",
+    "pairId",
+    "form",
+    "domain",
+    "transferType",
+    "taskArchetype",
+    "taskMode",
+    "split",
+    "task",
+    "evidence",
+    "contexts",
+    "lineage",
+    "manifestDigest"
   ],
-  "$defs": {
-    "Digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
-    "Text": { "type": "string", "minLength": 1 },
-    "Usage": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["inputTokens", "outputTokens", "costNanoUsd"],
-      "properties": {
-        "inputTokens": { "type": "integer", "minimum": 0 },
-        "outputTokens": { "type": "integer", "minimum": 0 },
-        "costNanoUsd": { "type": "integer", "minimum": 0 }
-      }
+  "properties": {
+    "release": { "const": "2026.8.17" },
+    "caseId": { "$ref": "#/$defs/text" },
+    "pairId": { "$ref": "#/$defs/text" },
+    "form": { "enum": ["dialogue", "professional_artifact"] },
+    "domain": { "$ref": "#/$defs/text" },
+    "transferType": {
+      "enum": ["near_transfer", "far_transfer", "boundary", "policy_conflict"]
     },
-    "Candidate": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "candidateId",
-        "harness",
-        "model",
-        "host",
-        "adaptation",
-        "configurationDigest",
-        "toolPolicyDigest",
-        "candidateDigest"
-      ],
-      "properties": {
-        "candidateId": { "$ref": "#/$defs/Text" },
-        "harness": { "$ref": "#/$defs/Text" },
-        "model": { "$ref": "#/$defs/Text" },
-        "host": { "$ref": "#/$defs/Text" },
-        "adaptation": { "$ref": "#/$defs/Text" },
-        "configurationDigest": { "$ref": "#/$defs/Digest" },
-        "toolPolicyDigest": { "$ref": "#/$defs/Digest" },
-        "candidateDigest": { "$ref": "#/$defs/Digest" }
-      }
-    },
-    "Execution": {
-      "oneOf": [
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "kind",
-            "hostReceiptDigest",
-            "transcriptDigest",
-            "turnCount",
-            "termination",
-            "cleanup"
-          ],
-          "properties": {
-            "kind": { "const": "conversation" },
-            "hostReceiptDigest": { "$ref": "#/$defs/Digest" },
-            "transcriptDigest": { "$ref": "#/$defs/Digest" },
-            "turnCount": { "type": "integer", "minimum": 1 },
-            "termination": { "enum": ["completed", "max_turns"] },
-            "cleanup": { "enum": ["succeeded", "failed", "unavailable"] }
-          }
-        },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "kind",
-            "hostReceiptDigest",
-            "inputTreeDigest",
-            "outputTreeDigest",
-            "verifierReceiptDigest",
-            "network",
-            "cleanup"
-          ],
-          "properties": {
-            "kind": { "const": "workspace" },
-            "hostReceiptDigest": { "$ref": "#/$defs/Digest" },
-            "inputTreeDigest": { "$ref": "#/$defs/Digest" },
-            "outputTreeDigest": { "$ref": "#/$defs/Digest" },
-            "verifierReceiptDigest": { "$ref": "#/$defs/Digest" },
-            "network": { "enum": ["disabled", "restricted", "unverified"] },
-            "cleanup": { "enum": ["succeeded", "failed", "unavailable"] }
-          }
-        }
+    "taskArchetype": {
+      "enum": [
+        "recommendation",
+        "allocation_prioritization",
+        "design_threshold",
+        "critique_revision"
       ]
     },
-    "Artifact": {
+    "taskMode": { "enum": ["bounded", "open_ended"] },
+    "split": { "const": "public" },
+    "task": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["digest", "bytes", "mediaType", "validationDigest"],
+      "required": ["instruction", "environment", "output"],
       "properties": {
-        "digest": { "$ref": "#/$defs/Digest" },
-        "bytes": { "type": "integer", "minimum": 0 },
-        "mediaType": { "const": "text/plain" },
-        "validationDigest": { "$ref": "#/$defs/Digest" }
-      }
-    },
-    "CaseManifest": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "release",
-        "caseId",
-        "familyId",
-        "targetPairBlockId",
-        "form",
-        "split",
-        "task",
-        "evidence",
-        "contexts",
-        "lineage",
-        "sealed",
-        "manifestDigest"
-      ],
-      "properties": {
-        "release": { "const": "2026.8.12" },
-        "caseId": { "$ref": "#/$defs/Text" },
-        "familyId": { "$ref": "#/$defs/Text" },
-        "targetPairBlockId": { "$ref": "#/$defs/Text" },
-        "form": { "enum": ["dialogue", "professional_artifact"] },
-        "split": {
-          "enum": ["judge_qualification", "release_a", "release_b"]
-        },
-        "task": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["instruction", "environment", "output"],
-          "properties": {
-            "instruction": { "$ref": "#/$defs/Text" },
-            "environment": {
-              "oneOf": [
-                {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": ["kind"],
-                  "properties": { "kind": { "const": "conversation" } }
-                },
-                {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": ["kind", "fixtureDigest", "verifierDigest"],
-                  "properties": {
-                    "kind": { "const": "workspace" },
-                    "fixtureDigest": { "$ref": "#/$defs/Digest" },
-                    "verifierDigest": { "$ref": "#/$defs/Digest" }
-                  }
-                }
-              ]
-            },
-            "output": {
+        "instruction": { "$ref": "#/$defs/text" },
+        "environment": {
+          "oneOf": [
+            {
               "type": "object",
               "additionalProperties": false,
-              "required": ["mediaType", "maxBytes", "requiredReferenceIds"],
+              "required": ["kind"],
+              "properties": { "kind": { "const": "conversation" } }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["kind", "fixtureDigest", "verifierDigest"],
               "properties": {
-                "mediaType": { "const": "text/plain" },
-                "maxBytes": { "type": "integer", "minimum": 1 },
-                "requiredReferenceIds": {
-                  "type": "array",
-                  "items": { "$ref": "#/$defs/Text" },
-                  "uniqueItems": true
-                }
+                "kind": { "const": "workspace" },
+                "fixtureDigest": { "$ref": "#/$defs/digest" },
+                "verifierDigest": { "$ref": "#/$defs/digest" }
               }
             }
-          }
+          ]
         },
-        "evidence": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["id", "content", "source", "license"],
-            "properties": {
-              "id": { "$ref": "#/$defs/Text" },
-              "content": { "$ref": "#/$defs/Text" },
-              "source": { "$ref": "#/$defs/Text" },
-              "license": { "const": "MIT" }
+        "output": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mediaType", "maxBytes", "requiredReferenceIds"],
+          "properties": {
+            "mediaType": { "const": "text/plain" },
+            "maxBytes": { "type": "integer", "minimum": 1 },
+            "requiredReferenceIds": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/text" },
+              "uniqueItems": true
             }
           }
-        },
-        "contexts": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "task_only",
-            "nondiagnostic_target_a",
-            "nondiagnostic_target_b",
-            "diagnostic_target_a",
-            "diagnostic_target_b"
-          ],
-          "properties": {
-            "task_only": { "$ref": "#/$defs/EmptyContext" },
-            "nondiagnostic_target_a": { "$ref": "#/$defs/NonemptyContext" },
-            "nondiagnostic_target_b": { "$ref": "#/$defs/NonemptyContext" },
-            "diagnostic_target_a": { "$ref": "#/$defs/NonemptyContext" },
-            "diagnostic_target_b": { "$ref": "#/$defs/NonemptyContext" }
-          }
-        },
-        "lineage": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["sourceIds", "templateId", "rubricTemplateId"],
-          "properties": {
-            "sourceIds": {
-              "type": "array",
-              "minItems": 1,
-              "uniqueItems": true,
-              "items": { "$ref": "#/$defs/Text" }
-            },
-            "templateId": { "$ref": "#/$defs/Text" },
-            "rubricTemplateId": { "$ref": "#/$defs/Text" }
-          }
-        },
-        "sealed": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["rubricDigest", "judgmentPlanDigest"],
-          "properties": {
-            "rubricDigest": { "$ref": "#/$defs/Digest" },
-            "judgmentPlanDigest": { "$ref": "#/$defs/Digest" }
-          }
-        },
-        "manifestDigest": { "$ref": "#/$defs/Digest" }
+        }
       }
     },
-    "Context": {
+    "evidence": {
       "type": "array",
+      "minItems": 1,
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "content"],
+        "required": ["id", "content", "source", "license"],
         "properties": {
-          "id": { "$ref": "#/$defs/Text" },
-          "content": { "$ref": "#/$defs/Text" }
+          "id": { "$ref": "#/$defs/text" },
+          "content": { "$ref": "#/$defs/text" },
+          "source": { "$ref": "#/$defs/text" },
+          "license": { "const": "MIT" }
         }
       }
     },
-    "EmptyContext": {
-      "allOf": [{ "$ref": "#/$defs/Context" }],
-      "maxItems": 0
-    },
-    "NonemptyContext": {
-      "allOf": [{ "$ref": "#/$defs/Context" }],
-      "minItems": 1
-    },
-    "Session": {
+    "contexts": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["sessionDigest", "order", "leakage", "leakageCheckDigest"],
+      "required": ["unconditioned", "target_a", "target_b"],
       "properties": {
-        "sessionDigest": { "$ref": "#/$defs/Digest" },
-        "order": { "type": "integer", "minimum": 0 },
-        "leakage": { "enum": ["passed", "failed", "unavailable"] },
-        "leakageCheckDigest": { "$ref": "#/$defs/Digest" }
+        "unconditioned": { "type": "array", "maxItems": 0 },
+        "target_a": { "$ref": "#/$defs/history" },
+        "target_b": { "$ref": "#/$defs/history" }
       }
     },
-    "RunReceipt": {
-      "oneOf": [
-        { "$ref": "#/$defs/SucceededReceipt" },
-        { "$ref": "#/$defs/FailedReceipt" }
-      ]
-    },
-    "SucceededReceipt": {
+    "lineage": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "release",
-        "benchCommit",
-        "bankDigest",
-        "trialId",
-        "caseId",
-        "manifestDigest",
-        "taskDigest",
-        "condition",
-        "candidate",
-        "session",
-        "execution",
-        "state",
-        "artifact",
-        "durationMs",
-        "usage",
-        "receiptDigest"
-      ],
+      "required": ["sourceIds", "templateId"],
       "properties": {
-        "release": { "const": "2026.8.12" },
-        "benchCommit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
-        "bankDigest": { "$ref": "#/$defs/Digest" },
-        "trialId": { "$ref": "#/$defs/Text" },
-        "caseId": { "$ref": "#/$defs/Text" },
-        "manifestDigest": { "$ref": "#/$defs/Digest" },
-        "taskDigest": { "$ref": "#/$defs/Digest" },
-        "condition": {
-          "enum": [
-            "task_only",
-            "nondiagnostic_target_a",
-            "nondiagnostic_target_b",
-            "diagnostic_target_a",
-            "diagnostic_target_b"
-          ]
+        "sourceIds": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/text" },
+          "uniqueItems": true
         },
-        "candidate": { "$ref": "#/$defs/Candidate" },
-        "session": { "$ref": "#/$defs/Session" },
-        "execution": { "$ref": "#/$defs/Execution" },
-        "state": { "const": "succeeded" },
-        "artifact": { "$ref": "#/$defs/Artifact" },
-        "durationMs": { "type": "number", "minimum": 0 },
-        "usage": { "anyOf": [{ "$ref": "#/$defs/Usage" }, { "type": "null" }] },
-        "receiptDigest": { "$ref": "#/$defs/Digest" }
+        "templateId": { "$ref": "#/$defs/text" }
       }
     },
-    "FailedReceipt": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "release",
-        "benchCommit",
-        "bankDigest",
-        "trialId",
-        "caseId",
-        "manifestDigest",
-        "taskDigest",
-        "condition",
-        "candidate",
-        "session",
-        "execution",
-        "state",
-        "cause",
-        "receiptDigest"
-      ],
-      "properties": {
-        "release": { "const": "2026.8.12" },
-        "benchCommit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
-        "bankDigest": { "$ref": "#/$defs/Digest" },
-        "trialId": { "$ref": "#/$defs/Text" },
-        "caseId": { "$ref": "#/$defs/Text" },
-        "manifestDigest": { "$ref": "#/$defs/Digest" },
-        "taskDigest": { "$ref": "#/$defs/Digest" },
-        "condition": {
-          "enum": [
-            "task_only",
-            "nondiagnostic_target_a",
-            "nondiagnostic_target_b",
-            "diagnostic_target_a",
-            "diagnostic_target_b"
-          ]
-        },
-        "candidate": { "$ref": "#/$defs/Candidate" },
-        "session": { "$ref": "#/$defs/Session" },
-        "execution": {
-          "anyOf": [{ "$ref": "#/$defs/Execution" }, { "type": "null" }]
-        },
-        "state": {
-          "enum": [
-            "candidate_failed",
-            "host_failed",
-            "invalid_artifact",
-            "verifier_failed",
-            "skipped",
-            "unavailable"
-          ]
-        },
-        "cause": { "$ref": "#/$defs/Text" },
-        "receiptDigest": { "$ref": "#/$defs/Digest" }
-      }
-    },
-    "Vote": {
-      "oneOf": [
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "model",
-            "promptDigest",
-            "usage",
-            "state",
-            "resolvedModel",
-            "responseDigest",
-            "verdict"
-          ],
-          "properties": {
-            "model": {
-              "enum": ["gpt-5.6-terra", "gpt-5.6-luna", "gpt-5.6-sol"]
-            },
-            "promptDigest": { "$ref": "#/$defs/Digest" },
-            "usage": {
-              "anyOf": [{ "$ref": "#/$defs/Usage" }, { "type": "null" }]
-            },
-            "state": { "const": "measured" },
-            "resolvedModel": { "$ref": "#/$defs/Text" },
-            "responseDigest": { "$ref": "#/$defs/Digest" },
-            "verdict": { "enum": ["pass", "fail", "left", "right", "tie"] }
-          }
-        },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "model",
-            "promptDigest",
-            "usage",
-            "state",
-            "resolvedModel",
-            "responseDigest",
-            "cause"
-          ],
-          "properties": {
-            "model": {
-              "enum": ["gpt-5.6-terra", "gpt-5.6-luna", "gpt-5.6-sol"]
-            },
-            "promptDigest": { "$ref": "#/$defs/Digest" },
-            "usage": {
-              "anyOf": [{ "$ref": "#/$defs/Usage" }, { "type": "null" }]
-            },
-            "state": {
-              "enum": ["abstained", "invalid", "unavailable", "failed"]
-            },
-            "resolvedModel": {
-              "anyOf": [{ "$ref": "#/$defs/Text" }, { "type": "null" }]
-            },
-            "responseDigest": {
-              "anyOf": [{ "$ref": "#/$defs/Digest" }, { "type": "null" }]
-            },
-            "cause": { "$ref": "#/$defs/Text" }
-          }
-        }
-      ]
-    },
-    "PointwiseVote": {
-      "allOf": [
-        { "$ref": "#/$defs/Vote" },
-        {
-          "if": { "properties": { "state": { "const": "measured" } } },
-          "then": { "properties": { "verdict": { "enum": ["pass", "fail"] } } }
-        }
-      ]
-    },
-    "PairwiseVote": {
-      "allOf": [
-        { "$ref": "#/$defs/Vote" },
-        {
-          "if": { "properties": { "state": { "const": "measured" } } },
-          "then": {
-            "properties": { "verdict": { "enum": ["left", "right", "tie"] } }
-          }
-        }
-      ]
-    },
-    "JudgmentOutcome": {
-      "oneOf": [
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["state", "verdict"],
-          "properties": {
-            "state": { "const": "measured" },
-            "verdict": { "enum": ["pass", "fail", "left", "right", "tie"] }
-          }
-        },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["state"],
-          "properties": {
-            "state": {
-              "enum": [
-                "disagreement",
-                "abstained",
-                "invalid",
-                "unavailable",
-                "failed"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    "JudgmentRecord": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "release",
-        "judgmentId",
-        "trialIds",
-        "caseId",
-        "runReceiptDigests",
-        "mode",
-        "dimension",
-        "orientation",
-        "artifactDigests",
-        "artifactValidationDigests",
-        "rubricDigest",
-        "rubricProjectionId",
-        "rubricProjectionDigest",
-        "judgeConfigurationDigest",
-        "primaryJudges",
-        "crossValidationJudges",
-        "votes",
-        "outcome",
-        "recordDigest"
-      ],
-      "properties": {
-        "release": { "const": "2026.8.12" },
-        "judgmentId": { "$ref": "#/$defs/Text" },
-        "trialIds": {
-          "type": "array",
-          "minItems": 1,
-          "maxItems": 2,
-          "items": { "$ref": "#/$defs/Text" }
-        },
-        "caseId": { "$ref": "#/$defs/Text" },
-        "runReceiptDigests": {
-          "type": "array",
-          "minItems": 1,
-          "maxItems": 2,
-          "items": { "$ref": "#/$defs/Digest" }
-        },
-        "mode": { "enum": ["pointwise", "pairwise"] },
-        "dimension": {
-          "enum": [
-            "target_alignment",
-            "task_utility",
-            "evidence_integrity",
-            "target_specificity",
-            "critical_failure"
-          ]
-        },
-        "orientation": { "enum": ["canonical", "mirrored", null] },
-        "artifactDigests": {
-          "type": "array",
-          "minItems": 1,
-          "maxItems": 2,
-          "items": { "$ref": "#/$defs/Digest" }
-        },
-        "artifactValidationDigests": {
-          "type": "array",
-          "minItems": 1,
-          "maxItems": 2,
-          "items": { "$ref": "#/$defs/Digest" }
-        },
-        "rubricDigest": { "$ref": "#/$defs/Digest" },
-        "rubricProjectionId": { "$ref": "#/$defs/Text" },
-        "rubricProjectionDigest": { "$ref": "#/$defs/Digest" },
-        "judgeConfigurationDigest": { "$ref": "#/$defs/Digest" },
-        "primaryJudges": {
-          "type": "array",
-          "minItems": 2,
-          "maxItems": 2,
-          "uniqueItems": true,
-          "items": {
-            "enum": ["gpt-5.6-terra", "gpt-5.6-luna"]
-          }
-        },
-        "crossValidationJudges": {
-          "type": "array",
-          "minItems": 1,
-          "maxItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "const": "gpt-5.6-sol"
-          }
-        },
-        "votes": {
-          "type": "array",
-          "minItems": 3,
-          "maxItems": 3,
-          "items": { "$ref": "#/$defs/Vote" }
-        },
-        "outcome": { "$ref": "#/$defs/JudgmentOutcome" },
-        "recordDigest": { "$ref": "#/$defs/Digest" }
-      },
-      "allOf": [
-        {
-          "if": { "properties": { "mode": { "const": "pointwise" } } },
-          "then": {
-            "properties": {
-              "orientation": { "type": "null" },
-              "trialIds": { "minItems": 1, "maxItems": 1 },
-              "runReceiptDigests": { "minItems": 1, "maxItems": 1 },
-              "artifactDigests": { "minItems": 1, "maxItems": 1 },
-              "artifactValidationDigests": { "minItems": 1, "maxItems": 1 },
-              "votes": { "items": { "$ref": "#/$defs/PointwiseVote" } }
-            }
+    "manifestDigest": { "$ref": "#/$defs/digest" }
+  },
+  "$defs": {
+    "text": { "type": "string", "minLength": 1 },
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "history": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "format", "content"],
+        "properties": {
+          "id": { "$ref": "#/$defs/text" },
+          "format": {
+            "enum": [
+              "decision_note",
+              "message_excerpt",
+              "retrospective",
+              "structured_log"
+            ]
           },
-          "else": {
-            "properties": {
-              "orientation": { "enum": ["canonical", "mirrored"] },
-              "trialIds": { "minItems": 2, "maxItems": 2 },
-              "runReceiptDigests": { "minItems": 2, "maxItems": 2 },
-              "artifactDigests": { "minItems": 2, "maxItems": 2 },
-              "artifactValidationDigests": { "minItems": 2, "maxItems": 2 },
-              "votes": { "items": { "$ref": "#/$defs/PairwiseVote" } }
-            }
-          }
+          "content": { "$ref": "#/$defs/text" }
         }
-      ]
-    },
-    "Rate": {
-      "oneOf": [
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["state", "numerator", "denominator", "value"],
-          "properties": {
-            "state": { "const": "measured" },
-            "numerator": { "type": "integer", "minimum": 0 },
-            "denominator": { "type": "integer", "minimum": 1 },
-            "value": { "type": "number", "minimum": 0, "maximum": 1 }
-          }
-        },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["state", "numerator", "denominator", "value"],
-          "properties": {
-            "state": { "const": "unmeasured" },
-            "numerator": { "const": 0 },
-            "denominator": { "const": 0 },
-            "value": { "type": "null" }
-          }
-        }
-      ]
-    },
-    "Efficiency": {
-      "oneOf": [
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "state",
-            "samples",
-            "durationMsMean",
-            "inputTokensMean",
-            "outputTokensMean",
-            "costNanoUsdTotal"
-          ],
-          "properties": {
-            "state": { "const": "measured" },
-            "samples": { "type": "integer", "minimum": 1 },
-            "durationMsMean": { "type": "number", "minimum": 0 },
-            "inputTokensMean": {
-              "anyOf": [{ "type": "number", "minimum": 0 }, { "type": "null" }]
-            },
-            "outputTokensMean": {
-              "anyOf": [{ "type": "number", "minimum": 0 }, { "type": "null" }]
-            },
-            "costNanoUsdTotal": {
-              "anyOf": [{ "type": "number", "minimum": 0 }, { "type": "null" }]
-            }
-          }
-        },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "state",
-            "samples",
-            "durationMsMean",
-            "inputTokensMean",
-            "outputTokensMean",
-            "costNanoUsdTotal"
-          ],
-          "properties": {
-            "state": { "const": "unmeasured" },
-            "samples": { "const": 0 },
-            "durationMsMean": { "type": "null" },
-            "inputTokensMean": { "type": "null" },
-            "outputTokensMean": { "type": "null" },
-            "costNanoUsdTotal": { "type": "null" }
-          }
-        }
-      ]
-    },
-    "TrialCensus": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "condition",
-        "trialId",
-        "receiptDigest",
-        "receiptState",
-        "artifactValidationDigest",
-        "session",
-        "cleanup",
-        "judgmentRecordDigests"
-      ],
-      "properties": {
-        "condition": {
-          "enum": [
-            "task_only",
-            "nondiagnostic_target_a",
-            "nondiagnostic_target_b",
-            "diagnostic_target_a",
-            "diagnostic_target_b"
-          ]
-        },
-        "trialId": {
-          "anyOf": [{ "$ref": "#/$defs/Text" }, { "type": "null" }]
-        },
-        "receiptDigest": {
-          "anyOf": [{ "$ref": "#/$defs/Digest" }, { "type": "null" }]
-        },
-        "receiptState": {
-          "enum": [
-            "missing",
-            "succeeded",
-            "candidate_failed",
-            "host_failed",
-            "invalid_artifact",
-            "verifier_failed",
-            "skipped",
-            "unavailable"
-          ]
-        },
-        "artifactValidationDigest": {
-          "anyOf": [{ "$ref": "#/$defs/Digest" }, { "type": "null" }]
-        },
-        "session": {
-          "anyOf": [{ "$ref": "#/$defs/Session" }, { "type": "null" }]
-        },
-        "cleanup": {
-          "enum": ["not_applicable", "succeeded", "failed", "unavailable"]
-        },
-        "judgmentRecordDigests": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": { "$ref": "#/$defs/Digest" }
-        }
-      }
-    },
-    "CaseCensus": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "caseId",
-        "familyId",
-        "manifestDigest",
-        "familyState",
-        "trials"
-      ],
-      "properties": {
-        "caseId": { "$ref": "#/$defs/Text" },
-        "familyId": { "$ref": "#/$defs/Text" },
-        "manifestDigest": { "$ref": "#/$defs/Digest" },
-        "familyState": { "enum": ["qualified", "failed", "unavailable"] },
-        "trials": {
-          "type": "array",
-          "minItems": 5,
-          "maxItems": 5,
-          "items": { "$ref": "#/$defs/TrialCensus" }
-        }
-      }
-    },
-    "FormReport": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "split",
-        "form",
-        "census",
-        "targetAlignment",
-        "taskUtility",
-        "evidenceIntegrity",
-        "targetSpecificity",
-        "criticalFailureRate",
-        "qpcfr",
-        "efficiency",
-        "caseCensus",
-        "coverage",
-        "uncertainty"
-      ],
-      "properties": {
-        "split": { "enum": ["release_a", "release_b"] },
-        "form": { "enum": ["dialogue", "professional_artifact"] },
-        "census": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "families",
-            "measured",
-            "receipts",
-            "cleanup",
-            "judgments",
-            "family"
-          ],
-          "properties": {
-            "families": { "type": "integer", "minimum": 0 },
-            "measured": { "type": "integer", "minimum": 0 },
-            "receipts": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "missing": { "type": "integer", "minimum": 0 },
-                "succeeded": { "type": "integer", "minimum": 0 },
-                "candidate_failed": { "type": "integer", "minimum": 0 },
-                "host_failed": { "type": "integer", "minimum": 0 },
-                "invalid_artifact": { "type": "integer", "minimum": 0 },
-                "verifier_failed": { "type": "integer", "minimum": 0 },
-                "skipped": { "type": "integer", "minimum": 0 },
-                "unavailable": { "type": "integer", "minimum": 0 }
-              }
-            },
-            "cleanup": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "succeeded": { "type": "integer", "minimum": 0 },
-                "failed": { "type": "integer", "minimum": 0 },
-                "unavailable": { "type": "integer", "minimum": 0 }
-              }
-            },
-            "judgments": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "missing": { "type": "integer", "minimum": 0 },
-                "measured": { "type": "integer", "minimum": 0 },
-                "disagreement": { "type": "integer", "minimum": 0 },
-                "abstained": { "type": "integer", "minimum": 0 },
-                "invalid": { "type": "integer", "minimum": 0 },
-                "unavailable": { "type": "integer", "minimum": 0 },
-                "failed": { "type": "integer", "minimum": 0 }
-              }
-            },
-            "family": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "qualified": { "type": "integer", "minimum": 0 },
-                "failed": { "type": "integer", "minimum": 0 },
-                "unavailable": { "type": "integer", "minimum": 0 }
-              }
-            }
-          }
-        },
-        "targetAlignment": { "$ref": "#/$defs/Rate" },
-        "taskUtility": { "$ref": "#/$defs/Rate" },
-        "evidenceIntegrity": { "$ref": "#/$defs/Rate" },
-        "targetSpecificity": { "$ref": "#/$defs/Rate" },
-        "criticalFailureRate": { "$ref": "#/$defs/Rate" },
-        "qpcfr": { "$ref": "#/$defs/Rate" },
-        "efficiency": { "$ref": "#/$defs/Efficiency" },
-        "caseCensus": {
-          "type": "array",
-          "minItems": 1,
-          "items": { "$ref": "#/$defs/CaseCensus" }
-        },
-        "coverage": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "observedReceipts",
-            "semanticEligibleReceipts",
-            "judgedRecords",
-            "numericFamilies"
-          ],
-          "properties": {
-            "observedReceipts": { "type": "integer", "minimum": 0 },
-            "semanticEligibleReceipts": { "type": "integer", "minimum": 0 },
-            "judgedRecords": { "type": "integer", "minimum": 0 },
-            "numericFamilies": { "type": "integer", "minimum": 0 }
-          }
-        },
-        "uncertainty": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "unmeasuredFamilies",
-            "qpcfrLowerBound",
-            "qpcfrUpperBound"
-          ],
-          "properties": {
-            "unmeasuredFamilies": { "type": "integer", "minimum": 0 },
-            "qpcfrLowerBound": { "type": "number", "minimum": 0, "maximum": 1 },
-            "qpcfrUpperBound": { "type": "number", "minimum": 0, "maximum": 1 }
-          }
-        }
-      }
-    },
-    "BenchmarkReport": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "release",
-        "benchCommit",
-        "bankDigest",
-        "candidate",
-        "provenance",
-        "forms",
-        "reportDigest"
-      ],
-      "properties": {
-        "release": { "const": "2026.8.12" },
-        "benchCommit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
-        "bankDigest": { "$ref": "#/$defs/Digest" },
-        "candidate": { "$ref": "#/$defs/Candidate" },
-        "provenance": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["bankId", "protocolDigest", "judgeConfigurationDigest"],
-          "properties": {
-            "bankId": { "$ref": "#/$defs/Text" },
-            "protocolDigest": { "$ref": "#/$defs/Digest" },
-            "judgeConfigurationDigest": { "$ref": "#/$defs/Digest" }
-          }
-        },
-        "forms": {
-          "type": "array",
-          "minItems": 0,
-          "maxItems": 4,
-          "items": { "$ref": "#/$defs/FormReport" }
-        },
-        "reportDigest": { "$ref": "#/$defs/Digest" }
       }
     }
   }

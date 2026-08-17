@@ -1,0 +1,130 @@
+{
+  "release": "2026.8.17",
+  "caseId": "pair-07-boundary",
+  "pairId": "pair-07",
+  "form": "professional_artifact",
+  "domain": "education_coaching",
+  "transferType": "boundary",
+  "taskArchetype": "design_threshold",
+  "taskMode": "bounded",
+  "split": "public",
+  "task": {
+    "instruction": "Draft a coaching-intervention threshold for incomplete performance evidence.\n\nInclude a learner-review requirement, a reversible default, a support safeguard, and a privacy veto.",
+    "environment": {
+      "kind": "workspace",
+      "fixtureDigest": "sha256:794692a3b4aef91f7c83e8704dc743667b23a4fd15819af5bd6090b17cde2622",
+      "verifierDigest": "sha256:5019524361eae98fc425efd491d349df6ae0d8ca0f5452b5f54c5b3e06031476"
+    },
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 4000,
+      "requiredReferenceIds": ["evidence-03-01", "evidence-03-02"]
+    }
+  },
+  "evidence": [
+    {
+      "id": "evidence-03-01",
+      "content": "The task supplies the stated alternatives and constraints for this design_threshold decision.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/d35cf2cae0ff9e1c",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-03-02",
+      "content": "The response must remain grounded in the supplied task record.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/ba9a639c73fb1923",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "unconditioned": [],
+    "target_a": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A learner is struggling and a coach can impose a strict plan or try a small change.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Discuss the process and preserve support before changing the plan.\nReasoning: People affected by the choice should be able to inspect how it was reached."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given a group activity has unequal participation and limited context about why, the next decision is: Use a fair process to make participation visible.\nReasoning: Keep a buffer so a bad outcome does not remove the next safe option."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Looking back at a performance signal is low but may reflect a mismatch in assessment, the recorded choice was Review the assessment process with the learner. The record points to [history-03-e1] and [history-03-e2].\nReasoning: A shared path prevents the same decision work from being repeated across teams."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "context=A support resource is scarce and several learners need it; evidence=[history-04-e1],[history-04-e2]; decision=Use an explainable support rule with an appeal route.\nReasoning: Keep the decision process explainable to those who must live with its effects."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A proposed intervention would share private learner detail to coordinate help.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Protect privacy and use the minimum necessary information."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed learner intervention would expose private information or remove necessary support without evidence, and a safeguarded alternative is available, the next decision is: Stop the intervention and restore privacy and support."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Looking back at two coaching approaches meet the immediate objective, the recorded choice was Choose a coaching approach that meets the objective without removing learner support. The record points to [history-07-e1] and [history-07-e2]."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "context=A routine lesson adjustment has known support requirements; evidence=[history-08-e1],[history-08-e2]; decision=Use the agreed support process and record the outcome."
+      }
+    ],
+    "target_b": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A learner is struggling and a coach can impose a strict plan or try a small change.\nEvidence: [history-01-e1], [history-01-e2]\nDecision: Try the smallest change and observe the learner's response.\nReasoning: Use the next step to learn what matters before accepting a costly commitment."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-02-e1] and [history-02-e2]. Given a group activity has unequal participation and limited context about why, the next decision is: Test a small format change and learn from participation.\nReasoning: Leave an exit available before making the commitment durable."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Looking back at a performance signal is low but may reflect a mismatch in assessment, the recorded choice was Try a reversible assessment variation. The record points to [history-03-e1] and [history-03-e2].\nReasoning: Judge the choice over the full period it will affect, not only the immediate step."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "context=A support resource is scarce and several learners need it; evidence=[history-04-e1],[history-04-e2]; decision=Pilot a support schedule and inspect unmet needs.\nReasoning: Choose the action that can resolve the open question with the least irreversible cost."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A proposed intervention would share private learner detail to coordinate help.\nEvidence: [history-05-e1], [history-05-e2]\nDecision: Do not run a test that exposes private information."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "We reviewed [history-06-e1] and [history-06-e2]. Given a proposed learner intervention would expose private information or remove necessary support without evidence, and a safeguarded alternative is available, the next decision is: Stop the intervention and restore privacy and support."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Looking back at two coaching approaches meet the immediate objective, the recorded choice was Choose a coaching approach that meets the objective without removing learner support. The record points to [history-07-e1] and [history-07-e2]."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "context=A routine lesson adjustment has known support requirements; evidence=[history-08-e1],[history-08-e2]; decision=Use the agreed support process and record the outcome."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": ["synthetic:pair-07-boundary"],
+    "templateId": "judgment-history/boundary"
+  },
+  "manifestDigest": "sha256:53bd2ae4923326b706d91c2ddae6204d09eecea8fccaaf7a5b6c34e275b508de"
+}

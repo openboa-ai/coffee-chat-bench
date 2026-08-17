@@ -37,7 +37,7 @@ test("activation audit preserves missing evidence and blocks readiness", () => {
         source: "qualification/README.md",
         note: "No independent human labels have been collected.",
       },
-      reliability: {
+      reliabilityCalibration: {
         state: "unavailable",
         source: "docs/validity/validity-argument-and-evidence-plan.md",
         note: "Reliability study is not run.",
@@ -55,11 +55,11 @@ test("activation audit preserves missing evidence and blocks readiness", () => {
   assert.equal(audit.decision, "not_ready");
   assert.deepEqual(audit.blockers, [
     "humanCriterion",
-    "reliability",
+    "reliabilityCalibration",
     "contamination",
   ]);
   assert.equal(audit.gates.humanCriterion.state, "missing");
-  assert.equal(audit.gates.reliability.state, "unavailable");
+  assert.equal(audit.gates.reliabilityCalibration.state, "unavailable");
   assert.equal(audit.gates.contamination.state, "inconclusive");
   assert.deepEqual(parseActivationAudit(audit), audit);
   assert.deepEqual(parseActivationAuditInput(input), input);

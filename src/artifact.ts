@@ -12,14 +12,13 @@ import {
 
 export interface CandidateTask {
   readonly release: typeof RELEASE_ID;
-  readonly trialId: string;
-  readonly caseId: string;
   readonly instruction: string;
   readonly environment: CaseManifest["task"]["environment"];
   readonly output: CaseManifest["task"]["output"];
   readonly evidence: CaseManifest["evidence"];
   readonly context: readonly {
     readonly id: string;
+    readonly format: CaseManifest["contexts"]["target_a"][number]["format"];
     readonly content: string;
   }[];
   readonly taskDigest: Digest;
@@ -41,15 +40,16 @@ export function renderCase(
     );
   const semantic = {
     release: RELEASE_ID,
-    trialId: selection.trialId,
-    caseId: manifest.caseId,
     instruction: manifest.task.instruction,
     environment: manifest.task.environment,
     output: manifest.task.output,
     evidence: manifest.evidence,
     context: manifest.contexts[selection.condition],
   };
-  return { ...semantic, taskDigest: stableDigest(semantic) };
+  return {
+    ...semantic,
+    taskDigest: stableDigest({ ...semantic, trialId: selection.trialId }),
+  };
 }
 
 export type ArtifactValidation =
@@ -106,16 +106,17 @@ export function validateArtifact(
         state: "invalid",
         cause: `missing required reference ${referenceId}`,
       };
+  const digest = artifactDigest(bytes, manifest.task.output.mediaType);
   return {
     state: "valid",
     artifact: {
-      digest: artifactDigest(bytes, manifest.task.output.mediaType),
+      digest,
       bytes: bytes.length,
       mediaType: manifest.task.output.mediaType,
       validationDigest: stableDigest({
         manifestDigest: manifest.manifestDigest,
         artifact: {
-          digest: artifactDigest(bytes, manifest.task.output.mediaType),
+          digest,
           bytes: bytes.length,
           mediaType: manifest.task.output.mediaType,
         },
