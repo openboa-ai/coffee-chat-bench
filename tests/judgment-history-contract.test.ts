@@ -57,9 +57,15 @@ test("rendering a condition gives an agent only the selected history", async () 
   );
 });
 
-test("legacy split and condition shapes are rejected by the new contract", async () => {
+test("the public case contract has no dataset split field", async () => {
   const value = await rawCase();
-  value.split = "release_a";
+  delete value.split;
+  const manifest = parseCaseManifest(value);
+  assert.equal("split" in manifest, false);
+});
+
+test("legacy condition shapes are rejected by the new contract", async () => {
+  const value = await rawCase();
   value.contexts = { task_only: [] };
   assert.throws(
     () => parseCaseManifest(value),

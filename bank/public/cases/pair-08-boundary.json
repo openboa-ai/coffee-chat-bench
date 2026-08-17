@@ -7,7 +7,6 @@
   "transferType": "boundary",
   "taskArchetype": "allocation_prioritization",
   "taskMode": "bounded",
-  "split": "public",
   "task": {
     "instruction": "Allocate a public grant pool after the strongest proposal is blocked by an unresolved reviewer conflict.\n\nProvide a complete 100% allocation for this cycle and identify the rule that controls the result.",
     "environment": {
@@ -143,5 +142,5 @@
     "sourceIds": ["synthetic:pair-08-boundary"],
     "templateId": "judgment-history/boundary"
   },
-  "manifestDigest": "sha256:d7ab243ebee021926d430d6f6c07e0b6dc94a52d72ecdc6117b569b4112ed90e"
+  "manifestDigest": "sha256:0461d1fa5230e730da6bb9a9f1534dce18d1e173b6acc9c87f560a7ff8139c5c"
 }

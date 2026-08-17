@@ -7,7 +7,6 @@
   "transferType": "boundary",
   "taskArchetype": "allocation_prioritization",
   "taskMode": "bounded",
-  "split": "public",
   "task": {
     "instruction": "Allocate a clinic's transport contract when the highest-capacity bid omits a required access service.\n\nSelect one bid, allocate the full contract, and state the binding eligibility threshold.",
     "environment": {
@@ -143,5 +142,5 @@
     "sourceIds": ["synthetic:pair-04-boundary"],
     "templateId": "judgment-history/boundary"
   },
-  "manifestDigest": "sha256:1827ebed77b176ffd3641e2a6c6056133750d57d546cda5ecef1a07bc418a738"
+  "manifestDigest": "sha256:c269548abb4c20b1c79f8c353a7449585e9994d8dd188bb4b724b9614ef4fa8d"
 }

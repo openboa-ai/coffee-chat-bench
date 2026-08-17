@@ -7,7 +7,6 @@
   "transferType": "near_transfer",
   "taskArchetype": "allocation_prioritization",
   "taskMode": "open_ended",
-  "split": "public",
   "task": {
     "instruction": "Allocate 40 instrument-hours between three studies after an ambiguous materials result.\n\nWrite a short allocation memo selecting the first study, assigning hours, and stating what the result would permit the team to conclude next.",
     "environment": {
@@ -143,5 +142,5 @@
     "sourceIds": ["synthetic:pair-02-near_transfer"],
     "templateId": "judgment-history/near_transfer"
   },
-  "manifestDigest": "sha256:2c409fd46d0429dea234f0dacadf16d3692905e61c8e42eded2324e41f55afa1"
+  "manifestDigest": "sha256:cc6e7f76c325ddb7b65e69979c727d62f8f0ed1197b46dc2189844d28618bbb3"
 }

@@ -7,7 +7,6 @@
   "transferType": "far_transfer",
   "taskArchetype": "allocation_prioritization",
   "taskMode": "bounded",
-  "split": "public",
   "task": {
     "instruction": "Allocate one reserve coach across three support responses after a cohort's completion rate falls.\n\nWrite a one-week allocation note choosing one response, protecting required support, and defining the evidence for continuation.",
     "environment": {
@@ -143,5 +142,5 @@
     "sourceIds": ["synthetic:pair-05-far_transfer"],
     "templateId": "judgment-history/far_transfer"
   },
-  "manifestDigest": "sha256:73951142e7e300476a58a32cde46e452fe7b8f0de96e9cd67aaace92e03a316b"
+  "manifestDigest": "sha256:d2874f7fac9ad14383fc53d686582a1b59846f6936705294e5004dd631b71fd2"
 }

@@ -13,7 +13,6 @@
     "transferType",
     "taskArchetype",
     "taskMode",
-    "split",
     "task",
     "evidence",
     "contexts",
@@ -38,7 +37,6 @@
       ]
     },
     "taskMode": { "enum": ["bounded", "open_ended"] },
-    "split": { "const": "public" },
     "task": {
       "type": "object",
       "additionalProperties": false,

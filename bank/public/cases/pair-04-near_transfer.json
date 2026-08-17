@@ -7,7 +7,6 @@
   "transferType": "near_transfer",
   "taskArchetype": "critique_revision",
   "taskMode": "open_ended",
-  "split": "public",
   "task": {
     "instruction": "Revise a library-hours proposal that increases total visits but removes the only access window for one group.\n\nReturn a revised weekly allocation with the chosen trade-off, eligibility or access rule, and review condition.",
     "environment": {
@@ -143,5 +142,5 @@
     "sourceIds": ["synthetic:pair-04-near_transfer"],
     "templateId": "judgment-history/near_transfer"
   },
-  "manifestDigest": "sha256:8da7e6326d790f17ffd3e61c7207db87d3793d0aad2d8a18943bcecd29761cfa"
+  "manifestDigest": "sha256:7ca3fab6e54e267ba4fea63f4b2b977845d5a9f07242e2dd18efd21180a3a17e"
 }

@@ -7,7 +7,6 @@
   "transferType": "near_transfer",
   "taskArchetype": "recommendation",
   "taskMode": "bounded",
-  "split": "public",
   "task": {
     "instruction": "Choose the rollout plan for a new support-triage model before a contractual launch date.\n\nRecommend staged rollout or full rollout. State the first checkpoint and the observation that would change the recommendation.",
     "environment": {
@@ -141,5 +140,5 @@
     "sourceIds": ["synthetic:pair-01-near_transfer"],
     "templateId": "judgment-history/near_transfer"
   },
-  "manifestDigest": "sha256:1f47303f75caf9a8e75abdf02a203e7c113ee9aa8afe7bbcddc96c45ccd19d18"
+  "manifestDigest": "sha256:547b87a191f589962c5793f3ecefef67dda8fe1ac71da958b192cc4744831568"
 }

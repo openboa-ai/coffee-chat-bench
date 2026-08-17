@@ -7,7 +7,6 @@
   "transferType": "policy_conflict",
   "taskArchetype": "design_threshold",
   "taskMode": "bounded",
-  "split": "public",
   "task": {
     "instruction": "Set a compute-allocation threshold for a research program balancing a minimum opportunity floor and expected discovery yield.\n\nDefine the allocation rule for 1,000 GPU-hours and apply it to the supplied proposals.",
     "environment": {
@@ -141,5 +140,5 @@
     "sourceIds": ["synthetic:pair-04-policy_conflict"],
     "templateId": "judgment-history/policy_conflict"
   },
-  "manifestDigest": "sha256:cd39e0583cef0c622bae6375a68e3b2e39d28809773015e2bbe663dd4dc196d9"
+  "manifestDigest": "sha256:73b8fc2fa03ea90197d530f17e1fd2d43c669e0a68be232bdbef2a8ab2d50685"
 }

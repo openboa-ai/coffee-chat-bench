@@ -7,8 +7,10 @@ import { auditBank } from "../src/data-audit.ts";
 test("the canonical public bank has the fixed census and balanced cells", async () => {
   const bank = await validateBank("bank");
   assert.equal(bank.manifest.status, "not_active");
+  assert.equal("split" in bank.manifest, false);
   assert.equal(bank.cases.length, 32);
   assert.equal(new Set(bank.cases.map(({ entry }) => entry.pairId)).size, 8);
+  assert.ok(bank.cases.every(({ manifest }) => !("split" in manifest)));
   assert.deepEqual(
     Object.fromEntries(
       [...Map.groupBy(bank.cases, ({ manifest }) => manifest.domain)]

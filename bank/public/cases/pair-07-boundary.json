@@ -7,7 +7,6 @@
   "transferType": "boundary",
   "taskArchetype": "recommendation",
   "taskMode": "open_ended",
-  "split": "public",
   "task": {
     "instruction": "Choose the permitted implementation path for a training reorganization that withdraws necessary supervised practice.\n\nRecommend the immediate action, the support boundary, and the condition for restarting the reorganization.",
     "environment": {
@@ -141,5 +140,5 @@
     "sourceIds": ["synthetic:pair-07-boundary"],
     "templateId": "judgment-history/boundary"
   },
-  "manifestDigest": "sha256:36cc3e1a9f8c86a27b54e02f8a11ead812cf5bdf8699b1502880f43db1669fbe"
+  "manifestDigest": "sha256:6a7a007335a23953d2b5d7bfabbc037ab74a8a1f2b2da8d6a46d1a287b7319f2"
 }

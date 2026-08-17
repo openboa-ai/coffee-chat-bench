@@ -7,7 +7,6 @@
   "transferType": "policy_conflict",
   "taskArchetype": "recommendation",
   "taskMode": "bounded",
-  "split": "public",
   "task": {
     "instruction": "Choose the first public-health message when verified accuracy and audience learning support different presentations.\n\nRecommend one launch plan, define its audience boundary, and state the evidence that would permit a later change.",
     "environment": {
@@ -141,5 +140,5 @@
     "sourceIds": ["synthetic:pair-06-policy_conflict"],
     "templateId": "judgment-history/policy_conflict"
   },
-  "manifestDigest": "sha256:2929a9977b6ca4d0283b55bd5e0be74bf3f872f650da50da5c95ee6bbc825458"
+  "manifestDigest": "sha256:38a31f4c86e789321a8069314548e6787280c4aff20cce7d069db80ad74dafd6"
 }

@@ -7,7 +7,6 @@
   "transferType": "policy_conflict",
   "taskArchetype": "design_threshold",
   "taskMode": "bounded",
-  "split": "public",
   "task": {
     "instruction": "Set next quarter's editorial portfolio threshold after one format shows stronger evidence but creates a staffing concentration.\n\nAllocate 12 production slots, define the minimum meaningful commitment for each selected format, and state the rebalance trigger.",
     "environment": {
@@ -141,5 +140,5 @@
     "sourceIds": ["synthetic:pair-08-policy_conflict"],
     "templateId": "judgment-history/policy_conflict"
   },
-  "manifestDigest": "sha256:de70c47dc6d50ed15e743419b561759d7d123fd1e074c0718d3c3d99df852f5f"
+  "manifestDigest": "sha256:0beea60ab9b2967e36b319a0e5c9b808b552bb780d5e74d497f3a248acd035ef"
 }

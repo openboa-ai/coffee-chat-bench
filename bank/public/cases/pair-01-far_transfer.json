@@ -7,7 +7,6 @@
   "transferType": "far_transfer",
   "taskArchetype": "allocation_prioritization",
   "taskMode": "bounded",
-  "split": "public",
   "task": {
     "instruction": "Write a six-week staffing allocation memo for an organization that can fund only one initiative.\n\nChoose one initiative, explain why it comes first, and specify what evidence or condition would justify the next commitment.",
     "environment": {
@@ -143,5 +142,5 @@
     "sourceIds": ["synthetic:pair-01-far_transfer"],
     "templateId": "judgment-history/far_transfer"
   },
-  "manifestDigest": "sha256:c5febc2d7c15e4fe05103fed78bc4cb78bcb063dabcfd9117e516efb6e3a8750"
+  "manifestDigest": "sha256:5bec14c19c9811a09228635e1524f5484163942f47c9c6ae0c4c976fd8cc393c"
 }

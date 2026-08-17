@@ -2,7 +2,6 @@ import { lstat, readFile } from "node:fs/promises";
 import { relative, resolve, sep } from "node:path";
 
 import {
-  BANK_SPLITS,
   BENCHMARK_FORMS,
   RELEASE_ID,
   TASK_ARCHETYPES,
@@ -91,7 +90,6 @@ export interface BankManifestSemantic {
   readonly release: typeof RELEASE_ID;
   readonly bankId: "public_judgment_history_bank";
   readonly status: "not_active";
-  readonly split: "public";
   readonly license: "MIT";
   readonly samplingPlanPath: "sampling-plan.json";
   readonly samplingPlanDigest: Digest;
@@ -216,7 +214,6 @@ function parseSemantic(value: unknown): BankManifestSemantic {
       "release",
       "bankId",
       "status",
-      "split",
       "license",
       "samplingPlanPath",
       "samplingPlanDigest",
@@ -243,7 +240,6 @@ function parseSemantic(value: unknown): BankManifestSemantic {
       "bank.bankId",
     ),
     status: literal(parsed.status, ["not_active"] as const, "bank.status"),
-    split: literal(parsed.split, BANK_SPLITS, "bank.split"),
     license: literal(parsed.license, ["MIT"] as const, "bank.license"),
     samplingPlanPath: literal(
       parsed.samplingPlanPath,
@@ -272,7 +268,6 @@ export function parseBankManifest(value: unknown): BankManifest {
       "release",
       "bankId",
       "status",
-      "split",
       "license",
       "samplingPlanPath",
       "samplingPlanDigest",

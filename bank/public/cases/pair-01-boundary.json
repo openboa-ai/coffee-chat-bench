@@ -7,7 +7,6 @@
   "transferType": "boundary",
   "taskArchetype": "design_threshold",
   "taskMode": "open_ended",
-  "split": "public",
   "task": {
     "instruction": "Set the immediate response threshold for an authentication outage with two available fixes.\n\nChoose the permitted fix, explain the threshold, and state what the team should do during the additional delay.",
     "environment": {
@@ -141,5 +140,5 @@
     "sourceIds": ["synthetic:pair-01-boundary"],
     "templateId": "judgment-history/boundary"
   },
-  "manifestDigest": "sha256:bc49cf16fe4acd905b97690f9f9145dde02b1e318b1ee90220ba06a3e96de1ff"
+  "manifestDigest": "sha256:216c55393ffe1d7a1f27b7e577826c5b050e39078c74e784e6d62c350a0a3188"
 }

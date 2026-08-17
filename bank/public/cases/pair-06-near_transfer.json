@@ -7,7 +7,6 @@
   "transferType": "near_transfer",
   "taskArchetype": "allocation_prioritization",
   "taskMode": "open_ended",
-  "split": "public",
   "task": {
     "instruction": "Allocate ten reporting-hours across three story treatments for one verified investigation.\n\nWrite an allocation note choosing the first treatment, assigning the ten hours, and defining a publication or test boundary.",
     "environment": {
@@ -143,5 +142,5 @@
     "sourceIds": ["synthetic:pair-06-near_transfer"],
     "templateId": "judgment-history/near_transfer"
   },
-  "manifestDigest": "sha256:5a68aaf2f674ad1e59a1dc43b89eee43d469c3f6c7fac5abe16f7c6de32a6ce0"
+  "manifestDigest": "sha256:0a06ca9326e418393d38ccddf44f7961568864f7fdfc9b1286733b54f6c63cbc"
 }

@@ -7,7 +7,6 @@
   "transferType": "boundary",
   "taskArchetype": "critique_revision",
   "taskMode": "bounded",
-  "split": "public",
   "task": {
     "instruction": "Correct a draft article that suppresses a verified inspection record to make one cause appear settled.\n\nReturn a corrected publication decision and a two-paragraph replacement note that accurately states the competing evidence.",
     "environment": {
@@ -143,5 +142,5 @@
     "sourceIds": ["synthetic:pair-02-boundary"],
     "templateId": "judgment-history/boundary"
   },
-  "manifestDigest": "sha256:acfc007fa02f6232f8bc31d2b95031ed2128935dd90ddb3cda98d34676448d66"
+  "manifestDigest": "sha256:d14250e6b5c13a14dd80c693785331c8c6f8e9d9542787c32bec192deca9b62c"
 }

@@ -110,7 +110,6 @@ for (const pair of pairs) {
       transferType: task.transferType,
       taskArchetype: task.taskArchetype,
       taskMode: task.taskMode,
-      split: "public",
       task: {
         instruction: `${task.title}\n\n${task.instruction}`,
         environment:
@@ -223,7 +222,6 @@ const bank = createBankManifest({
   release: RELEASE_ID,
   bankId: "public_judgment_history_bank",
   status: "not_active",
-  split: "public",
   license: "MIT",
   samplingPlanPath: "sampling-plan.json",
   samplingPlanDigest: stableDigest(samplingPlan),

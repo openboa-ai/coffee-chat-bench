@@ -15,6 +15,9 @@ test("JSON schema agrees with the three-condition public case contract", async (
     }
   )({ strict: false }).compile(schema);
   assert.equal(validate(await rawCase()), true);
+  const withoutSplit = await rawCase();
+  delete withoutSplit.split;
+  assert.equal(validate(withoutSplit), true);
   const invalid = await rawCase();
   (invalid.contexts as Record<string, unknown>).target_a = [];
   assert.equal(validate(invalid), false);

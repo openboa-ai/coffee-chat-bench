@@ -2,7 +2,6 @@
   "release": "2026.8.17",
   "bankId": "public_judgment_history_bank",
   "status": "not_active",
-  "split": "public",
   "license": "MIT",
   "samplingPlanPath": "sampling-plan.json",
   "samplingPlanDigest": "sha256:14c5a149f20007174a97717be697af261631ff86f3d5c0a28680488fb702e7c8",
@@ -18,7 +17,7 @@
       "taskMode": "bounded",
       "casePath": "public/cases/pair-01-near_transfer.json",
       "evaluatorPath": "evaluator/cases/pair-01-near_transfer.json",
-      "manifestDigest": "sha256:1f47303f75caf9a8e75abdf02a203e7c113ee9aa8afe7bbcddc96c45ccd19d18",
+      "manifestDigest": "sha256:547b87a191f589962c5793f3ecefef67dda8fe1ac71da958b192cc4744831568",
       "evaluatorDigest": "sha256:49ca2b1f08081ff1f1cabb5c384daa2ad88daa204891d2accb0ff5ed90db1a2e"
     },
     {
@@ -31,7 +30,7 @@
       "taskMode": "bounded",
       "casePath": "public/cases/pair-01-far_transfer.json",
       "evaluatorPath": "evaluator/cases/pair-01-far_transfer.json",
-      "manifestDigest": "sha256:c5febc2d7c15e4fe05103fed78bc4cb78bcb063dabcfd9117e516efb6e3a8750",
+      "manifestDigest": "sha256:5bec14c19c9811a09228635e1524f5484163942f47c9c6ae0c4c976fd8cc393c",
       "evaluatorDigest": "sha256:9f9f0f896e659d74c9266e652dc5790276d8c74579f192ceb54b50e255c9fe98"
     },
     {
@@ -44,7 +43,7 @@
       "taskMode": "open_ended",
       "casePath": "public/cases/pair-01-boundary.json",
       "evaluatorPath": "evaluator/cases/pair-01-boundary.json",
-      "manifestDigest": "sha256:bc49cf16fe4acd905b97690f9f9145dde02b1e318b1ee90220ba06a3e96de1ff",
+      "manifestDigest": "sha256:216c55393ffe1d7a1f27b7e577826c5b050e39078c74e784e6d62c350a0a3188",
       "evaluatorDigest": "sha256:ad629ada2ec675b737ec1d78cea67616675f1dab3273bd9159a76cac4dc35723"
     },
     {
@@ -57,7 +56,7 @@
       "taskMode": "open_ended",
       "casePath": "public/cases/pair-01-policy_conflict.json",
       "evaluatorPath": "evaluator/cases/pair-01-policy_conflict.json",
-      "manifestDigest": "sha256:d12a859e7eb4ead0fc04cbf0b52c74b4a12e872d3ff20b05f16ac6a4e451f00a",
+      "manifestDigest": "sha256:1cbc1f277a5215a42a82c3a72bf2dec8d9527ab938df2c450b1b56c5392dcf42",
       "evaluatorDigest": "sha256:652d76c3ac01c4004d4b90a22e278a1d7953b5d48007496882e8b13436fb3483"
     },
     {
@@ -70,7 +69,7 @@
       "taskMode": "open_ended",
       "casePath": "public/cases/pair-02-near_transfer.json",
       "evaluatorPath": "evaluator/cases/pair-02-near_transfer.json",
-      "manifestDigest": "sha256:2c409fd46d0429dea234f0dacadf16d3692905e61c8e42eded2324e41f55afa1",
+      "manifestDigest": "sha256:cc6e7f76c325ddb7b65e69979c727d62f8f0ed1197b46dc2189844d28618bbb3",
       "evaluatorDigest": "sha256:8d293625324bcdfc9af8ba785f5b37cb03359b73cb8720995edb930913a71ac2"
     },
     {
@@ -83,7 +82,7 @@
       "taskMode": "open_ended",
       "casePath": "public/cases/pair-02-far_transfer.json",
       "evaluatorPath": "evaluator/cases/pair-02-far_transfer.json",
-      "manifestDigest": "sha256:2231cfd9189397dfd019cd12c57de73b79d3f6c585745c072fff273e86c08a7e",
+      "manifestDigest": "sha256:a836fb007c1b25c90475aa9c1d4734acc478ca7e70a494028f1678fb997e077b",
       "evaluatorDigest": "sha256:1629b266398c43344bca20764ff0155463b6500d8c31c8ae7169ad0d18646d68"
     },
     {
@@ -96,7 +95,7 @@
       "taskMode": "bounded",
       "casePath": "public/cases/pair-02-boundary.json",
       "evaluatorPath": "evaluator/cases/pair-02-boundary.json",
-      "manifestDigest": "sha256:acfc007fa02f6232f8bc31d2b95031ed2128935dd90ddb3cda98d34676448d66",
+      "manifestDigest": "sha256:d14250e6b5c13a14dd80c693785331c8c6f8e9d9542787c32bec192deca9b62c",
       "evaluatorDigest": "sha256:c201791531f4a19aab9a507a0e1a37f1ff9a0526dc046a6f564486924b3e3293"
     },
     {
@@ -109,7 +108,7 @@
       "taskMode": "bounded",
       "casePath": "public/cases/pair-02-policy_conflict.json",
       "evaluatorPath": "evaluator/cases/pair-02-policy_conflict.json",
-      "manifestDigest": "sha256:ccb29270431de3251b4ff5d4d39ce87dfb391e80b64700e7bc37b9aeab3a7388",
+      "manifestDigest": "sha256:50a6e3c708d8ab520798996e53d79cf6baa4f480d5347f19b45d3ef9eb6c1ff5",
       "evaluatorDigest": "sha256:0ae153d7355f9be36774ea504ab778cbcf205546df201f7bc10ef198f1d5f452"
     },
     {
@@ -122,7 +121,7 @@
       "taskMode": "bounded",
       "casePath": "public/cases/pair-03-near_transfer.json",
       "evaluatorPath": "evaluator/cases/pair-03-near_transfer.json",
-      "manifestDigest": "sha256:856fb99e9bf80ffcdedb1dd783f3541a90c58c9930d9fe2594a438c1efedcba4",
+      "manifestDigest": "sha256:cd4d4fd10bc261ebce9a7a801068613482f0342d41f746403e4cb2878bc02d38",
       "evaluatorDigest": "sha256:8c9a506be7adfee1b1fd25f27787f3af4e7724378866f9230bef4782c8c415a8"
     },
     {
@@ -135,7 +134,7 @@
       "taskMode": "bounded",
       "casePath": "public/cases/pair-03-far_transfer.json",
       "evaluatorPath": "evaluator/cases/pair-03-far_transfer.json",
-      "manifestDigest": "sha256:d0c582e050054f32224047c494f8169c3dee635960b40ce5c339634c9e9f5af2",
+      "manifestDigest": "sha256:0ae1a27f28560cd340c633c394a9c6caa3c246a1ae2feb80559ac148fd93c2ed",
       "evaluatorDigest": "sha256:add21e78502baa9b49ba10cc3919bca691cf7aab608da7898346daa0b76f7133"
     },
     {
@@ -148,7 +147,7 @@
       "taskMode": "open_ended",
       "casePath": "public/cases/pair-03-boundary.json",
       "evaluatorPath": "evaluator/cases/pair-03-boundary.json",
-      "manifestDigest": "sha256:9bca21b49d79a4bbe7002e4c5e75e022637e44c6aad6c3abff2b60c048f40e2a",
+      "manifestDigest": "sha256:f9780070762fbb82890fa4720479996352389e972129809bd5460904bd20f9dd",
       "evaluatorDigest": "sha256:d4ebab1b6ce61d0a79840bf489eb8ec3e53f0a5688ec3c6a9ef9d00615d0bdf0"
     },
     {
@@ -161,7 +160,7 @@
       "taskMode": "open_ended",
       "casePath": "public/cases/pair-03-policy_conflict.json",
       "evaluatorPath": "evaluator/cases/pair-03-policy_conflict.json",
-      "manifestDigest": "sha256:eba15fae40aeeadf9842aff42a5c14badd0f4c253e12309d9de0917651e66d91",
+      "manifestDigest": "sha256:2f5b0ee1a3facff6bf7869013cb8384627c6b6431dbfed9a95d06c295d226689",
       "evaluatorDigest": "sha256:9d8f7d01b40e48358dea39f62181cb87f9765da7044cf9a595ea289c002404bc"
     },
     {
@@ -174,7 +173,7 @@
       "taskMode": "open_ended",
       "casePath": "public/cases/pair-04-near_transfer.json",
       "evaluatorPath": "evaluator/cases/pair-04-near_transfer.json",
-      "manifestDigest": "sha256:8da7e6326d790f17ffd3e61c7207db87d3793d0aad2d8a18943bcecd29761cfa",
+      "manifestDigest": "sha256:7ca3fab6e54e267ba4fea63f4b2b977845d5a9f07242e2dd18efd21180a3a17e",
       "evaluatorDigest": "sha256:4168926e453e9aac1323a3f48526a8e96488ec65126f25e16b4ca2b97c8d9501"
     },
     {
@@ -187,7 +186,7 @@
       "taskMode": "open_ended",
       "casePath": "public/cases/pair-04-far_transfer.json",
       "evaluatorPath": "evaluator/cases/pair-04-far_transfer.json",
-      "manifestDigest": "sha256:0814916d8a5f093f28c81f89b7d0fafb9322f1099411d41a927561e45590d129",
+      "manifestDigest": "sha256:a69426168c2af605db85e0b4416bfb7fb32b4bdeb9ddd9fa5aa5df7f5cbfc1d0",
       "evaluatorDigest": "sha256:8c1ed13496f3a1f0ae17e9d297ec1cf7948edcd0871d4f6b3d3eebd2678eb864"
     },
     {
@@ -200,7 +199,7 @@
       "taskMode": "bounded",
       "casePath": "public/cases/pair-04-boundary.json",
       "evaluatorPath": "evaluator/cases/pair-04-boundary.json",
-      "manifestDigest": "sha256:1827ebed77b176ffd3641e2a6c6056133750d57d546cda5ecef1a07bc418a738",
+      "manifestDigest": "sha256:c269548abb4c20b1c79f8c353a7449585e9994d8dd188bb4b724b9614ef4fa8d",
       "evaluatorDigest": "sha256:8b8b05f17b41e85561e3ba963523bfee71bcf4afc45c3e8cd0a53bc9223ca738"
     },
     {
@@ -213,7 +212,7 @@
       "taskMode": "bounded",
       "casePath": "public/cases/pair-04-policy_conflict.json",
       "evaluatorPath": "evaluator/cases/pair-04-policy_conflict.json",
-      "manifestDigest": "sha256:cd39e0583cef0c622bae6375a68e3b2e39d28809773015e2bbe663dd4dc196d9",
+      "manifestDigest": "sha256:73b8fc2fa03ea90197d530f17e1fd2d43c669e0a68be232bdbef2a8ab2d50685",
       "evaluatorDigest": "sha256:bb0991d2d0b19b02b29ca56f29297c1423a848c5e498ae07960f75710f4360d7"
     },
     {
@@ -226,7 +225,7 @@
       "taskMode": "bounded",
       "casePath": "public/cases/pair-05-near_transfer.json",
       "evaluatorPath": "evaluator/cases/pair-05-near_transfer.json",
-      "manifestDigest": "sha256:82ceab66d01b07aad24cac48f4d79029511df44ccedf3eadb808fc55aa0ea3c1",
+      "manifestDigest": "sha256:b0308d22629c3ac42aed0220e0bb8a9a09cf4944f497720a61120e1953786d91",
       "evaluatorDigest": "sha256:8a72d5ba6d2ac30f7c5b737f02d9eabf9f2db60db22bed3521c557f4c8f391b7"
     },
     {
@@ -239,7 +238,7 @@
       "taskMode": "bounded",
       "casePath": "public/cases/pair-05-far_transfer.json",
       "evaluatorPath": "evaluator/cases/pair-05-far_transfer.json",
-      "manifestDigest": "sha256:73951142e7e300476a58a32cde46e452fe7b8f0de96e9cd67aaace92e03a316b",
+      "manifestDigest": "sha256:d2874f7fac9ad14383fc53d686582a1b59846f6936705294e5004dd631b71fd2",
       "evaluatorDigest": "sha256:fed903244f5b3e5050ec46c30528c488dad5fc10e200ffb3866f7e907054f293"
     },
     {
@@ -252,7 +251,7 @@
       "taskMode": "open_ended",
       "casePath": "public/cases/pair-05-boundary.json",
       "evaluatorPath": "evaluator/cases/pair-05-boundary.json",
-      "manifestDigest": "sha256:8a458f02e9d1882b3c11df9e9baa46c34a93158a88b2faeddd596cf0c139dc8f",
+      "manifestDigest": "sha256:38773f60e306cf35085073c5b0611fe0b763f4e11c216060121d998c627afb5a",
       "evaluatorDigest": "sha256:49d872c0a7c1e08f68176077ceaa6eb2728bb4e5bb65f7556f31cd68ab55aaae"
     },
     {
@@ -265,7 +264,7 @@
       "taskMode": "open_ended",
       "casePath": "public/cases/pair-05-policy_conflict.json",
       "evaluatorPath": "evaluator/cases/pair-05-policy_conflict.json",
-      "manifestDigest": "sha256:19656e6d51aaa5f7bb4c4969b74db3778397fb3fb4bdb4eb3a85cc85b84c2830",
+      "manifestDigest": "sha256:480d2bdebcabde6c4fe15d6f37d8dcf0ce542a06334fc4e9e84cc31c99f5005a",
       "evaluatorDigest": "sha256:1bb55ab242db4da65045da107a19559809931fa97e0f6e7e09b03a1e409a8600"
     },
     {
@@ -278,7 +277,7 @@
       "taskMode": "open_ended",
       "casePath": "public/cases/pair-06-near_transfer.json",
       "evaluatorPath": "evaluator/cases/pair-06-near_transfer.json",
-      "manifestDigest": "sha256:5a68aaf2f674ad1e59a1dc43b89eee43d469c3f6c7fac5abe16f7c6de32a6ce0",
+      "manifestDigest": "sha256:0a06ca9326e418393d38ccddf44f7961568864f7fdfc9b1286733b54f6c63cbc",
       "evaluatorDigest": "sha256:03036ca46dc435a346fef8dbcb5b46d59608b1150681f30bc1f49db42904df2d"
     },
     {
@@ -291,7 +290,7 @@
       "taskMode": "open_ended",
       "casePath": "public/cases/pair-06-far_transfer.json",
       "evaluatorPath": "evaluator/cases/pair-06-far_transfer.json",
-      "manifestDigest": "sha256:bf1c452908e4964e39367b8abdc668535faa5ac1dfbe6ac80495989fb53f4c2b",
+      "manifestDigest": "sha256:a4e77218e63d8304017edb82f28b8a5892f766ae81e965a5023e99d281e9e354",
       "evaluatorDigest": "sha256:455042559011874421c46e5e4732235cb3afc331bbf8ec4191282376051b1209"
     },
     {
@@ -304,7 +303,7 @@
       "taskMode": "bounded",
       "casePath": "public/cases/pair-06-boundary.json",
       "evaluatorPath": "evaluator/cases/pair-06-boundary.json",
-      "manifestDigest": "sha256:b967d56f26993741c9412aca1480569770af0ceee7c10796c7a15769aa5d2cc0",
+      "manifestDigest": "sha256:8d5f47d4745dd749832936be6ae9ed340aa1f290a8dfef563eace7f0a1644d81",
       "evaluatorDigest": "sha256:f694be6d2a017a7b329489f7a470c87f6d6d555ddc4c7254708d8792338ae589"
     },
     {
@@ -317,7 +316,7 @@
       "taskMode": "bounded",
       "casePath": "public/cases/pair-06-policy_conflict.json",
       "evaluatorPath": "evaluator/cases/pair-06-policy_conflict.json",
-      "manifestDigest": "sha256:2929a9977b6ca4d0283b55bd5e0be74bf3f872f650da50da5c95ee6bbc825458",
+      "manifestDigest": "sha256:38a31f4c86e789321a8069314548e6787280c4aff20cce7d069db80ad74dafd6",
       "evaluatorDigest": "sha256:111668f8a48f83f1dcda112d4977a2a00fe2091be28f49e2aa2c3bd8f8292aa8"
     },
     {
@@ -330,7 +329,7 @@
       "taskMode": "bounded",
       "casePath": "public/cases/pair-07-near_transfer.json",
       "evaluatorPath": "evaluator/cases/pair-07-near_transfer.json",
-      "manifestDigest": "sha256:4effa97262b4ac6cfee803e502a000e4ba7c6008b156a58e2141914bf3f6abbf",
+      "manifestDigest": "sha256:be99f3bec30d256fab935510e97c84a2d377a7c76f1d64f6c1bcc79444511388",
       "evaluatorDigest": "sha256:af754662a937e87658cab6663a93e58f895cb0579eb54a678f63654663150aed"
     },
     {
@@ -343,7 +342,7 @@
       "taskMode": "bounded",
       "casePath": "public/cases/pair-07-far_transfer.json",
       "evaluatorPath": "evaluator/cases/pair-07-far_transfer.json",
-      "manifestDigest": "sha256:8f4db69ffc87b6508b40a839f2224c2856ec576f59ebea43b846ac0acde9052e",
+      "manifestDigest": "sha256:96be3278e9b9f32638c1456ddc2dfc589848070e3bd2742656e2cca74c64404b",
       "evaluatorDigest": "sha256:7277cd01fe0067c8b44c73201eac4070bacc32b5fc0a089a5af682fb298fdbaa"
     },
     {
@@ -356,7 +355,7 @@
       "taskMode": "open_ended",
       "casePath": "public/cases/pair-07-boundary.json",
       "evaluatorPath": "evaluator/cases/pair-07-boundary.json",
-      "manifestDigest": "sha256:36cc3e1a9f8c86a27b54e02f8a11ead812cf5bdf8699b1502880f43db1669fbe",
+      "manifestDigest": "sha256:6a7a007335a23953d2b5d7bfabbc037ab74a8a1f2b2da8d6a46d1a287b7319f2",
       "evaluatorDigest": "sha256:eb929e147629e720c92ccd56dca70b8081187da133f154a43c2843fd64826ed4"
     },
     {
@@ -369,7 +368,7 @@
       "taskMode": "open_ended",
       "casePath": "public/cases/pair-07-policy_conflict.json",
       "evaluatorPath": "evaluator/cases/pair-07-policy_conflict.json",
-      "manifestDigest": "sha256:94ad38203a1230bab812bbe4838cb927ecd77ba5656108ca2269cac539bd5b99",
+      "manifestDigest": "sha256:38060835a362bafa199c87f73f90e6ff161085ab65b4bda812e72895c405fcc5",
       "evaluatorDigest": "sha256:bf02be7cf2e82203cc2e5051e1ea4a3a6f454a250403d415ff5b94ce94ece0fe"
     },
     {
@@ -382,7 +381,7 @@
       "taskMode": "open_ended",
       "casePath": "public/cases/pair-08-near_transfer.json",
       "evaluatorPath": "evaluator/cases/pair-08-near_transfer.json",
-      "manifestDigest": "sha256:73d892d31defd4fa115d130170ebcb14fbdc5da03e40f390e327230323546500",
+      "manifestDigest": "sha256:5cd25e454f454396729b94314ee6ac4d2e255c558b0636e0a5e6adf6eca55987",
       "evaluatorDigest": "sha256:e169516159428dcdd96990c5d6a291fc4a13a55272e76c0d9b3c3f37bedd8ec5"
     },
     {
@@ -395,7 +394,7 @@
       "taskMode": "open_ended",
       "casePath": "public/cases/pair-08-far_transfer.json",
       "evaluatorPath": "evaluator/cases/pair-08-far_transfer.json",
-      "manifestDigest": "sha256:fbe03e5d1c8f13c4f0acb2564e4ac5f6c54145efc6a9b7f13d1b932073923017",
+      "manifestDigest": "sha256:fb9374b3764d50e03f83f3d2e070b1d7093cbb1ffa2b43f5423b8c9ebd89f44d",
       "evaluatorDigest": "sha256:ac51f59495c54fe30176d04b7fceb9d90f3ff50b0d01b0a2a76bb81bdba3caff"
     },
     {
@@ -408,7 +407,7 @@
       "taskMode": "bounded",
       "casePath": "public/cases/pair-08-boundary.json",
       "evaluatorPath": "evaluator/cases/pair-08-boundary.json",
-      "manifestDigest": "sha256:d7ab243ebee021926d430d6f6c07e0b6dc94a52d72ecdc6117b569b4112ed90e",
+      "manifestDigest": "sha256:0461d1fa5230e730da6bb9a9f1534dce18d1e173b6acc9c87f560a7ff8139c5c",
       "evaluatorDigest": "sha256:c7e089ef8624ee9d1697a2f147f69659f6f0fd4be6e2b609548848c21a0df7e7"
     },
     {
@@ -421,9 +420,9 @@
       "taskMode": "bounded",
       "casePath": "public/cases/pair-08-policy_conflict.json",
       "evaluatorPath": "evaluator/cases/pair-08-policy_conflict.json",
-      "manifestDigest": "sha256:de70c47dc6d50ed15e743419b561759d7d123fd1e074c0718d3c3d99df852f5f",
+      "manifestDigest": "sha256:0beea60ab9b2967e36b319a0e5c9b808b552bb780d5e74d497f3a248acd035ef",
       "evaluatorDigest": "sha256:a4b5f8674230bd98c86a69933f443fa90b49e29fe7826f65d61af9ffc4d72a8f"
     }
   ],
-  "bankDigest": "sha256:fab984669e06c83f4dded67b3c1f8f46024368c40cc9ff4cf62dfe0241c9d3d5"
+  "bankDigest": "sha256:7e0cccf1e6931d0288f0928a8e15e231540626fd289863c4b8b752edd32af1fa"
 }

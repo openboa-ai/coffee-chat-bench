@@ -7,7 +7,6 @@
   "transferType": "policy_conflict",
   "taskArchetype": "recommendation",
   "taskMode": "bounded",
-  "split": "public",
   "task": {
     "instruction": "Choose the next due-diligence action for a fleet-software purchase when causal resolution and reproducible performance evidence point to different options.\n\nRecommend one action for this month and state what claim the evidence would and would not support.",
     "environment": {
@@ -141,5 +140,5 @@
     "sourceIds": ["synthetic:pair-02-policy_conflict"],
     "templateId": "judgment-history/policy_conflict"
   },
-  "manifestDigest": "sha256:ccb29270431de3251b4ff5d4d39ce87dfb391e80b64700e7bc37b9aeab3a7388"
+  "manifestDigest": "sha256:50a6e3c708d8ab520798996e53d79cf6baa4f480d5347f19b45d3ef9eb6c1ff5"
 }

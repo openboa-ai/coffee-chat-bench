@@ -7,7 +7,6 @@
   "transferType": "near_transfer",
   "taskArchetype": "recommendation",
   "taskMode": "bounded",
-  "split": "public",
   "task": {
     "instruction": "Choose the response to a rising database error rate before the evening peak.\n\nRecommend one response, define its stop condition, and state how recovery capacity is protected.",
     "environment": {
@@ -141,5 +140,5 @@
     "sourceIds": ["synthetic:pair-05-near_transfer"],
     "templateId": "judgment-history/near_transfer"
   },
-  "manifestDigest": "sha256:82ceab66d01b07aad24cac48f4d79029511df44ccedf3eadb808fc55aa0ea3c1"
+  "manifestDigest": "sha256:b0308d22629c3ac42aed0220e0bb8a9a09cf4944f497720a61120e1953786d91"
 }

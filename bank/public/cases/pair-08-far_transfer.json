@@ -7,7 +7,6 @@
   "transferType": "far_transfer",
   "taskArchetype": "recommendation",
   "taskMode": "open_ended",
-  "split": "public",
   "task": {
     "instruction": "Choose a one-year research portfolio under a budget that cannot fully fund every live hypothesis.\n\nRecommend a portfolio, allocate 100% of the budget, and state the evidence that would trigger reallocation.",
     "environment": {
@@ -141,5 +140,5 @@
     "sourceIds": ["synthetic:pair-08-far_transfer"],
     "templateId": "judgment-history/far_transfer"
   },
-  "manifestDigest": "sha256:fbe03e5d1c8f13c4f0acb2564e4ac5f6c54145efc6a9b7f13d1b932073923017"
+  "manifestDigest": "sha256:fb9374b3764d50e03f83f3d2e070b1d7093cbb1ffa2b43f5423b8c9ebd89f44d"
 }

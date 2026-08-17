@@ -7,7 +7,6 @@
   "transferType": "far_transfer",
   "taskArchetype": "design_threshold",
   "taskMode": "open_ended",
-  "split": "public",
   "task": {
     "instruction": "Set the evidence threshold for expanding a mobile permit service after conflicting demand estimates.\n\nRecommend the next evidence step and define the threshold for an expansion decision.",
     "environment": {
@@ -141,5 +140,5 @@
     "sourceIds": ["synthetic:pair-02-far_transfer"],
     "templateId": "judgment-history/far_transfer"
   },
-  "manifestDigest": "sha256:2231cfd9189397dfd019cd12c57de73b79d3f6c585745c072fff273e86c08a7e"
+  "manifestDigest": "sha256:a836fb007c1b25c90475aa9c1d4734acc478ca7e70a494028f1678fb997e077b"
 }

@@ -7,7 +7,6 @@
   "transferType": "near_transfer",
   "taskArchetype": "design_threshold",
   "taskMode": "bounded",
-  "split": "public",
   "task": {
     "instruction": "Set the intervention threshold for a learner who has missed two course milestones.\n\nRecommend the next support plan, define the mastery evidence required, and state when the plan should be revised.",
     "environment": {
@@ -141,5 +140,5 @@
     "sourceIds": ["synthetic:pair-07-near_transfer"],
     "templateId": "judgment-history/near_transfer"
   },
-  "manifestDigest": "sha256:4effa97262b4ac6cfee803e502a000e4ba7c6008b156a58e2141914bf3f6abbf"
+  "manifestDigest": "sha256:be99f3bec30d256fab935510e97c84a2d377a7c76f1d64f6c1bcc79444511388"
 }

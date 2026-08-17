@@ -7,7 +7,6 @@
   "transferType": "far_transfer",
   "taskArchetype": "critique_revision",
   "taskMode": "bounded",
-  "split": "public",
   "task": {
     "instruction": "Revise a customer-support onboarding plan that removes trainee choice but lacks a stable proficiency standard.\n\nReturn a revised two-week plan with trainee input, a common proficiency criterion, support provisions, and an escalation point.",
     "environment": {
@@ -143,5 +142,5 @@
     "sourceIds": ["synthetic:pair-07-far_transfer"],
     "templateId": "judgment-history/far_transfer"
   },
-  "manifestDigest": "sha256:8f4db69ffc87b6508b40a839f2224c2856ec576f59ebea43b846ac0acde9052e"
+  "manifestDigest": "sha256:96be3278e9b9f32638c1456ddc2dfc589848070e3bd2742656e2cca74c64404b"
 }

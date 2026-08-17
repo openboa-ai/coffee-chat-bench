@@ -7,7 +7,6 @@
   "transferType": "boundary",
   "taskArchetype": "critique_revision",
   "taskMode": "bounded",
-  "split": "public",
   "task": {
     "instruction": "Correct a press-release draft that turns a preliminary association into a causal medical claim.\n\nReturn a publication decision and a corrected two-paragraph release that accurately represents the study.",
     "environment": {
@@ -143,5 +142,5 @@
     "sourceIds": ["synthetic:pair-06-boundary"],
     "templateId": "judgment-history/boundary"
   },
-  "manifestDigest": "sha256:b967d56f26993741c9412aca1480569770af0ceee7c10796c7a15769aa5d2cc0"
+  "manifestDigest": "sha256:8d5f47d4745dd749832936be6ae9ed340aa1f290a8dfef563eace7f0a1644d81"
 }

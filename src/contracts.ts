@@ -4,7 +4,6 @@ export { canonicalJson, stableDigest, type Digest } from "./digest.ts";
 
 export const RELEASE_ID = "2026.8.17" as const;
 export const BENCHMARK_FORMS = ["dialogue", "professional_artifact"] as const;
-export const BANK_SPLITS = ["public"] as const;
 export const BENCHMARK_CONDITIONS = [
   "unconditioned",
   "target_a",
@@ -36,7 +35,6 @@ export type TransferType = (typeof TRANSFER_TYPES)[number];
 export type TaskArchetype = (typeof TASK_ARCHETYPES)[number];
 export type TaskMode = (typeof TASK_MODES)[number];
 export type HistoryFormat = (typeof HISTORY_FORMATS)[number];
-export type BankSplit = "public";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -123,7 +121,6 @@ export interface CaseManifestSemantic {
   readonly transferType: TransferType;
   readonly taskArchetype: TaskArchetype;
   readonly taskMode: TaskMode;
-  readonly split: "public";
   readonly task: {
     readonly instruction: string;
     readonly environment:
@@ -199,7 +196,6 @@ function parseCaseSemantic(value: unknown): CaseManifestSemantic {
       "transferType",
       "taskArchetype",
       "taskMode",
-      "split",
       "task",
       "evidence",
       "contexts",
@@ -293,7 +289,6 @@ function parseCaseSemantic(value: unknown): CaseManifestSemantic {
       "case manifest.taskArchetype",
     ),
     taskMode: literal(parsed.taskMode, TASK_MODES, "case manifest.taskMode"),
-    split: "public",
     task: {
       instruction: string(task.instruction, "case manifest.task.instruction"),
       environment:
@@ -360,7 +355,6 @@ export function parseCaseManifest(value: unknown): CaseManifest {
       "transferType",
       "taskArchetype",
       "taskMode",
-      "split",
       "task",
       "evidence",
       "contexts",

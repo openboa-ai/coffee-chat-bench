@@ -1,5 +1,4 @@
 export {
-  BANK_SPLITS,
   BENCHMARK_CONDITIONS,
   BENCHMARK_FORMS,
   HISTORY_FORMATS,
@@ -17,7 +16,6 @@ export {
   stableDigest,
 } from "./contracts.ts";
 export type {
-  BankSplit,
   BenchmarkCondition,
   BenchmarkForm,
   CandidateIdentity,

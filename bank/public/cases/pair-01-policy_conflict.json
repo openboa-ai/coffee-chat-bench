@@ -7,7 +7,6 @@
   "transferType": "policy_conflict",
   "taskArchetype": "critique_revision",
   "taskMode": "open_ended",
-  "split": "public",
   "task": {
     "instruction": "Revise a coaching-program proposal that trades learner evidence against a common operating calendar.\n\nReturn a revised proposal with a decision, sequencing logic, checkpoint, and stop or escalation condition.",
     "environment": {
@@ -143,5 +142,5 @@
     "sourceIds": ["synthetic:pair-01-policy_conflict"],
     "templateId": "judgment-history/policy_conflict"
   },
-  "manifestDigest": "sha256:d12a859e7eb4ead0fc04cbf0b52c74b4a12e872d3ff20b05f16ac6a4e451f00a"
+  "manifestDigest": "sha256:1cbc1f277a5215a42a82c3a72bf2dec8d9527ab938df2c450b1b56c5392dcf42"
 }

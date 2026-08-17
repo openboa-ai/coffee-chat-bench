@@ -7,7 +7,6 @@
   "transferType": "far_transfer",
   "taskArchetype": "critique_revision",
   "taskMode": "bounded",
-  "split": "public",
   "task": {
     "instruction": "Revise an incident-command handoff that is fast but gives responders no reviewable way to challenge permanent changes.\n\nReturn a revised handoff with immediate authority, review rights, a permanence boundary, and a deadline.",
     "environment": {
@@ -143,5 +142,5 @@
     "sourceIds": ["synthetic:pair-03-far_transfer"],
     "templateId": "judgment-history/far_transfer"
   },
-  "manifestDigest": "sha256:d0c582e050054f32224047c494f8169c3dee635960b40ce5c339634c9e9f5af2"
+  "manifestDigest": "sha256:0ae1a27f28560cd340c633c394a9c6caa3c246a1ae2feb80559ac148fd93c2ed"
 }

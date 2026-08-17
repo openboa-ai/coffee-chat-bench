@@ -7,7 +7,6 @@
   "transferType": "near_transfer",
   "taskArchetype": "design_threshold",
   "taskMode": "bounded",
-  "split": "public",
   "task": {
     "instruction": "Set the decision threshold for merging two operations teams before a fixed contract transition.\n\nRecommend who decides, what review occurs first, and the condition under which the decision must be reopened.",
     "environment": {
@@ -141,5 +140,5 @@
     "sourceIds": ["synthetic:pair-03-near_transfer"],
     "templateId": "judgment-history/near_transfer"
   },
-  "manifestDigest": "sha256:856fb99e9bf80ffcdedb1dd783f3541a90c58c9930d9fe2594a438c1efedcba4"
+  "manifestDigest": "sha256:cd4d4fd10bc261ebce9a7a801068613482f0342d41f746403e4cb2878bc02d38"
 }

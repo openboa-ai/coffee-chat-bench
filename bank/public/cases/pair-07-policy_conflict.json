@@ -7,7 +7,6 @@
   "transferType": "policy_conflict",
   "taskArchetype": "allocation_prioritization",
   "taskMode": "open_ended",
-  "split": "public",
   "task": {
     "instruction": "Allocate 20 remediation-hours among security-training options for two analysts who missed a critical proficiency threshold.\n\nWrite an allocation memo selecting one first intervention, assigning the 20 hours, and defining advancement and privacy conditions.",
     "environment": {
@@ -143,5 +142,5 @@
     "sourceIds": ["synthetic:pair-07-policy_conflict"],
     "templateId": "judgment-history/policy_conflict"
   },
-  "manifestDigest": "sha256:94ad38203a1230bab812bbe4838cb927ecd77ba5656108ca2269cac539bd5b99"
+  "manifestDigest": "sha256:38060835a362bafa199c87f73f90e6ff161085ab65b4bda812e72895c405fcc5"
 }

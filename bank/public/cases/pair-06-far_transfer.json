@@ -7,7 +7,6 @@
   "transferType": "far_transfer",
   "taskArchetype": "design_threshold",
   "taskMode": "open_ended",
-  "split": "public",
   "task": {
     "instruction": "Set the evidence threshold for using a supplier's environmental claim in a public procurement recommendation.\n\nRecommend the next action and define when the claim may appear in the final recommendation.",
     "environment": {
@@ -141,5 +140,5 @@
     "sourceIds": ["synthetic:pair-06-far_transfer"],
     "templateId": "judgment-history/far_transfer"
   },
-  "manifestDigest": "sha256:bf1c452908e4964e39367b8abdc668535faa5ac1dfbe6ac80495989fb53f4c2b"
+  "manifestDigest": "sha256:a4e77218e63d8304017edb82f28b8a5892f766ae81e965a5023e99d281e9e354"
 }

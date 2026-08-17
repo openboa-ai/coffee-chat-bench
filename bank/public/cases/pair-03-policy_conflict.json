@@ -7,7 +7,6 @@
   "transferType": "policy_conflict",
   "taskArchetype": "allocation_prioritization",
   "taskMode": "open_ended",
-  "split": "public",
   "task": {
     "instruction": "Allocate one product-planning week between stakeholder review and a named-owner service decision.\n\nWrite a planning note allocating the five working days, selecting a final decision process, and defining an escalation trigger.",
     "environment": {
@@ -143,5 +142,5 @@
     "sourceIds": ["synthetic:pair-03-policy_conflict"],
     "templateId": "judgment-history/policy_conflict"
   },
-  "manifestDigest": "sha256:eba15fae40aeeadf9842aff42a5c14badd0f4c253e12309d9de0917651e66d91"
+  "manifestDigest": "sha256:2f5b0ee1a3facff6bf7869013cb8384627c6b6431dbfed9a95d06c295d226689"
 }

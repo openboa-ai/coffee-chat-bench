@@ -7,7 +7,6 @@
   "transferType": "far_transfer",
   "taskArchetype": "recommendation",
   "taskMode": "open_ended",
-  "split": "public",
   "task": {
     "instruction": "Choose how an editorial team should spend its final 60 production-hours this month.\n\nRecommend one allocation and explain whose access or benefit determines the decision.",
     "environment": {
@@ -141,5 +140,5 @@
     "sourceIds": ["synthetic:pair-04-far_transfer"],
     "templateId": "judgment-history/far_transfer"
   },
-  "manifestDigest": "sha256:0814916d8a5f093f28c81f89b7d0fafb9322f1099411d41a927561e45590d129"
+  "manifestDigest": "sha256:a69426168c2af605db85e0b4416bfb7fb32b4bdeb9ddd9fa5aa5df7f5cbfc1d0"
 }

@@ -7,7 +7,6 @@
   "transferType": "policy_conflict",
   "taskArchetype": "critique_revision",
   "taskMode": "open_ended",
-  "split": "public",
   "task": {
     "instruction": "Revise an on-call centralization proposal that improves response speed but removes backup coverage.\n\nReturn a revised staffing proposal with the first change, observation window, capacity boundary, and stop condition.",
     "environment": {
@@ -143,5 +142,5 @@
     "sourceIds": ["synthetic:pair-05-policy_conflict"],
     "templateId": "judgment-history/policy_conflict"
   },
-  "manifestDigest": "sha256:19656e6d51aaa5f7bb4c4969b74db3778397fb3fb4bdb4eb3a85cc85b84c2830"
+  "manifestDigest": "sha256:480d2bdebcabde6c4fe15d6f37d8dcf0ce542a06334fc4e9e84cc31c99f5005a"
 }

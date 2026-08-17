@@ -7,7 +7,6 @@
   "transferType": "near_transfer",
   "taskArchetype": "critique_revision",
   "taskMode": "open_ended",
-  "split": "public",
   "task": {
     "instruction": "Revise a supplier-allocation recommendation that overreacts to one strong performance record.\n\nReturn a complete 100% allocation with rationale, dependency boundary, and review trigger.",
     "environment": {
@@ -143,5 +142,5 @@
     "sourceIds": ["synthetic:pair-08-near_transfer"],
     "templateId": "judgment-history/near_transfer"
   },
-  "manifestDigest": "sha256:73d892d31defd4fa115d130170ebcb14fbdc5da03e40f390e327230323546500"
+  "manifestDigest": "sha256:5cd25e454f454396729b94314ee6ac4d2e255c558b0636e0a5e6adf6eca55987"
 }
