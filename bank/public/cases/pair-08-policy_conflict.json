@@ -61,12 +61,12 @@
       {
         "id": "record-02",
         "format": "message_excerpt",
-        "content": "Situation: A research program must allocate one year of funding across three hypotheses.\nMessage: We considered [history-02-e1] Hypothesis Cedar has two preregistered replications, needs at least 70% of the budget for a decisive study, and can use the full budget for a second site and higher precision. [history-02-e2] Hypotheses Birch and Ash each have one small exploratory result and can run useful pilots with 15% of the budget. The decision is Allocate 70% to Cedar and 15% to each exploratory pilot.\nReasoning: The portfolio preserves two independent learning paths without preventing the strongest study."
+        "content": "Situation: A city service must allocate its annual outreach budget across one proven channel and two smaller independent channels.\nMessage: We considered [history-02-e1] Channel Core has two audited campaigns, needs 60% of the budget to preserve citywide coverage, and can use the full budget to add multilingual frequency. [history-02-e2] Channels Local and Hotline use independent delivery methods, each has one small pilot, and each can run a useful program with 20% of the budget. The decision is Allocate 60% to Core and 20% each to Local and Hotline.\nReasoning: The portfolio preserves two independent reach paths without preventing citywide coverage."
       },
       {
         "id": "record-03",
         "format": "retrospective",
-        "content": "Situation: An editorial team must choose next year's mix after one investigation format outperforms all others.\nRecord: [history-03-e1] The investigation format has three years of strong subscriber retention but depends on one specialist editor. [history-03-e2] The remaining 30% of the annual budget can either fund two smaller formats produced by different staff or train a second specialist editor and expand the investigation format.\nRecorded decision: Use 70% for the investigation and 15% for each smaller format to retain independent staff and audience paths.\nReasoning: The portfolio should not make one editor or audience assumption a single point of failure."
+        "content": "Situation: An emergency-response network must choose next year's depot mix after central dispatch outperforms the local depots.\nRecord: [history-03-e1] Central dispatch resolved incidents 14% faster over three years but depends on one telecom carrier and can productively use all 12 response crews. [history-03-e2] Four crews can either remain split between two local depots on independent carriers or staff a redundant carrier link and expand central dispatch.\nRecorded decision: Assign eight crews to central dispatch and keep two crews at each independent local depot.\nReasoning: The network should not make one carrier and one operating site its only response path."
       },
       {
         "id": "record-04",
@@ -103,12 +103,12 @@
       {
         "id": "record-02",
         "format": "message_excerpt",
-        "content": "Situation: A research program must allocate one year of funding across three hypotheses.\nMessage: We considered [history-02-e1] Hypothesis Cedar has two preregistered replications, needs at least 70% of the budget for a decisive study, and can use the full budget for a second site and higher precision. [history-02-e2] Hypotheses Birch and Ash each have one small exploratory result and can run useful pilots with 15% of the budget. The decision is Allocate the full budget to Cedar's decisive preregistered study.\nReasoning: Diluting the only replicated program would leave every hypothesis underpowered and no conclusion defensible."
+        "content": "Situation: A city service must allocate its annual outreach budget across one proven channel and two smaller independent channels.\nMessage: We considered [history-02-e1] Channel Core has two audited campaigns, needs 60% of the budget to preserve citywide coverage, and can use the full budget to add multilingual frequency. [history-02-e2] Channels Local and Hotline use independent delivery methods, each has one small pilot, and each can run a useful program with 20% of the budget. The decision is Allocate the full budget to Core's audited citywide program.\nReasoning: The strongest repeated evidence supports a meaningful commitment instead of fragmenting delivery across smaller pilots."
       },
       {
         "id": "record-03",
         "format": "retrospective",
-        "content": "Situation: An editorial team must choose next year's mix after one investigation format outperforms all others.\nRecord: [history-03-e1] The investigation format has three years of strong subscriber retention but depends on one specialist editor. [history-03-e2] The remaining 30% of the annual budget can either fund two smaller formats produced by different staff or train a second specialist editor and expand the investigation format.\nRecorded decision: Use 70% for the investigation and the remaining 30% to train a second editor and expand that format.\nReasoning: The repeated retention evidence justifies concentration once the staffing dependency is addressed directly."
+        "content": "Situation: An emergency-response network must choose next year's depot mix after central dispatch outperforms the local depots.\nRecord: [history-03-e1] Central dispatch resolved incidents 14% faster over three years but depends on one telecom carrier and can productively use all 12 response crews. [history-03-e2] Four crews can either remain split between two local depots on independent carriers or staff a redundant carrier link and expand central dispatch.\nRecorded decision: Assign eight crews to central dispatch and use four crews to staff the redundant carrier link there.\nReasoning: The repeated response evidence justifies concentration once the telecom dependency is addressed directly."
       },
       {
         "id": "record-04",
@@ -141,5 +141,5 @@
     "sourceIds": ["synthetic:pair-08-policy_conflict"],
     "templateId": "judgment-history/policy_conflict"
   },
-  "manifestDigest": "sha256:1b75cd99dde9599a660f922215a84e056df318080c30f0bd5db834a4eb47c50b"
+  "manifestDigest": "sha256:de70c47dc6d50ed15e743419b561759d7d123fd1e074c0718d3c3d99df852f5f"
 }

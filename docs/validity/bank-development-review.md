@@ -64,6 +64,27 @@ benchmark problem well enough. Direct review found and removed:
 - arithmetic and resource-threshold inconsistencies in access-hour, compute,
   staffing, and portfolio cases.
 
+A second full-bank pass before publication also found and corrected:
+
+- a transport reserve that did not actually clear the stated service floor,
+  making the aggregate-reach decision weaker than the protected-floor option;
+- a tutoring follow-up scheduled soon enough to dominate the immediate
+  protected-floor allocation rather than create a defensible trade-off;
+- held-out cases that semantically repeated a historical quotation dispute,
+  supplier test, accommodation change, editorial accessibility allocation,
+  training-data disclosure, research portfolio, editorial portfolio, or
+  public-reserve rule;
+- exact library-hour and compute allocations whose intended priority was not
+  fully supported by the supplied quantities; and
+- one allowed-alternative statement that referred to a recertification
+  constraint absent from the case evidence.
+
+Those items were rewritten at the authored-data source. They were not hidden
+with lexical exceptions or additional semantic rule checks. Near-transfer
+cases intentionally retain a related decision structure, while far-transfer,
+boundary, and policy-conflict cases now use distinct situations and evidence
+from their target histories.
+
 The bank was rewritten around explicit facts rather than patched with fallback
 text. Every held-out case now has four substantive evidence items. Every pair
 uses four different domains. Expected decisions converge only for the eight
@@ -71,8 +92,9 @@ boundary cases and remain distinguishable for the other 24 cases.
 
 ## Current construction evidence
 
-Project-side review found no remaining internal contradiction or missing
-decision input in the current 8-pair, 32-case corpus. The mechanical audit also
+After the second pass, project-side review found no unresolved internal
+contradiction, dominated target option, missing decision input, or semantic
+answer copy in the current 8-pair, 32-case corpus. The mechanical audit also
 confirms:
 
 - exact `8 pairs / 16 targets / 32 cases / 3 conditions / 96 executions` census;

@@ -46,7 +46,7 @@
       "Explain whether resilience to correlated failure or concentration on the strongest evidence controls normal allocation."
     ],
     "allowedAlternatives": [
-      "Different percentages are acceptable if they total 100%, respect recertification constraints, and reveal the selected priority."
+      "Different percentages are acceptable if they total 100%, respect Boreal's 35% certified cap and the emergency-shift review boundary, and reveal the selected priority."
     ],
     "taskPerformanceConditions": [
       "Provides a complete 100% allocation, dependency boundary, and observable review trigger."
@@ -58,5 +58,5 @@
       "Allocates more than 100%, claims Atlas cannot fail, or assumes an unreviewed shift above 15% is available."
     ]
   },
-  "evaluatorDigest": "sha256:7424665a160a66fefc0fa5e6056448c49d9dc02cba1d766fce9dccc09645724e"
+  "evaluatorDigest": "sha256:e169516159428dcdd96990c5d6a291fc4a13a55272e76c0d9b3c3f37bedd8ec5"
 }

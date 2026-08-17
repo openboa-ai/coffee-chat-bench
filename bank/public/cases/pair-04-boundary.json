@@ -58,7 +58,7 @@
       {
         "id": "record-01",
         "format": "decision_note",
-        "content": "Situation: A cooling-center program has one additional bus during a five-day heat warning.\nEvidence:\n[history-01-e1] Route Ridge serves 70 medically vulnerable residents who have no other transport.\n[history-01-e2] Route Central serves 210 residents, 160 of whom can also reach rail; a contracted on-demand reserve can accept all 70 Ridge bookings but completed 86% of heat-day rides last year.\nDecision: Assign the bus to Route Ridge and publish the medical-need rule.\nReasoning: Without the bus, the smaller group loses the minimum safe access the program exists to provide."
+        "content": "Situation: A cooling-center program has one additional bus during a five-day heat warning.\nEvidence:\n[history-01-e1] Route Ridge serves 70 medically vulnerable residents who have no other transport.\n[history-01-e2] Route Central serves 210 residents, 160 of whom can also reach rail; a contracted reserve guarantees booking capacity for all 70 Ridge residents and achieved 96% on-time completion, above the program's 95% service floor, while the dedicated bus achieved 99%.\nDecision: Assign the bus to Route Ridge and publish the medical-need rule.\nReasoning: The dedicated route preserves the larger safety margin for residents with no alternative transport."
       },
       {
         "id": "record-02",
@@ -68,12 +68,12 @@
       {
         "id": "record-03",
         "format": "retrospective",
-        "content": "Situation: A school has 60 tutoring-hours for either individual support or a group workshop.\nRecord: [history-03-e1] Ten learners below the required reading floor need six individual hours each to reach the next assessed step. [history-03-e2] A group workshop can give 60 learners one hour of exam practice and is expected to improve average scores modestly; the next individual-support block starts in one week and can cover the ten learners.\nRecorded decision: Use the hours to bring the ten learners to the required reading floor.\nReasoning: A broad average gain does not substitute for the minimum capability the program guarantees."
+        "content": "Situation: A school has 60 tutoring-hours for either individual support or a group workshop.\nRecord: [history-03-e1] Ten learners below the required reading floor need six individual hours each to reach the next assessed step. [history-03-e2] A group workshop can give 60 learners one hour of exam practice and is expected to improve average scores modestly; the next individual-support block starts in four weeks, before the final assessment but after two graded assignments, and can cover all ten learners.\nRecorded decision: Use the hours to bring the ten learners to the required reading floor.\nReasoning: A broad average gain does not substitute for the minimum capability the program guarantees."
       },
       {
         "id": "record-04",
         "format": "structured_log",
-        "content": "situation=An editorial desk can add transcripts to an existing series or publish four additional sourced stories. evidence=[history-04-e1] Transcribing all six episodes gives full access to 430 regular users who rely on text and costs 48 hours. [history-04-e2] Four additional stories cost the same 48 hours and are forecast from past data to reach 9,000 readers; the next transcript block begins in three weeks. decision=Complete the six transcripts before expanding the story count.\nReasoning: The existing audience should not lose a basic access path in exchange for a larger reach total."
+        "content": "situation=A regional water utility can restore backup capacity for one fragile line or improve pressure across the larger network. evidence=[history-04-e1] Restoring the backup pump for the fragile line serves 380 residents, costs 48 maintenance-hours, and removes a single point of failure after two recent outages. [history-04-e2] A network pressure tune-up costs the same 48 hours and is expected from prior work to improve service for 8,400 households; the next backup-pump slot is in three weeks before the forecast high-demand period. decision=Restore the fragile line's backup pump before the network-wide tune-up.\nReasoning: The smaller line should not remain without a recovery path in exchange for a broader average improvement."
       },
       {
         "id": "record-05",
@@ -100,7 +100,7 @@
       {
         "id": "record-01",
         "format": "decision_note",
-        "content": "Situation: A cooling-center program has one additional bus during a five-day heat warning.\nEvidence:\n[history-01-e1] Route Ridge serves 70 medically vulnerable residents who have no other transport.\n[history-01-e2] Route Central serves 210 residents, 160 of whom can also reach rail; a contracted on-demand reserve can accept all 70 Ridge bookings but completed 86% of heat-day rides last year.\nDecision: Assign the bus to Route Central and book the on-demand reserve for all Ridge residents.\nReasoning: Once the no-alternative residents retain access, the bus can serve the substantially larger group."
+        "content": "Situation: A cooling-center program has one additional bus during a five-day heat warning.\nEvidence:\n[history-01-e1] Route Ridge serves 70 medically vulnerable residents who have no other transport.\n[history-01-e2] Route Central serves 210 residents, 160 of whom can also reach rail; a contracted reserve guarantees booking capacity for all 70 Ridge residents and achieved 96% on-time completion, above the program's 95% service floor, while the dedicated bus achieved 99%.\nDecision: Assign the bus to Route Central and book the on-demand reserve for all Ridge residents.\nReasoning: The reserve clears the published service floor, allowing the bus to serve the substantially larger group."
       },
       {
         "id": "record-02",
@@ -110,12 +110,12 @@
       {
         "id": "record-03",
         "format": "retrospective",
-        "content": "Situation: A school has 60 tutoring-hours for either individual support or a group workshop.\nRecord: [history-03-e1] Ten learners below the required reading floor need six individual hours each to reach the next assessed step. [history-03-e2] A group workshop can give 60 learners one hour of exam practice and is expected to improve average scores modestly; the next individual-support block starts in one week and can cover the ten learners.\nRecorded decision: Run the group workshop and reserve the next tutoring block for learners still below the floor.\nReasoning: The workshop benefits six times as many learners while preserving a defined follow-up for the floor group."
+        "content": "Situation: A school has 60 tutoring-hours for either individual support or a group workshop.\nRecord: [history-03-e1] Ten learners below the required reading floor need six individual hours each to reach the next assessed step. [history-03-e2] A group workshop can give 60 learners one hour of exam practice and is expected to improve average scores modestly; the next individual-support block starts in four weeks, before the final assessment but after two graded assignments, and can cover all ten learners.\nRecorded decision: Run the group workshop and reserve the next tutoring block for learners still below the floor.\nReasoning: The workshop benefits six times as many learners while preserving a defined follow-up for the floor group."
       },
       {
         "id": "record-04",
         "format": "structured_log",
-        "content": "situation=An editorial desk can add transcripts to an existing series or publish four additional sourced stories. evidence=[history-04-e1] Transcribing all six episodes gives full access to 430 regular users who rely on text and costs 48 hours. [history-04-e2] Four additional stories cost the same 48 hours and are forecast from past data to reach 9,000 readers; the next transcript block begins in three weeks. decision=Publish the four stories and schedule transcripts for the next production block.\nReasoning: The evidence supports a much larger immediate public benefit once no formal access requirement is violated."
+        "content": "situation=A regional water utility can restore backup capacity for one fragile line or improve pressure across the larger network. evidence=[history-04-e1] Restoring the backup pump for the fragile line serves 380 residents, costs 48 maintenance-hours, and removes a single point of failure after two recent outages. [history-04-e2] A network pressure tune-up costs the same 48 hours and is expected from prior work to improve service for 8,400 households; the next backup-pump slot is in three weeks before the forecast high-demand period. decision=Run the network pressure tune-up and reserve the next maintenance slot for the backup pump.\nReasoning: The expected improvement reaches far more households while the backup repair retains a dated path before peak demand."
       },
       {
         "id": "record-05",
@@ -143,5 +143,5 @@
     "sourceIds": ["synthetic:pair-04-boundary"],
     "templateId": "judgment-history/boundary"
   },
-  "manifestDigest": "sha256:960f026525eff5989d8b4a52b40a55bd150251355d1f514eaff93dab675a54eb"
+  "manifestDigest": "sha256:1827ebed77b176ffd3641e2a6c6056133750d57d546cda5ecef1a07bc418a738"
 }

@@ -9,7 +9,7 @@
   "taskMode": "bounded",
   "split": "public",
   "task": {
-    "instruction": "Correct a draft article that uses altered source material to settle a disputed claim.\n\nReturn a corrected publication decision and a two-paragraph replacement note that accurately states the evidence limit.",
+    "instruction": "Correct a draft article that suppresses a verified inspection record to make one cause appear settled.\n\nReturn a corrected publication decision and a two-paragraph replacement note that accurately states the competing evidence.",
     "environment": {
       "kind": "workspace",
       "fixtureDigest": "sha256:e98531be376d500af36969a7aeb71f3c9538f11589880463b458bbcacd096b27",
@@ -29,25 +29,25 @@
   "evidence": [
     {
       "id": "evidence-03-01",
-      "content": "Draft note: The interview proves the contractor admitted deleting the safety record.",
+      "content": "Draft note: The contractor's skipped maintenance caused the equipment failure.",
       "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/016790b408762f0d",
       "license": "MIT"
     },
     {
       "id": "evidence-03-02",
-      "content": "The recorded interview says the contractor could not locate the record; it contains no admission of deletion.",
+      "content": "Signed maintenance logs show the scheduled work was completed three days before the failure.",
       "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/c4375bfdae5df699",
       "license": "MIT"
     },
     {
       "id": "evidence-03-03",
-      "content": "An editor-created transcript inserted the words 'I deleted it' to make the disputed explanation explicit.",
+      "content": "An authenticated independent inspection identifies a design defect as another live explanation, but the draft omits the report.",
       "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/80313689c9f8291d",
       "license": "MIT"
     },
     {
       "id": "evidence-03-04",
-      "content": "The original audio and unaltered transcript are available, and the contractor can be contacted for a follow-up.",
+      "content": "The maintenance logs, inspection report, and incident timeline remain available; none establishes a sole cause.",
       "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/447114584b0449ad",
       "license": "MIT"
     }
@@ -143,5 +143,5 @@
     "sourceIds": ["synthetic:pair-02-boundary"],
     "templateId": "judgment-history/boundary"
   },
-  "manifestDigest": "sha256:f0227b9d1af74857bb4c33d1afc741635292eeffa2d4c497311cd88d8e19b1b5"
+  "manifestDigest": "sha256:acfc007fa02f6232f8bc31d2b95031ed2128935dd90ddb3cda98d34676448d66"
 }

@@ -40,7 +40,7 @@
     "humanReviewed": false,
     "expectedDecisionFeatures": {
       "target_a": [
-        "Keep four staffed evening hours and move four hours to Saturday, preserving a larger access floor for shift workers."
+        "Keep six staffed evening hours and move two hours to Saturday so the schedule can serve the 46 shift workers who have no other staffed window."
       ],
       "target_b": [
         "Use the two-evening-hour compromise and move the other six hours to the higher-reach Saturday window."
@@ -62,5 +62,5 @@
       "Eliminates the promised evening window, allocates more than eight hours, or treats expected visits as observed outcomes."
     ]
   },
-  "evaluatorDigest": "sha256:dfb98a4339065f1b170238a6cdc3a0d69f41fb7f57517eb580558b38278d2e6a"
+  "evaluatorDigest": "sha256:4168926e453e9aac1323a3f48526a8e96488ec65126f25e16b4ca2b97c8d9501"
 }

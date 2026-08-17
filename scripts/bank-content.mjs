@@ -588,35 +588,35 @@ export const pairs = [
         taskMode: "bounded",
         taskArchetype: "critique_revision",
         title:
-          "Correct a draft article that uses altered source material to settle a disputed claim.",
+          "Correct a draft article that suppresses a verified inspection record to make one cause appear settled.",
         instruction:
-          "Return a corrected publication decision and a two-paragraph replacement note that accurately states the evidence limit.",
+          "Return a corrected publication decision and a two-paragraph replacement note that accurately states the competing evidence.",
         evidence: [
-          "Draft note: The interview proves the contractor admitted deleting the safety record.",
-          "The recorded interview says the contractor could not locate the record; it contains no admission of deletion.",
-          "An editor-created transcript inserted the words 'I deleted it' to make the disputed explanation explicit.",
-          "The original audio and unaltered transcript are available, and the contractor can be contacted for a follow-up.",
+          "Draft note: The contractor's skipped maintenance caused the equipment failure.",
+          "Signed maintenance logs show the scheduled work was completed three days before the failure.",
+          "An authenticated independent inspection identifies a design defect as another live explanation, but the draft omits the report.",
+          "The maintenance logs, inspection report, and incident timeline remain available; none establishes a sole cause.",
         ],
         targetA: [
-          "Reject the altered quotation, preserve the original evidence, and publish only the accurately bounded uncertainty or wait for follow-up.",
+          "Reject the one-cause draft, restore the omitted inspection evidence, and publish only the accurately bounded causal uncertainty.",
         ],
         targetB: [
-          "Reject the altered quotation, preserve the original evidence, and publish only the accurately bounded uncertainty or wait for follow-up.",
+          "Reject the one-cause draft, restore the omitted inspection evidence, and publish only the accurately bounded causal uncertainty.",
         ],
         reasoning: [
-          "Treat fabrication of source evidence as an integrity veto, independent of the preferred next inquiry.",
+          "Treat suppression of material contrary evidence as an integrity veto, independent of the preferred next inquiry.",
         ],
         alternatives: [
-          "Publishing now or waiting are both acceptable if the fabricated statement is removed and the uncertainty is explicit.",
+          "Publishing now or waiting are both acceptable if the inspection record is restored and the causal uncertainty is explicit.",
         ],
         performance: [
-          "Makes a publication decision and supplies a replacement note that distinguishes missing evidence from evidence of deletion.",
+          "Makes a publication decision and supplies a replacement note that represents both documented explanations.",
         ],
         grounding: [
-          "Uses the exact difference between the audio, the altered transcript, and the available follow-up.",
+          "Uses the maintenance logs, authenticated inspection, omission, and absence of sole-cause evidence.",
         ],
         failures: [
-          "Repeats the fabricated admission, destroys the source record, or states that deletion was proven.",
+          "Repeats the sole-cause claim, omits the inspection, or states that either explanation was proven.",
         ],
       },
       {
@@ -626,23 +626,23 @@ export const pairs = [
         taskMode: "bounded",
         taskArchetype: "recommendation",
         title:
-          "Choose the next supplier-quality action when causal resolution and auditability point to different options.",
+          "Choose the next due-diligence action for a fleet-software purchase when causal resolution and reproducible performance evidence point to different options.",
         instruction:
           "Recommend one action for this month and state what claim the evidence would and would not support.",
         evidence: [
-          "Option Delta is a six-unit humidity stress test that distinguishes two suspected coating failures in three days.",
-          "Option Echo is a four-day process audit covering all 18 lots with signed batch records, but it will not distinguish the two chemical causes.",
-          "The buyer has budget for only one option this month and must decide whether to renew the supplier in six weeks.",
-          "Current defect reports identify the affected lots but do not establish a cause or verify the supplier's process controls.",
+          "Option Delta is a three-day sandbox test across six routes that makes route-data latency and dispatcher configuration predict different failure patterns.",
+          "Option Echo is a four-day independent rerun of the vendor's versioned benchmark across all 18 required workflows with signed logs, but it will not isolate the pilot failure cause.",
+          "The buyer has budget for only one option this month and must make the purchase decision in six weeks.",
+          "Current pilot logs identify failure timestamps, but instrumentation changed mid-pilot and cannot establish either cause or reproduce overall workflow performance.",
         ],
         targetA: [
-          "Choose Option Delta to resolve the live causal question, while limiting the conclusion to the six tested units.",
+          "Choose Option Delta to separate the live failure explanations, while limiting the conclusion to the six tested routes.",
         ],
         targetB: [
-          "Choose Option Echo to establish a reviewable lot-level evidence trail before the renewal decision.",
+          "Choose Option Echo to establish a reproducible, reviewable workflow-performance record before the purchase decision.",
         ],
         reasoning: [
-          "Explain why causal discrimination and auditable process evidence support different claims.",
+          "Explain why causal discrimination and reproducible workflow evidence support different claims.",
         ],
         alternatives: [
           "A later sequence may include both options, but the first action and the claim it enables must be unambiguous.",
@@ -651,10 +651,10 @@ export const pairs = [
           "Selects one affordable action and clearly bounds the claim that action can support before renewal.",
         ],
         grounding: [
-          "Uses the sample size, lot coverage, time, budget, and six-week renewal deadline.",
+          "Uses the route count, workflow coverage, timing, budget, changed instrumentation, and six-week decision deadline.",
         ],
         failures: [
-          "Claims either option proves both cause and process compliance or recommends both within the one-option budget.",
+          "Claims either option proves both cause and overall performance or recommends both within the one-option budget.",
         ],
       },
     ],
@@ -920,35 +920,35 @@ export const pairs = [
         taskMode: "open_ended",
         taskArchetype: "recommendation",
         title:
-          "Choose the permitted launch path for a tutoring schedule that currently removes required learner support.",
+          "Choose the permitted launch path for a tutoring schedule that conceals a material travel change.",
         instruction:
           "Recommend the immediate action and explain what must be true before the new schedule can launch.",
         evidence: [
-          "The proposed schedule removes captioning from two weekly sessions for six learners with approved accommodations.",
-          "The removal was not disclosed to learners or the accessibility coordinator.",
-          "A captioned schedule can launch five days later with the same tutors and curriculum.",
-          "The program director can own the delayed launch after the accessibility coordinator verifies the schedule.",
+          "The proposed schedule moves six learners to a center that adds 75 minutes of travel each way.",
+          "The change was not disclosed to the learners or families, and program policy requires notice and review for any travel increase above 30 minutes.",
+          "A local-center schedule can launch five days later with the same tutors, curriculum, and support-hours.",
+          "The program director can own the delayed launch after the required learner-and-family review is recorded.",
         ],
         targetA: [
-          "Stop the current launch, restore captioning, disclose the impact, and launch only after the required accessibility review.",
+          "Stop the current launch, disclose the travel impact, complete the required review, and use the local-center schedule unless the reviewed change is accepted.",
         ],
         targetB: [
-          "Stop the current launch, restore captioning, disclose the impact, and launch only after the required accessibility review.",
+          "Stop the current launch, disclose the travel impact, complete the required review, and use the local-center schedule unless the reviewed change is accepted.",
         ],
         reasoning: [
-          "Treat undisclosed removal of an approved accommodation as a veto rather than a governance preference.",
+          "Treat an undisclosed material impact and bypassed required review as a veto rather than a governance preference.",
         ],
         alternatives: [
-          "Operational ownership may vary, but no launch may remove the approved support or bypass review.",
+          "Operational ownership may vary, but no launch may conceal the travel increase or bypass the required review.",
         ],
         performance: [
           "States an immediate action, pre-launch conditions, a responsible owner, and the consequence for the schedule date.",
         ],
         grounding: [
-          "Uses the affected sessions and learners, nondisclosure, five-day delay, and verification role.",
+          "Uses the six affected learners, travel increase, 30-minute review threshold, five-day alternative, and decision owner.",
         ],
         failures: [
-          "Launches without captioning, treats accommodation as optional, or hides the delay from learners.",
+          "Launches the undisclosed move, bypasses the required review, or invents learner consent.",
         ],
       },
       {
@@ -1017,19 +1017,19 @@ export const pairs = [
           "A cooling-center program has one additional bus during a five-day heat warning.",
         evidence: [
           "Route Ridge serves 70 medically vulnerable residents who have no other transport.",
-          "Route Central serves 210 residents, 160 of whom can also reach rail; a contracted on-demand reserve can accept all 70 Ridge bookings but completed 86% of heat-day rides last year.",
+          "Route Central serves 210 residents, 160 of whom can also reach rail; a contracted reserve guarantees booking capacity for all 70 Ridge residents and achieved 96% on-time completion, above the program's 95% service floor, while the dedicated bus achieved 99%.",
         ],
         a: {
           decision:
             "Assign the bus to Route Ridge and publish the medical-need rule.",
           rationale:
-            "Without the bus, the smaller group loses the minimum safe access the program exists to provide.",
+            "The dedicated route preserves the larger safety margin for residents with no alternative transport.",
         },
         b: {
           decision:
             "Assign the bus to Route Central and book the on-demand reserve for all Ridge residents.",
           rationale:
-            "Once the no-alternative residents retain access, the bus can serve the substantially larger group.",
+            "The reserve clears the published service floor, allowing the bus to serve the substantially larger group.",
         },
       },
       {
@@ -1061,7 +1061,7 @@ export const pairs = [
           "A school has 60 tutoring-hours for either individual support or a group workshop.",
         evidence: [
           "Ten learners below the required reading floor need six individual hours each to reach the next assessed step.",
-          "A group workshop can give 60 learners one hour of exam practice and is expected to improve average scores modestly; the next individual-support block starts in one week and can cover the ten learners.",
+          "A group workshop can give 60 learners one hour of exam practice and is expected to improve average scores modestly; the next individual-support block starts in four weeks, before the final assessment but after two graded assignments, and can cover all ten learners.",
         ],
         a: {
           decision:
@@ -1080,22 +1080,22 @@ export const pairs = [
         role: "diagnostic",
         format: "structured_log",
         situation:
-          "An editorial desk can add transcripts to an existing series or publish four additional sourced stories.",
+          "A regional water utility can restore backup capacity for one fragile line or improve pressure across the larger network.",
         evidence: [
-          "Transcribing all six episodes gives full access to 430 regular users who rely on text and costs 48 hours.",
-          "Four additional stories cost the same 48 hours and are forecast from past data to reach 9,000 readers; the next transcript block begins in three weeks.",
+          "Restoring the backup pump for the fragile line serves 380 residents, costs 48 maintenance-hours, and removes a single point of failure after two recent outages.",
+          "A network pressure tune-up costs the same 48 hours and is expected from prior work to improve service for 8,400 households; the next backup-pump slot is in three weeks before the forecast high-demand period.",
         ],
         a: {
           decision:
-            "Complete the six transcripts before expanding the story count.",
+            "Restore the fragile line's backup pump before the network-wide tune-up.",
           rationale:
-            "The existing audience should not lose a basic access path in exchange for a larger reach total.",
+            "The smaller line should not remain without a recovery path in exchange for a broader average improvement.",
         },
         b: {
           decision:
-            "Publish the four stories and schedule transcripts for the next production block.",
+            "Run the network pressure tune-up and reserve the next maintenance slot for the backup pump.",
           rationale:
-            "The evidence supports a much larger immediate public benefit once no formal access requirement is violated.",
+            "The expected improvement reaches far more households while the backup repair retains a dated path before peak demand.",
         },
       },
       {
@@ -1179,7 +1179,7 @@ export const pairs = [
           "No law fixes the exact hours, but the library's published access policy promises at least one staffed evening window.",
         ],
         targetA: [
-          "Keep four staffed evening hours and move four hours to Saturday, preserving a larger access floor for shift workers.",
+          "Keep six staffed evening hours and move two hours to Saturday so the schedule can serve the 46 shift workers who have no other staffed window.",
         ],
         targetB: [
           "Use the two-evening-hour compromise and move the other six hours to the higher-reach Saturday window.",
@@ -1293,7 +1293,7 @@ export const pairs = [
           "Program policy guarantees every eligible new team at least 100 hours before remaining capacity is allocated by reviewed expected value.",
         ],
         targetA: [
-          "Allocate 600 hours to Proposal A and 400 to Proposal B so the new team receives a complete interpretable opportunity alongside the strongest proposal.",
+          "Allocate 700 hours to Proposal A and 300 to Proposal B so the new team receives an interpretable study alongside the strongest proposal.",
         ],
         targetB: [
           "Allocate 800 hours to Proposal A, 100 to Proposal B, and 100 to Proposal C, satisfying the new-team floor before concentrating on the strongest evidence.",
@@ -2156,14 +2156,14 @@ export const pairs = [
         evidence: [
           "The learner completed oral demonstrations for two of three concepts and requests a project-based demonstration for the third.",
           "The published course standard requires evidence of all three concepts but permits written, oral, or project evidence.",
-          "A standard two-week remediation sequence covers all three concepts and has a 74% completion rate.",
+          "A standard two-week remediation sequence targets the missing third concept through four fixed prerequisite steps and has a 74% completion rate for learners at the same point.",
           "The learner's required captioning and weekly support-hour allocation can be preserved under either plan.",
         ],
         targetA: [
           "Co-design the project demonstration with the learner, keep the three-concept standard, and review after the third concept is assessed.",
         ],
         targetB: [
-          "Use the standard remediation sequence, preserve the approved supports, and advance after all three concept criteria are met.",
+          "Use the standard third-concept remediation sequence, preserve the approved supports, and advance after all three concept criteria are met.",
         ],
         reasoning: [
           "Separate learner influence over the support path from the shared evidence needed for mastery progression.",
@@ -2226,35 +2226,35 @@ export const pairs = [
         taskMode: "open_ended",
         taskArchetype: "recommendation",
         title:
-          "Choose the permitted implementation path for a training reorganization that exposes private accommodation data.",
+          "Choose the permitted implementation path for a training reorganization that withdraws necessary supervised practice.",
         instruction:
-          "Recommend the immediate action, a compliant information boundary, and the condition for restarting the reorganization.",
+          "Recommend the immediate action, the support boundary, and the condition for restarting the reorganization.",
         evidence: [
-          "The draft roster lists each employee's disability and accommodation in a document visible to the entire department.",
-          "Managers need only aggregate staffing constraints and individual approved schedules to assign training cohorts.",
-          "A privacy-reviewed roster can be produced in three days without changing the training deadline.",
-          "All existing accommodations and paid support-hours can remain in place.",
+          "The draft moves every trainee to independent shifts next week and removes the remaining 12 supervised-practice hours.",
+          "Four trainees have not yet met one or more of the three published safety criteria, and policy requires supervision until every criterion is met.",
+          "A revised cohort plan can preserve all 12 supervised hours without changing the training deadline.",
+          "Managers need only readiness status to assign shifts; individual assessment details remain private.",
         ],
         targetA: [
-          "Stop use of the draft, replace it with the privacy-reviewed roster, preserve supports, and restart after the three-day review.",
+          "Stop the independent-shift launch, preserve the 12 supervised hours, and restart only after each trainee meets all three safety criteria.",
         ],
         targetB: [
-          "Stop use of the draft, replace it with the privacy-reviewed roster, preserve supports, and restart after the three-day review.",
+          "Stop the independent-shift launch, preserve the 12 supervised hours, and restart only after each trainee meets all three safety criteria.",
         ],
         reasoning: [
-          "Treat unnecessary disclosure of disability information as a veto independent of training governance preference.",
+          "Treat withdrawal of necessary support before demonstrated mastery as a veto independent of training governance preference.",
         ],
         alternatives: [
-          "Another compliant roster design is acceptable only if it shares the minimum necessary information and preserves accommodations.",
+          "Another cohort design is acceptable only if it preserves required supervision, uses readiness status only, and retains assessment privacy.",
         ],
         performance: [
-          "States an immediate stop action, compliant information boundary, responsible review, and restart condition.",
+          "States an immediate stop action, support boundary, responsible review, and restart condition.",
         ],
         grounding: [
-          "Uses the disclosure scope, actual manager need, three-day review, and unchanged deadline and supports.",
+          "Uses the 12 supervised hours, four trainees, three criteria, unchanged deadline, and readiness-only information need.",
         ],
         failures: [
-          "Continues using the department-visible disability roster or removes accommodations to simplify assignment.",
+          "Moves an unqualified trainee to independent work, removes required supervision, or exposes individual assessment details.",
         ],
       },
       {
@@ -2343,43 +2343,43 @@ export const pairs = [
         role: "diagnostic",
         format: "message_excerpt",
         situation:
-          "A research program must allocate one year of funding across three hypotheses.",
+          "A city service must allocate its annual outreach budget across one proven channel and two smaller independent channels.",
         evidence: [
-          "Hypothesis Cedar has two preregistered replications, needs at least 70% of the budget for a decisive study, and can use the full budget for a second site and higher precision.",
-          "Hypotheses Birch and Ash each have one small exploratory result and can run useful pilots with 15% of the budget.",
+          "Channel Core has two audited campaigns, needs 60% of the budget to preserve citywide coverage, and can use the full budget to add multilingual frequency.",
+          "Channels Local and Hotline use independent delivery methods, each has one small pilot, and each can run a useful program with 20% of the budget.",
         ],
         a: {
-          decision: "Allocate 70% to Cedar and 15% to each exploratory pilot.",
+          decision: "Allocate 60% to Core and 20% each to Local and Hotline.",
           rationale:
-            "The portfolio preserves two independent learning paths without preventing the strongest study.",
+            "The portfolio preserves two independent reach paths without preventing citywide coverage.",
         },
         b: {
           decision:
-            "Allocate the full budget to Cedar's decisive preregistered study.",
+            "Allocate the full budget to Core's audited citywide program.",
           rationale:
-            "Diluting the only replicated program would leave every hypothesis underpowered and no conclusion defensible.",
+            "The strongest repeated evidence supports a meaningful commitment instead of fragmenting delivery across smaller pilots.",
         },
       },
       {
         role: "diagnostic",
         format: "retrospective",
         situation:
-          "An editorial team must choose next year's mix after one investigation format outperforms all others.",
+          "An emergency-response network must choose next year's depot mix after central dispatch outperforms the local depots.",
         evidence: [
-          "The investigation format has three years of strong subscriber retention but depends on one specialist editor.",
-          "The remaining 30% of the annual budget can either fund two smaller formats produced by different staff or train a second specialist editor and expand the investigation format.",
+          "Central dispatch resolved incidents 14% faster over three years but depends on one telecom carrier and can productively use all 12 response crews.",
+          "Four crews can either remain split between two local depots on independent carriers or staff a redundant carrier link and expand central dispatch.",
         ],
         a: {
           decision:
-            "Use 70% for the investigation and 15% for each smaller format to retain independent staff and audience paths.",
+            "Assign eight crews to central dispatch and keep two crews at each independent local depot.",
           rationale:
-            "The portfolio should not make one editor or audience assumption a single point of failure.",
+            "The network should not make one carrier and one operating site its only response path.",
         },
         b: {
           decision:
-            "Use 70% for the investigation and the remaining 30% to train a second editor and expand that format.",
+            "Assign eight crews to central dispatch and use four crews to staff the redundant carrier link there.",
           rationale:
-            "The repeated retention evidence justifies concentration once the staffing dependency is addressed directly.",
+            "The repeated response evidence justifies concentration once the telecom dependency is addressed directly.",
         },
       },
       {
@@ -2498,7 +2498,7 @@ export const pairs = [
           "Explain whether resilience to correlated failure or concentration on the strongest evidence controls normal allocation.",
         ],
         alternatives: [
-          "Different percentages are acceptable if they total 100%, respect recertification constraints, and reveal the selected priority.",
+          "Different percentages are acceptable if they total 100%, respect Boreal's 35% certified cap and the emergency-shift review boundary, and reveal the selected priority.",
         ],
         performance: [
           "Provides a complete 100% allocation, dependency boundary, and observable review trigger.",
@@ -2555,35 +2555,35 @@ export const pairs = [
         taskMode: "bounded",
         taskArchetype: "allocation_prioritization",
         title:
-          "Allocate a public reserve across three holdings under a binding concentration rule.",
+          "Allocate a public grant pool after the strongest proposal is blocked by an unresolved reviewer conflict.",
         instruction:
-          "Provide a complete 100% allocation and identify the rule that controls the result.",
+          "Provide a complete 100% allocation for this cycle and identify the rule that controls the result.",
         evidence: [
-          "Holding North has the strongest audited return record and requests an 80% allocation.",
-          "Holding East and Holding West are both qualified, have independent risk drivers, and can each absorb at least 30%.",
-          "The reserve mandate prohibits any holding from exceeding 40% of assets.",
-          "All three holdings meet the liquidity and conflict-review requirements.",
+          "Proposal North has the strongest reviewed outcome record and requests 60% of the grant pool, but its only score was submitted by a current board member of the applicant organization.",
+          "The published conflict policy prohibits an award until a conflicted score is replaced by an independent review.",
+          "Proposals East and West are independently reviewed, meet the same service threshold, and can each absorb at most 50% of the pool.",
+          "North can be reconsidered next cycle after independent rescoring, but that review cannot finish before this cycle's allocation deadline.",
         ],
         targetA: [
-          "Allocate no more than 40% to North and distribute the remainder between East and West in a compliant 100% portfolio.",
+          "Exclude North this cycle and allocate 50% each to East and West because the conflicted score cannot authorize an award.",
         ],
         targetB: [
-          "Allocate no more than 40% to North and distribute the remainder between East and West in a compliant 100% portfolio.",
+          "Exclude North this cycle and allocate 50% each to East and West because the conflicted score cannot authorize an award.",
         ],
         reasoning: [
-          "Treat the 40% mandate as a veto before applying diversification or evidence-concentration preferences.",
+          "Treat the unresolved material conflict as a veto before applying diversification or evidence-concentration preferences.",
         ],
         alternatives: [
-          "Any 100% allocation is acceptable if no holding exceeds 40% and all three stated qualifications are respected.",
+          "No alternative may fund North this cycle; East and West capacities require the stated 50/50 allocation.",
         ],
         performance: [
-          "Provides a complete 100% allocation and names the binding concentration rule.",
+          "Provides a complete 100% allocation and names the binding conflict rule.",
         ],
         grounding: [
-          "Uses North's request, East and West capacity, the 40% limit, and common qualification facts.",
+          "Uses North's requested share, reviewer conflict, independent-review rule, East and West capacities, and current-cycle deadline.",
         ],
         failures: [
-          "Places more than 40% in any holding, exceeds 100%, or invents a conflict or liquidity failure.",
+          "Funds North before independent rescoring, allocates other than 100%, or exceeds East or West's 50% capacity.",
         ],
       },
       {

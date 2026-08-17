@@ -39,7 +39,7 @@
     },
     {
       "id": "evidence-01-03",
-      "content": "A standard two-week remediation sequence covers all three concepts and has a 74% completion rate.",
+      "content": "A standard two-week remediation sequence targets the missing third concept through four fixed prerequisite steps and has a 74% completion rate for learners at the same point.",
       "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/ebb50c3290129740",
       "license": "MIT"
     },
@@ -141,5 +141,5 @@
     "sourceIds": ["synthetic:pair-07-near_transfer"],
     "templateId": "judgment-history/near_transfer"
   },
-  "manifestDigest": "sha256:4ed911f4859bcbd8ac9e363344fd4e86ae0d98b3178a2315904d4e3bcf583f1d"
+  "manifestDigest": "sha256:4effa97262b4ac6cfee803e502a000e4ba7c6008b156a58e2141914bf3f6abbf"
 }

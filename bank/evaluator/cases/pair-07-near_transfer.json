@@ -43,7 +43,7 @@
         "Co-design the project demonstration with the learner, keep the three-concept standard, and review after the third concept is assessed."
       ],
       "target_b": [
-        "Use the standard remediation sequence, preserve the approved supports, and advance after all three concept criteria are met."
+        "Use the standard third-concept remediation sequence, preserve the approved supports, and advance after all three concept criteria are met."
       ]
     },
     "expectedReasoningFeatures": [
@@ -62,5 +62,5 @@
       "Lowers the three-concept standard without evidence, removes captioning, or treats the 74% rate as an individual outcome."
     ]
   },
-  "evaluatorDigest": "sha256:95fd1a599589c15604fd5ee61ee0d5f86d67a3750dd9de1bf1236b709178dfb2"
+  "evaluatorDigest": "sha256:af754662a937e87658cab6663a93e58f895cb0579eb54a678f63654663150aed"
 }

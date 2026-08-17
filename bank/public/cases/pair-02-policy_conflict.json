@@ -9,7 +9,7 @@
   "taskMode": "bounded",
   "split": "public",
   "task": {
-    "instruction": "Choose the next supplier-quality action when causal resolution and auditability point to different options.\n\nRecommend one action for this month and state what claim the evidence would and would not support.",
+    "instruction": "Choose the next due-diligence action for a fleet-software purchase when causal resolution and reproducible performance evidence point to different options.\n\nRecommend one action for this month and state what claim the evidence would and would not support.",
     "environment": {
       "kind": "conversation"
     },
@@ -27,25 +27,25 @@
   "evidence": [
     {
       "id": "evidence-04-01",
-      "content": "Option Delta is a six-unit humidity stress test that distinguishes two suspected coating failures in three days.",
+      "content": "Option Delta is a three-day sandbox test across six routes that makes route-data latency and dispatcher configuration predict different failure patterns.",
       "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/9480a3bf9cbedb89",
       "license": "MIT"
     },
     {
       "id": "evidence-04-02",
-      "content": "Option Echo is a four-day process audit covering all 18 lots with signed batch records, but it will not distinguish the two chemical causes.",
+      "content": "Option Echo is a four-day independent rerun of the vendor's versioned benchmark across all 18 required workflows with signed logs, but it will not isolate the pilot failure cause.",
       "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/9be2c21fafd90a1c",
       "license": "MIT"
     },
     {
       "id": "evidence-04-03",
-      "content": "The buyer has budget for only one option this month and must decide whether to renew the supplier in six weeks.",
+      "content": "The buyer has budget for only one option this month and must make the purchase decision in six weeks.",
       "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/fa68fd10f381ed5f",
       "license": "MIT"
     },
     {
       "id": "evidence-04-04",
-      "content": "Current defect reports identify the affected lots but do not establish a cause or verify the supplier's process controls.",
+      "content": "Current pilot logs identify failure timestamps, but instrumentation changed mid-pilot and cannot establish either cause or reproduce overall workflow performance.",
       "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/c1c2db237b8c3bcd",
       "license": "MIT"
     }
@@ -141,5 +141,5 @@
     "sourceIds": ["synthetic:pair-02-policy_conflict"],
     "templateId": "judgment-history/policy_conflict"
   },
-  "manifestDigest": "sha256:9f7e1774190d45ce3fb8972cbba4ce96645a8f6a7162baabe3ed17d17ffd52b1"
+  "manifestDigest": "sha256:ccb29270431de3251b4ff5d4d39ce87dfb391e80b64700e7bc37b9aeab3a7388"
 }

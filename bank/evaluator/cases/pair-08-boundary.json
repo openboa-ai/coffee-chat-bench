@@ -36,27 +36,27 @@
     "humanReviewed": false,
     "expectedDecisionFeatures": {
       "target_a": [
-        "Allocate no more than 40% to North and distribute the remainder between East and West in a compliant 100% portfolio."
+        "Exclude North this cycle and allocate 50% each to East and West because the conflicted score cannot authorize an award."
       ],
       "target_b": [
-        "Allocate no more than 40% to North and distribute the remainder between East and West in a compliant 100% portfolio."
+        "Exclude North this cycle and allocate 50% each to East and West because the conflicted score cannot authorize an award."
       ]
     },
     "expectedReasoningFeatures": [
-      "Treat the 40% mandate as a veto before applying diversification or evidence-concentration preferences."
+      "Treat the unresolved material conflict as a veto before applying diversification or evidence-concentration preferences."
     ],
     "allowedAlternatives": [
-      "Any 100% allocation is acceptable if no holding exceeds 40% and all three stated qualifications are respected."
+      "No alternative may fund North this cycle; East and West capacities require the stated 50/50 allocation."
     ],
     "taskPerformanceConditions": [
-      "Provides a complete 100% allocation and names the binding concentration rule."
+      "Provides a complete 100% allocation and names the binding conflict rule."
     ],
     "evidenceGroundingConditions": [
-      "Uses North's request, East and West capacity, the 40% limit, and common qualification facts."
+      "Uses North's requested share, reviewer conflict, independent-review rule, East and West capacities, and current-cycle deadline."
     ],
     "criticalFailures": [
-      "Places more than 40% in any holding, exceeds 100%, or invents a conflict or liquidity failure."
+      "Funds North before independent rescoring, allocates other than 100%, or exceeds East or West's 50% capacity."
     ]
   },
-  "evaluatorDigest": "sha256:606a1975431d3b6f722e8e23328a7f4f9f3b99de8de7f14c66400afe72f73410"
+  "evaluatorDigest": "sha256:c7e089ef8624ee9d1697a2f147f69659f6f0fd4be6e2b609548848c21a0df7e7"
 }

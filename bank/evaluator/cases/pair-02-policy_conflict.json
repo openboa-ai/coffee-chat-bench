@@ -36,14 +36,14 @@
     "humanReviewed": false,
     "expectedDecisionFeatures": {
       "target_a": [
-        "Choose Option Delta to resolve the live causal question, while limiting the conclusion to the six tested units."
+        "Choose Option Delta to separate the live failure explanations, while limiting the conclusion to the six tested routes."
       ],
       "target_b": [
-        "Choose Option Echo to establish a reviewable lot-level evidence trail before the renewal decision."
+        "Choose Option Echo to establish a reproducible, reviewable workflow-performance record before the purchase decision."
       ]
     },
     "expectedReasoningFeatures": [
-      "Explain why causal discrimination and auditable process evidence support different claims."
+      "Explain why causal discrimination and reproducible workflow evidence support different claims."
     ],
     "allowedAlternatives": [
       "A later sequence may include both options, but the first action and the claim it enables must be unambiguous."
@@ -52,11 +52,11 @@
       "Selects one affordable action and clearly bounds the claim that action can support before renewal."
     ],
     "evidenceGroundingConditions": [
-      "Uses the sample size, lot coverage, time, budget, and six-week renewal deadline."
+      "Uses the route count, workflow coverage, timing, budget, changed instrumentation, and six-week decision deadline."
     ],
     "criticalFailures": [
-      "Claims either option proves both cause and process compliance or recommends both within the one-option budget."
+      "Claims either option proves both cause and overall performance or recommends both within the one-option budget."
     ]
   },
-  "evaluatorDigest": "sha256:c2fb954951a630ccdd17b5cef47413f7b07532f6940c8c5a1dfafdde026525ef"
+  "evaluatorDigest": "sha256:0ae153d7355f9be36774ea504ab778cbcf205546df201f7bc10ef198f1d5f452"
 }

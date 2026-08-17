@@ -40,7 +40,7 @@
     "humanReviewed": false,
     "expectedDecisionFeatures": {
       "target_a": [
-        "Allocate 600 hours to Proposal A and 400 to Proposal B so the new team receives a complete interpretable opportunity alongside the strongest proposal."
+        "Allocate 700 hours to Proposal A and 300 to Proposal B so the new team receives an interpretable study alongside the strongest proposal."
       ],
       "target_b": [
         "Allocate 800 hours to Proposal A, 100 to Proposal B, and 100 to Proposal C, satisfying the new-team floor before concentrating on the strongest evidence."
@@ -62,5 +62,5 @@
       "Allocates other than 1,000 hours, denies Proposal B its floor, exceeds a proposal cap, or presents estimated chances as guaranteed discoveries."
     ]
   },
-  "evaluatorDigest": "sha256:3e0b10feb563a1680be80d6aeb048c1d84bea7504c44b6c7568b8fd3f9b6e57c"
+  "evaluatorDigest": "sha256:bb0991d2d0b19b02b29ca56f29297c1423a848c5e498ae07960f75710f4360d7"
 }
