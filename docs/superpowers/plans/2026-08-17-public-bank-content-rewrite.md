@@ -64,7 +64,7 @@ test("boundary cases converge while other held-out cases discriminate", async ()
 
 - [ ] **Step 2: Run the focused test and verify RED**
 
-Run: `node --experimental-strip-types --test tests/public-bank.test.ts`  
+Run: `node --experimental-strip-types --test tests/public-bank.test.ts`
 Expected: FAIL because current pairs use one domain, 31 cases contain only two
 placeholder evidence items, and boundary criteria diverge.
 
@@ -116,7 +116,7 @@ new semantic scoring rules.
 
 - [ ] **Step 3: Keep generated content deterministic**
 
-Run: `node --experimental-strip-types scripts/build-bank.mjs bank`  
+Run: `node --experimental-strip-types scripts/build-bank.mjs bank`
 Expected: deterministic JSON output with 32 public and 32 evaluator cases.
 
 ### Task 3: Author all eight matched policy pairs

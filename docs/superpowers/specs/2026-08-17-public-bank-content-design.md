@@ -1,6 +1,6 @@
 # Public Judgment-History Bank Content Design
 
-**Status:** approved for implementation  
+**Status:** approved for implementation
 **Repository status after implementation:** `not_active`
 
 ## Purpose
