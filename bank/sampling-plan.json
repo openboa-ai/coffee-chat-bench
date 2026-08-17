@@ -1,0 +1,310 @@
+{
+  "release": "2026.8.17",
+  "bankId": "public_judgment_history_bank",
+  "pairs": [
+    {
+      "pairId": "pair-01",
+      "cases": [
+        {
+          "caseId": "pair-01-near_transfer",
+          "domain": "product_service_operations",
+          "transferType": "near_transfer",
+          "form": "dialogue",
+          "taskMode": "bounded",
+          "taskArchetype": "recommendation"
+        },
+        {
+          "caseId": "pair-01-far_transfer",
+          "domain": "organizational_design",
+          "transferType": "far_transfer",
+          "form": "professional_artifact",
+          "taskMode": "bounded",
+          "taskArchetype": "allocation_prioritization"
+        },
+        {
+          "caseId": "pair-01-boundary",
+          "domain": "security_reliability",
+          "transferType": "boundary",
+          "form": "dialogue",
+          "taskMode": "open_ended",
+          "taskArchetype": "design_threshold"
+        },
+        {
+          "caseId": "pair-01-policy_conflict",
+          "domain": "education_coaching",
+          "transferType": "policy_conflict",
+          "form": "professional_artifact",
+          "taskMode": "open_ended",
+          "taskArchetype": "critique_revision"
+        }
+      ]
+    },
+    {
+      "pairId": "pair-02",
+      "cases": [
+        {
+          "caseId": "pair-02-near_transfer",
+          "domain": "scientific_technical_investigation",
+          "transferType": "near_transfer",
+          "form": "professional_artifact",
+          "taskMode": "open_ended",
+          "taskArchetype": "allocation_prioritization"
+        },
+        {
+          "caseId": "pair-02-far_transfer",
+          "domain": "public_resource_allocation",
+          "transferType": "far_transfer",
+          "form": "dialogue",
+          "taskMode": "open_ended",
+          "taskArchetype": "design_threshold"
+        },
+        {
+          "caseId": "pair-02-boundary",
+          "domain": "editorial_creative_strategy",
+          "transferType": "boundary",
+          "form": "professional_artifact",
+          "taskMode": "bounded",
+          "taskArchetype": "critique_revision"
+        },
+        {
+          "caseId": "pair-02-policy_conflict",
+          "domain": "procurement_portfolio_allocation",
+          "transferType": "policy_conflict",
+          "form": "dialogue",
+          "taskMode": "bounded",
+          "taskArchetype": "recommendation"
+        }
+      ]
+    },
+    {
+      "pairId": "pair-03",
+      "cases": [
+        {
+          "caseId": "pair-03-near_transfer",
+          "domain": "organizational_design",
+          "transferType": "near_transfer",
+          "form": "dialogue",
+          "taskMode": "bounded",
+          "taskArchetype": "design_threshold"
+        },
+        {
+          "caseId": "pair-03-far_transfer",
+          "domain": "security_reliability",
+          "transferType": "far_transfer",
+          "form": "professional_artifact",
+          "taskMode": "bounded",
+          "taskArchetype": "critique_revision"
+        },
+        {
+          "caseId": "pair-03-boundary",
+          "domain": "education_coaching",
+          "transferType": "boundary",
+          "form": "dialogue",
+          "taskMode": "open_ended",
+          "taskArchetype": "recommendation"
+        },
+        {
+          "caseId": "pair-03-policy_conflict",
+          "domain": "product_service_operations",
+          "transferType": "policy_conflict",
+          "form": "professional_artifact",
+          "taskMode": "open_ended",
+          "taskArchetype": "allocation_prioritization"
+        }
+      ]
+    },
+    {
+      "pairId": "pair-04",
+      "cases": [
+        {
+          "caseId": "pair-04-near_transfer",
+          "domain": "public_resource_allocation",
+          "transferType": "near_transfer",
+          "form": "professional_artifact",
+          "taskMode": "open_ended",
+          "taskArchetype": "critique_revision"
+        },
+        {
+          "caseId": "pair-04-far_transfer",
+          "domain": "editorial_creative_strategy",
+          "transferType": "far_transfer",
+          "form": "dialogue",
+          "taskMode": "open_ended",
+          "taskArchetype": "recommendation"
+        },
+        {
+          "caseId": "pair-04-boundary",
+          "domain": "procurement_portfolio_allocation",
+          "transferType": "boundary",
+          "form": "professional_artifact",
+          "taskMode": "bounded",
+          "taskArchetype": "allocation_prioritization"
+        },
+        {
+          "caseId": "pair-04-policy_conflict",
+          "domain": "scientific_technical_investigation",
+          "transferType": "policy_conflict",
+          "form": "dialogue",
+          "taskMode": "bounded",
+          "taskArchetype": "design_threshold"
+        }
+      ]
+    },
+    {
+      "pairId": "pair-05",
+      "cases": [
+        {
+          "caseId": "pair-05-near_transfer",
+          "domain": "security_reliability",
+          "transferType": "near_transfer",
+          "form": "dialogue",
+          "taskMode": "bounded",
+          "taskArchetype": "recommendation"
+        },
+        {
+          "caseId": "pair-05-far_transfer",
+          "domain": "education_coaching",
+          "transferType": "far_transfer",
+          "form": "professional_artifact",
+          "taskMode": "bounded",
+          "taskArchetype": "allocation_prioritization"
+        },
+        {
+          "caseId": "pair-05-boundary",
+          "domain": "product_service_operations",
+          "transferType": "boundary",
+          "form": "dialogue",
+          "taskMode": "open_ended",
+          "taskArchetype": "design_threshold"
+        },
+        {
+          "caseId": "pair-05-policy_conflict",
+          "domain": "organizational_design",
+          "transferType": "policy_conflict",
+          "form": "professional_artifact",
+          "taskMode": "open_ended",
+          "taskArchetype": "critique_revision"
+        }
+      ]
+    },
+    {
+      "pairId": "pair-06",
+      "cases": [
+        {
+          "caseId": "pair-06-near_transfer",
+          "domain": "editorial_creative_strategy",
+          "transferType": "near_transfer",
+          "form": "professional_artifact",
+          "taskMode": "open_ended",
+          "taskArchetype": "allocation_prioritization"
+        },
+        {
+          "caseId": "pair-06-far_transfer",
+          "domain": "procurement_portfolio_allocation",
+          "transferType": "far_transfer",
+          "form": "dialogue",
+          "taskMode": "open_ended",
+          "taskArchetype": "design_threshold"
+        },
+        {
+          "caseId": "pair-06-boundary",
+          "domain": "scientific_technical_investigation",
+          "transferType": "boundary",
+          "form": "professional_artifact",
+          "taskMode": "bounded",
+          "taskArchetype": "critique_revision"
+        },
+        {
+          "caseId": "pair-06-policy_conflict",
+          "domain": "public_resource_allocation",
+          "transferType": "policy_conflict",
+          "form": "dialogue",
+          "taskMode": "bounded",
+          "taskArchetype": "recommendation"
+        }
+      ]
+    },
+    {
+      "pairId": "pair-07",
+      "cases": [
+        {
+          "caseId": "pair-07-near_transfer",
+          "domain": "education_coaching",
+          "transferType": "near_transfer",
+          "form": "dialogue",
+          "taskMode": "bounded",
+          "taskArchetype": "design_threshold"
+        },
+        {
+          "caseId": "pair-07-far_transfer",
+          "domain": "product_service_operations",
+          "transferType": "far_transfer",
+          "form": "professional_artifact",
+          "taskMode": "bounded",
+          "taskArchetype": "critique_revision"
+        },
+        {
+          "caseId": "pair-07-boundary",
+          "domain": "organizational_design",
+          "transferType": "boundary",
+          "form": "dialogue",
+          "taskMode": "open_ended",
+          "taskArchetype": "recommendation"
+        },
+        {
+          "caseId": "pair-07-policy_conflict",
+          "domain": "security_reliability",
+          "transferType": "policy_conflict",
+          "form": "professional_artifact",
+          "taskMode": "open_ended",
+          "taskArchetype": "allocation_prioritization"
+        }
+      ]
+    },
+    {
+      "pairId": "pair-08",
+      "cases": [
+        {
+          "caseId": "pair-08-near_transfer",
+          "domain": "procurement_portfolio_allocation",
+          "transferType": "near_transfer",
+          "form": "professional_artifact",
+          "taskMode": "open_ended",
+          "taskArchetype": "critique_revision"
+        },
+        {
+          "caseId": "pair-08-far_transfer",
+          "domain": "scientific_technical_investigation",
+          "transferType": "far_transfer",
+          "form": "dialogue",
+          "taskMode": "open_ended",
+          "taskArchetype": "recommendation"
+        },
+        {
+          "caseId": "pair-08-boundary",
+          "domain": "public_resource_allocation",
+          "transferType": "boundary",
+          "form": "professional_artifact",
+          "taskMode": "bounded",
+          "taskArchetype": "allocation_prioritization"
+        },
+        {
+          "caseId": "pair-08-policy_conflict",
+          "domain": "editorial_creative_strategy",
+          "transferType": "policy_conflict",
+          "form": "dialogue",
+          "taskMode": "bounded",
+          "taskArchetype": "design_threshold"
+        }
+      ]
+    }
+  ],
+  "census": {
+    "pairs": 8,
+    "targets": 16,
+    "historyRecordsPerTarget": 8,
+    "caseFamilies": 32,
+    "conditions": 3,
+    "agentExecutions": 96
+  }
+}

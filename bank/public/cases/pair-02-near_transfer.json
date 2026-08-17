@@ -1,0 +1,146 @@
+{
+  "release": "2026.8.17",
+  "caseId": "pair-02-near_transfer",
+  "pairId": "pair-02",
+  "form": "professional_artifact",
+  "domain": "scientific_technical_investigation",
+  "transferType": "near_transfer",
+  "taskArchetype": "allocation_prioritization",
+  "taskMode": "open_ended",
+  "task": {
+    "instruction": "Allocate 40 instrument-hours between three studies after an ambiguous materials result.\n\nWrite a short allocation memo selecting the first study, assigning hours, and stating what the result would permit the team to conclude next.",
+    "environment": {
+      "kind": "workspace",
+      "fixtureDigest": "sha256:3276a551beb84bc6faa89985a2047eb39fd9f5f4d8de3d81dea1cb0a7c8f5d25",
+      "verifierDigest": "sha256:720b2ac1c0ec56a4241ad6c7cc4b964410b4c5b2050cc391ea3ec9581c26bfbe"
+    },
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 4000,
+      "requiredReferenceIds": [
+        "evidence-01-01",
+        "evidence-01-02",
+        "evidence-01-03",
+        "evidence-01-04"
+      ]
+    }
+  },
+  "evidence": [
+    {
+      "id": "evidence-01-01",
+      "content": "Study Alpha uses 12 hours to apply a temperature perturbation that makes the oxidation and sensor-drift hypotheses predict opposite outcomes.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/49e21980b09497f0",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-01-02",
+      "content": "Study Beta uses 24 hours to repeat the original test under a preregistered, versioned procedure with independent calibration checks.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/c318791e7f27d37d",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-01-03",
+      "content": "Study Gamma uses all 40 hours to enlarge the original sample without changing the disputed measurement procedure.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/670f803ff3438223",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-01-04",
+      "content": "The remaining 28 or 16 hours may be held for the next study, but no additional instrument time is available this month.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/8830777c73821e66",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "unconditioned": [],
+    "target_a": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: Two explanations remain for a sensor drift observed during a battery test.\nEvidence:\n[history-01-e1] A 90-minute temperature perturbation would produce opposite predictions under the two explanations.\n[history-01-e2] Repeating the full calibrated protocol takes eight hours and would establish whether the original drift reproduces.\nDecision: Run the temperature perturbation before repeating the full protocol.\nReasoning: The short perturbation directly distinguishes the explanations that are still live."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: Two interview accounts disagree about why a public-service pilot missed its target.\nMessage: We considered [history-02-e1] A follow-up with the one shared handoff owner could distinguish timing failure from eligibility confusion. [history-02-e2] The original interview notes use different question orders and one interview has no recording or contemporaneous transcript. The decision is Interview the shared handoff owner with questions aimed at the two competing explanations.\nReasoning: The follow-up can resolve the disputed mechanism instead of collecting more general opinion."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: A service shows a latency spike that could come from cache eviction or a database lock.\nRecord: [history-03-e1] A controlled cache flush in staging would make the two hypotheses predict different traces within 20 minutes. [history-03-e2] The production benchmark can be rerun from a versioned script, but its last three runs varied by 12%.\nRecorded decision: Run the controlled cache flush and compare the trace signature.\nReasoning: The targeted intervention has more power to separate the two causes."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "situation=A new applicant group appears underrepresented in a grant program, but two data problems could explain the gap. evidence=[history-04-e1] A targeted review of 40 rejected applications can distinguish eligibility misunderstanding from reviewer inconsistency. [history-04-e2] The prior-year application extract lacks a documented deduplication rule and cannot be reproduced from the published query. decision=Review the 40 rejections against the two explanations before redesigning the program.\nReasoning: The targeted sample addresses the decision-relevant uncertainty directly."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A supplier's coating fails intermittently, and the buyer must choose the next quality investigation.\nEvidence:\n[history-05-e1] A humidity stress test would separate the two suspected chemical causes using six samples.\n[history-05-e2] The supplier offers a full process audit with lot-level records, but the audit takes four days and does not isolate the cause.\nDecision: Run the six-sample humidity stress test first."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: A team proposes testing a failure hypothesis by overwriting the only raw instrument files.\nMessage: We considered [history-06-e1] The overwrite would prevent reconstruction of the original measurement sequence. [history-06-e2] A copied dataset can run the same test while preserving the signed raw files. The decision is Reject the overwrite and run the test on the preserved copy."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: An editor can resolve an attribution dispute quickly only by inserting a quotation that the source did not say.\nRecord: [history-07-e1] The audio contains no statement matching the proposed quotation. [history-07-e2] The article can describe the disagreement accurately while the source is contacted again.\nRecorded decision: Do not insert the quotation; report the disagreement and preserve the recording."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "situation=A routine calibration check has one accepted procedure and no competing explanation. evidence=[history-08-e1] The reference standard is within its certified interval. [history-08-e2] The versioned procedure has reproduced the expected value in the last five checks. decision=Run the accepted calibration procedure and record the result."
+      }
+    ],
+    "target_b": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: Two explanations remain for a sensor drift observed during a battery test.\nEvidence:\n[history-01-e1] A 90-minute temperature perturbation would produce opposite predictions under the two explanations.\n[history-01-e2] Repeating the full calibrated protocol takes eight hours and would establish whether the original drift reproduces.\nDecision: Repeat the full calibrated protocol before interpreting the drift.\nReasoning: A result that cannot be reproduced under the documented procedure cannot support the later claim."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: Two interview accounts disagree about why a public-service pilot missed its target.\nMessage: We considered [history-02-e1] A follow-up with the one shared handoff owner could distinguish timing failure from eligibility confusion. [history-02-e2] The original interview notes use different question orders and one interview has no recording or contemporaneous transcript. The decision is Re-interview both participants under one recorded protocol before drawing a causal conclusion.\nReasoning: Comparable records are needed before the disagreement can be treated as evidence."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: A service shows a latency spike that could come from cache eviction or a database lock.\nRecord: [history-03-e1] A controlled cache flush in staging would make the two hypotheses predict different traces within 20 minutes. [history-03-e2] The production benchmark can be rerun from a versioned script, but its last three runs varied by 12%.\nRecorded decision: Stabilize and rerun the versioned benchmark before attributing the spike.\nReasoning: The current measurement procedure is too variable to support a defensible attribution."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "situation=A new applicant group appears underrepresented in a grant program, but two data problems could explain the gap. evidence=[history-04-e1] A targeted review of 40 rejected applications can distinguish eligibility misunderstanding from reviewer inconsistency. [history-04-e2] The prior-year application extract lacks a documented deduplication rule and cannot be reproduced from the published query. decision=Rebuild the prior-year extract with a published deduplication rule before comparing groups.\nReasoning: A review based on an irreproducible denominator would not survive independent scrutiny."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A supplier's coating fails intermittently, and the buyer must choose the next quality investigation.\nEvidence:\n[history-05-e1] A humidity stress test would separate the two suspected chemical causes using six samples.\n[history-05-e2] The supplier offers a full process audit with lot-level records, but the audit takes four days and does not isolate the cause.\nDecision: Run the documented lot-level process audit first."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: A team proposes testing a failure hypothesis by overwriting the only raw instrument files.\nMessage: We considered [history-06-e1] The overwrite would prevent reconstruction of the original measurement sequence. [history-06-e2] A copied dataset can run the same test while preserving the signed raw files. The decision is Reject the overwrite and run the test on the preserved copy."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: An editor can resolve an attribution dispute quickly only by inserting a quotation that the source did not say.\nRecord: [history-07-e1] The audio contains no statement matching the proposed quotation. [history-07-e2] The article can describe the disagreement accurately while the source is contacted again.\nRecorded decision: Do not insert the quotation; report the disagreement and preserve the recording."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "situation=A routine calibration check has one accepted procedure and no competing explanation. evidence=[history-08-e1] The reference standard is within its certified interval. [history-08-e2] The versioned procedure has reproduced the expected value in the last five checks. decision=Run the accepted calibration procedure and record the result."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": ["synthetic:pair-02-near_transfer"],
+    "templateId": "judgment-history/near_transfer"
+  },
+  "manifestDigest": "sha256:cc6e7f76c325ddb7b65e69979c727d62f8f0ed1197b46dc2189844d28618bbb3"
+}

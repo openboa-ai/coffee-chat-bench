@@ -1,125 +1,119 @@
-# Fixed synthetic bank preregistration
+# Public judgment-history bank preregistration
 
-## Status and timing
+## Status
 
-This document freezes the intended analysis before candidate artifacts, human
-labels, judge qualification evidence, or official scores are collected. The
-repository remains `not_active`.
+The repository remains `not_active`. This document fixes the dataset question,
+sampling matrix, and claim boundary before candidate executions or semantic
+scores are collected.
 
 ## Research question
 
-For a fixed synthetic task and evidence packet, does diagnostic history for a
-declared decision policy produce policy-specific behavior beyond task-only and
-exposure-matched nondiagnostic history while preserving utility, integrity, and
-critical constraints?
+Given the same task and evidence, can an agent infer a stable decision policy
+from a target's judgment history and transfer that policy to a held-out task
+while preserving task performance and evidence grounding?
 
-## Units, conditions, and strata
+The candidate class is agent systems. A direct one-shot language-model
+completion is out of scope. The bank does not claim authentic human judgment,
+whole-person understanding, population generalization, or Coffee Chat product
+performance.
 
-The family is the clustered analysis unit. Every family has exactly five fresh
-candidate conditions:
+## Bank and sampling
 
-- `task_only`;
-- `nondiagnostic_target_a` and `nondiagnostic_target_b`;
-- `diagnostic_target_a` and `diagnostic_target_b`.
+There is one public benchmark bank. It contains:
 
-The 12 scored families are reported separately by `release_a`/`release_b` and
-dialogue/professional-artifact form. Results are not silently pooled.
-`release_b` is a fixed public robustness slice, not an untouched replication.
-The four `judge_qualification` families never enter candidate scores.
+- 8 matched target pairs and 16 synthetic targets;
+- 8 historical judgment records per target;
+- 32 held-out case families;
+- 3 conditions per case: `unconditioned`, `target_a`, `target_b`;
+- 96 agent-condition executions in the full projection.
 
-## Frozen policy blocks
+Each pair has one `near_transfer`, one `far_transfer`, one `boundary`, and one
+`policy_conflict` case. Each pair has two dialogue and two
+professional-artifact cases, two bounded and two open-ended tasks. Across the
+bank, eight domains and four task archetypes are balanced as declared in
+[`bank/sampling-plan.json`](bank/sampling-plan.json).
 
-- S1: A = reversible field learning; B = operational readiness.
-- S2: A = predictive robustness; B = mechanism and falsifiability.
-- S3: A = coordination legibility; B = local evidence ownership.
+Each target history has five diagnostic episodes, two boundary episodes, and
+one distractor episode. The four record formats occur twice each. A/B records
+share situations, evidence identifiers, and format positions; only the
+decision content and partial rationale may differ. History length is balanced
+within ten percent.
 
-The labels A and B are bookkeeping only. Neither side is globally superior.
-Each case must make both policies defensible and may reverse the surface action
-that a shallow label classifier would associate with a policy.
+## Conditions and execution boundary
 
-## Frozen 18-row judgment plan
+- `unconditioned`: task and evidence only;
+- `target_a`: task, evidence, and target A history;
+- `target_b`: task, evidence, and target B history.
 
-Every family declares six semantic pair contrasts, each with canonical and
-mirrored presentation:
+The renderer passes one selected history to the candidate. The candidate does
+not receive the condition name, target identity, other target, hidden policy,
+or evaluator criterion. The public repository necessarily stores both target
+contexts for reproducible rendering; an adapter must never pass both to one
+execution.
 
-1. diagnostic A versus diagnostic B under the A-alignment projection;
-2. diagnostic B versus diagnostic A under the B-alignment projection;
-3. diagnostic A versus nondiagnostic A for A-specificity;
-4. diagnostic B versus nondiagnostic B for B-specificity;
-5. diagnostic A versus task-only for task-utility non-inferiority;
-6. diagnostic B versus task-only for task-utility non-inferiority.
+## Criterion hypothesis
 
-The mirrored row reverses condition order and expected left/right direction
-while preserving one rubric projection. Six pointwise pass floors cover each
-diagnostic condition on task utility, evidence integrity, and critical failure.
-Utility pairs accept the diagnostic artifact winning or tying; they do not
-predeclare improvement. Any uplift is a direction-free effect estimate.
-Expected verdicts are project-author construction hypotheses, not criterion
-labels. Every plan file declares that authority and remains distinct from later
-independent human evidence.
+Each evaluator material records:
 
-Each rubric has only seven narrow semantic projections: A/B alignment, A/B
-specificity, utility, integrity, and critical failure. The judge evaluates the
-criterion holistically; keyword counts and rule tallies do not award semantic
-credit.
+- three ordered decision cues for each target;
+- one shared safety/integrity veto and its boundary condition;
+- one target-specific tie-breaker;
+- expected decision features and reasoning features;
+- allowed alternatives;
+- task-performance and evidence-grounding conditions;
+- case-defined critical failures.
 
-## Proposed family gate and missingness
+Every criterion is explicitly marked:
 
-A future family result is numeric only if all five executions are isolated and
-eligible, every declared judgment is available, canonical and mirrored results
-select the same semantic artifact, the two frozen primary judges concur, the Sol
-cross-validation judge matches that consensus, and all five dimensions are
-measured. Utility, integrity, specificity, alignment, and critical failure are
-non-compensatory.
+```text
+authority: project_author_hypothesis
+humanReviewed: false
+```
 
-Missing, invalid, failed, unavailable, abstained, disputed, leaked,
-cleanup-failed, orientation-inconsistent, or judge-disagreeing evidence remains
-nonnumeric. It is never converted to zero or silently omitted. Reports must show
-planned and measured denominators plus conditional rates and bounds.
+These are construction hypotheses, not human criterion labels.
 
-## Human criterion and judge qualification
+## Planned measurement
 
-Independent dimension-trained annotators must label blinded qualification
-artifacts before model judges are run. Construction hypotheses are hidden.
-Human disagreement and abstention remain explicit rather than forced into a
-criterion label. Only unanimous non-abstaining annotations enter the
-high-consensus reference subset. Canonical and mirrored presentations use
-separated assignment.
+Objective verification handles encoding, byte limits, required references, and
+artifact structure. The required semantic measurement layer is an AI judge
+(LLM-as-a-judge) for policy adherence, policy transfer, task performance,
+evidence grounding, and critical failure.
 
-`gpt-5.6-terra` and `gpt-5.6-luna` are the frozen primary judges, and
-`gpt-5.6-sol` is the cross-validation judge. All three require independent
-qualification and exact concurrence after qualification. Sol never adjudicates
-a primary disagreement.
-The public qualification artifacts are project-agent-assisted synthetic
-material generated outside the primary roster; their construction hypotheses
-are hidden from annotators and cannot substitute for human labels. The frozen
-thresholds and assignment procedure live in `qualification/PROTOCOL.md` and
-`qualification/study.json`. No current judge is qualified.
+The first judge implementation may operate in `provisional` state for
+development and hill climbing. Human criterion annotation is a later required
+reference for judge reliability, calibration, disagreement, abstention, and
+validity evidence. Lack of human annotations limits interpretation; it does not
+remove the AI judge from the pipeline.
 
-## Falsifiers and audits
+Missing, invalid, unavailable, skipped, abstained, or judge-disagreeing states
+remain nonnumeric. They are never converted to zero or silently omitted.
 
-The construct is narrowed or rejected when any of the following occurs:
+## Falsifiers
 
-- nondiagnostic or task-only conditions reproduce the diagnostic contrast;
-- a lexical, style, verbosity, label, retrieval, or surface-action baseline
-  reproduces expected directions;
-- diagnostic history states the held-out answer or nondiagnostic history leaks
-  the operative policy;
-- independent reviewers cannot defend both policies or match exposure and
-  information density;
-- A/B cross-scoring, mirrored ordering, human labels, or qualified judges fail;
-- utility, integrity, or critical constraints fail despite apparent alignment.
+The design must be narrowed or revised if any of these occurs:
 
-Mechanical overlap, length, and lineage results are recorded separately from
-semantic review. No code check can satisfy these empirical falsifiers.
+- a candidate can obtain the target-specific direction without the judgment
+  history;
+- policy names, answer wording, option tokens, style, length, or evidence IDs
+  reveal the target direction;
+- the held-out case repeats a situation, answer, or rationale from the history;
+- an independent construction reviewer cannot recover the intended cue
+  priorities, veto, and tie-breaker from the history;
+- either target is only defensible by violating the task's objective contract;
+- a boundary case is solved by blindly reversing the A/B direction;
+- required evidence grounding or critical constraints are lost when policy
+  adherence improves;
+- future human criterion labels and the AI judge show poor agreement or
+  systematic form/domain disagreement.
 
-## Exposure and claim boundary
+Mechanical audits record census, digest binding, identity parity, length parity,
+and path separation. They cannot satisfy the semantic falsifiers.
 
-The bank is intentionally public and prospective. Candidate/model versions,
-release dates, and possible prior exposure must be reported. There is no
-unobserved-secrecy claim.
+## Claim boundary
 
-Even after a successful future audit, the strongest permitted interpretation is
-limited to named fixed synthetic cases and forms. This preregistration does not
-establish authentic-human transfer, population validity, product performance,
-judge validity, a leaderboard, or benchmark activation.
+The bank is synthetic, public, small, and prospective. Passing repository tests
+establishes only contract and construction consistency. It does not establish
+construct validity, criterion validity, human agreement, population validity,
+unseen-task generalization, agent performance, an active score, or a
+leaderboard. Activation requires a separate evidence review and remains
+blocked while required evidence is missing.

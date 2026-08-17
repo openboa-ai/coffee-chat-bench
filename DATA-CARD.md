@@ -1,112 +1,156 @@
-# Public synthetic bank data card
+# Public benchmark bank data card
 
 ## Status
 
-Repository status remains `not_active`. This release contains a complete public
-synthetic case bank, author-hypothesis judgment plans, and a candidate-neutral
-Harbor task projection. It also contains a fixed blind qualification package
-with 32 project-agent-assisted synthetic artifacts and 88 judgment items. It
-has completed an installed-Harbor Oracle plumbing control but contains no
-candidate outputs, human labels, qualified model-judge evidence, benchmark
-score, validity finding, leaderboard, or activation decision.
+Repository status is `not_active`. The repository contains one public,
+synthetic benchmark bank and its evaluator-only construction material. It does
+not contain candidate results, a public score, a leaderboard, or an activation
+decision.
 
-## Intended construct
+## Intended use
 
-The proposed construct is fixed synthetic judgment-policy application: given
-one fixed task and evidence packet, does a candidate apply one declared
-synthetic decision policy in the preregistered direction while preserving task
-utility and evidence integrity?
+The bank is for evaluating **agent systems**, not direct one-shot language
+model completions. A candidate receives a task, its evidence packet, an output
+contract, and one selected judgment history. The intended question is:
 
-The bank does not represent a real person. It does not establish authentic
-human judgment transfer, population generalization, unseen-target performance,
-or Coffee Chat Product performance.
+> Can an agent infer a stable decision policy from the supplied history and
+> transfer it to a held-out task while preserving task performance and evidence
+> grounding?
+
+The bank is candidate-independent. It does not require Coffee Chat and does
+not award Coffee Chat product credit. `coffee-chat-eval` may consume the bank
+through an adapter, but provider credentials, agent harnesses, host execution,
+and performance reports are outside this repository.
+
+## One public dataset
+
+Externally, users select only the `public benchmark bank`. There are no public
+development, pilot, release, holdout, or judge-qualification datasets in this
+initial bank. Internal construction and future qualification work are tracked
+as evidence states and evaluator material, not as additional datasets that a
+candidate must choose.
 
 ## Census
 
-The bank contains 16 independently identified case families:
+| Unit                            |                                                                                  Count |
+| ------------------------------- | -------------------------------------------------------------------------------------: |
+| Matched target pairs            |                                                                                      8 |
+| Synthetic targets               |                                                                                     16 |
+| History records per target      |                                                                                      8 |
+| Case families                   |                                                                                     32 |
+| Conditions per case             |                                                                                      3 |
+| Full agent-condition executions |                                                                                     96 |
+| Domains                         |                                                                            8 × 4 cases |
+| Forms                           |                                                 16 dialogue + 16 professional artifact |
+| Transfer types                  |                         8 near-transfer, 8 far-transfer, 8 boundary, 8 policy-conflict |
+| Task archetypes                 | 8 recommendation, 8 allocation/prioritization, 8 design/threshold, 8 critique/revision |
 
-- 12 scored-design families: three fixed policy blocks × `release_a` and
-  `release_b` × dialogue and professional-artifact forms;
-- four `judge_qualification` families: two dialogue and two
-  professional-artifact cases with target blocks and lineage disjoint from the
-  scored releases;
-- five conditions per family: task only, two exposure-matched
-  nondiagnostic histories, and two diagnostic policy histories;
-- two neutral-ID history records in every nonempty context;
-- 18 preregistered author-hypothesis judgment rows per family.
+Each pair has exactly four held-out cases: one for each transfer type. Each
+pair has two dialogue cases and two professional-artifact cases; two tasks are
+bounded and two are open-ended. The sampling matrix is frozen in
+[`bank/sampling-plan.json`](bank/sampling-plan.json).
 
-`release_a` is the primary fixed public slice. `release_b` is a second public
-task-, source-, template-, and rubric-template-disjoint robustness slice over
-the same three policy blocks. It is not an untouched replication.
+## Target histories
 
-## Policy blocks and forms
+Each matched pair contains target A and target B. They see the same historical
+situations, evidence identifiers, and record formats, but make different,
+defensible decisions. Each history contains:
 
-The scored bank crosses three context-dependent policy tensions:
+- five episodes that distinguish the two decision policies;
+- two boundary episodes where a safety or task constraint makes the decisions
+  converge; and
+- one distractor episode that should not identify the policy.
 
-1. reversible field learning versus operational readiness;
-2. predictive robustness versus mechanism and falsifiability;
-3. coordination legibility versus local evidence ownership.
+The four record formats occur exactly twice per target:
+`decision_note`, `message_excerpt`, `retrospective`, and `structured_log`.
+At most four records include a partial rationale. The first five records are
+diagnostic and differ between A and B; the next two are boundary records where
+the shared constraint makes the decisions converge; the final distractor is
+neutral and also converges. Policy names, personality labels, target identity,
+and held-out answers are not candidate-visible. History lengths are balanced
+within 10% for every pair without artificial whitespace padding.
 
-These are not global personality traits. Each side is designed to be defensible
-under its case constraints, and surface actions reverse in selected cases so a
-simple ship/wait, central/local, or method-name classifier cannot define the
-construct. Dialogue and professional artifacts remain separate reporting
-strata.
+## Candidate and evaluator boundary
 
-## Creation and rights
+The candidate-visible material is under [`bank/public/`](bank/public/). It
+contains the task, evidence, output contract, and both target contexts in the
+canonical manifest so the renderer can select one condition deterministically.
+At execution time, `renderCase` exposes only the selected context:
 
-All task facts, evidence, histories, policies, rubrics, and judgment-plan
-hypotheses were newly authored as synthetic project material. Every evidence
-item uses a `synthetic://openboa-ai/coffee-chat-bench/...` URI and an MIT
-license declaration. `RIGHTS-PROVENANCE.jsonl` records every authoritative bank
-file and synthetic evidence URI.
+```text
+unconditioned -> task + evidence + no history
+target_a      -> task + evidence + target A history
+target_b      -> task + evidence + target B history
+```
 
-The provenance records say `humanReview: pending`. Project or project-agent
-authorship must not be confused with future independent human annotation or
-review.
+The evaluator-only material is under [`bank/evaluator/`](bank/evaluator/). It
+contains the policy hypothesis, history-role labels, expected decision and
+reasoning features, allowed alternatives, task-performance conditions,
+evidence-grounding conditions, and critical failures. It is not passed to the
+agent or copied into the Harbor task.
 
-## Candidate-visible and evaluator-only material
+## Criterion and judge status
 
-A candidate receives exactly one task, the shared evidence packet, one selected
-context, and the output contract. Condition names, target identities, other
-contexts, rubrics, expected directions, and the judgment plan remain outside
-the candidate input during a trial. Because the repository is public, this is
-runtime isolation rather than a permanent secrecy claim.
+Every evaluator criterion currently declares:
 
-The Harbor projection preserves that boundary across 80 digest-named,
-no-network tasks. Its reward checks only output bytes, UTF-8, and required
-references; it cannot award policy application, utility, or semantic quality.
+```text
+authority: project_author_hypothesis
+humanReviewed: false
+```
 
-## Quality controls and current evidence gaps
+The future semantic measurement layer is an AI judge (LLM-as-a-judge), because
+open-ended policy adherence and utility cannot be reduced to keyword or format
+rules. The next implementation step will define the fixed judge protocol and
+allow a `provisional` judge to support development measurement. Human criterion
+annotation remains a required later step for reliability, calibration, and
+validity evidence. It is not a prerequisite for the AI judge to exist or run.
 
-Mechanical checks cover census, digests, file binding, unique lineage,
-condition cardinality, neutral context IDs, source rights, and declared plan
-shape. `OVERLAP-REPORT.json` reports character and word counts. An independent
-project-agent review then assessed all 16 families for policy defensibility,
-incompatible decisions, nonleaking controls, and rubric support. It found three
-material construction issues; the repaired families passed a narrow rereview
-with no remaining policy issue. A later complete corpus review found and
-corrected one task-to-rubric terminology mismatch before resealing the bank.
-This is development evidence permitting human annotation to begin, not human
-validity evidence.
+Objective verification remains separate and checks only explicit contracts:
+encoding, byte limits, required evidence references, and artifact structure.
+AI-judge failure, abstention, disagreement, invalid output, unavailable
+provider, or missing evidence remains nonnumeric.
 
-The following evidence is intentionally absent and required before activation:
+## Provenance and rights
 
-- independent human review of policy defensibility, matched controls, answer
-  leakage, lexical shortcuts, information density, and surface reversals;
-- independently blinded human labels with disagreement and abstention retained;
-- model-judge qualification, reliability, bias, perturbation, and drift results;
-- isolated candidate execution receipts and complete release/form coverage;
-- an activation audit limited to the evidence actually obtained.
+The bank is newly authored synthetic material. Evidence uses synthetic URIs and
+MIT licensing declarations. File and source provenance are recorded in
+[`RIGHTS-PROVENANCE.jsonl`](RIGHTS-PROVENANCE.jsonl). The bank is public and
+prospective, so [`CONTAMINATION.jsonl`](CONTAMINATION.jsonl) records exposure
+risk without making a secrecy or contamination-free claim.
 
-## Known limitations
+## Quality gates
 
-The bank is small, fully synthetic, fixed, and public. The three scored policy
-blocks do not represent a population. The four qualification families are
-pipeline material, not enough independent clusters to establish broad judge
-generalization. Public exposure may permit memorization or prior inclusion;
-`CONTAMINATION.jsonl` records that risk prospectively and makes no secrecy
-claim.
+`npm run data:audit` checks the fixed census, pair and sampling matrix,
+condition cardinality, history format balance, A/B evidence parity, length
+parity, evaluator/public separation, synthetic provenance, and digest binding.
+The Harbor projection checks that exactly 96 candidate tasks can be materialized
+without evaluator material.
 
-Passing repository tests means only that the declared files and contracts are
-internally consistent.
+The project agent also directly reviewed all histories and held-out cases for
+coherent policy conflicts, defensibility, complete decision inputs, arithmetic
+and resource consistency, boundary convergence, and cross-domain transfer. The
+review and the defects corrected during it are recorded in
+[`docs/validity/bank-development-review.md`](docs/validity/bank-development-review.md).
+Because the reviewer also authored the rewrite, this is project-side
+construction QA rather than independent or human validation.
+
+These are construction and contract checks. They do not establish that the
+synthetic policies are psychologically authentic, that humans would agree with
+the criteria, that an AI judge is reliable, or that an agent benefits from the
+history. Those claims require the future validity evidence plan.
+
+## Known limitations and next evidence
+
+- The bank is small, synthetic, and public.
+- Eight target pairs do not represent a population of users or values.
+- The cases test controlled policy transfer, not whole-person modeling or
+  preference discovery.
+- No genuine human criterion annotations have been collected yet.
+- No AI judge has been qualified against human criterion evidence yet.
+- No candidate execution report or active benchmark score is published.
+
+The next evidence sequence is: implement the fixed AI-judge contract, run
+provisional development measurements, collect blinded human criterion labels
+when resources permit, assess agreement/reliability and calibration, then
+revisit the benchmark's validity and activation decision. Until then the
+repository remains `not_active`.

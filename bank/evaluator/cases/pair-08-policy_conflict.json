@@ -1,0 +1,62 @@
+{
+  "release": "2026.8.17",
+  "caseId": "pair-08-policy_conflict",
+  "pairId": "pair-08",
+  "policy": {
+    "sharedVeto": {
+      "name": "unsupported_concentration_veto",
+      "condition": "The option hides a material conflict, creates a prohibited dependency, exceeds a binding concentration limit, or relies on an unsupported claim.",
+      "requiredAction": "Reject the option and restore a compliant evidence-backed allocation."
+    },
+    "target_a": {
+      "priorityCues": [
+        "resilience_margin",
+        "time_horizon",
+        "coordination_externality"
+      ],
+      "tieBreaker": "Prefer a diversified allocation that remains viable when one assumption or dependency fails."
+    },
+    "target_b": {
+      "priorityCues": ["evidential_basis", "information_gain", "time_horizon"],
+      "tieBreaker": "Prefer concentrating resources on the strongest traceable evidence when dilution would prevent a meaningful result."
+    }
+  },
+  "historyRoles": [
+    "diagnostic",
+    "diagnostic",
+    "diagnostic",
+    "diagnostic",
+    "diagnostic",
+    "boundary",
+    "boundary",
+    "distractor"
+  ],
+  "criterion": {
+    "authority": "project_author_hypothesis",
+    "humanReviewed": false,
+    "expectedDecisionFeatures": {
+      "target_a": [
+        "Allocate eight slots to Long and four to Field to preserve an independent editorial path."
+      ],
+      "target_b": [
+        "Allocate all twelve slots to Long because its evidence is strongest and eight slots are only the minimum coherent commitment."
+      ]
+    },
+    "expectedReasoningFeatures": [
+      "Resolve the conflict between staffing and format diversification and concentration on repeated retention evidence."
+    ],
+    "allowedAlternatives": [
+      "Another allocation is acceptable only if it totals 12, meets every selected format's minimum, and exposes the priority."
+    ],
+    "taskPerformanceConditions": [
+      "Allocates exactly 12 slots, defines selected-format minimums, and states an observable rebalance trigger."
+    ],
+    "evidenceGroundingConditions": [
+      "Uses the retention evidence, staffing dependencies, format minimums, and 12-slot capacity."
+    ],
+    "criticalFailures": [
+      "Underfunds a selected format, exceeds 12 slots, or claims weaker evidence means a format has no possible value."
+    ]
+  },
+  "evaluatorDigest": "sha256:a4b5f8674230bd98c86a69933f443fa90b49e29fe7826f65d61af9ffc4d72a8f"
+}

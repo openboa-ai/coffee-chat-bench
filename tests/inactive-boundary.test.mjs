@@ -716,10 +716,10 @@ test("rejects every unlabelled benchmark-bearing directory category", () => {
 test("rejects an unapproved executable source", () => {
   withFixture((repository) => {
     writeFileSync(
-      join(repository, "scripts", "runner.mjs"),
+      join(repository, "runner.mjs"),
       "process.stdout.write('benchmark');\n",
     );
-    execFileSync("git", ["add", "scripts/runner.mjs"], { cwd: repository });
+    execFileSync("git", ["add", "runner.mjs"], { cwd: repository });
 
     const result = check(repository);
     assert.notEqual(result.status, 0);

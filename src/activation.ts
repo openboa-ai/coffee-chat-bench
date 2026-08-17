@@ -2,12 +2,12 @@ import { RELEASE_ID, stableDigest, type Digest } from "./contracts.ts";
 
 export const ACTIVATION_GATES = [
   "publicRights",
-  "bankIntegrity",
+  "bankConstruction",
   "humanCriterion",
-  "judgeQualification",
-  "reliability",
+  "aiJudge",
+  "reliabilityCalibration",
   "contamination",
-  "execution",
+  "candidateExecution",
   "validity",
 ] as const;
 

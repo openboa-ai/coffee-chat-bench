@@ -1,46 +1,47 @@
 {
-  "release": "2026.8.12",
-  "bankDigest": "sha256:a7ce9ce12679f81bd212324919e39dd3eda26115dec7366c52aea8768cf790dd",
+  "release": "2026.8.17",
+  "bankDigest": "sha256:7e0cccf1e6931d0288f0928a8e15e231540626fd289863c4b8b752edd32af1fa",
+  "repositoryStatus": "not_active",
   "gates": {
     "publicRights": {
       "state": "partial",
       "source": "LICENSE; DATA-CARD.md; RIGHTS-PROVENANCE.jsonl",
-      "note": "MIT and provenance records are present; independent rights review is pending."
+      "note": "Synthetic MIT provenance is declared; independent rights review remains future evidence."
     },
-    "bankIntegrity": {
+    "bankConstruction": {
       "state": "passed",
-      "source": "npm run check:inactive; validate-bank bank",
-      "note": "The fixed public bank and sealed file bindings pass mechanical validation."
+      "source": "npm run data:audit; bank/bank.json; bank/sampling-plan.json; docs/validity/bank-development-review.md",
+      "note": "The rewritten 8-pair, 32-case, three-condition bank passes mechanical checks and project-side semantic construction review; this is not independent validity evidence."
     },
     "humanCriterion": {
       "state": "missing",
-      "source": "qualification/README.md",
-      "note": "No independent blinded human labels have been collected."
+      "source": "qualification/README.md; qualification/PROTOCOL.md",
+      "note": "No independent blinded human criterion annotations have been collected."
     },
-    "judgeQualification": {
+    "aiJudge": {
       "state": "missing",
-      "source": "qualification/README.md; qualification/PROTOCOL.md; coffee-chat-eval judge probe",
-      "note": "No human-referenced qualification report exists; the host-held transport probe obtained structured votes from Terra, Luna, and Sol, but the models disagreed (Sol/Terra left; Luna right), so the probe remains unqualified and unmeasured."
+      "source": "docs/implementation-plan.md; qualification/README.md",
+      "note": "The semantic AI-judge implementation and its provisional protocol are the next work unit."
     },
-    "reliability": {
+    "reliabilityCalibration": {
       "state": "missing",
-      "source": "docs/validity/validity-argument-and-evidence-plan.md",
-      "note": "Inter-annotator and judge reliability studies have not been run."
+      "source": "qualification/RELIABILITY.md; docs/validity/validity-argument-and-evidence-plan.md",
+      "note": "Human-grounded reliability, calibration, disagreement, and perturbation evidence are not available."
     },
     "contamination": {
       "state": "inconclusive",
       "source": "CONTAMINATION.jsonl; OVERLAP-REPORT.json; docs/validity/contamination-protocol.md",
-      "note": "Mechanical public-exposure and overlap records exist; training inclusion and independent semantic review remain unknown."
+      "note": "The bank is public; declared-corpus and independent semantic exposure review remain incomplete."
     },
-    "execution": {
-      "state": "partial",
-      "source": "coffee-chat-eval reports/2026.8.12/oracle-control-1bc7160-receipt.json; codex-baseline-coverage-report.md; codex-baseline-coverage-receipts.json",
-      "note": "Two isolated Harbor Oracle controls and 48 isolated Codex candidate trials cover all 12 scored release/form families under task_only and diagnostic_target_a. They remain structural execution evidence only; five-condition/full 16-family semantic coverage and measurement are pending."
+    "candidateExecution": {
+      "state": "missing",
+      "source": "coffee-chat-eval",
+      "note": "No candidate performance report is admitted by this dataset PR."
     },
     "validity": {
       "state": "missing",
       "source": "docs/validity/validity-argument-and-evidence-plan.md",
-      "note": "The validity argument is prospective; no activation evidence supports an active benchmark claim."
+      "note": "The validity argument is prospective and does not activate the repository."
     }
   }
 }

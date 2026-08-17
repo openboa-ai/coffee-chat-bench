@@ -1,7 +1,7 @@
 {
   "name": "@openboa-ai/coffee-chat-bench",
   "private": true,
-  "version": "2026.8.12",
+  "version": "2026.8.17",
   "type": "module",
   "exports": {
     ".": "./src/benchmark-contracts.ts",
@@ -12,6 +12,7 @@
   },
   "scripts": {
     "ci:policy": "node --test tests/workflow-policy.test.mjs && node .github/ci-policy.mjs",
+    "data:audit": "node --experimental-strip-types scripts/data-audit.mjs bank",
     "test": "node --experimental-strip-types --test tests/*.test.mjs tests/*.test.ts",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write AGENTS.md README.md DATA-CARD.md PREREGISTRATION.md OVERLAP-REPORT.json package.json package-lock.json tsconfig.json prettier.config.mjs docs/*.md docs/validity/*.md harbor/*.md qualification/*.md qualification/*.json \"bank/**/*.json\" harbor/*.ts schemas/*.json scripts/*.mjs src/*.ts tests/*.mjs tests/*.ts",

@@ -1,0 +1,146 @@
+{
+  "release": "2026.8.17",
+  "caseId": "pair-08-near_transfer",
+  "pairId": "pair-08",
+  "form": "professional_artifact",
+  "domain": "procurement_portfolio_allocation",
+  "transferType": "near_transfer",
+  "taskArchetype": "critique_revision",
+  "taskMode": "open_ended",
+  "task": {
+    "instruction": "Revise a supplier-allocation recommendation that overreacts to one strong performance record.\n\nReturn a complete 100% allocation with rationale, dependency boundary, and review trigger.",
+    "environment": {
+      "kind": "workspace",
+      "fixtureDigest": "sha256:d5ce94724a1ffbbe4598cd63fb96ea284b0451c34f7aaabf6cdd2c34443e258b",
+      "verifierDigest": "sha256:fa606a29be808e8bb26453508499bc1826bf658a38d9bcb45a76c7339bcf233f"
+    },
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 4000,
+      "requiredReferenceIds": [
+        "evidence-01-01",
+        "evidence-01-02",
+        "evidence-01-03",
+        "evidence-01-04"
+      ]
+    }
+  },
+  "evidence": [
+    {
+      "id": "evidence-01-01",
+      "content": "Draft recommendation: Give Supplier Atlas 100% of annual volume because it has a 99% on-time rate across 20 months.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/d271c302115e2d82",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-01-02",
+      "content": "Supplier Atlas uses the same port and raw-material region as the incumbent and offers the lowest cost.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/87ac63af99879b5c",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-01-03",
+      "content": "Supplier Boreal has a 95% on-time rate, costs 6% more, and uses an independent port and raw-material region.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/f5b1f1fe03ae04ac",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-01-04",
+      "content": "Both suppliers are certified for the planned allocation and Boreal can take up to 35%; after contracts are set, an emergency shift more than 15 percentage points above plan requires a six-week review.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/4eb0b97aaaf9df7e",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "unconditioned": [],
+    "target_a": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A manufacturer must allocate annual volume between two qualified suppliers.\nEvidence:\n[history-01-e1] Supplier North has a 98% on-time rate over 18 months and can cover all demand at the lowest unit cost.\n[history-01-e2] Supplier South has a 94% on-time rate, costs 7% more, and uses a different shipping route and raw-material source.\nDecision: Split volume 70% to North and 30% to South to preserve an independent supply path.\nReasoning: The modest cost premium buys recovery capacity against a failure North's record cannot rule out."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A city service must allocate its annual outreach budget across one proven channel and two smaller independent channels.\nMessage: We considered [history-02-e1] Channel Core has two audited campaigns, needs 60% of the budget to preserve citywide coverage, and can use the full budget to add multilingual frequency. [history-02-e2] Channels Local and Hotline use independent delivery methods, each has one small pilot, and each can run a useful program with 20% of the budget. The decision is Allocate 60% to Core and 20% each to Local and Hotline.\nReasoning: The portfolio preserves two independent reach paths without preventing citywide coverage."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: An emergency-response network must choose next year's depot mix after central dispatch outperforms the local depots.\nRecord: [history-03-e1] Central dispatch resolved incidents 14% faster over three years but depends on one telecom carrier and can productively use all 12 response crews. [history-03-e2] Four crews can either remain split between two local depots on independent carriers or staff a redundant carrier link and expand central dispatch.\nRecorded decision: Assign eight crews to central dispatch and keep two crews at each independent local depot.\nReasoning: The network should not make one carrier and one operating site its only response path."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "situation=A school must select digital resources for a new mathematics curriculum. evidence=[history-04-e1] Platform One has two controlled studies showing mastery gains and covers every required unit. [history-04-e2] Platforms Two and Three each cover half the units, use different teaching modes, and have only observational evidence. decision=Use Platform One for core units and retain one alternative mode for targeted support.\nReasoning: A second mode protects learners for whom the dominant platform's assumptions fail."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A service team must decide whether to keep two search providers or standardize on the higher-performing one.\nEvidence:\n[history-05-e1] Provider Axis has 8% better relevance over six evaluations and supports the full query volume.\n[history-05-e2] Provider Beacon is 11% more expensive but failed independently during Axis's only two-hour outage last year.\nDecision: Keep Beacon for a meaningful traffic share as an independent service path."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: A fund manager proposes concentrating 80% of a public reserve in one asset despite a binding 40% concentration limit.\nMessage: We considered [history-06-e1] The 40% limit applies to every asset in the reserve mandate. [history-06-e2] A compliant allocation can place 40% in the asset and distribute the remainder across two qualified holdings. The decision is Reject the 80% proposal and use a compliant allocation with no asset above 40%."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A procurement recommendation ranks one vendor first using a continuity claim that cannot be traced to any source.\nRecord: [history-07-e1] The vendor's submitted records contain no continuity test or customer reference for the claim. [history-07-e2] Two other bids provide signed continuity tests and can meet the same minimum delivery requirement.\nRecorded decision: Reject the unsupported ranking and compare only the bids with traceable continuity evidence."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "situation=Two routine renewals have identical verified performance and the budget covers both without concentration or staffing risk. evidence=[history-08-e1] Both contracts passed the same review and have independent delivery paths. [history-08-e2] Renewing both uses 70% of the available budget and creates no prohibited dependency. decision=Renew both contracts under the approved terms."
+      }
+    ],
+    "target_b": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A manufacturer must allocate annual volume between two qualified suppliers.\nEvidence:\n[history-01-e1] Supplier North has a 98% on-time rate over 18 months and can cover all demand at the lowest unit cost.\n[history-01-e2] Supplier South has a 94% on-time rate, costs 7% more, and uses a different shipping route and raw-material source.\nDecision: Allocate 90% to North and 10% to South as a qualification reserve.\nReasoning: North's longer, stronger operating record supports a meaningful commitment while retaining a tested fallback."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A city service must allocate its annual outreach budget across one proven channel and two smaller independent channels.\nMessage: We considered [history-02-e1] Channel Core has two audited campaigns, needs 60% of the budget to preserve citywide coverage, and can use the full budget to add multilingual frequency. [history-02-e2] Channels Local and Hotline use independent delivery methods, each has one small pilot, and each can run a useful program with 20% of the budget. The decision is Allocate the full budget to Core's audited citywide program.\nReasoning: The strongest repeated evidence supports a meaningful commitment instead of fragmenting delivery across smaller pilots."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: An emergency-response network must choose next year's depot mix after central dispatch outperforms the local depots.\nRecord: [history-03-e1] Central dispatch resolved incidents 14% faster over three years but depends on one telecom carrier and can productively use all 12 response crews. [history-03-e2] Four crews can either remain split between two local depots on independent carriers or staff a redundant carrier link and expand central dispatch.\nRecorded decision: Assign eight crews to central dispatch and use four crews to staff the redundant carrier link there.\nReasoning: The repeated response evidence justifies concentration once the telecom dependency is addressed directly."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "situation=A school must select digital resources for a new mathematics curriculum. evidence=[history-04-e1] Platform One has two controlled studies showing mastery gains and covers every required unit. [history-04-e2] Platforms Two and Three each cover half the units, use different teaching modes, and have only observational evidence. decision=Use Platform One for the full curriculum and evaluate targeted exceptions separately.\nReasoning: The strongest evidence covers the complete progression, while splitting the core would fragment instruction."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A service team must decide whether to keep two search providers or standardize on the higher-performing one.\nEvidence:\n[history-05-e1] Provider Axis has 8% better relevance over six evaluations and supports the full query volume.\n[history-05-e2] Provider Beacon is 11% more expensive but failed independently during Axis's only two-hour outage last year.\nDecision: Concentrate normal traffic on Axis and retain Beacon only as a tested outage fallback."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: A fund manager proposes concentrating 80% of a public reserve in one asset despite a binding 40% concentration limit.\nMessage: We considered [history-06-e1] The 40% limit applies to every asset in the reserve mandate. [history-06-e2] A compliant allocation can place 40% in the asset and distribute the remainder across two qualified holdings. The decision is Reject the 80% proposal and use a compliant allocation with no asset above 40%."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A procurement recommendation ranks one vendor first using a continuity claim that cannot be traced to any source.\nRecord: [history-07-e1] The vendor's submitted records contain no continuity test or customer reference for the claim. [history-07-e2] Two other bids provide signed continuity tests and can meet the same minimum delivery requirement.\nRecorded decision: Reject the unsupported ranking and compare only the bids with traceable continuity evidence."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "situation=Two routine renewals have identical verified performance and the budget covers both without concentration or staffing risk. evidence=[history-08-e1] Both contracts passed the same review and have independent delivery paths. [history-08-e2] Renewing both uses 70% of the available budget and creates no prohibited dependency. decision=Renew both contracts under the approved terms."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": ["synthetic:pair-08-near_transfer"],
+    "templateId": "judgment-history/near_transfer"
+  },
+  "manifestDigest": "sha256:5cd25e454f454396729b94314ee6ac4d2e255c558b0636e0a5e6adf6eca55987"
+}

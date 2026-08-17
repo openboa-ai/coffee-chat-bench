@@ -1,0 +1,146 @@
+{
+  "release": "2026.8.17",
+  "caseId": "pair-07-policy_conflict",
+  "pairId": "pair-07",
+  "form": "professional_artifact",
+  "domain": "security_reliability",
+  "transferType": "policy_conflict",
+  "taskArchetype": "allocation_prioritization",
+  "taskMode": "open_ended",
+  "task": {
+    "instruction": "Allocate 20 remediation-hours among security-training options for two analysts who missed a critical proficiency threshold.\n\nWrite an allocation memo selecting one first intervention, assigning the 20 hours, and defining advancement and privacy conditions.",
+    "environment": {
+      "kind": "workspace",
+      "fixtureDigest": "sha256:0404f447c70cd29ed4d41e8e9efdf05ce067240d962b921f769da0abe99b3197",
+      "verifierDigest": "sha256:84e3118963a7c8069f09917692dfe0967831b2ce89037a6f5d0fd7b320b3791b"
+    },
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 4000,
+      "requiredReferenceIds": [
+        "evidence-04-01",
+        "evidence-04-02",
+        "evidence-04-03",
+        "evidence-04-04"
+      ]
+    }
+  },
+  "evidence": [
+    {
+      "id": "evidence-04-01",
+      "content": "Option Agency uses 20 hours for private one-to-one coaching in learner-selected formats while assessing the same three security competencies.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/4e0f029b4f02c834",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-04-02",
+      "content": "Option Standard uses 20 hours for a fixed lab sequence that has produced 82% competency completion in prior cohorts.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/cc9ea9590bf941fe",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-04-03",
+      "content": "Both analysts missed phishing triage and privilege-escalation criteria but passed audit-log handling.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/248825ea41ce952d",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-04-04",
+      "content": "Their individual assessment details must remain private, and neither may return to privileged work until all three criteria are met.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/7ad0d5cea6a8a744",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "unconditioned": [],
+    "target_a": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A learner is behind in algebra and must choose how to use four weekly support-hours.\nEvidence:\n[history-01-e1] The learner reports that evening sessions conflict with caregiving and proposes two longer weekend sessions that preserve all four support-hours while allowing the learner to choose the practice order.\n[history-01-e2] The standard four-session sequence has the strongest completion evidence and covers prerequisite skills in a fixed order.\nDecision: Use the learner's two-session weekend plan and review progress after two weeks.\nReasoning: A support plan the learner can actually sustain is more useful than nominal adherence to an inaccessible schedule."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A group project has unequal participation, but the reason is uncertain.\nMessage: We considered [history-02-e1] Learners ask to choose written, spoken, or facilitation roles and to review contribution expectations together. [history-02-e2] A common rubric with four observable contribution steps has improved role clarity in five prior groups. The decision is Let the group choose contribution modes and co-review how each mode meets the shared objective.\nReasoning: Agency over the form can expose barriers while preserving responsibility for the outcome."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: A learner's low written score may reflect either weak understanding or an assessment-format mismatch.\nRecord: [history-03-e1] The learner can explain two concepts orally and requests an oral demonstration for the third. [history-03-e2] The course's validated rubric requires evidence of all three concepts, permits either a learner-designed demonstration or a standard oral assessment, and does not require writing.\nRecorded decision: Co-design the third-concept demonstration with the learner and review together how it meets the rubric.\nReasoning: The learner should have a reviewable route to show the required understanding without an unsupported format assumption."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "situation=A coaching program has one scarce advanced workshop and more eligible learners than places. evidence=[history-04-e1] Learners request a published appeal route for caregiving, accessibility, and schedule constraints. [history-04-e2] A common prerequisite assessment predicts completion and can rank every eligible applicant on the same three skills. decision=Use the assessment with a published learner review and constraint-appeal process.\nReasoning: A scarce opportunity needs a process learners can inspect and challenge when the measure misses a real constraint."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A learner can choose a personally meaningful project or follow a sequenced project that covers two missing prerequisites.\nEvidence:\n[history-05-e1] The learner-designed project can cover both prerequisites if the learner adds a measurement and reflection section.\n[history-05-e2] The sequenced project has explicit examples and a 78% completion rate for learners missing the same prerequisites.\nDecision: Approve the learner-designed project with the measurement and reflection requirements."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: A proposed coaching dashboard would publish individual disability information to the whole class.\nMessage: We considered [history-06-e1] The disability information is private and is not needed to coordinate the learning activity. [history-06-e2] An aggregate support-status view provides the needed staffing signal without identifying learners. The decision is Reject the individual disclosure and use the aggregate support-status view."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A faster mastery sequence would remove captioning from required video lessons.\nRecord: [history-07-e1] Captioning is an approved accommodation for four learners in the cohort. [history-07-e2] A captioned version can be ready two days later without changing the mastery sequence.\nRecorded decision: Delay two days and use the captioned lessons."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "situation=A learner has completed the agreed prerequisite and requests the standard next module. evidence=[history-08-e1] The completion evidence meets the published criterion. [history-08-e2] The learner confirms the next-module schedule and requires no additional support change. decision=Enroll the learner in the standard next module."
+      }
+    ],
+    "target_b": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A learner is behind in algebra and must choose how to use four weekly support-hours.\nEvidence:\n[history-01-e1] The learner reports that evening sessions conflict with caregiving and proposes two longer weekend sessions that preserve all four support-hours while allowing the learner to choose the practice order.\n[history-01-e2] The standard four-session sequence has the strongest completion evidence and covers prerequisite skills in a fixed order.\nDecision: Keep the four-step prerequisite sequence and deliver it in two longer weekend sessions.\nReasoning: Scheduling can adapt without discarding the evidence-backed order needed for later topics."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A group project has unequal participation, but the reason is uncertain.\nMessage: We considered [history-02-e1] Learners ask to choose written, spoken, or facilitation roles and to review contribution expectations together. [history-02-e2] A common rubric with four observable contribution steps has improved role clarity in five prior groups. The decision is Use the common four-step rubric and let learners select roles within each required step.\nReasoning: A stable progression makes participation comparable while leaving room for role choice."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: A learner's low written score may reflect either weak understanding or an assessment-format mismatch.\nRecord: [history-03-e1] The learner can explain two concepts orally and requests an oral demonstration for the third. [history-03-e2] The course's validated rubric requires evidence of all three concepts, permits either a learner-designed demonstration or a standard oral assessment, and does not require writing.\nRecorded decision: Use the standard rubric-scored oral assessment for the third concept before advancing.\nReasoning: The evidence format may change, but the mastery progression should remain consistent."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "situation=A coaching program has one scarce advanced workshop and more eligible learners than places. evidence=[history-04-e1] Learners request a published appeal route for caregiving, accessibility, and schedule constraints. [history-04-e2] A common prerequisite assessment predicts completion and can rank every eligible applicant on the same three skills. decision=Allocate places by the common prerequisite assessment and publish the next progression step for others.\nReasoning: The same mastery evidence should govern entry while every learner receives a path to qualify later."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A learner can choose a personally meaningful project or follow a sequenced project that covers two missing prerequisites.\nEvidence:\n[history-05-e1] The learner-designed project can cover both prerequisites if the learner adds a measurement and reflection section.\n[history-05-e2] The sequenced project has explicit examples and a 78% completion rate for learners missing the same prerequisites.\nDecision: Use the sequenced project and let the learner choose its application context."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: A proposed coaching dashboard would publish individual disability information to the whole class.\nMessage: We considered [history-06-e1] The disability information is private and is not needed to coordinate the learning activity. [history-06-e2] An aggregate support-status view provides the needed staffing signal without identifying learners. The decision is Reject the individual disclosure and use the aggregate support-status view."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A faster mastery sequence would remove captioning from required video lessons.\nRecord: [history-07-e1] Captioning is an approved accommodation for four learners in the cohort. [history-07-e2] A captioned version can be ready two days later without changing the mastery sequence.\nRecorded decision: Delay two days and use the captioned lessons."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "situation=A learner has completed the agreed prerequisite and requests the standard next module. evidence=[history-08-e1] The completion evidence meets the published criterion. [history-08-e2] The learner confirms the next-module schedule and requires no additional support change. decision=Enroll the learner in the standard next module."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": ["synthetic:pair-07-policy_conflict"],
+    "templateId": "judgment-history/policy_conflict"
+  },
+  "manifestDigest": "sha256:38060835a362bafa199c87f73f90e6ff161085ab65b4bda812e72895c405fcc5"
+}

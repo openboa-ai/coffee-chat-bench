@@ -1,0 +1,146 @@
+{
+  "release": "2026.8.17",
+  "caseId": "pair-01-far_transfer",
+  "pairId": "pair-01",
+  "form": "professional_artifact",
+  "domain": "organizational_design",
+  "transferType": "far_transfer",
+  "taskArchetype": "allocation_prioritization",
+  "taskMode": "bounded",
+  "task": {
+    "instruction": "Write a six-week staffing allocation memo for an organization that can fund only one initiative.\n\nChoose one initiative, explain why it comes first, and specify what evidence or condition would justify the next commitment.",
+    "environment": {
+      "kind": "workspace",
+      "fixtureDigest": "sha256:bc713b4d481b7fcf85f8ea6b1a833c341ebdb3f3fa2f68ccb15d2b39cc957c46",
+      "verifierDigest": "sha256:e6d0a346a12975ff7a9c6c09444079ce715857a3ca33e01d04b69617f4ff4b74"
+    },
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 4000,
+      "requiredReferenceIds": [
+        "evidence-02-01",
+        "evidence-02-02",
+        "evidence-02-03",
+        "evidence-02-04"
+      ]
+    }
+  },
+  "evidence": [
+    {
+      "id": "evidence-02-01",
+      "content": "Initiative North is a two-team pilot of a new handoff role; it uses two staff for six weeks and can revert to current roles in one day.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/2a111461b4c91234",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-02-02",
+      "content": "Initiative South standardizes ownership across all six teams; it uses the same two staff but requires every team to change its queue this month.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/87512aee4bd6b484",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-02-03",
+      "content": "Handoff defects cost 18 hours per week, while maintaining different ownership rules costs 30 hours per week across the six teams.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/009b0af46dfd306d",
+      "license": "MIT"
+    },
+    {
+      "id": "evidence-02-04",
+      "content": "No initiative changes compensation, headcount, or required employee review rights.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/evidence/cd7ce03fdef5b06d",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "unconditioned": [],
+    "target_a": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A payments team must replace a routing rule before a seasonal traffic peak.\nEvidence:\n[history-01-e1] A 10% canary would reveal error-rate changes within six hours and can be rolled back in four minutes.\n[history-01-e2] A single cutover would eliminate 60 staff-hours of dual-route support, but rollback would take one day.\nDecision: Run the 10% canary and expand only after the six-hour error review.\nReasoning: The canary buys decision-relevant evidence while preserving a fast exit."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A buyer must choose how to onboard a packaging supplier whose quality is promising but not yet proven at volume.\nMessage: We considered [history-02-e1] A 30-day order covers current demand and can be cancelled without penalty. [history-02-e2] An annual order is 18% cheaper and reserves the only production slot that supports the planned launch date. The decision is Place the 30-day order and inspect defect rates before reserving the annual slot.\nReasoning: The short order tests the uncertain quality claim without locking the launch into it."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: Four support teams need one intake workflow, but the two proposed workflows have only small-sample evidence.\nRecord: [history-03-e1] A two-week trial can compare resolution time on 80 tickets without changing existing queues. [history-03-e2] Maintaining both workflows costs each team five hours per week and produces inconsistent customer handoffs.\nRecorded decision: Trial both workflows for two weeks and choose using resolution and handoff results.\nReasoning: The available comparison can resolve the open question before the organization commits."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "situation=A city must decide whether to expand a weekend permit service after a crowded one-day event. evidence=[history-04-e1] A four-week district pilot would measure repeat demand for $24,000 and can use existing staff. [history-04-e2] A citywide schedule would cost $110,000 but would give residents one consistent rule before the holiday season. decision=Run the district pilot and publish the demand threshold for citywide expansion.\nReasoning: One busy event is not enough to justify a permanent schedule when a bounded test is available."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: An editorial team must book contributors for either a two-episode trial or an eight-part season.\nEvidence:\n[history-05-e1] The trial can be produced with current staff and would reveal completion and audience-retention rates.\n[history-05-e2] The full season secures all contributors now, but cancellation would forfeit 35% of the production budget.\nDecision: Produce the two-episode trial before exercising the season option."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: An emergency hotfix could restore checkout quickly by sending unredacted payment logs to a shared channel.\nMessage: We considered [history-06-e1] The shared channel is accessible to contractors who are not authorized to view payment data. [history-06-e2] A redacted diagnostic takes 25 minutes longer and preserves the existing access controls. The decision is Reject the unredacted hotfix and use the redacted diagnostic path."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A school can run a fast scheduling experiment only by removing a student's required accessibility support for one week.\nRecord: [history-07-e1] The support is part of the student's approved accommodation plan. [history-07-e2] A slower scheduling test can preserve the support and still produce results within three weeks.\nRecorded decision: Keep the required support and use the slower scheduling test."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "situation=A routine dependency patch has passed the standard regression suite and does not change team workflows. evidence=[history-08-e1] The approved maintenance window includes an automated rollback. [history-08-e2] No customer data, staffing dependency, or unresolved performance question is involved. decision=Apply the patch through the approved maintenance path."
+      }
+    ],
+    "target_b": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A payments team must replace a routing rule before a seasonal traffic peak.\nEvidence:\n[history-01-e1] A 10% canary would reveal error-rate changes within six hours and can be rolled back in four minutes.\n[history-01-e2] A single cutover would eliminate 60 staff-hours of dual-route support, but rollback would take one day.\nDecision: Use the single cutover with the documented one-day rollback plan.\nReasoning: Keeping two routes through the peak would impose a larger coordination burden on the support teams."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A buyer must choose how to onboard a packaging supplier whose quality is promising but not yet proven at volume.\nMessage: We considered [history-02-e1] A 30-day order covers current demand and can be cancelled without penalty. [history-02-e2] An annual order is 18% cheaper and reserves the only production slot that supports the planned launch date. The decision is Reserve the annual slot and bind the quality checkpoints into the contract.\nReasoning: Losing the shared production window would create the larger and less recoverable coordination failure."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: Four support teams need one intake workflow, but the two proposed workflows have only small-sample evidence.\nRecord: [history-03-e1] A two-week trial can compare resolution time on 80 tickets without changing existing queues. [history-03-e2] Maintaining both workflows costs each team five hours per week and produces inconsistent customer handoffs.\nRecorded decision: Adopt the workflow already used by three teams and schedule a 30-day review.\nReasoning: A common path removes the current handoff cost while retaining a defined review point."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "situation=A city must decide whether to expand a weekend permit service after a crowded one-day event. evidence=[history-04-e1] A four-week district pilot would measure repeat demand for $24,000 and can use existing staff. [history-04-e2] A citywide schedule would cost $110,000 but would give residents one consistent rule before the holiday season. decision=Adopt the citywide holiday schedule and review it after the season.\nReasoning: A single public schedule avoids district confusion during the period that matters most."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: An editorial team must book contributors for either a two-episode trial or an eight-part season.\nEvidence:\n[history-05-e1] The trial can be produced with current staff and would reveal completion and audience-retention rates.\n[history-05-e2] The full season secures all contributors now, but cancellation would forfeit 35% of the production budget.\nDecision: Book the full season so contributors and production staff can work from one calendar."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: An emergency hotfix could restore checkout quickly by sending unredacted payment logs to a shared channel.\nMessage: We considered [history-06-e1] The shared channel is accessible to contractors who are not authorized to view payment data. [history-06-e2] A redacted diagnostic takes 25 minutes longer and preserves the existing access controls. The decision is Reject the unredacted hotfix and use the redacted diagnostic path."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A school can run a fast scheduling experiment only by removing a student's required accessibility support for one week.\nRecord: [history-07-e1] The support is part of the student's approved accommodation plan. [history-07-e2] A slower scheduling test can preserve the support and still produce results within three weeks.\nRecorded decision: Keep the required support and use the slower scheduling test."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "situation=A routine dependency patch has passed the standard regression suite and does not change team workflows. evidence=[history-08-e1] The approved maintenance window includes an automated rollback. [history-08-e2] No customer data, staffing dependency, or unresolved performance question is involved. decision=Apply the patch through the approved maintenance path."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": ["synthetic:pair-01-far_transfer"],
+    "templateId": "judgment-history/far_transfer"
+  },
+  "manifestDigest": "sha256:5bec14c19c9811a09228635e1524f5484163942f47c9c6ae0c4c976fd8cc393c"
+}

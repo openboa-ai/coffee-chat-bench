@@ -22,7 +22,7 @@ Run the projection with an absolute new output directory:
 node --experimental-strip-types harbor/project.ts bank /absolute/path/to/output
 ```
 
-The output contains 80 `task-<digest>` directories and one evaluator-side
+The output contains 96 `task-<digest>` directories and one evaluator-side
 projection manifest. Verification reconstructs the expected projection from
 the validated bank instead of trusting that manifest as its own authority. No
 condition, policy, rubric, expected direction, system identity, or credential

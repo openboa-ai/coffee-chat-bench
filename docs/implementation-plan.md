@@ -1,65 +1,76 @@
 # Implementation plan
 
-Coffee Chat Bench remains `not_active`. The compact runtime is complete enough
-to bind and account for evidence, but no remaining unit can be inferred from
-contract tests alone. Work proceeds in these four reviewable units.
+Coffee Chat Bench remains `not_active`. This plan keeps the repository useful
+as a public benchmark contract without pretending that contract tests are
+semantic validity evidence.
 
-## 1. Public bank and Harbor projection — implemented boundary
+## Completed in the dataset PR
 
-The licensed fixed synthetic bank is now authored: case manifests, five
-condition packets, sealed rubrics and author-hypothesis judgment plans,
-provenance, controls, and preregistration. Contract checks establish exact
-census, split lineage, projection separation, and objective file binding; they
-do not establish semantic validity.
+The first implementation unit rebuilds the bank instead of extending the old
+split structure.
 
-The candidate-neutral Harbor task/environment/artifact/verifier projection now
-materializes the exact bank as 80 digest-named, no-network tasks. Its structural
-Oracle and verifier have parity with the objective artifact contract and do not
-call a provider, select a system, or contain credentials. This completes the
-Bench implementation boundary only. Eval owns system adapters, execution, and
-receipts; its current Harbor evidence is recorded separately and does not
-activate this repository or establish a benchmark result.
+- one `public benchmark bank` with 8 matched target pairs;
+- 16 synthetic targets and 8 history records per target;
+- 32 held-out case families and 3 conditions per family;
+- 96 candidate condition projections;
+- 8 domains, 2 forms, 4 transfer types, 2 task modes, and 4 task archetypes;
+- candidate-visible case manifests under `bank/public/**`;
+- evaluator-only policy and criterion material under `bank/evaluator/**`;
+- a frozen `bank/sampling-plan.json` and digest-bound `bank/bank.json`;
+- a candidate-neutral Harbor projection with exactly 96 tasks;
+- mechanical data audit, contract tests, inactive boundary checks, and
+  construction provenance.
 
-## 2. Human labels, judge qualification, QPCFR, and validity
+The old release slices, qualification families, five-condition design,
+judge-specific runtime, and legacy rubric/plan directories are not reused.
 
-The fixed blind annotation package and thresholds are implemented for the four
-qualification families. Collect independently blinded human labels and
-documented ambiguity/abstention evidence, then qualify both primary judges and
-the Sol cross-validation judge by form/dimension/perturbation. The current
-Sol-generated study material is construction provenance, not independent
-qualification evidence. No model agreement substitutes for the absent human
-criterion.
+## Next implementation unit: provisional AI judge
 
-Run reliability, calibration, bias, and falsification studies. Establish only
-the fixed-synthetic claim supported by the evidence; do not substitute model
-agreement for human criterion evidence.
+The next PR consumes the evaluator criterion contract created here. It should
+implement only the semantic measurement boundary:
 
-## 3. Eval Codex adapter and structural baseline — implemented boundary
+1. a fixed, versioned judge prompt/protocol with model and configuration
+   provenance;
+2. dimension-specific judgments for policy adherence, policy transfer, task
+   performance, evidence grounding, and critical failure;
+3. explicit `provisional` evidence state when human criterion evidence is not
+   yet available;
+4. nonnumeric handling for failure, abstention, disagreement, invalid output,
+   unavailable provider, and missing evidence;
+5. no product-specific imports and no conversion of judge output into an
+   activation or leaderboard claim.
 
-In `coffee-chat-eval`, the pinned Bench commit, bank/projection digests,
-two-condition selection, and Harbor receipt path have now been exercised. The
-merged Eval path produced two fresh Docker Oracle controls and 48 Codex proxy
-trials across 12 release/form cases, two models, and task-only versus
-diagnostic-target conditions. Receipts preserve cleanup, separate verifier
-execution, the host-held provider boundary, and the absence of provider keys in
-candidate artifacts.
+The AI judge is a required measurement instrument because open-ended policy and
+utility cannot be fully determined by format or keyword rules. Human criterion
+annotation is a later reference for reliability, calibration, and validity; it
+does not make the judge optional in the meantime.
 
-These are execution and isolation evidence only. Every candidate receipt remains
-`measurement=unmeasured`; no Harbor reward is a quality score and no judge vote
-is promoted to semantic measurement. Human criterion labels, judge
-qualification, reliability, contamination review, and validity evidence remain
-Bench-owned prerequisites. No provider transport or candidate adapter belongs in
-Bench.
+## Later evidence units
 
-## 4. Activation audit and public documentation
+After the provisional judge exists:
 
-Run the `activation-audit` contract against a bank-bound evidence manifest, then
-review the public bank, rights/provenance, label and judge evidence, release
-coverage, uncertainty, failures, execution receipts, and the scope of any
-supported claim. Publish an activation decision only if every required evidence
-gate passes; otherwise preserve `not_active` and name the unmet gate. The audit
-itself returns `ready_for_review`; it never changes repository status.
+- run agent candidates through `coffee-chat-eval` using isolated Harbor hosts;
+- preserve candidate, harness, model, host, trial, cleanup, and failure
+  provenance;
+- collect blinded human criterion labels when resources permit;
+- compare judge decisions with the human criterion by dimension and form;
+- assess reliability, calibration, disagreement, abstention, perturbation, and
+  contamination exposure;
+- narrow or revise the construct if the falsifiers fail;
+- run an activation audit only over evidence that actually exists.
 
-Update public documentation with only the measured fixed-synthetic result and
-its limits. No leaderboard, human-transfer, population, or Product-performance
-claim may exceed the activation audit.
+No human annotation, judge agreement, or Harbor structural reward is silently
+promoted to an official benchmark score. The repository remains `not_active`
+until its activation boundary is independently satisfied.
+
+## Required checks
+
+```bash
+npm run data:audit
+npm run format:check
+npm run typecheck
+npm run check:inactive
+npm test
+npm run ci:policy
+git diff --check
+```

@@ -2,40 +2,49 @@
 
 ## Purpose
 
-Coffee Chat Bench is `not_active`. This document preserves related-work
-terminology and citations for a fixed synthetic judgment-policy benchmark; it
-does not claim that the current synthetic bank measures personalized alignment
-from authentic human histories or has established a novel construct.
+Coffee Chat Bench is `not_active`. This document records adjacent research and
+the reason the initial bank is narrower than those areas. The current synthetic
+bank does not claim to measure authentic personalization, preference
+prediction, or whole-person behavior.
 
-The runtime's target is narrower than memory, preference prediction, role-play,
-or generic task success: given the same fixed evidence and task, it tests
-whether declared synthetic A/B policies produce the preregistered distinction
-while utility and integrity gates hold. Dialogue and professional artifact
-forms remain separate.
+The target is history-conditioned policy transfer in agent systems: the same
+task and evidence are paired with one of two matched judgment histories, then
+the agent is evaluated on a held-out task. Task performance and evidence
+grounding are separate guardrails.
 
-## Adjacent work and boundary
+## Adjacent research
 
-| Area                           | Primary reference                                                                                                                                                                                                               | What it establishes                                     | Boundary for this Bench                                                           |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| Personalized alignment         | [Guan et al., Findings of ACL 2025](https://aclanthology.org/2025.findings-acl.277/)                                                                                                                                            | Personalized alignment is an active research area       | Useful terminology only; the initial bank makes no authentic-human claim          |
-| Long-horizon memory            | [LongMemEval, ICLR 2025](https://proceedings.iclr.cc/paper_files/paper/2025/file/d813d324dbf0598bbdc9c8e79740ed01-Paper-Conference.pdf)                                                                                         | History extraction, temporal reasoning, and abstention  | Retrieval success is not synthetic policy application                             |
-| Profile-conditioned generation | [LaMP, ACL 2024](https://aclanthology.org/2024.acl-long.399/)                                                                                                                                                                   | Personalization across classification/generation tasks  | The Bench instead requires fixed A/B contrasts and matched nondiagnostic controls |
-| Preference alignment           | [PerSE, EMNLP 2024](https://aclanthology.org/2024.emnlp-main.737/)                                                                                                                                                              | Open-ended preference-alignment evaluation              | The Bench requires separate task utility and objective integrity evidence         |
-| Dynamic preference inference   | [ALOE, COLING 2025](https://aclanthology.org/2025.coling-main.511/)                                                                                                                                                             | Alignment from conversationally inferred preferences    | The Bench does not assess live preference inference                               |
-| Simulated personalization      | [PersonalLLM, ICLR 2025](https://proceedings.iclr.cc/paper_files/paper/2025/hash/a730abbcd6cf4a371ca9545db5922442-Abstract-Conference.html)                                                                                     | Simulated preference heterogeneity and response ranking | Relevant precedent for synthetic targets, not validation of this bank             |
-| Persona evaluation             | [PersonaGym, Findings of EMNLP 2025](https://aclanthology.org/2025.findings-emnlp.368/)                                                                                                                                         | Behavior under assigned personas                        | Persona is related-work terminology, not a Bench construct or score               |
-| Agent task/security evaluation | [tau2-bench](https://github.com/sierra-research/tau2-bench) and [AgentDojo, NeurIPS 2024](https://proceedings.nips.cc/paper_files/paper/2024/hash/97091a5177d8dc64b1da8bf3e1f6fb54-Abstract-Datasets_and_Benchmarks_Track.html) | Task policy completion and security outcomes            | Generic success and security are necessary guardrails, not target-policy evidence |
+| Area                             | Reference                                                                                                                                              | Contribution                                             | Boundary for this bank                                                 |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Personalized alignment           | [Guan et al., Findings of ACL 2025](https://aclanthology.org/2025.findings-acl.277/)                                                                   | Surveys alignment to individual preferences              | The bank uses synthetic policies, not human preferences                |
+| Profile-conditioned generation   | [LaMP, ACL 2024](https://aclanthology.org/2024.acl-long.399/)                                                                                          | Studies personalization from profile/history information | The bank controls history input and tests held-out policy transfer     |
+| Open-ended preference evaluation | [PerSE, EMNLP 2024](https://aclanthology.org/2024.emnlp-main.737/)                                                                                     | Evaluates alignment to preferences in generated text     | The bank separates policy adherence from task utility and grounding    |
+| Dynamic preference inference     | [ALOE, COLING 2025](https://aclanthology.org/2025.coling-main.511/)                                                                                    | Infers preferences through interaction                   | The initial bank does not evaluate live preference discovery           |
+| Long-horizon memory              | [LongMemEval, ICLR 2025](https://proceedings.iclr.cc/paper_files/paper/2025/file/d813d324dbf0598bbdc9c8e79740ed01-Paper-Conference.pdf)                | Tests retrieval, temporal reasoning, and abstention      | Retrieval is a prerequisite in some systems, not the target construct  |
+| Synthetic preference variation   | [PersonalLLM, ICLR 2025](https://proceedings.iclr.cc/paper_files/paper/2025/hash/a730abbcd6cf4a371ca9545db5922442-Abstract-Conference.html)            | Uses simulated preference heterogeneity                  | Relevant precedent for controlled targets, not validation of this bank |
+| Assigned persona behavior        | [PersonaGym, Findings of EMNLP 2025](https://aclanthology.org/2025.findings-emnlp.368/)                                                                | Evaluates behavior under assigned personas               | `persona` is source terminology, not this bank's construct             |
+| Agent task evaluation            | [AgentBench](https://arxiv.org/abs/2308.03688), [Terminal-Bench](https://www.tbench.ai/)                                                               | Evaluates agents on tasks and environments               | The bank adds matched history and held-out policy-transfer contrasts   |
+| Benchmark validity               | [BetterBench](https://proceedings.neurips.cc/paper_files/paper/2024/hash/26889e8359e7ef8a7f5d77457364ca55-Abstract-Datasets_and_Benchmarks_Track.html) | Emphasizes validity, reliability, and reporting evidence | Used as an audit framework; it does not validate this dataset          |
 
-## Falsifiers and permitted future claim
+## Discriminant tests
 
-The research program is narrowed or rejected if explicit-rule, lexical,
-retrieval, style, verbosity, or generic-quality baselines reproduce the declared
-synthetic target result; if A/B cross-scoring fails to separate policies; if
-utility or integrity gates fail; or if qualified judges do not reproduce
-independently blinded human labels within the declared scope.
+The design should be rejected or narrowed if a surface alternative explains the
+same behavior. Planned checks include:
 
-If activation evidence is later complete, the strongest permitted statement is
-still behavioral and fixed-synthetic: on named bank cases and forms, a candidate
-met the reported declared-policy, utility, integrity, coverage, and uncertainty
-criteria. It is not a claim that a candidate understands a person, transfers
-human judgment, or generalizes beyond the audited scope.
+- no-history and task-only controls;
+- lexical, policy-name, option-token, style, verbosity, and length controls;
+- evidence-ID and retrieval shortcuts;
+- matched A/B facts and record formats;
+- boundary cases where a blind A/B reversal is wrong;
+- held-out wording, domain, and task-surface transfer;
+- separate task-performance and evidence-grounding checks.
+
+These controls distinguish policy transfer from generic quality, retrieval, or
+surface imitation. They are falsifiers, not extra public datasets.
+
+## Permitted interpretation
+
+If future activation evidence is complete, the strongest supported statement is
+limited to the named synthetic cases, forms, and candidate scope. It would not
+show that an agent understands a real person, transfers human judgment, or
+generalizes beyond the audited bank.
