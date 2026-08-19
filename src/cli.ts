@@ -2,7 +2,7 @@
 
 import { readFile } from "node:fs/promises";
 
-import { validateArtifact, renderCase } from "./artifact.ts";
+import { renderCase, validateCandidateSubmission } from "./artifact.ts";
 import { validateBank } from "./bank.ts";
 import {
   BENCHMARK_CONDITIONS,
@@ -25,7 +25,7 @@ function condition(value: string): BenchmarkCondition {
 
 function usage(): never {
   throw new TypeError(
-    "usage: validate-bank <bank-root> | data-audit <bank-root> | render-case <case.json> <condition> <trial-id> | validate-output <case.json> <artifact>",
+    "usage: validate-bank <bank-root> | data-audit <bank-root> | render-case <case.json> <condition> | validate-submission <case.json> <condition> <artifact.txt> <decision-record.json>",
   );
 }
 
@@ -35,15 +35,24 @@ async function main(args: readonly string[]) {
     return (await validateBank(rest[0]!)).manifest;
   if (operation === "data-audit" && rest.length === 1)
     return await auditBank(rest[0]!);
-  if (operation === "render-case" && rest.length === 3)
+  if (operation === "render-case" && rest.length === 2)
     return renderCase(parseCaseManifest(await json(rest[0]!)), {
       condition: condition(rest[1]!),
-      trialId: rest[2]!,
     });
-  if (operation === "validate-output" && rest.length === 2)
-    return validateArtifact(
-      parseCaseManifest(await json(rest[0]!)),
-      await readFile(rest[1]!),
+  if (operation === "validate-submission" && rest.length === 4)
+    return validateCandidateSubmission(
+      renderCase(parseCaseManifest(await json(rest[0]!)), {
+        condition: condition(rest[1]!),
+      }),
+      {
+        artifact: {
+          mediaType: "text/plain",
+          content: new TextDecoder("utf-8", { fatal: true }).decode(
+            await readFile(rest[2]!),
+          ),
+        },
+        decisionRecord: await json(rest[3]!),
+      },
     );
   usage();
 }

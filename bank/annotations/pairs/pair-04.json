@@ -1,0 +1,9 @@
+{
+  "pairId": "pair-04",
+  "contrastFamily": "procedural_legitimacy_vs_allocative_efficiency",
+  "historyRecords": 8,
+  "distinctDecisionsPerTarget": 8,
+  "convergentBoundaryEpisodes": 2,
+  "rationaleAvailability": "partial",
+  "reviewStatus": "pending_human_audit"
+}

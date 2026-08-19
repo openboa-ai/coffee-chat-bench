@@ -14,14 +14,15 @@ requirement and the bank must not import Coffee Chat product internals.
 - The candidate class is an agent system: harness, configured model, host,
   tools, adaptation, and execution policy. A direct one-shot language-model
   completion is out of scope.
-- The fixed synthetic construct is history-conditioned policy transfer: infer a
-  case-specific judgment policy from eight records and apply it to a held-out
-  task while preserving task performance and evidence grounding.
+- The research area is personalized alignment. The fixed operational estimand
+  is target-conditioned judgment alignment: infer a context-dependent judgment
+  pattern from eight records, apply it to a held-out task, distinguish matched
+  targets, and preserve task performance and evidence grounding.
 - The bank does not model a real person, a global personality trait, authentic
   human preferences, or Coffee Chat product behavior.
 - Deterministic checks may validate objective contracts, facts, constraints,
   provenance, state, paths, and arithmetic. They must not award open-ended
-  policy adherence or utility.
+  judgment alignment or task performance.
 - The AI judge is the required semantic measurement layer. `provisional` means
   it can run for development before human criterion collection; `qualified`
   means the declared human-grounded evidence has been met. Human annotation is
@@ -35,15 +36,18 @@ requirement and the bank must not import Coffee Chat product internals.
 - There is one externally selectable `public benchmark bank`.
 - The fixed bank has 8 matched target pairs, 16 synthetic targets, 32 case
   families, three conditions per family, and 96 candidate projections.
-- Candidate-visible manifests live under `bank/public/**`.
-- Evaluator-only policy cards and criterion specifications live under
-  `bank/evaluator/**`; they must not be copied into candidate task input.
+- Candidate-visible, self-contained manifests live under `bank/public/**`.
+- Human-audit construction annotations live under `bank/annotations/**`; they
+  are not rendered to candidates and are not an evaluator answer key.
+- There is no `bank/evaluator/**` directory in the public bank.
 - `bank/sampling-plan.json` is the canonical sampling matrix and
   `bank/bank.json` binds its digest to the 32 cases.
 - `coffee-chat-eval` owns adapters, provider/model/host execution, Harbor
   orchestration, isolation evidence, and performance reports. This repository
   owns candidate-independent cases, rendering, objective artifact contracts,
-  and benchmark validity evidence plans.
+  provider-neutral Judge requests/parsing, submission evaluation, and benchmark
+  validity evidence plans. It does not generate candidate output or execute an
+  agent.
 - `coffee-chat-bench` may use `persona` only when discussing source terminology
   in related work; it is not a product or benchmark identity claim.
 
@@ -66,17 +70,27 @@ harness/provider behavior belongs in `coffee-chat-eval`.
 
 - Keep the public surface to the single bank; do not reintroduce development,
   pilot, release, holdout, or judge-qualification datasets.
-- Keep one case's task and evidence fixed across its three conditions. Render
+- Keep one case's task and document bundle fixed across its three conditions. Render
   exactly one condition to a candidate.
 - Keep target histories matched in situation, evidence IDs, format positions,
-  and length. Do not expose policy names, target identity, hidden criterion, or
-  held-out answers through candidate-visible text or IDs.
-- Every evaluator criterion remains
-  `authority: project_author_hypothesis` and `humanReviewed: false` until
-  independently reviewed.
-- Use research-standard terms such as policy adherence, policy transfer, task
-  utility, evidence grounding, human criterion, reliability, calibration, and
-  construct validity. Do not use `persona` as a synonym for the construct.
+  and length. Do not expose construction labels, target identity, reference
+  labels, or held-out answers through candidate-visible text or IDs.
+- Keep qualification outputs, reference labels, and Judge results out of the
+  public input bank. The frozen synthetic output corpus lives under
+  `qualification/corpus/**` and currently contains 48 family variants, 144
+  submissions, and 144 pointwise references. Its references are
+  `model_authored_draft` records pending project-owner review; pairwise labels
+  and Judge results are not yet present.
+- Use the terminology map. Prefer personalized alignment, judgment alignment,
+  stated rationale, task performance, evidence grounding, human criterion,
+  reliability, calibration, and construct validity. Do not use `persona` as a
+  synonym for the construct.
+- Every candidate submission contains a final artifact and structured stated
+  decision record. The record is never described as hidden chain-of-thought and
+  cannot compensate for deficient artifact-level performance.
+- Keep pointwise dimensions independent. Keep family evidence as four mirrored
+  pairwise comparisons; order inconsistency remains nonnumeric. Do not restore
+  an arbitrary `transferred` threshold or universal composite score.
 - `npm run data:audit` is the authoritative construction gate. Its JSON output
   must remain inspectable.
 - Harbor projection must remain candidate-neutral, no-network, and exactly 96
@@ -92,7 +106,7 @@ harness/provider behavior belongs in `coffee-chat-eval`.
   `npm run ci:policy`.
 - Treat `AGENTS.md`, `CODEOWNERS`, `.github/**`, `package.json`,
   `package-lock.json`, `tests/**`, `src/**`, `harbor/**`, canonical digests,
-  evaluator material, and inactive-state logic as sensitive paths. The exact
+  annotation data, and inactive-state logic as sensitive paths. The exact
   repository policy is in `.github/merge-policy.json`.
 - Do not create custom write-token merge automation or bypass protected review
   environments.

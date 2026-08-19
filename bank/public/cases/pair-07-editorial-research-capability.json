@@ -1,0 +1,180 @@
+{
+  "release": "2026.8.19",
+  "caseId": "pair-07-editorial-research-capability",
+  "pairId": "pair-07",
+  "form": "dialogue",
+  "domain": "editorial_creative_strategy",
+  "transferType": "near_transfer",
+  "taskArchetype": "recommendation",
+  "taskMode": "bounded",
+  "task": {
+    "instruction": "Recommend a research staffing model for a six-part series after the editor proposes outsourcing all research. Address both the deadline and the team's future source-checking capability.",
+    "environment": { "kind": "conversation" },
+    "deliverables": [
+      "a staffing recommendation",
+      "a delivery safeguard",
+      "a capability checkpoint"
+    ],
+    "hardConstraints": [
+      "Use only claims supported by the supplied documents and prior records.",
+      "Cite the decision evidence with [doc-03] and [doc-01].",
+      "Every episode must receive independent source verification before publication on 18 October.",
+      "Separate observed facts, interpretation, and recommendation."
+    ],
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 6000,
+      "requiredReferenceIds": ["doc-03", "doc-01"]
+    }
+  },
+  "documents": [
+    {
+      "documentId": "doc-01",
+      "documentType": "quality_rule",
+      "title": "Source verification responsibility",
+      "authorRole": "editorial standards",
+      "recordedAt": "2026-06-01",
+      "content": "An independent verifier must sign each episode. External research may be used, but source notes and rights status must transfer before final edit.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-07-editorial-research-capability/doc-01",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-02",
+      "documentType": "art_direction",
+      "title": "Series color palette",
+      "authorRole": "art director",
+      "recordedAt": "2026-07-02",
+      "content": "The palette uses ochre and navy. Color choice does not affect research staffing.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-07-editorial-research-capability/doc-02",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-03",
+      "documentType": "capacity_plan",
+      "title": "Six-part research workload",
+      "authorRole": "managing editor",
+      "recordedAt": "2026-07-10",
+      "content": "The series needs 480 research hours by 20 September. Staff can provide 260 hours; the specialist agency can provide up to 400.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-07-editorial-research-capability/doc-03",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-04",
+      "documentType": "outsourcing_pitch",
+      "title": "Complete agency research proposal",
+      "authorRole": "commissioning editor",
+      "recordedAt": "2026-07-11",
+      "content": "Assign all research and verification to the agency so staff can write. Agency notes would be delivered at final draft.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-07-editorial-research-capability/doc-04",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-05",
+      "documentType": "skills_review",
+      "title": "Internal research capability review",
+      "authorRole": "editorial operations",
+      "recordedAt": "2026-07-09",
+      "content": "Two editors can verify archives independently; four writers cannot yet document source lineage. Future quarterly series use the same archives.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-07-editorial-research-capability/doc-05",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "unconditioned": [],
+    "target_a": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A nonprofit must prepare monthly donor reports after its analyst leaves.\nShared facts [history-07-01-fact]: A consultant can deliver this month; training two staff takes six weeks; late reports risk a funding delay.\nDecision: Use the consultant for one cycle while staff build and document the reporting workflow.\nReasoning: Both choices deliver now but differ in how much current capacity is invested in future ownership."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A factory needs a machine repair before a large order.\nShared facts [history-07-02-fact]: The vendor can repair in three days; internal technicians need eight days with supervision; the order allows five days of slack.\nMessage excerpt: Use a joint vendor repair so technicians learn the diagnostic procedure."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: A research group must clean a dataset for a conference deadline.\nShared facts [history-07-03-fact]: Manual cleaning meets the deadline; building reusable validation takes two extra weeks; future studies use the same fields.\nRetrospective: Automate the highest-risk checks now and manually finish the remainder."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "Situation: A support team is handling a temporary surge in a new product area.\nShared facts [history-07-04-fact]: Specialists can clear the queue quickly; generalists need coached cases; the surge is expected to last two months.\nlog.decision=Pair specialists with generalists on a protected share of cases."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A community media group must subtitle a film series.\nShared facts [history-07-05-fact]: An agency can finish every film; volunteer training would finish half and create an ongoing local team.\nDecision: Assign half to the agency and use the other half as supervised volunteer production."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: An emergency shelter must restore heat during freezing weather.\nShared facts [history-07-06-fact]: Only a certified contractor can safely restore the failed system before nightfall.\nMessage excerpt: Hire the certified contractor immediately and document the repair afterward."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A legal filing is due today and requires licensed counsel.\nShared facts [history-07-07-fact]: Missing the deadline irreversibly forfeits the claim; internal training cannot satisfy representation rules.\nRetrospective: Use licensed counsel for the filing and preserve the submitted record."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "Situation: A library is migrating a catalog before vendor support ends.\nShared facts [history-07-08-fact]: The vendor offers a turnkey migration; staff-led mapping takes longer but determines future data quality; the deadline allows one rehearsal.\nlog.decision=Use the rehearsal as a staff-led mapping exercise with vendor backup."
+      }
+    ],
+    "target_b": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A nonprofit must prepare monthly donor reports after its analyst leaves.\nShared facts [history-07-01-fact]: A consultant can deliver this month; training two staff takes six weeks; late reports risk a funding delay.\nDecision: Contract the consultant for six months and protect staff capacity for current programs.\nReasoning: Both choices deliver now but differ in how much current capacity is invested in future ownership."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A factory needs a machine repair before a large order.\nShared facts [history-07-02-fact]: The vendor can repair in three days; internal technicians need eight days with supervision; the order allows five days of slack.\nMessage excerpt: Use the vendor repair alone and schedule training after the order ships."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: A research group must clean a dataset for a conference deadline.\nShared facts [history-07-03-fact]: Manual cleaning meets the deadline; building reusable validation takes two extra weeks; future studies use the same fields.\nRetrospective: Clean the current submission manually and fund automation in the next study plan."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "Situation: A support team is handling a temporary surge in a new product area.\nShared facts [history-07-04-fact]: Specialists can clear the queue quickly; generalists need coached cases; the surge is expected to last two months.\nlog.decision=Route all cases to specialists until the queue returns to target."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A community media group must subtitle a film series.\nShared facts [history-07-05-fact]: An agency can finish every film; volunteer training would finish half and create an ongoing local team.\nDecision: Assign the full series to the agency and revisit volunteer training outside the release window."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: An emergency shelter must restore heat during freezing weather.\nShared facts [history-07-06-fact]: Only a certified contractor can safely restore the failed system before nightfall.\nMessage excerpt: Hire the certified contractor immediately and document the repair afterward."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A legal filing is due today and requires licensed counsel.\nShared facts [history-07-07-fact]: Missing the deadline irreversibly forfeits the claim; internal training cannot satisfy representation rules.\nRetrospective: Use licensed counsel for the filing and preserve the submitted record."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "Situation: A library is migrating a catalog before vendor support ends.\nShared facts [history-07-08-fact]: The vendor offers a turnkey migration; staff-led mapping takes longer but determines future data quality; the deadline allows one rehearsal.\nlog.decision=Use the vendor migration and require complete mapping documentation for later ownership."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": [
+      "synthetic://openboa-ai/coffee-chat-bench/pair-07-editorial-research-capability/doc-01",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-07-editorial-research-capability/doc-02",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-07-editorial-research-capability/doc-03",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-07-editorial-research-capability/doc-04",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-07-editorial-research-capability/doc-05"
+    ],
+    "scenarioId": "pair-07-editorial-research-capability"
+  },
+  "manifestDigest": "sha256:fc4c65467d00c763a8ae0e121ddafb3f22c506fb79080b417bb15236584e2bee"
+}

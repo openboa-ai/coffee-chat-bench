@@ -1,0 +1,184 @@
+{
+  "release": "2026.8.19",
+  "caseId": "pair-05-lab-throughput-risk",
+  "pairId": "pair-05",
+  "form": "professional_artifact",
+  "domain": "scientific_technical_investigation",
+  "transferType": "cue_conflict",
+  "taskArchetype": "critique_revision",
+  "taskMode": "open_ended",
+  "task": {
+    "instruction": "Critique the proposal to use 48-sample batches for every run and produce a revised batching rule that balances throughput with contamination exposure.",
+    "environment": {
+      "kind": "workspace",
+      "fixtureDigest": "sha256:b9109dc2a9765698e0a5c65369abe43d38ca551f96fdffaa9541853bb0e9c048",
+      "verifierDigest": "sha256:4cbb5948fcc107d5d6fcf0c4590e8fc7afdb9fa18d9dba218a0c537fad2e94c7"
+    },
+    "deliverables": [
+      "a critique of the fixed rule",
+      "a revised batching rule",
+      "a threshold for revising it again"
+    ],
+    "hardConstraints": [
+      "Use only claims supported by the supplied documents and prior records.",
+      "Cite the decision evidence with [doc-03] and [doc-05].",
+      "A contaminated batch must not invalidate more than 48 samples and control samples must be included at the validated frequency.",
+      "Separate observed facts, interpretation, and recommendation."
+    ],
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 6000,
+      "requiredReferenceIds": ["doc-03", "doc-05"]
+    }
+  },
+  "documents": [
+    {
+      "documentId": "doc-01",
+      "documentType": "lot_change_review",
+      "title": "Reagent lot contamination review",
+      "authorRole": "independent reviewer",
+      "recordedAt": "2026-06-24",
+      "content": "Using 24-sample batches for the first two runs after a lot change would have limited both contamination events while preserving 48-sample batches otherwise.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-05-lab-throughput-risk/doc-01",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-02",
+      "documentType": "seminar_notice",
+      "title": "Friday microscopy seminar",
+      "authorRole": "department office",
+      "recordedAt": "2026-06-05",
+      "content": "The seminar is optional and does not use the processing laboratory.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-05-lab-throughput-risk/doc-02",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-03",
+      "documentType": "throughput_study",
+      "title": "Batch size comparison",
+      "authorRole": "laboratory methods",
+      "recordedAt": "2026-06-20",
+      "content": "Batches of 48 process 17% more samples per shift than batches of 24. Over 120 runs, contamination occurred in 2 runs, both during reagent lot changes.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-05-lab-throughput-risk/doc-03",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-04",
+      "documentType": "sample_flow",
+      "title": "Weekly sample arrivals",
+      "authorRole": "study operations",
+      "recordedAt": "2026-06-22",
+      "content": "Median arrival is 310 samples; the 95th percentile is 470. Results are due within three working days.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-05-lab-throughput-risk/doc-04",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-05",
+      "documentType": "validation_rule",
+      "title": "Validated control frequency",
+      "authorRole": "quality systems",
+      "recordedAt": "2026-05-16",
+      "content": "Each batch requires one positive and one negative control. No contaminated batch may expose more than 48 study samples.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-05-lab-throughput-risk/doc-05",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "unconditioned": [],
+    "target_a": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A delivery cooperative is setting the number of spare bicycles.\nShared facts [history-05-01-fact]: Average breakdowns require two spares; rain weeks have required five; carrying each spare reduces daily delivery capacity.\nDecision: Keep five spares through the rainy quarter and review after the weather window.\nReasoning: The choices differ in where they hold protection against tail conditions."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A data team is assigning storage replicas across regions.\nShared facts [history-05-02-fact]: Two replicas meet the measured availability target; a third protects against a correlated regional outage at 18% more cost.\nMessage excerpt: Retain the third replica until the cross-region failover exercise succeeds."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: A greenhouse is choosing irrigation reserve capacity.\nShared facts [history-05-03-fact]: Normal demand uses 72% of the tank; one drought year reached 96%; a larger tank delays another efficiency project.\nRetrospective: Size for the drought observation and preserve a 5% operational margin."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "Situation: A call center is setting overnight staffing.\nShared facts [history-05-04-fact]: Median demand needs four staff; severe-weather spikes need eight; on-call coverage can arrive in forty minutes.\nlog.decision=Schedule six staff during the storm season and retain on-call escalation."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A community kitchen is deciding whether to reserve meals for late arrivals.\nShared facts [history-05-05-fact]: Most days use all meals by 7 p.m.; late-arrival need is irregular; leftovers can be safely redistributed next morning.\nDecision: Reserve ten meals until closing during the winter intake period."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: A chemical process exceeds its certified pressure range.\nShared facts [history-05-06-fact]: The safety case prohibits operation outside the range and no compensating control has been validated.\nMessage excerpt: Stop the process and return it to the certified operating envelope."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A blood bank detects an unverified refrigerator temperature excursion.\nShared facts [history-05-07-fact]: The release protocol requires quarantine until product viability is confirmed.\nRetrospective: Quarantine the affected units and obtain the required viability decision."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "Situation: A festival is choosing generator capacity for an outdoor stage.\nShared facts [history-05-08-fact]: Typical load is 64 kW; the headliner setup can reach 79 kW; rental options are 75 kW or 95 kW with a material cost difference.\nlog.decision=Rent 95 kW because the peak estimate and setup uncertainty exceed the smaller unit."
+      }
+    ],
+    "target_b": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A delivery cooperative is setting the number of spare bicycles.\nShared facts [history-05-01-fact]: Average breakdowns require two spares; rain weeks have required five; carrying each spare reduces daily delivery capacity.\nDecision: Keep three spares and contract same-day rentals for demand beyond the measured average.\nReasoning: The choices differ in where they hold protection against tail conditions."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A data team is assigning storage replicas across regions.\nShared facts [history-05-02-fact]: Two replicas meet the measured availability target; a third protects against a correlated regional outage at 18% more cost.\nMessage excerpt: Use two replicas and invest the released budget in faster recovery automation."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: A greenhouse is choosing irrigation reserve capacity.\nShared facts [history-05-03-fact]: Normal demand uses 72% of the tank; one drought year reached 96%; a larger tank delays another efficiency project.\nRetrospective: Keep the current tank and add soil sensors plus a contracted emergency supply."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "Situation: A call center is setting overnight staffing.\nShared facts [history-05-04-fact]: Median demand needs four staff; severe-weather spikes need eight; on-call coverage can arrive in forty minutes.\nlog.decision=Schedule four staff and use a measured queue threshold to activate on-call coverage."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A community kitchen is deciding whether to reserve meals for late arrivals.\nShared facts [history-05-05-fact]: Most days use all meals by 7 p.m.; late-arrival need is irregular; leftovers can be safely redistributed next morning.\nDecision: Reserve four meals and trigger same-day partner transfer when the waitlist exceeds that buffer."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: A chemical process exceeds its certified pressure range.\nShared facts [history-05-06-fact]: The safety case prohibits operation outside the range and no compensating control has been validated.\nMessage excerpt: Stop the process and return it to the certified operating envelope."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A blood bank detects an unverified refrigerator temperature excursion.\nShared facts [history-05-07-fact]: The release protocol requires quarantine until product viability is confirmed.\nRetrospective: Quarantine the affected units and obtain the required viability decision."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "Situation: A festival is choosing generator capacity for an outdoor stage.\nShared facts [history-05-08-fact]: Typical load is 64 kW; the headliner setup can reach 79 kW; rental options are 75 kW or 95 kW with a material cost difference.\nlog.decision=Rent 75 kW and remove the optional lighting bank if monitored load reaches 70 kW."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": [
+      "synthetic://openboa-ai/coffee-chat-bench/pair-05-lab-throughput-risk/doc-01",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-05-lab-throughput-risk/doc-02",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-05-lab-throughput-risk/doc-03",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-05-lab-throughput-risk/doc-04",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-05-lab-throughput-risk/doc-05"
+    ],
+    "scenarioId": "pair-05-lab-throughput-risk"
+  },
+  "manifestDigest": "sha256:51c0c12b0f845494ad66a1c71f3f127a523ce73ceae2d8934ae70bfcce4ff34b"
+}

@@ -2,203 +2,138 @@
 
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
+import prettier from "prettier";
 
 import {
   RELEASE_ID,
   createBankManifest,
   createCaseManifest,
-  parseEvaluatorMaterial,
   stableDigest,
 } from "../src/benchmark-contracts.ts";
-import { pairs } from "./bank-content.mjs";
+import {
+  buildAllInputContent,
+  buildPairAnnotation,
+} from "./public-input-content.mjs";
 
 const root = resolve(process.argv[2] ?? "bank");
 
-function sentence(value) {
-  return `${value.trim().replace(/[.!?]+$/u, "")}.`;
-}
-
-function historyRecord(record, index, target) {
-  const id = `record-${String(index + 1).padStart(2, "0")}`;
-  const evidence = record.evidence.map((fact, evidenceIndex) => ({
-    id: `history-${String(index + 1).padStart(2, "0")}-e${evidenceIndex + 1}`,
-    fact: sentence(fact),
-  }));
-  const evidenceList = evidence
-    .map(({ id: evidenceId, fact }) => `[${evidenceId}] ${fact}`)
-    .join("\n");
-  const evidenceInline = evidence
-    .map(({ id: evidenceId, fact }) => `[${evidenceId}] ${fact}`)
-    .join(" ");
-  const selected = record[target];
-  const decision = sentence(selected.decision);
-  const renderers = {
-    decision_note: `Situation: ${sentence(record.situation)}\nEvidence:\n${evidenceList}\nDecision: ${decision}`,
-    message_excerpt: `Situation: ${sentence(record.situation)}\nMessage: We considered ${evidenceInline} The decision is ${decision}`,
-    retrospective: `Situation: ${sentence(record.situation)}\nRecord: ${evidenceInline}\nRecorded decision: ${decision}`,
-    structured_log: `situation=${sentence(record.situation)} evidence=${evidenceInline} decision=${decision}`,
-  };
-  const base = renderers[record.format];
-  if (!base)
-    throw new TypeError(`unsupported history format: ${record.format}`);
-  return {
-    id,
-    format: record.format,
-    content: selected.rationale
-      ? `${base}\nReasoning: ${sentence(selected.rationale)}`
-      : base,
-  };
-}
-
-function pairHistories(pair) {
-  return {
-    target_a: pair.history.map((record, index) =>
-      historyRecord(record, index, "a"),
-    ),
-    target_b: pair.history.map((record, index) =>
-      historyRecord(record, index, "b"),
-    ),
-  };
-}
-
-function criterion(task) {
-  return {
-    authority: "project_author_hypothesis",
-    humanReviewed: false,
-    expectedDecisionFeatures: {
-      target_a: task.targetA,
-      target_b: task.targetB,
-    },
-    expectedReasoningFeatures: task.reasoning,
-    allowedAlternatives: task.alternatives,
-    taskPerformanceConditions: task.performance,
-    evidenceGroundingConditions: task.grounding,
-    criticalFailures: task.failures,
-  };
-}
-
 async function writeJson(path, value) {
   await mkdir(dirname(path), { recursive: true });
-  await writeFile(path, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+  const json = await prettier.format(JSON.stringify(value), { parser: "json" });
+  await writeFile(path, json, "utf8");
 }
 
-await rm(resolve(root, "cases"), { recursive: true, force: true });
-await rm(resolve(root, "public"), { recursive: true, force: true });
-await rm(resolve(root, "evaluator"), { recursive: true, force: true });
+function csvCell(value) {
+  return `"${String(value).replaceAll('"', '""')}"`;
+}
 
-const samplingPairs = [];
+async function writeCsv(path, headers, rows) {
+  await mkdir(dirname(path), { recursive: true });
+  await writeFile(
+    path,
+    `${[headers, ...rows].map((row) => row.map(csvCell).join(",")).join("\n")}\n`,
+    "utf8",
+  );
+}
+
+const content = buildAllInputContent();
+await Promise.all([
+  rm(resolve(root, "cases"), { recursive: true, force: true }),
+  rm(resolve(root, "public"), { recursive: true, force: true }),
+  rm(resolve(root, "evaluator"), { recursive: true, force: true }),
+  rm(resolve(root, "annotations"), { recursive: true, force: true }),
+]);
+await mkdir(resolve(root, "public/cases"), { recursive: true });
+await mkdir(resolve(root, "annotations/pairs"), { recursive: true });
+await mkdir(resolve(root, "annotations/cases"), { recursive: true });
+
 const entries = [];
-
-for (const pair of pairs) {
-  const histories = pairHistories(pair);
+const samplingPairs = [];
+for (let pairIndex = 0; pairIndex < content.pairs.length; pairIndex += 1) {
+  const pair = content.pairs[pairIndex];
   const pairCases = [];
-
-  for (const [taskIndex, task] of pair.tasks.entries()) {
-    const caseId = `${pair.pairId}-${task.transferType}`;
-    const evidence = task.evidence.map((content, evidenceIndex) => ({
-      id: `evidence-${String(taskIndex + 1).padStart(2, "0")}-${String(evidenceIndex + 1).padStart(2, "0")}`,
-      content,
-      source: `synthetic://openboa-ai/coffee-chat-bench/evidence/${stableDigest({ caseId, evidenceIndex }).slice(7, 23)}`,
-      license: "MIT",
-    }));
+  await writeJson(
+    resolve(root, "annotations/pairs", `${pair.pairId}.json`),
+    buildPairAnnotation(pairIndex),
+  );
+  for (const { blueprint, histories } of content.cases.filter(
+    ({ blueprint }) => blueprint.pairId === pair.pairId,
+  )) {
     const manifest = createCaseManifest({
       release: RELEASE_ID,
-      caseId,
-      pairId: pair.pairId,
-      form: task.form,
-      domain: task.domain,
-      transferType: task.transferType,
-      taskArchetype: task.taskArchetype,
-      taskMode: task.taskMode,
+      caseId: blueprint.caseId,
+      pairId: blueprint.pairId,
+      form: blueprint.form,
+      domain: blueprint.domain,
+      transferType: blueprint.transferType,
+      taskArchetype: blueprint.taskArchetype,
+      taskMode: blueprint.taskMode,
       task: {
-        instruction: `${task.title}\n\n${task.instruction}`,
+        instruction: blueprint.task.instruction,
         environment:
-          task.form === "dialogue"
+          blueprint.form === "dialogue"
             ? { kind: "conversation" }
             : {
                 kind: "workspace",
-                fixtureDigest: stableDigest({ caseId, fixture: "input" }),
+                fixtureDigest: stableDigest({
+                  caseId: blueprint.caseId,
+                  fixture: "multi-document-input",
+                }),
                 verifierDigest: stableDigest({
-                  caseId,
-                  verifier: "references",
+                  caseId: blueprint.caseId,
+                  verifier: "reference-contract",
                 }),
               },
+        deliverables: blueprint.task.deliverables,
+        hardConstraints: blueprint.task.hardConstraints,
         output: {
           mediaType: "text/plain",
-          maxBytes: 4000,
-          requiredReferenceIds: evidence.map(({ id }) => id),
+          maxBytes: 6000,
+          requiredReferenceIds: blueprint.task.requiredReferenceIds,
         },
       },
-      evidence,
+      documents: blueprint.documents,
       contexts: {
         unconditioned: [],
         target_a: histories.target_a,
         target_b: histories.target_b,
       },
       lineage: {
-        sourceIds: [`synthetic:${caseId}`],
-        templateId: `judgment-history/${task.transferType}`,
+        sourceIds: blueprint.documents.map(({ source }) => source),
+        scenarioId: blueprint.annotations.userScenario,
       },
     });
-    const evaluatorSemantic = {
-      release: RELEASE_ID,
-      caseId,
-      pairId: pair.pairId,
-      policy: {
-        sharedVeto: {
-          name: pair.veto.name,
-          condition: pair.veto.condition,
-          requiredAction: pair.veto.action,
-        },
-        target_a: {
-          priorityCues: pair.a.cues,
-          tieBreaker: pair.a.tie,
-        },
-        target_b: {
-          priorityCues: pair.b.cues,
-          tieBreaker: pair.b.tie,
-        },
-      },
-      historyRoles: pair.history.map(({ role }) => role),
-      criterion: criterion(task),
-    };
-    const evaluator = parseEvaluatorMaterial({
-      ...evaluatorSemantic,
-      evaluatorDigest: stableDigest(evaluatorSemantic),
-    });
-
     await writeJson(
-      resolve(root, "public", "cases", `${caseId}.json`),
+      resolve(root, "public/cases", `${blueprint.caseId}.json`),
       manifest,
     );
     await writeJson(
-      resolve(root, "evaluator", "cases", `${caseId}.json`),
-      evaluator,
+      resolve(root, "annotations/cases", `${blueprint.caseId}.json`),
+      blueprint.annotations,
     );
-
-    entries.push({
-      caseId,
-      pairId: pair.pairId,
-      form: task.form,
-      domain: task.domain,
-      transferType: task.transferType,
-      taskArchetype: task.taskArchetype,
-      taskMode: task.taskMode,
-      casePath: `public/cases/${caseId}.json`,
-      evaluatorPath: `evaluator/cases/${caseId}.json`,
+    const entry = {
+      caseId: blueprint.caseId,
+      pairId: blueprint.pairId,
+      form: blueprint.form,
+      domain: blueprint.domain,
+      transferType: blueprint.transferType,
+      taskArchetype: blueprint.taskArchetype,
+      taskMode: blueprint.taskMode,
+      casePath: `public/cases/${blueprint.caseId}.json`,
       manifestDigest: manifest.manifestDigest,
-      evaluatorDigest: evaluator.evaluatorDigest,
-    });
+    };
+    entries.push(entry);
     pairCases.push({
-      caseId,
-      domain: task.domain,
-      transferType: task.transferType,
-      form: task.form,
-      taskMode: task.taskMode,
-      taskArchetype: task.taskArchetype,
+      caseId: blueprint.caseId,
+      domain: blueprint.domain,
+      transferType: blueprint.transferType,
+      form: blueprint.form,
+      taskMode: blueprint.taskMode,
+      taskArchetype: blueprint.taskArchetype,
+      documentCount: blueprint.documents.length,
+      workspaceNoise: blueprint.annotations.workspaceNoise,
     });
   }
-
   samplingPairs.push({ pairId: pair.pairId, cases: pairCases });
 }
 
@@ -213,8 +148,22 @@ const census = {
 const samplingPlan = {
   release: RELEASE_ID,
   bankId: "public_judgment_history_bank",
-  pairs: samplingPairs,
   census,
+  strata: {
+    domains: 8,
+    transferTypes: 4,
+    forms: { dialogue: 16, professional_artifact: 16 },
+    taskModes: { bounded: 16, open_ended: 16 },
+    taskArchetypes: {
+      recommendation: 8,
+      allocation_prioritization: 8,
+      design_threshold: 8,
+      critique_revision: 8,
+    },
+    documentComplexity: { compact: 0, standard: 32, dense: 0 },
+    workspaceNoise: { clean: 0, ordinary: 16, noisy: 16, dense_noisy: 0 },
+  },
+  pairs: samplingPairs,
 };
 await writeJson(resolve(root, "sampling-plan.json"), samplingPlan);
 
@@ -228,10 +177,148 @@ const bank = createBankManifest({
   protocolDigest: stableDigest({
     protocol: "public-judgment-history-bank",
     conditions: ["unconditioned", "target_a", "target_b"],
+    candidateType: "agent",
+    input: "multi-document-case-with-optional-history",
   }),
   cases: entries,
 });
 await writeJson(resolve(root, "bank.json"), bank);
+
+const repositoryRoot = resolve(root, "..");
+const rightsRows = [
+  "bank/bank.json",
+  "bank/sampling-plan.json",
+  ...entries.map(({ casePath }) => `bank/${casePath}`),
+  ...samplingPairs.map(({ pairId }) => `bank/annotations/pairs/${pairId}.json`),
+  ...entries.map(({ caseId }) => `bank/annotations/cases/${caseId}.json`),
+].map((path) => ({
+  kind: "file",
+  path,
+  contentClass: path.includes("/public/")
+    ? "candidate_visible"
+    : path.includes("/annotations/")
+      ? "construction_annotation"
+      : "governance",
+  authorship: "openboa_ai_project_authored_synthetic",
+  license: "MIT",
+  humanReview: "pending",
+  externalDependency: "none",
+}));
+await writeFile(
+  resolve(repositoryRoot, "RIGHTS-PROVENANCE.jsonl"),
+  `${rightsRows.map((row) => JSON.stringify(row)).join("\n")}\n`,
+  "utf8",
+);
+
+const contaminationRows = [
+  {
+    bankId: "public_judgment_history_bank",
+    scope: "entire_bank",
+    bankDigest: bank.bankDigest,
+    exposure: "public_prospective",
+    trainingInclusion: "unknown",
+    semanticReview: "pending",
+    secrecyClaim: "none",
+    interpretation:
+      "The bank is public; no contamination-free or provider-training claim is made.",
+  },
+  ...entries.map(({ caseId }) => ({
+    bankId: "public_judgment_history_bank",
+    caseId,
+    exposure: "public_prospective",
+    trainingInclusion: "unknown",
+    semanticReview: "pending",
+    secrecyClaim: "none",
+    interpretation:
+      "Synthetic case; declared-corpus overlap and independent semantic review remain future evidence.",
+  })),
+];
+await writeFile(
+  resolve(repositoryRoot, "CONTAMINATION.jsonl"),
+  `${contaminationRows.map((row) => JSON.stringify(row)).join("\n")}\n`,
+  "utf8",
+);
+
+const documentContents = content.cases.flatMap(({ blueprint }) =>
+  blueprint.documents.map(({ content: documentContent }) => documentContent),
+);
+await writeJson(resolve(repositoryRoot, "OVERLAP-REPORT.json"), {
+  reportId: `public-bank-overlap-audit-${RELEASE_ID}`,
+  bankId: "public_judgment_history_bank",
+  bankDigest: bank.bankDigest,
+  caseCount: entries.length,
+  scope: "mechanical lineage and duplicate audit",
+  state: "project_construction_reviewed",
+  checks: {
+    caseIndexComplete: true,
+    documentBundleIndexComplete: true,
+    sourceLineageUnique: true,
+    crossCaseExactDuplicates:
+      new Set(documentContents).size !== documentContents.length,
+    semanticOverlap: "project_review_completed_not_independent",
+    answerLeakage: "project_review_completed_not_independent",
+  },
+  claimBoundary:
+    "Counts and exact-duplicate checks do not establish human agreement, AI-judge qualification, construct validity, or activation.",
+});
+
+const pairById = new Map(content.pairs.map((pair) => [pair.pairId, pair]));
+await writeCsv(
+  resolve(repositoryRoot, "docs/validity/public-bank-cases-review.csv"),
+  [
+    "case_id",
+    "pair_id",
+    "contrast_family",
+    "domain",
+    "transfer_type",
+    "form",
+    "task_archetype",
+    "task_mode",
+    "instruction",
+    "document_titles",
+    "hard_constraint",
+    "review_status",
+  ],
+  content.cases.map(({ blueprint }) => [
+    blueprint.caseId,
+    blueprint.pairId,
+    pairById.get(blueprint.pairId)?.contrastFamily ?? "",
+    blueprint.domain,
+    blueprint.transferType,
+    blueprint.form,
+    blueprint.taskArchetype,
+    blueprint.taskMode,
+    blueprint.task.instruction,
+    blueprint.documents.map(({ title }) => title).join(" | "),
+    blueprint.task.hardConstraints[2],
+    "pending_human_audit",
+  ]),
+);
+await writeCsv(
+  resolve(repositoryRoot, "docs/validity/public-bank-histories-review.csv"),
+  [
+    "pair_id",
+    "contrast_family",
+    "target",
+    "record_id",
+    "format",
+    "content",
+    "review_status",
+  ],
+  content.pairs.flatMap((pair, pairIndex) =>
+    ["target_a", "target_b"].flatMap((target) =>
+      content.pairHistories[pairIndex][target].map((record) => [
+        pair.pairId,
+        pair.contrastFamily,
+        target,
+        record.id,
+        record.format,
+        record.content,
+        "pending_human_audit",
+      ]),
+    ),
+  ),
+);
 
 console.log(
   JSON.stringify(
@@ -239,6 +326,10 @@ console.log(
       bankDigest: bank.bankDigest,
       cases: entries.length,
       pairs: samplingPairs.length,
+      documents: content.cases.reduce(
+        (total, { blueprint }) => total + blueprint.documents.length,
+        0,
+      ),
     },
     null,
     2,

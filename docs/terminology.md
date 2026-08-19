@@ -1,109 +1,115 @@
 # Terminology and construct map
 
-## Status and purpose
+## Purpose
 
-Coffee Chat Bench remains `not_active`. This document separates established
-research terms from local operational labels so the benchmark does not make a
-larger claim than its synthetic data supports.
+Coffee Chat Bench remains `not_active`. This map distinguishes established
+research language from repository contract names. Local operational terms are
+defined explicitly rather than presented as accepted psychological constructs.
 
-## Construct language
+## Construct hierarchy
 
-The bank holds a task and evidence packet constant, then supplies one of two
-matched synthetic judgment histories or no history. The intended phenomenon is
-described operationally as **history-conditioned policy transfer in agent
-systems**. The phrase is a design label, not a claim that the benchmark has
-established a field-wide psychological construct.
+| Level                 | Term                                    | Meaning in this repository                                                                                     |
+| --------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Research area         | `personalized alignment`                | Adapting model behavior to individual preferences, histories, or feedback while retaining broader constraints  |
+| Experimental paradigm | `history-conditioned agent evaluation`  | Holding task/evidence fixed while varying which prior decision history an agent receives                       |
+| Operational estimand  | `target-conditioned judgment alignment` | The history-conditioned change in held-out judgment, target discrimination, and retained task/evidence quality |
+| Observable behavior   | `judgment alignment`                    | Final-artifact consistency with the context-dependent pattern expressed in one target history                  |
 
-The case-level question is **policy adherence under transfer**: does the agent
-use the selected history to guide a held-out decision while preserving task
-performance and evidence grounding? The bank does not infer a real person's
-identity, recover unspoken preferences, or measure a global personality trait.
+`Target-conditioned judgment alignment` is a repository-defined operational
+estimand assembled from standard concepts. It is not claimed as a field-wide
+construct, personality measure, or model of a whole person.
 
-## Research terms and their relation to this bank
+## Research terms
 
-| Term                             | Common research use                                                              | Boundary in this bank                                                       |
-| -------------------------------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `personalization`                | Adapting a model output using information about a user, profile, or history      | The bank uses synthetic histories and makes no authentic-user claim         |
-| `profile-conditioned generation` | Generating output conditioned on a profile or personal items                     | The bank controls the history input; it does not evaluate profile retrieval |
-| `preference alignment`           | Aligning or evaluating output against specified preferences                      | The bank uses case-specific decision policies, not human preference labels  |
-| `personalized alignment`         | Adapting behavior to individual preferences while preserving broader constraints | Related framing, not the name of the measured construct                     |
-| `policy adherence`               | Following a declared policy or task constraint in an environment                 | The closest case-level description of the diagnostic behavior               |
-| `policy transfer`                | Applying a learned or inferred policy to a new state or task                     | The held-out case is the transfer target                                    |
-| `task utility`                   | Task-relevant usefulness or performance under a condition                        | A guardrail: history-conditioned work must still complete the task          |
-| `evidence grounding`             | Keeping claims supported by supplied evidence                                    | A separate semantic dimension from policy adherence                         |
-| `LLM-as-a-judge`                 | Using a language model to evaluate open-ended model output                       | The required future semantic measurement instrument                         |
-| `human criterion`                | An independently collected human reference for evaluating an instrument          | Future evidence for judge qualification, not current data                   |
-| `reliability`                    | Consistency across raters, items, or controlled repetitions                      | Required evidence for the judge, not established by code tests              |
-| `calibration`                    | Aligning or assessing an evaluator against a reference criterion and uncertainty | Future human-grounded judge evidence                                        |
-| `construct validity`             | Evidence that an instrument measures the intended construct                      | Not established by the synthetic bank or provisional judge                  |
-| `discriminant validity`          | Evidence that the measure differs from nearby explanations                       | Addressed through matched cases, boundary cases, and shortcut checks        |
+| Term                             | Common use                                                               | Boundary here                                                                                          |
+| -------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `personalization`                | Adapting output using user, profile, interaction, or history information | Targets and histories are synthetic; no authentic-user claim                                           |
+| `profile-conditioned generation` | Generating with profile or historical items as context                   | History is supplied directly; profile retrieval is not measured                                        |
+| `preference alignment`           | Aligning behavior or output to specified or inferred preferences         | This bank observes context-dependent judgments, not global preference labels                           |
+| `personalized alignment`         | Individualized alignment under broader constraints                       | Research area, not the score name                                                                      |
+| `judgment policy`                | An operational mapping from decision cues and constraints to judgments   | Inferred only within the sampled synthetic histories and tasks                                         |
+| `policy transfer`                | Applying an inferred policy in a new state or task                       | A case-design property; the reported outcome is judgment alignment, not a thresholded transfer verdict |
+| `task performance`               | Degree to which requested work is successfully completed                 | Separate ordinal guardrail                                                                             |
+| `evidence grounding`             | Degree to which claims and actions are supported by supplied evidence    | Separate ordinal guardrail, not citation counting                                                      |
+| `LLM-as-a-judge`                 | Language model used to assess open-ended outputs                         | Required semantic measurement instrument with explicit evidence state                                  |
+| `human criterion`                | Independently collected human reference used to assess an instrument     | Future Judge qualification evidence                                                                    |
+| `reliability`                    | Consistency across raters, items, orders, or repetitions                 | Not established by deterministic tests                                                                 |
+| `calibration`                    | Agreement of scores or confidence with a reference criterion             | Future human-grounded Judge evidence                                                                   |
+| `construct validity`             | Evidence supporting the intended interpretation and use of a measure     | Not established by the current synthetic bank                                                          |
+| `discriminant validity`          | Evidence that nearby explanations do not account for the result          | Requires controls for style, length, retrieval, generic quality, and position                          |
 
-`persona` may appear in related-work source terminology, but it is not the
-construct or a claim about a real person in this benchmark.
+`Persona` may appear when citing related work that uses that term. It is not
+the construct measured by this repository.
 
-## Contract terms
+## Public contract terms
 
-| Contract term           | Meaning here                                                                                     | Do not interpret it as                        |
-| ----------------------- | ------------------------------------------------------------------------------------------------ | --------------------------------------------- |
-| `judgment policy`       | A case-specific rule for prioritizing decision cues, applying a shared veto, and resolving a tie | A personality trait or universal value system |
-| `target_a` / `target_b` | Two bookkeeping labels for matched synthetic histories                                           | Globally better or worse targets              |
-| `unconditioned`         | Task and evidence without a judgment history                                                     | A low-quality or missing task                 |
-| `diagnostic episode`    | A history episode whose decision differentiates the two synthetic policies                       | Proof of a real preference                    |
-| `boundary episode`      | An episode where a shared constraint makes both targets converge                                 | Evidence that the policies are identical      |
-| `distractor episode`    | An episode that should not identify the policy                                                   | An irrelevant or malformed record             |
-| `near_transfer`         | A held-out task close to the history's decision structure                                        | Mere wording repetition                       |
-| `far_transfer`          | A held-out task with a more distant domain or decision surface                                   | Generalization to all tasks                   |
-| `boundary`              | A held-out case that tests whether the policy respects a constraint boundary                     | A universal safety benchmark                  |
-| `policy_conflict`       | A held-out case where policy-relevant priorities pull in different directions                    | A globally correct answer key                 |
-| `evidence_integrity`    | Serialized contract name for grounding and critical evidence constraints                         | A lexical overlap score or truth guarantee    |
-| `critical_failure`      | A case-defined failure that invalidates an otherwise plausible output                            | A universal safety score                      |
-| `case family`           | One task/evidence packet with two target histories and three rendered conditions                 | One real user or independent human            |
-| `public benchmark bank` | The single externally selectable dataset                                                         | A hidden holdout or a qualified score         |
+| Contract term           | Meaning                                                                             | Not equivalent to                                 |
+| ----------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `CandidateSubmission`   | Final artifact plus required stated decision record                                 | Agent trace or private chain-of-thought           |
+| `decisionRecord`        | Concise statement of decision, source use, trade-offs, constraints, and uncertainty | A hidden rationale that can override the artifact |
+| `unconditioned`         | Task and documents without a target history                                         | A deliberately weak candidate                     |
+| `target_a` / `target_b` | Bookkeeping labels for matched synthetic histories                                  | Better/worse targets or candidate identities      |
+| `near_transfer`         | Held-out case with a similar decision structure                                     | Repeated wording or answer copying                |
+| `far_transfer`          | Held-out case with a more distant domain or decision surface                        | Universal generalization                          |
+| `boundary_condition`    | Case where a shared hard constraint should produce convergence                      | A universal safety benchmark                      |
+| `cue_conflict`          | Case where multiple policy-relevant cues favor different actions                    | A globally correct preference label               |
+| `public benchmark bank` | The single externally selectable input dataset                                      | Hidden holdout or qualified score                 |
+
+## Measurement terms
+
+| Result                         | Definition                                                                                                                         |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `judgment_alignment`           | 1–5 rating of final-artifact alignment to one target's history                                                                     |
+| `stated_rationale_alignment`   | Diagnostic facet ratings for cue utilization, cue weighting, context sensitivity, and action consistency                           |
+| `task_performance`             | 1–5 rating of task completion and decision usefulness                                                                              |
+| `evidence_grounding`           | 1–5 rating of semantic support from supplied evidence                                                                              |
+| `hard_constraint_violation`    | Separate true/false/abstain detection                                                                                              |
+| `conditioning_effect`          | Pairwise target-conditioned artifact versus unconditioned artifact under the same target history                                   |
+| `target_specificity`           | Pairwise matched-target contrast under one selected target history                                                                 |
+| `mirrored pairwise comparison` | Same two artifacts judged in canonical and reversed presentation order                                                             |
+| `order_inconsistent`           | Reversed order changes the normalized semantic winner; result remains nonnumeric                                                   |
+| `boundary_convergence`         | In a boundary-condition case, both target-specificity comparisons tie and conditioned artifacts satisfy the shared hard constraint |
+
+No measurement term above implies an overall pass. The repository does not
+define a universal scalar or `transferred` threshold.
 
 ## Agent-evaluation terms
 
-The candidate framing follows agent-evaluation work such as
-[AgentBench](https://arxiv.org/abs/2308.03688),
-[Terminal-Bench](https://www.tbench.ai/), and
-[Harbor](https://www.harborframework.com/docs/core-concepts):
+- **agent system** — harness, configured model, tools, host, adaptation, and
+  execution policy;
+- **task** — instruction and environment contract presented to an agent;
+- **candidate adapter** — Eval-owned bridge into the Bench input/submission
+  contract;
+- **benchmark projection** — Bench-owned translation into an execution format
+  without invoking a candidate;
+- **verifier** — deterministic checker for objective artifact state;
+- **AI judge** — semantic evaluator invoked through provider-neutral
+  `JudgeTransport`;
+- **stated rationale** — candidate-authored diagnostic explanation that may be
+  inspected and scored without requesting hidden reasoning;
+- **report** — downstream accounting that preserves measured and nonnumeric
+  states.
 
-- **agent system** — runtime or harness plus configured model, host, tools,
-  adaptation, and execution policy;
-- **task** — instruction and environment contract presented to the agent;
-- **execution** — an isolated run producing a transcript or workspace artifact
-  with an inspectable receipt;
-- **adapter** — the evaluator-owned bridge from a candidate agent system to the
-  benchmark input/output contract;
-- **verifier** — an objective checker of artifact or environment state;
-- **AI judge** — a semantic evaluator for dimensions objective verification
-  cannot determine;
-- **human criterion** — an independent reference used to qualify the AI judge;
-- **report** — accounting that preserves measured, missing, invalid,
-  unavailable, skipped, and nonnumeric states.
-
-A model call made by the AI judge is an evaluator call. It is not a candidate
-agent and must not be confused with one-shot model evaluation.
+An evaluator-model call is not a candidate-agent execution.
 
 ## Evidence states
 
-1. **Objective verification** — bytes, format, references, constraints, and
-   provenance.
-2. **AI-judge measurement** — semantic policy adherence, transfer, utility,
-   grounding, and critical failure.
-3. **Human criterion** — blinded human labels used to assess the judge.
-4. **Validity evidence** — construct, criterion, reliability, calibration,
-   discriminant, and activation evidence.
+- `provisional`: AI-judge measurements can run, but human-grounded reliability
+  and calibration evidence is incomplete;
+- `qualified`: declared human criterion, reliability, calibration, and bias
+  checks support the Judge for a stated scope;
+- `not_active`: the repository does not publish an official score or
+  leaderboard, regardless of whether the evaluator code runs.
 
-`provisional` means the fixed AI-judge protocol can run for development while
-human criterion evidence is incomplete. `qualified` means the declared
-human-grounded requirements have been met for a stated scope. Neither state
-activates the repository by itself.
+Missing, invalid, unavailable, abstained, and order-inconsistent results remain
+nonnumeric.
 
-## Sources
+## References
 
 - [Guan et al., A Survey on Personalized Alignment (Findings of ACL 2025)](https://aclanthology.org/2025.findings-acl.277/)
-- [Salemi et al., LaMP: When Large Language Models Meet Personalization (ACL 2024)](https://aclanthology.org/2024.acl-long.399/)
+- [Salemi et al., LaMP (ACL 2024)](https://aclanthology.org/2024.acl-long.399/)
 - [Wang et al., Learning Personalized Alignment for Evaluating Open-ended Text Generation (EMNLP 2024)](https://aclanthology.org/2024.emnlp-main.737/)
 - [Wu et al., Aligning LLMs with Individual Preferences via Interaction (COLING 2025)](https://aclanthology.org/2025.coling-main.511/)
-- [Liu et al., AgentBench: Evaluating LLMs as Agents (ICLR 2024)](https://arxiv.org/abs/2308.03688)
-- [Terminal-Bench](https://www.tbench.ai/) and [Harbor task documentation](https://www.harborframework.com/docs/tasks)
+- [Liu et al., AgentBench (ICLR 2024)](https://arxiv.org/abs/2308.03688)
+- [BetterBench (NeurIPS 2024)](https://proceedings.neurips.cc/paper_files/paper/2024/hash/26889e8359e7ef8a7f5d77457364ca55-Abstract-Datasets_and_Benchmarks_Track.html)
+- [Harbor task documentation](https://www.harborframework.com/docs/tasks)

@@ -2,118 +2,122 @@
 
 ## Status
 
-The repository remains `not_active`. This document fixes the dataset question,
-sampling matrix, and claim boundary before candidate executions or semantic
-scores are collected.
+The repository remains `not_active`. This document fixes the experimental
+question, sampling matrix, measurement decomposition, and claim boundary before
+candidate results are interpreted.
 
 ## Research question
 
-Given the same task and evidence, can an agent infer a stable decision policy
-from a target's judgment history and transfer that policy to a held-out task
-while preserving task performance and evidence grounding?
+Holding task and evidence fixed, does conditioning an agent on one target's
+prior decision history produce held-out judgments that align with that target,
+remain distinguishable from a matched alternative, and preserve task
+performance and evidence grounding?
 
-The candidate class is agent systems. A direct one-shot language-model
-completion is out of scope. The bank does not claim authentic human judgment,
-whole-person understanding, population generalization, or Coffee Chat product
-performance.
+This operational estimand is `target-conditioned judgment alignment` within the
+broader personalized-alignment research area. The candidate class is agent
+systems. Direct one-shot model completions are out of scope.
 
-## Bank and sampling
+## Fixed bank
 
-There is one public benchmark bank. It contains:
+The public benchmark bank contains:
 
 - 8 matched target pairs and 16 synthetic targets;
-- 8 historical judgment records per target;
-- 32 held-out case families;
-- 3 conditions per case: `unconditioned`, `target_a`, `target_b`;
-- 96 agent-condition executions in the full projection.
+- 8 prior decision records per target;
+- 32 multi-document case families;
+- 3 conditions per case: `unconditioned`, `target_a`, and `target_b`;
+- 96 agent-condition projections;
+- 8 domains, 2 forms, 2 task modes, 4 task archetypes, and 4 transfer types;
+- 5 separately authored documents per case.
 
-Each pair has one `near_transfer`, one `far_transfer`, one `boundary`, and one
-`policy_conflict` case. Each pair has two dialogue and two
-professional-artifact cases, two bounded and two open-ended tasks. Across the
-bank, eight domains and four task archetypes are balanced as declared in
+Every pair has one `near_transfer`, `far_transfer`, `boundary_condition`, and
+`cue_conflict` case. The full matrix is fixed in
 [`bank/sampling-plan.json`](bank/sampling-plan.json).
 
-Each target history has five diagnostic episodes, two boundary episodes, and
-one distractor episode. The four record formats occur twice each. A/B records
-share situations, evidence identifiers, and format positions; only the
-decision content and partial rationale may differ. History length is balanced
-within ten percent.
+## Conditions and candidate boundary
 
-## Conditions and execution boundary
+- `unconditioned`: task and documents only;
+- `target_a`: task, documents, and target A history;
+- `target_b`: task, documents, and target B history.
 
-- `unconditioned`: task and evidence only;
-- `target_a`: task, evidence, and target A history;
-- `target_b`: task, evidence, and target B history.
+The renderer exposes exactly one condition. It does not expose condition names,
+target identities, the other history, construction annotations, reference
+labels, or Judge configuration.
 
-The renderer passes one selected history to the candidate. The candidate does
-not receive the condition name, target identity, other target, hidden policy,
-or evaluator criterion. The public repository necessarily stores both target
-contexts for reproducible rendering; an adapter must never pass both to one
-execution.
+Every candidate returns a final text artifact and a structured decision record.
+The record contains only stated decision evidence: decision, visible source
+use, trade-offs, constraint handling, and uncertainty. It is not hidden
+chain-of-thought or an execution trace.
 
-## Criterion hypothesis
+## Fixed pointwise measurements
 
-Each evaluator material records:
+- `judgment_alignment`: 1–5, target conditions only;
+- `stated_rationale_alignment`: four 1–5 diagnostic facets, target conditions
+  only;
+- `task_performance`: 1–5 in all conditions;
+- `evidence_grounding`: 1–5 in all conditions; and
+- `hard_constraint_violation`: true, false, or abstain in all conditions.
 
-- three ordered decision cues for each target;
-- one shared safety/integrity veto and its boundary condition;
-- one target-specific tie-breaker;
-- expected decision features and reasoning features;
-- allowed alternatives;
-- task-performance and evidence-grounding conditions;
-- case-defined critical failures.
+Each dimension uses an independent Judge call and dimension-specific anchors.
+Only `stated_rationale_alignment` receives the decision record. No dimension is
+collapsed into a composite score.
 
-Every criterion is explicitly marked:
+## Fixed pairwise comparisons
 
-```text
-authority: project_author_hypothesis
-humanReviewed: false
-```
+For every complete case family, the evaluator compares:
 
-These are construction hypotheses, not human criterion labels.
+1. target A versus unconditioned under target-A history;
+2. target B versus unconditioned under target-B history;
+3. target A versus target B under target-A history; and
+4. target B versus target A under target-B history.
 
-## Planned measurement
+Each comparison is repeated in reversed artifact order. Canonical and mirrored
+responses must normalize to the same winner or tie. Otherwise the result is
+`order_inconsistent` and nonnumeric.
 
-Objective verification handles encoding, byte limits, required references, and
-artifact structure. The required semantic measurement layer is an AI judge
-(LLM-as-a-judge) for policy adherence, policy transfer, task performance,
-evidence grounding, and critical failure.
+Pairwise prompts contain one selected history, task/evidence, and two final
+artifacts. They contain no decision records, condition labels, target IDs, or
+pointwise scores.
 
-The first judge implementation may operate in `provisional` state for
-development and hill climbing. Human criterion annotation is a later required
-reference for judge reliability, calibration, disagreement, abstention, and
-validity evidence. Lack of human annotations limits interpretation; it does not
-remove the AI judge from the pipeline.
+`boundary_condition` convergence is observed when both target-specificity
+comparisons tie and both conditioned artifacts comply with the shared hard
+constraint. The evaluator does not apply score thresholds to create an overall
+`transferred` verdict.
 
-Missing, invalid, unavailable, skipped, abstained, or judge-disagreeing states
-remain nonnumeric. They are never converted to zero or silently omitted.
+## Evidence state
+
+The AI judge is required because open-ended semantic alignment cannot be fully
+verified by deterministic rules. Before genuine human criterion annotation,
+its measurements have `provisional` evidence status. Later blinded human labels
+are required to estimate agreement, reliability, calibration, abstention, and
+bias; they are not required for the evaluator interface to exist.
+
+Project-owner review is construction QA, not independent human criterion
+evidence. Missing, invalid, unavailable, abstained, and order-inconsistent
+results remain nonnumeric.
 
 ## Falsifiers
 
-The design must be narrowed or revised if any of these occurs:
+The interpretation must be narrowed or the data repaired if:
 
-- a candidate can obtain the target-specific direction without the judgment
-  history;
-- policy names, answer wording, option tokens, style, length, or evidence IDs
-  reveal the target direction;
-- the held-out case repeats a situation, answer, or rationale from the history;
-- an independent construction reviewer cannot recover the intended cue
-  priorities, veto, and tie-breaker from the history;
-- either target is only defensible by violating the task's objective contract;
-- a boundary case is solved by blindly reversing the A/B direction;
-- required evidence grounding or critical constraints are lost when policy
-  adherence improves;
-- future human criterion labels and the AI judge show poor agreement or
-  systematic form/domain disagreement.
+- target direction can be recovered without the supplied history;
+- style, length, option tokens, IDs, or document order identify a target;
+- a held-out task repeats a historical answer;
+- one target is defensible only by violating the objective task contract;
+- decision-record wording improves artifact-level scores without a better
+  artifact;
+- canonical and mirrored pairwise results are systematically inconsistent;
+- a boundary condition is solved by blindly reversing target direction;
+- increased judgment alignment requires lower task performance or evidence
+  grounding; or
+- future human criterion evidence disagrees systematically by form, domain,
+  transfer type, or task mode.
 
-Mechanical audits record census, digest binding, identity parity, length parity,
-and path separation. They cannot satisfy the semantic falsifiers.
+Mechanical audits cannot satisfy semantic falsifiers.
 
 ## Claim boundary
 
 The bank is synthetic, public, small, and prospective. Passing repository tests
-establishes only contract and construction consistency. It does not establish
-construct validity, criterion validity, human agreement, population validity,
-unseen-task generalization, agent performance, an active score, or a
-leaderboard. Activation requires a separate evidence review and remains
-blocked while required evidence is missing.
+establishes contract and construction consistency only. It does not establish
+construct validity, human agreement, AI-judge qualification, population
+validity, unseen-task generalization, candidate performance, an active score,
+or a leaderboard.

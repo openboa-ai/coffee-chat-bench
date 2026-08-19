@@ -1,0 +1,180 @@
+{
+  "release": "2026.8.19",
+  "caseId": "pair-06-team-boundary-experiment",
+  "pairId": "pair-06",
+  "form": "dialogue",
+  "domain": "organizational_design",
+  "transferType": "cue_conflict",
+  "taskArchetype": "critique_revision",
+  "taskMode": "open_ended",
+  "task": {
+    "instruction": "Critique the proposed two-person cross-functional pool and revise the eight-analyst design. Decide whether the causal uncertainty warrants waiting or a bounded operating experiment.",
+    "environment": { "kind": "conversation" },
+    "deliverables": [
+      "a critique of the proposed pool",
+      "a revised eight-person allocation",
+      "a continuation or rollback trigger"
+    ],
+    "hardConstraints": [
+      "Use only claims supported by the supplied documents and prior records.",
+      "Cite the decision evidence with [doc-03] and [doc-01].",
+      "Each regulated reporting team must retain at least one qualified analyst and monthly filings may not be delayed.",
+      "Separate observed facts, interpretation, and recommendation."
+    ],
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 6000,
+      "requiredReferenceIds": ["doc-03", "doc-01"]
+    }
+  },
+  "documents": [
+    {
+      "documentId": "doc-01",
+      "documentType": "trial_design",
+      "title": "Six-week shared-pool design",
+      "authorRole": "strategy operations",
+      "recordedAt": "2026-07-16",
+      "content": "Move two analysts to a shared pool, retain one qualified analyst in each regulated team, and compare queue age weekly. Reassignment can reverse in two days.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-06-team-boundary-experiment/doc-01",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-02",
+      "documentType": "manager_feedback",
+      "title": "Team manager interviews",
+      "authorRole": "people partner",
+      "recordedAt": "2026-07-17",
+      "content": "Managers fear loss of context but agree that two recurring requests are suitable for a shared pool. One team has no backup for its qualified analyst.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-06-team-boundary-experiment/doc-02",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-03",
+      "documentType": "workload_table",
+      "title": "Analyst workload and delays",
+      "authorRole": "operations analytics",
+      "recordedAt": "2026-07-13",
+      "content": "Three stable teams have 3, 3, and 2 analysts. Cross-team requests wait a median 12 days; regulated monthly work uses one qualified analyst per team for six days.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-06-team-boundary-experiment/doc-03",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-04",
+      "documentType": "recruiting_note",
+      "title": "Graduate recruiting events",
+      "authorRole": "talent team",
+      "recordedAt": "2026-07-01",
+      "content": "Two campus events are planned for October. No hires would start during the proposed trial.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-06-team-boundary-experiment/doc-04",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-05",
+      "documentType": "causal_review",
+      "title": "Sources of cross-team delay",
+      "authorRole": "process improvement",
+      "recordedAt": "2026-07-15",
+      "content": "Queue data cannot separate analyst scarcity from manager approval delay. A process audit takes ten weeks.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-06-team-boundary-experiment/doc-05",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "unconditioned": [],
+    "target_a": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A retailer is considering a new shelf layout after one store reports higher sales.\nShared facts [history-06-01-fact]: The comparison lacks matched foot traffic; moving shelves is reversible overnight; twenty stores could test it next month.\nDecision: Wait for a matched comparison from three stores before expanding.\nReasoning: The dispute is whether action should wait for attribution or become the means of learning."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A neighborhood program is considering text reminders for appointments.\nShared facts [history-06-02-fact]: A small pilot shows fewer no-shows; consent language was inconsistent; messages can be stopped immediately.\nMessage excerpt: Repeat the pilot with consistent consent before operational use."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: An engineering team is evaluating a caching change.\nShared facts [history-06-03-fact]: Synthetic tests show a 13% speedup; production traffic has a different request mix; canary rollback is automated.\nRetrospective: Build a representative replay before exposing production traffic."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "Situation: A literacy nonprofit is considering peer tutoring.\nShared facts [history-06-04-fact]: Two observational studies are favorable; tutor quality varies; the semester starts in two weeks.\nlog.decision=Train tutors and establish a matched baseline before assigning learners."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A newsroom is deciding whether to add context cards to breaking-news pages.\nShared facts [history-06-05-fact]: Reader interviews support the idea; click effects are unknown; cards can be removed without altering articles.\nDecision: Prototype and test comprehension before newsroom-wide adoption."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: A medical device lacks the legally required validation result.\nShared facts [history-06-06-fact]: Use in patients is prohibited until the specified validation succeeds.\nMessage excerpt: Do not deploy; complete the required validation protocol."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A public agency cannot verify an applicant's mandatory eligibility document.\nShared facts [history-06-07-fact]: The governing rule prohibits award without that document and provides a later reapplication path.\nRetrospective: Withhold the award and preserve the reapplication route."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "Situation: A farming cooperative is considering an unfamiliar cover crop.\nShared facts [history-06-08-fact]: Regional studies are mixed; a quarter-field trial is reversible after one season; seed ordering closes this week.\nlog.decision=Use the current crop until a local replicated trial resolves the soil concern."
+      }
+    ],
+    "target_b": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A retailer is considering a new shelf layout after one store reports higher sales.\nShared facts [history-06-01-fact]: The comparison lacks matched foot traffic; moving shelves is reversible overnight; twenty stores could test it next month.\nDecision: Run the layout in four varied stores with a preregistered rollback rule.\nReasoning: The dispute is whether action should wait for attribution or become the means of learning."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A neighborhood program is considering text reminders for appointments.\nShared facts [history-06-02-fact]: A small pilot shows fewer no-shows; consent language was inconsistent; messages can be stopped immediately.\nMessage excerpt: Launch a monitored opt-in cohort and compare it with the current process."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: An engineering team is evaluating a caching change.\nShared facts [history-06-03-fact]: Synthetic tests show a 13% speedup; production traffic has a different request mix; canary rollback is automated.\nRetrospective: Run a 2% production canary with latency and error abort thresholds."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "Situation: A literacy nonprofit is considering peer tutoring.\nShared facts [history-06-04-fact]: Two observational studies are favorable; tutor quality varies; the semester starts in two weeks.\nlog.decision=Start with two classrooms and use weekly reading probes to adapt the program."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A newsroom is deciding whether to add context cards to breaking-news pages.\nShared facts [history-06-05-fact]: Reader interviews support the idea; click effects are unknown; cards can be removed without altering articles.\nDecision: Deploy on one desk and learn from correction, comprehension, and workload data."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: A medical device lacks the legally required validation result.\nShared facts [history-06-06-fact]: Use in patients is prohibited until the specified validation succeeds.\nMessage excerpt: Do not deploy; complete the required validation protocol."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A public agency cannot verify an applicant's mandatory eligibility document.\nShared facts [history-06-07-fact]: The governing rule prohibits award without that document and provides a later reapplication path.\nRetrospective: Withhold the award and preserve the reapplication route."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "Situation: A farming cooperative is considering an unfamiliar cover crop.\nShared facts [history-06-08-fact]: Regional studies are mixed; a quarter-field trial is reversible after one season; seed ordering closes this week.\nlog.decision=Plant quarter-field trials on three soil types and publish the comparison plan."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": [
+      "synthetic://openboa-ai/coffee-chat-bench/pair-06-team-boundary-experiment/doc-01",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-06-team-boundary-experiment/doc-02",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-06-team-boundary-experiment/doc-03",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-06-team-boundary-experiment/doc-04",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-06-team-boundary-experiment/doc-05"
+    ],
+    "scenarioId": "pair-06-team-boundary-experiment"
+  },
+  "manifestDigest": "sha256:1a7513762cac4607b5940126e9925ba84a300f3212770bac93bb0fc3c5bb4a58"
+}

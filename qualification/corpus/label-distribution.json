@@ -1,0 +1,211 @@
+{
+  "release": "2026.8.19",
+  "corpusId": "provisional_judge_qualification_corpus",
+  "status": "draft_labels_mapped",
+  "authority": "model_authored_draft",
+  "reviewState": "pending_project_owner_review",
+  "records": {
+    "pointwise": 144,
+    "pairwise": 0,
+    "total": 144
+  },
+  "condition": {
+    "target_a": 48,
+    "target_b": 48,
+    "unconditioned": 48
+  },
+  "scores": {
+    "judgmentAlignment": {
+      "1": 6,
+      "2": 29,
+      "3": 16,
+      "4": 17,
+      "5": 28
+    },
+    "taskPerformance": {
+      "1": 9,
+      "2": 31,
+      "3": 22,
+      "4": 60,
+      "5": 22
+    },
+    "evidenceGrounding": {
+      "1": 5,
+      "2": 13,
+      "3": 20,
+      "4": 65,
+      "5": 41
+    },
+    "statedRationaleAlignment": {
+      "cueUtilization": {
+        "1": 2,
+        "2": 22,
+        "3": 36,
+        "4": 22,
+        "5": 14
+      },
+      "cueWeighting": {
+        "1": 9,
+        "2": 32,
+        "3": 22,
+        "4": 20,
+        "5": 13
+      },
+      "contextSensitivity": {
+        "1": 5,
+        "2": 22,
+        "3": 34,
+        "4": 21,
+        "5": 14
+      },
+      "actionConsistency": {
+        "1": 13,
+        "2": 5,
+        "3": 12,
+        "4": 52,
+        "5": 14
+      }
+    }
+  },
+  "hardConstraintViolation": {
+    "false": 126,
+    "true": 18
+  },
+  "confidence": {
+    "pointwise": {
+      "high": 421,
+      "medium": 305,
+      "low": 186
+    },
+    "pairwise": {}
+  },
+  "applicability": {
+    "targetRelativeNotApplicable": 48
+  },
+  "byConstructionIntent": {
+    "context_insensitive_judgment": {
+      "submissions": 1,
+      "scoreVectors": {
+        "j2-t2-e3-cu2-cw1-cs1-ac3-hc0": 1
+      },
+      "distinctScoreVectors": 1
+    },
+    "cue_omission": {
+      "submissions": 3,
+      "scoreVectors": {
+        "j2-t3-e3-cu2-cw2-cs2-ac3-hc0": 1,
+        "j3-t2-e5-cu3-cw2-cs3-ac4-hc0": 1,
+        "j3-t3-e4-cu2-cw2-cs2-ac3-hc0": 1
+      },
+      "distinctScoreVectors": 3
+    },
+    "grounding_weakness": {
+      "submissions": 15,
+      "scoreVectors": {
+        "j3-t4-e4-cu2-cw2-cs2-ac4-hc0": 1,
+        "j4-t4-e1-cu4-cw4-cs4-ac4-hc0": 1,
+        "j4-t4-e2-cu4-cw4-cs4-ac4-hc0": 5,
+        "jna-t4-e2-cuna-cwna-csna-acna-hc0": 8
+      },
+      "distinctScoreVectors": 4
+    },
+    "hard_constraint_breach": {
+      "submissions": 16,
+      "scoreVectors": {
+        "j1-t1-e3-cu1-cw1-cs1-ac1-hc1": 1,
+        "j1-t2-e4-cu1-cw1-cs2-ac1-hc1": 1,
+        "j1-t2-e4-cu3-cw1-cs2-ac4-hc1": 4,
+        "j2-t2-e3-cu2-cw2-cs1-ac1-hc1": 1,
+        "j4-t1-e3-cu4-cw4-cs2-ac4-hc1": 1,
+        "jna-t2-e4-cuna-cwna-csna-acna-hc1": 8
+      },
+      "distinctScoreVectors": 6
+    },
+    "integrated_control": {
+      "submissions": 4,
+      "scoreVectors": {
+        "j5-t5-e5-cu5-cw4-cs5-ac5-hc0": 1,
+        "j5-t5-e5-cu5-cw5-cs5-ac5-hc0": 3
+      },
+      "distinctScoreVectors": 2
+    },
+    "integrated_response": {
+      "submissions": 18,
+      "scoreVectors": {
+        "j5-t5-e5-cu5-cw5-cs5-ac5-hc0": 10,
+        "jna-t5-e5-cuna-cwna-csna-acna-hc0": 8
+      },
+      "distinctScoreVectors": 2
+    },
+    "material_task_omission": {
+      "submissions": 20,
+      "scoreVectors": {
+        "j4-t2-e5-cu4-cw4-cs4-ac4-hc0": 8,
+        "jna-t1-e4-cuna-cwna-csna-acna-hc0": 5,
+        "jna-t1-e5-cuna-cwna-csna-acna-hc0": 1,
+        "jna-t2-e5-cuna-cwna-csna-acna-hc0": 6
+      },
+      "distinctScoreVectors": 4
+    },
+    "mixed_borderline": {
+      "submissions": 16,
+      "scoreVectors": {
+        "j2-t4-e4-cu2-cw2-cs1-ac4-hc0": 1,
+        "j3-t3-e3-cu3-cw3-cs3-ac3-hc0": 7,
+        "jna-t3-e3-cuna-cwna-csna-acna-hc0": 8
+      },
+      "distinctScoreVectors": 3
+    },
+    "rationale_action_inconsistency": {
+      "submissions": 17,
+      "scoreVectors": {
+        "j2-t2-e4-cu3-cw3-cs3-ac1-hc1": 1,
+        "j2-t4-e4-cu3-cw3-cs3-ac1-hc0": 9,
+        "j2-t4-e5-cu2-cw1-cs1-ac3-hc0": 1,
+        "j3-t3-e4-cu4-cw4-cs4-ac2-hc0": 1,
+        "j3-t3-e4-cu4-cw4-cs4-ac3-hc0": 1,
+        "j3-t3-e5-cu3-cw3-cs3-ac2-hc0": 1,
+        "j3-t4-e4-cu4-cw3-cs4-ac2-hc0": 1,
+        "j3-t4-e4-cu4-cw4-cs4-ac2-hc0": 1,
+        "j4-t4-e5-cu4-cw4-cs4-ac2-hc0": 1
+      },
+      "distinctScoreVectors": 9
+    },
+    "rationale_underspecified": {
+      "submissions": 14,
+      "scoreVectors": {
+        "j5-t4-e4-cu3-cw2-cs2-ac4-hc0": 9,
+        "j5-t4-e4-cu3-cw2-cs3-ac4-hc0": 3,
+        "j5-t4-e4-cu4-cw3-cs4-ac4-hc0": 2
+      },
+      "distinctScoreVectors": 3
+    },
+    "target_insensitive_judgment": {
+      "submissions": 14,
+      "scoreVectors": {
+        "j2-t4-e4-cu2-cw1-cs2-ac4-hc0": 1,
+        "j2-t4-e4-cu2-cw2-cs3-ac4-hc0": 11,
+        "j3-t4-e4-cu2-cw2-cs2-ac4-hc0": 1,
+        "j4-t4-e4-cu2-cw2-cs3-ac4-hc0": 1
+      },
+      "distinctScoreVectors": 4
+    },
+    "target_policy_reversal": {
+      "submissions": 2,
+      "scoreVectors": {
+        "j2-t4-e4-cu2-cw2-cs2-ac4-hc0": 1,
+        "j2-t4-e4-cu3-cw3-cs2-ac4-hc0": 1
+      },
+      "distinctScoreVectors": 2
+    },
+    "unsupported_material_claim": {
+      "submissions": 4,
+      "scoreVectors": {
+        "jna-t1-e1-cuna-cwna-csna-acna-hc1": 1,
+        "jna-t3-e1-cuna-cwna-csna-acna-hc0": 2,
+        "jna-t4-e1-cuna-cwna-csna-acna-hc0": 1
+      },
+      "distinctScoreVectors": 3
+    }
+  }
+}

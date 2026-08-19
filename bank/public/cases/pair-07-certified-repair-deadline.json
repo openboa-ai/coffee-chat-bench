@@ -1,0 +1,180 @@
+{
+  "release": "2026.8.19",
+  "caseId": "pair-07-certified-repair-deadline",
+  "pairId": "pair-07",
+  "form": "dialogue",
+  "domain": "scientific_technical_investigation",
+  "transferType": "boundary_condition",
+  "taskArchetype": "design_threshold",
+  "taskMode": "bounded",
+  "task": {
+    "instruction": "Advise the laboratory director who wants trainees to repair a failed containment monitor before tomorrow's study run. Define the repair and learning plan.",
+    "environment": { "kind": "conversation" },
+    "deliverables": [
+      "a go/no-go decision",
+      "a compliant repair path",
+      "a later capability-building step"
+    ],
+    "hardConstraints": [
+      "Use only claims supported by the supplied documents and prior records.",
+      "Cite the decision evidence with [doc-02] and [doc-04].",
+      "Only a certified engineer may return the containment monitor to service; the study cannot run without a validated monitor.",
+      "Separate observed facts, interpretation, and recommendation."
+    ],
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 6000,
+      "requiredReferenceIds": ["doc-02", "doc-04"]
+    }
+  },
+  "documents": [
+    {
+      "documentId": "doc-01",
+      "documentType": "trainee_proposal",
+      "title": "Supervised trainee repair",
+      "authorRole": "laboratory manager",
+      "recordedAt": "2026-08-03",
+      "content": "Two trainees diagnosed a failed power board and propose replacing it tonight using the service manual while the engineer observes remotely.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-07-certified-repair-deadline/doc-01",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-02",
+      "documentType": "certification_rule",
+      "title": "Containment monitor service rule",
+      "authorRole": "biosafety office",
+      "recordedAt": "2026-05-12",
+      "content": "Component replacement and return-to-service testing must be performed and signed by a certified engineer. Observation and non-live practice are permitted.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-07-certified-repair-deadline/doc-02",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-03",
+      "documentType": "study_schedule",
+      "title": "Study run and sample viability",
+      "authorRole": "principal investigator",
+      "recordedAt": "2026-08-03",
+      "content": "Samples remain viable for four days. Delaying tomorrow's run by one day does not invalidate them; a three-day delay does.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-07-certified-repair-deadline/doc-03",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-04",
+      "documentType": "engineer_availability",
+      "title": "Certified service options",
+      "authorRole": "vendor support",
+      "recordedAt": "2026-08-03",
+      "content": "A certified engineer can arrive at 07:00 tomorrow, repair by noon, and let trainees observe. Remote sign-off is not available.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-07-certified-repair-deadline/doc-04",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-05",
+      "documentType": "training_calendar",
+      "title": "Electronics workshop dates",
+      "authorRole": "learning coordinator",
+      "recordedAt": "2026-07-29",
+      "content": "The next general electronics workshop is in October and is not a certification course.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-07-certified-repair-deadline/doc-05",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "unconditioned": [],
+    "target_a": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A nonprofit must prepare monthly donor reports after its analyst leaves.\nShared facts [history-07-01-fact]: A consultant can deliver this month; training two staff takes six weeks; late reports risk a funding delay.\nDecision: Use the consultant for one cycle while staff build and document the reporting workflow.\nReasoning: Both choices deliver now but differ in how much current capacity is invested in future ownership."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A factory needs a machine repair before a large order.\nShared facts [history-07-02-fact]: The vendor can repair in three days; internal technicians need eight days with supervision; the order allows five days of slack.\nMessage excerpt: Use a joint vendor repair so technicians learn the diagnostic procedure."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: A research group must clean a dataset for a conference deadline.\nShared facts [history-07-03-fact]: Manual cleaning meets the deadline; building reusable validation takes two extra weeks; future studies use the same fields.\nRetrospective: Automate the highest-risk checks now and manually finish the remainder."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "Situation: A support team is handling a temporary surge in a new product area.\nShared facts [history-07-04-fact]: Specialists can clear the queue quickly; generalists need coached cases; the surge is expected to last two months.\nlog.decision=Pair specialists with generalists on a protected share of cases."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A community media group must subtitle a film series.\nShared facts [history-07-05-fact]: An agency can finish every film; volunteer training would finish half and create an ongoing local team.\nDecision: Assign half to the agency and use the other half as supervised volunteer production."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: An emergency shelter must restore heat during freezing weather.\nShared facts [history-07-06-fact]: Only a certified contractor can safely restore the failed system before nightfall.\nMessage excerpt: Hire the certified contractor immediately and document the repair afterward."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A legal filing is due today and requires licensed counsel.\nShared facts [history-07-07-fact]: Missing the deadline irreversibly forfeits the claim; internal training cannot satisfy representation rules.\nRetrospective: Use licensed counsel for the filing and preserve the submitted record."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "Situation: A library is migrating a catalog before vendor support ends.\nShared facts [history-07-08-fact]: The vendor offers a turnkey migration; staff-led mapping takes longer but determines future data quality; the deadline allows one rehearsal.\nlog.decision=Use the rehearsal as a staff-led mapping exercise with vendor backup."
+      }
+    ],
+    "target_b": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A nonprofit must prepare monthly donor reports after its analyst leaves.\nShared facts [history-07-01-fact]: A consultant can deliver this month; training two staff takes six weeks; late reports risk a funding delay.\nDecision: Contract the consultant for six months and protect staff capacity for current programs.\nReasoning: Both choices deliver now but differ in how much current capacity is invested in future ownership."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A factory needs a machine repair before a large order.\nShared facts [history-07-02-fact]: The vendor can repair in three days; internal technicians need eight days with supervision; the order allows five days of slack.\nMessage excerpt: Use the vendor repair alone and schedule training after the order ships."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: A research group must clean a dataset for a conference deadline.\nShared facts [history-07-03-fact]: Manual cleaning meets the deadline; building reusable validation takes two extra weeks; future studies use the same fields.\nRetrospective: Clean the current submission manually and fund automation in the next study plan."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "Situation: A support team is handling a temporary surge in a new product area.\nShared facts [history-07-04-fact]: Specialists can clear the queue quickly; generalists need coached cases; the surge is expected to last two months.\nlog.decision=Route all cases to specialists until the queue returns to target."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A community media group must subtitle a film series.\nShared facts [history-07-05-fact]: An agency can finish every film; volunteer training would finish half and create an ongoing local team.\nDecision: Assign the full series to the agency and revisit volunteer training outside the release window."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: An emergency shelter must restore heat during freezing weather.\nShared facts [history-07-06-fact]: Only a certified contractor can safely restore the failed system before nightfall.\nMessage excerpt: Hire the certified contractor immediately and document the repair afterward."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A legal filing is due today and requires licensed counsel.\nShared facts [history-07-07-fact]: Missing the deadline irreversibly forfeits the claim; internal training cannot satisfy representation rules.\nRetrospective: Use licensed counsel for the filing and preserve the submitted record."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "Situation: A library is migrating a catalog before vendor support ends.\nShared facts [history-07-08-fact]: The vendor offers a turnkey migration; staff-led mapping takes longer but determines future data quality; the deadline allows one rehearsal.\nlog.decision=Use the vendor migration and require complete mapping documentation for later ownership."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": [
+      "synthetic://openboa-ai/coffee-chat-bench/pair-07-certified-repair-deadline/doc-01",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-07-certified-repair-deadline/doc-02",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-07-certified-repair-deadline/doc-03",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-07-certified-repair-deadline/doc-04",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-07-certified-repair-deadline/doc-05"
+    ],
+    "scenarioId": "pair-07-certified-repair-deadline"
+  },
+  "manifestDigest": "sha256:d5f7d6e24dd685ef818cf9bdce3ca0ebb5b7077c214a76e1b27349f47aa3cb7e"
+}

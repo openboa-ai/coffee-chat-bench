@@ -20,6 +20,7 @@ export type {
   BenchmarkForm,
   CandidateIdentity,
   CandidateSemantic,
+  CaseDocument,
   CaseManifest,
   CaseManifestSemantic,
   Digest,
@@ -32,12 +33,25 @@ export type {
   TaskMode,
   TransferType,
 } from "./contracts.ts";
-export { artifactDigest, renderCase, validateArtifact } from "./artifact.ts";
-export type { ArtifactValidation, CandidateTask } from "./artifact.ts";
+export {
+  DECISION_RECORD_MAX_BYTES,
+  artifactDigest,
+  renderCase,
+  validateArtifact,
+  validateCandidateArtifact,
+  validateCandidateSubmission,
+} from "./artifact.ts";
+export type {
+  ArtifactValidation,
+  CandidateArtifact,
+  CandidateSubmission,
+  CandidateSubmissionValidation,
+  CandidateTask,
+  DecisionRecord,
+} from "./artifact.ts";
 export {
   createBankManifest,
   parseBankManifest,
-  parseEvaluatorMaterial,
   parseValidatedBank,
   validateBank,
 } from "./bank.ts";
@@ -45,11 +59,43 @@ export type {
   BankCaseEntry,
   BankManifest,
   BankManifestSemantic,
-  CriterionSpec,
-  EvaluatorMaterial,
-  EvaluatorMaterialSemantic,
-  SharedVeto,
-  TargetPolicy,
   ValidatedBank,
   ValidatedBankCase,
 } from "./bank.ts";
+export {
+  evaluateCaseFamily,
+  evaluateSubmission,
+  getBenchmarkInput,
+  isEvaluationDimension,
+} from "./evaluator.ts";
+export type {
+  BenchmarkInput,
+  BoundaryConvergenceEvaluation,
+  CaseFamilyEvaluation,
+  CaseFamilySubmissions,
+  EvaluationState,
+  HardConstraintEvaluation,
+  JudgeProvenance,
+  PairwiseAttempt,
+  PairwiseEvaluation,
+  ScoreEvaluation,
+  SubmissionEvaluation,
+} from "./evaluator.ts";
+export {
+  DEFAULT_JUDGE_PROTOCOL,
+  EVALUATION_DIMENSIONS,
+  protocolDigest,
+} from "./judge-protocol.ts";
+export type {
+  EvaluationDimension,
+  JudgeCompletion,
+  JudgeDimensionDefinition,
+  JudgeProtocol,
+  JudgeRequest,
+  JudgeTransport,
+  OrdinalScore,
+  PairwiseComparisonKind,
+  PairwiseOrientation,
+  PairwisePreference,
+  StatedRationaleAlignmentScore,
+} from "./judge-protocol.ts";

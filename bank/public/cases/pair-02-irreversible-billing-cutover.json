@@ -1,0 +1,184 @@
+{
+  "release": "2026.8.19",
+  "caseId": "pair-02-irreversible-billing-cutover",
+  "pairId": "pair-02",
+  "form": "professional_artifact",
+  "domain": "product_service_operations",
+  "transferType": "boundary_condition",
+  "taskArchetype": "design_threshold",
+  "taskMode": "bounded",
+  "task": {
+    "instruction": "Design a billing cutover gate that addresses the proposed one-way migration and complies with the customer-balance control. Define the reversible sequence and exact go/no-go condition.",
+    "environment": {
+      "kind": "workspace",
+      "fixtureDigest": "sha256:c43e0b1f3e71b126b122e8ffa009a07ff49355e8299b1fbf4c404ee4aeb51420",
+      "verifierDigest": "sha256:dc71ccd45e234b432258fd895faaf1f62df7509c7464e14e54fae3c51a6704ce"
+    },
+    "deliverables": [
+      "a cutover gate",
+      "a reversible migration sequence",
+      "an exact go/no-go condition"
+    ],
+    "hardConstraints": [
+      "Use only claims supported by the supplied documents and prior records.",
+      "Cite the decision evidence with [doc-02] and [doc-04].",
+      "The ledger migration may not become irreversible until opening balances reconcile to the signed control total.",
+      "Separate observed facts, interpretation, and recommendation."
+    ],
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 6000,
+      "requiredReferenceIds": ["doc-02", "doc-04"]
+    }
+  },
+  "documents": [
+    {
+      "documentId": "doc-01",
+      "documentType": "cutover_proposal",
+      "title": "Accelerated cutover proposal",
+      "authorRole": "program director",
+      "recordedAt": "2026-07-19",
+      "content": "Freeze the old system Friday, import all accounts Saturday, and decommission the old database before Monday opening to avoid dual support.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-02-irreversible-billing-cutover/doc-01",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-02",
+      "documentType": "control_requirement",
+      "title": "Customer balance migration control",
+      "authorRole": "financial controls",
+      "recordedAt": "2026-05-30",
+      "content": "Opening balances must equal the signed source total and exception lines must be resolved or explicitly held before irreversible cutover.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-02-irreversible-billing-cutover/doc-02",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-03",
+      "documentType": "rehearsal_result",
+      "title": "Second migration rehearsal",
+      "authorRole": "data engineering",
+      "recordedAt": "2026-07-18",
+      "content": "99.7% of accounts reconciled. Forty-two disputed credits totaling $184,600 remain; the source ledger can stay read-only for three weeks.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-02-irreversible-billing-cutover/doc-03",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-04",
+      "documentType": "rollback_design",
+      "title": "Dual-read rollback option",
+      "authorRole": "platform architecture",
+      "recordedAt": "2026-07-20",
+      "content": "A dual-read period preserves source balances and permits account-level correction. It adds two days of operational support and does not permit writes to the old ledger.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-02-irreversible-billing-cutover/doc-04",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-05",
+      "documentType": "brand_note",
+      "title": "Invoice logo refresh",
+      "authorRole": "brand operations",
+      "recordedAt": "2026-07-17",
+      "content": "The logo will change on September invoices. The image asset does not alter amounts, account identifiers, or migration controls.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-02-irreversible-billing-cutover/doc-05",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "unconditioned": [],
+    "target_a": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A housing cooperative is replacing its shared laundry equipment.\nShared facts [history-02-01-fact]: Leasing costs 14% more over three years but permits annual replacement; purchasing secures a 19% discount and fixes the model for seven years.\nDecision: Lease for one year and collect repair and usage data before purchasing.\nReasoning: The disagreement concerns the value of retaining an exit relative to the coordination benefit of one fleet."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A university archive is selecting a file format for a digitization program.\nShared facts [history-02-02-fact]: The open format has broad tool support but larger storage cost; the optimized format cuts storage by 28% and depends on one maintained decoder.\nMessage excerpt: Store preservation masters in the open format and test the optimized format for access copies."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: A small manufacturer is deciding between modular and integrated packaging lines.\nShared facts [history-02-03-fact]: The modular line can swap stations and produces 11% fewer units; the integrated line meets forecast demand with a five-year service contract.\nRetrospective: Install the modular line until the product mix stabilizes."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "Situation: A community theater is choosing rehearsal space for the next two years.\nShared facts [history-02-04-fact]: Monthly rentals preserve scheduling flexibility; a two-year lease lowers cost by 22% and enables permanent accessibility improvements.\nlog.decision=Rent for the first season and retain the ability to move after audience-access data arrives."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A research team is selecting a transcription vendor for sensitive interviews.\nShared facts [history-02-05-fact]: One vendor offers cancellable monthly service; the other offers a dedicated trained team only with a twelve-month minimum.\nDecision: Use the monthly vendor for the pilot and keep the corpus portable."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: A bridge inspection finds a crack above the mandatory closure threshold.\nShared facts [history-02-06-fact]: Two independent engineers confirm the measurement and the transport code requires immediate closure.\nMessage excerpt: Close the bridge and begin the prescribed structural assessment."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A clinic's vaccine refrigerator loses temperature control.\nShared facts [history-02-07-fact]: The excursion exceeds the manufacturer limit and the affected doses cannot be verified as viable.\nRetrospective: Quarantine the doses and follow the replacement protocol."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "Situation: A publisher is choosing an audiobook narrator for a series.\nShared facts [history-02-08-fact]: A rotating cast preserves future options; one narrator offers continuity and a lower per-book rate but has limited availability next year.\nlog.decision=Contract one title and keep later casting open until listener and schedule evidence is available."
+      }
+    ],
+    "target_b": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A housing cooperative is replacing its shared laundry equipment.\nShared facts [history-02-01-fact]: Leasing costs 14% more over three years but permits annual replacement; purchasing secures a 19% discount and fixes the model for seven years.\nDecision: Purchase the standardized fleet and negotiate a parts guarantee.\nReasoning: The disagreement concerns the value of retaining an exit relative to the coordination benefit of one fleet."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A university archive is selecting a file format for a digitization program.\nShared facts [history-02-02-fact]: The open format has broad tool support but larger storage cost; the optimized format cuts storage by 28% and depends on one maintained decoder.\nMessage excerpt: Adopt the optimized format with a funded migration checkpoint and escrowed decoder source."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: A small manufacturer is deciding between modular and integrated packaging lines.\nShared facts [history-02-03-fact]: The modular line can swap stations and produces 11% fewer units; the integrated line meets forecast demand with a five-year service contract.\nRetrospective: Install the integrated line and lock the product interface for two seasons."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "Situation: A community theater is choosing rehearsal space for the next two years.\nShared facts [history-02-04-fact]: Monthly rentals preserve scheduling flexibility; a two-year lease lowers cost by 22% and enables permanent accessibility improvements.\nlog.decision=Sign the lease and make the accessibility improvements before rehearsals begin."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A research team is selecting a transcription vendor for sensitive interviews.\nShared facts [history-02-05-fact]: One vendor offers cancellable monthly service; the other offers a dedicated trained team only with a twelve-month minimum.\nDecision: Commit to the dedicated team with quarterly quality exits."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: A bridge inspection finds a crack above the mandatory closure threshold.\nShared facts [history-02-06-fact]: Two independent engineers confirm the measurement and the transport code requires immediate closure.\nMessage excerpt: Close the bridge and begin the prescribed structural assessment."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A clinic's vaccine refrigerator loses temperature control.\nShared facts [history-02-07-fact]: The excursion exceeds the manufacturer limit and the affected doses cannot be verified as viable.\nRetrospective: Quarantine the doses and follow the replacement protocol."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "Situation: A publisher is choosing an audiobook narrator for a series.\nShared facts [history-02-08-fact]: A rotating cast preserves future options; one narrator offers continuity and a lower per-book rate but has limited availability next year.\nlog.decision=Contract the series now to secure continuity and reserve the narrator's calendar."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": [
+      "synthetic://openboa-ai/coffee-chat-bench/pair-02-irreversible-billing-cutover/doc-01",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-02-irreversible-billing-cutover/doc-02",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-02-irreversible-billing-cutover/doc-03",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-02-irreversible-billing-cutover/doc-04",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-02-irreversible-billing-cutover/doc-05"
+    ],
+    "scenarioId": "pair-02-irreversible-billing-cutover"
+  },
+  "manifestDigest": "sha256:4f415f6effb05b48c6467aecc06a2395cc0e795edf87b90b822c02c128828712"
+}

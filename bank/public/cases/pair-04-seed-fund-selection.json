@@ -1,0 +1,180 @@
+{
+  "release": "2026.8.19",
+  "caseId": "pair-04-seed-fund-selection",
+  "pairId": "pair-04",
+  "form": "dialogue",
+  "domain": "procurement_portfolio_allocation",
+  "transferType": "far_transfer",
+  "taskArchetype": "allocation_prioritization",
+  "taskMode": "bounded",
+  "task": {
+    "instruction": "Advise the investment committee how to allocate three equal seed awards and whether the analyst ranking can be used before the weighting dispute is addressed.",
+    "environment": { "kind": "conversation" },
+    "deliverables": [
+      "a three-award allocation",
+      "the role of applicant participation",
+      "a documented recourse step"
+    ],
+    "hardConstraints": [
+      "Use only claims supported by the supplied documents and prior records.",
+      "Cite the decision evidence with [doc-03] and [doc-01].",
+      "Conflicted reviewers cannot score a project and awards must be announced by 30 August.",
+      "Separate observed facts, interpretation, and recommendation."
+    ],
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 6000,
+      "requiredReferenceIds": ["doc-03", "doc-01"]
+    }
+  },
+  "documents": [
+    {
+      "documentId": "doc-01",
+      "documentType": "published_terms",
+      "title": "Seed fund assessment terms",
+      "authorRole": "fund secretariat",
+      "recordedAt": "2026-05-02",
+      "content": "Published weights are evidence 40%, feasibility 30%, scalability 20%, community value 10%. Changes after submission require notice and an equal opportunity to update applications.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-04-seed-fund-selection/doc-01",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-02",
+      "documentType": "deadline_note",
+      "title": "Sponsor decision deadline",
+      "authorRole": "sponsor office",
+      "recordedAt": "2026-07-18",
+      "content": "Selections are due 30 August. A ten-day clarification period fits; reopening applications does not.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-04-seed-fund-selection/doc-02",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-03",
+      "documentType": "ranking",
+      "title": "Seed project ranking",
+      "authorRole": "portfolio analysts",
+      "recordedAt": "2026-07-15",
+      "content": "After conflict removals, analyst scores rank M 88, N 84, P 81, Q 79, R 75. The fund supports three equal awards.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-04-seed-fund-selection/doc-03",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-04",
+      "documentType": "event_plan",
+      "title": "Award announcement venue",
+      "authorRole": "communications",
+      "recordedAt": "2026-07-11",
+      "content": "The auditorium is available on 2 September, after the required award announcement date.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-04-seed-fund-selection/doc-04",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-05",
+      "documentType": "applicant_letter",
+      "title": "Joint applicant concern",
+      "authorRole": "applicant representatives",
+      "recordedAt": "2026-07-17",
+      "content": "Applicants say the 20% scalability weight disadvantages community projects and was first disclosed after expressions of interest closed.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-04-seed-fund-selection/doc-05",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "unconditioned": [],
+    "target_a": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A city is assigning weekend street closures for community events.\nShared facts [history-04-01-fact]: Three districts apply; traffic modeling favors one route; two districts were excluded from the previous consultation.\nDecision: Run a short affected-district review before assigning the contested weekend.\nReasoning: Both choices are accountable but give different weight to participation before allocation."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A foundation must distribute translation support among partner groups.\nShared facts [history-04-02-fact]: Usage data favors two large partners; four small partners lack comparable tracking; the grant promises equitable access.\nMessage excerpt: Agree on an access floor with all partners before allocating the remainder."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: A company is choosing employee representatives for a workspace redesign.\nShared facts [history-04-03-fact]: A random panel takes three weeks; department heads can nominate a panel in three days; construction begins in five weeks.\nRetrospective: Delay nonstructural choices and recruit the random panel for decisions affecting daily use."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "Situation: A conservation program is selecting farms for limited soil testing.\nShared facts [history-04-04-fact]: Risk scoring identifies eight farms; local associations dispute two input variables; the testing season is short.\nlog.decision=Correct the disputed variables with association review before final selection."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A university allocates emergency housing after a residence fire.\nShared facts [history-04-05-fact]: Verified accessibility and dependent-care needs differ; affected students cannot wait for a campus-wide consultation.\nDecision: Use published need tiers with an immediate appeal desk staffed by student services."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: A flood response team assigns rescue boats during an active evacuation.\nShared facts [history-04-06-fact]: Dispatch data identifies trapped residents and safe routes; delay creates immediate physical danger.\nMessage excerpt: Dispatch by verified danger and capacity while logging every decision for later review."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A transit agency is choosing which bus shelters receive lighting upgrades.\nShared facts [history-04-07-fact]: Ridership favors downtown; harassment reports are concentrated at lower-ridership stops; the budget covers six sites.\nRetrospective: Include riders from the affected stops in setting the safety weighting before ranking all sites.\nReasoning: The consequence is distributed, but delay also leaves a documented safety burden in place."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "Situation: A professional association is revising its conference travel grants.\nShared facts [history-04-08-fact]: Past awards concentrate in three institutions; peer review predicts presentation quality; early-career members request a different criterion.\nlog.decision=Convene a member panel to set the weighting before opening applications."
+      }
+    ],
+    "target_b": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A city is assigning weekend street closures for community events.\nShared facts [history-04-01-fact]: Three districts apply; traffic modeling favors one route; two districts were excluded from the previous consultation.\nDecision: Assign the modeled route and publish the reasons and appeal window.\nReasoning: Both choices are accountable but give different weight to participation before allocation."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A foundation must distribute translation support among partner groups.\nShared facts [history-04-02-fact]: Usage data favors two large partners; four small partners lack comparable tracking; the grant promises equitable access.\nMessage excerpt: Fund the two measured high-use partners first and reserve a transparent application pool for the rest."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: A company is choosing employee representatives for a workspace redesign.\nShared facts [history-04-03-fact]: A random panel takes three weeks; department heads can nominate a panel in three days; construction begins in five weeks.\nRetrospective: Use nominated representatives now and publish a two-week objection and correction process."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "Situation: A conservation program is selecting farms for limited soil testing.\nShared facts [history-04-04-fact]: Risk scoring identifies eight farms; local associations dispute two input variables; the testing season is short.\nlog.decision=Select the six uncontested highest-risk farms and reopen the remaining slots after variable review."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A university allocates emergency housing after a residence fire.\nShared facts [history-04-05-fact]: Verified accessibility and dependent-care needs differ; affected students cannot wait for a campus-wide consultation.\nDecision: Use published need tiers with an immediate appeal desk staffed by student services."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: A flood response team assigns rescue boats during an active evacuation.\nShared facts [history-04-06-fact]: Dispatch data identifies trapped residents and safe routes; delay creates immediate physical danger.\nMessage excerpt: Dispatch by verified danger and capacity while logging every decision for later review."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A transit agency is choosing which bus shelters receive lighting upgrades.\nShared facts [history-04-07-fact]: Ridership favors downtown; harassment reports are concentrated at lower-ridership stops; the budget covers six sites.\nRetrospective: Apply a published safety-and-use formula now and fund the six highest combined scores.\nReasoning: The consequence is distributed, but delay also leaves a documented safety burden in place."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "Situation: A professional association is revising its conference travel grants.\nShared facts [history-04-08-fact]: Past awards concentrate in three institutions; peer review predicts presentation quality; early-career members request a different criterion.\nlog.decision=Publish a blended score and run the cycle, with a scheduled criterion review using applicant outcomes."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": [
+      "synthetic://openboa-ai/coffee-chat-bench/pair-04-seed-fund-selection/doc-01",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-04-seed-fund-selection/doc-02",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-04-seed-fund-selection/doc-03",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-04-seed-fund-selection/doc-04",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-04-seed-fund-selection/doc-05"
+    ],
+    "scenarioId": "pair-04-seed-fund-selection"
+  },
+  "manifestDigest": "sha256:760e6b6302dbab4968a350e628457fbfdb988a47b52b47d198af8452940d4b84"
+}

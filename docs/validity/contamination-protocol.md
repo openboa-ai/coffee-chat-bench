@@ -17,14 +17,14 @@ The audit distinguishes:
 
 1. exact or near-exact reuse of a public case, answer, rubric, or prompt
    template;
-2. source-text overlap that allows recall rather than policy transfer;
-3. evaluator exposure, where a candidate receives the hidden policy, criterion,
-   other target, or held-out answer;
+2. source-text overlap that allows recall rather than held-out judgment transfer;
+3. annotation exposure, where a candidate receives construction labels,
+   reference labels, the other target, or a held-out answer;
 4. construction leakage through IDs, option tokens, style, length, or evidence
    density; and
 5. untracked reuse of one public case as another case.
 
-Public exposure and evaluator-boundary leakage are separate threats. Neither is
+Public exposure and candidate-boundary leakage are separate threats. Neither is
 resolved by a passing schema test.
 
 ## Future evidence
@@ -33,9 +33,9 @@ An evidence bundle must bind the bank digest and include:
 
 - raw `CONTAMINATION.jsonl` and `OVERLAP-REPORT.json`;
 - exact, normalized, and bounded near-match searches against declared corpora;
-- independent blinded review of case, criterion, and answer overlap;
+- independent blinded review of case, annotation, and answer overlap;
 - candidate-render inspection showing that one condition is exposed and
-  evaluator material is excluded; and
+  human-audit annotations are excluded; and
 - source and lineage records for all synthetic material.
 
 Search results speak only about the declared corpora. They cannot prove what an
@@ -45,7 +45,7 @@ unknown provider included in training data.
 
 - `passed`: declared corpus and boundary checks complete with no unresolved
   prohibited overlap;
-- `failed`: prohibited overlap or candidate-visible evaluator material found;
+- `failed`: prohibited overlap or candidate-visible annotation/answer material found;
 - `inconclusive`: a required corpus, review, or provider attestation is absent;
 - `not_run`: the protocol has not been executed for the bound bank.
 

@@ -418,7 +418,7 @@ if (
   ]) ||
   packageJson.name !== "@openboa-ai/coffee-chat-bench" ||
   packageJson.private !== true ||
-  packageJson.version !== "2026.8.17" ||
+  packageJson.version !== "2026.8.19" ||
   packageJson.type !== "module" ||
   !equal(packageJson.exports, {
     ".": "./src/benchmark-contracts.ts",
