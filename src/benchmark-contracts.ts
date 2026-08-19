@@ -64,6 +64,7 @@ export type {
 } from "./bank.ts";
 export {
   evaluateCaseFamily,
+  evaluatePointwise,
   evaluateSubmission,
   getBenchmarkInput,
   isEvaluationDimension,
@@ -78,6 +79,8 @@ export type {
   JudgeProvenance,
   PairwiseAttempt,
   PairwiseEvaluation,
+  PointwiseEvaluation,
+  PointwiseResult,
   ScoreEvaluation,
   SubmissionEvaluation,
 } from "./evaluator.ts";

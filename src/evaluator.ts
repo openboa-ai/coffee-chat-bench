@@ -502,6 +502,120 @@ export async function evaluateSubmission(input: {
   };
 }
 
+export type PointwiseResult =
+  | ScoreEvaluation<OrdinalScore | StatedRationaleAlignmentScore>
+  | HardConstraintEvaluation;
+
+export interface PointwiseEvaluation {
+  readonly input: BenchmarkInput;
+  readonly submission: CandidateSubmission;
+  readonly objective: CandidateSubmissionValidation;
+  readonly dimension: EvaluationDimension;
+  readonly request: Extract<
+    JudgeRequest,
+    { readonly kind: "pointwise" }
+  > | null;
+  readonly result: PointwiseResult;
+}
+
+function pointwiseResult(
+  evaluation: SubmissionEvaluation,
+  dimension: EvaluationDimension,
+): PointwiseResult {
+  switch (dimension) {
+    case "judgment_alignment":
+      return evaluation.judgmentAlignment;
+    case "stated_rationale_alignment":
+      return evaluation.statedRationaleAlignment;
+    case "task_performance":
+      return evaluation.taskPerformance;
+    case "evidence_grounding":
+      return evaluation.evidenceGrounding;
+    case "hard_constraint_violation":
+      return evaluation.hardConstraintViolation;
+  }
+}
+
+/**
+ * Evaluate exactly one pointwise dimension for a candidate submission.
+ * Qualification and hill-climbing use this narrow path so one example maps
+ * to one judge call; the full case-family API remains responsible for the
+ * complete product evaluation and mirrored pairwise comparisons.
+ */
+export async function evaluatePointwise(input: {
+  readonly benchmarkInput: BenchmarkInput;
+  readonly submission: CandidateSubmission;
+  readonly dimension: EvaluationDimension;
+  readonly transport: JudgeTransport;
+  readonly protocol?: JudgeProtocol;
+}): Promise<PointwiseEvaluation> {
+  const protocol = input.protocol ?? DEFAULT_JUDGE_PROTOCOL;
+  const validation = validateCandidateSubmission(
+    input.benchmarkInput.candidate,
+    input.submission,
+  );
+  if (validation.state === "invalid") {
+    const invalid = invalidSubmissionEvaluation({
+      benchmarkInput: input.benchmarkInput,
+      submission: input.submission,
+      validation,
+      protocol,
+    });
+    return {
+      input: input.benchmarkInput,
+      submission: input.submission,
+      objective: validation,
+      dimension: input.dimension,
+      request: null,
+      result: pointwiseResult(invalid, input.dimension),
+    };
+  }
+
+  if (
+    input.benchmarkInput.condition === "unconditioned" &&
+    (input.dimension === "judgment_alignment" ||
+      input.dimension === "stated_rationale_alignment")
+  ) {
+    return {
+      input: input.benchmarkInput,
+      submission: input.submission,
+      objective: validation,
+      dimension: input.dimension,
+      request: null,
+      result: notApplicable(
+        baseProvenance(input.benchmarkInput, protocol, {
+          artifactDigest: validation.artifact.digest,
+          decisionRecordDigest: validation.decisionRecord.digest,
+        }),
+      ),
+    };
+  }
+
+  const request = createPointwiseRequest({
+    protocol,
+    dimension: input.dimension,
+    candidateInput: candidateInput(input.benchmarkInput.candidate),
+    candidateArtifact: input.submission.artifact.content,
+    ...(input.dimension === "stated_rationale_alignment"
+      ? { decisionRecord: input.submission.decisionRecord }
+      : {}),
+    inputDigest: input.benchmarkInput.inputDigest,
+    artifactDigest: validation.artifact.digest,
+    decisionRecordDigest:
+      input.dimension === "stated_rationale_alignment"
+        ? validation.decisionRecord.digest
+        : null,
+  });
+  return {
+    input: input.benchmarkInput,
+    submission: input.submission,
+    objective: validation,
+    dimension: input.dimension,
+    request,
+    result: await judgePointwise(request, input.transport),
+  };
+}
+
 function missingSubmissionEvaluation(
   input: BenchmarkInput,
   protocol: JudgeProtocol,
