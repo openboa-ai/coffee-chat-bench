@@ -63,6 +63,26 @@ text.
   pointwise reference fields. It intentionally omits construction intent so it
   can be used for output-grounded review.
 
+## Provisional Judge run
+
+The Luna campaign runner consumes this frozen corpus through an injected
+provider transport. The transport is responsible for credentials and model
+API calls; the benchmark repository records only redacted request metadata,
+rendered prompts, responses, parsed results, labels, metrics, and plots.
+
+```bash
+node --experimental-strip-types scripts/run-luna-qualification-step.mjs \
+  --transport /path/to/provider-transport.mjs \
+  --step-id 0000-baseline
+```
+
+Each step is write-once under `qualification/hill-climbing/steps/`. A complete
+step contains 144 pointwise evaluations, one selected dimension per example,
+and updates `progress.png` and its own `run.png`. These are provisional
+development measurements only; they do not activate the public bank or create
+a leaderboard. The provider transport and credentials remain outside this
+repository.
+
 Regenerate the audit and review projection with:
 
 ```bash
