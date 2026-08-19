@@ -19,45 +19,93 @@ function number(value) {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
-function metricValue(metrics, path) {
-  let value = metrics;
+export function metricValue(metricsDocument, path) {
+  let value = metricsDocument?.metrics ?? metricsDocument;
   for (const key of path) value = value?.[key];
   return number(value?.value ?? value);
+}
+
+export function metricDomain(values, minLimit, maxLimit) {
+  const measured = values.filter((value) => number(value) !== null);
+  if (measured.length === 0) return [minLimit, maxLimit];
+  const observedMin = Math.min(...measured);
+  const observedMax = Math.max(...measured);
+  const observedRange = observedMax - observedMin;
+  const padding =
+    observedRange > 0
+      ? observedRange * 0.15
+      : Math.max((maxLimit - minLimit) * 0.05, 0.05);
+  const min = Math.max(minLimit, observedMin - padding);
+  const max = Math.min(maxLimit, observedMax + padding);
+  return min < max ? [min, max] : [minLimit, maxLimit];
+}
+
+export function plotSeries(values, min, max) {
+  const safeMax = max === min ? min + 1 : max;
+  const points = [];
+  const segments = [];
+  let segment = [];
+  for (const [index, rawValue] of values.entries()) {
+    const value = number(rawValue);
+    if (value === null) {
+      if (segment.length > 0) segments.push(segment);
+      segment = [];
+      continue;
+    }
+    const point = {
+      index,
+      value,
+      normalized: Math.max(0, Math.min(1, (value - min) / (safeMax - min))),
+    };
+    points.push(point);
+    segment.push(point);
+  }
+  if (segment.length > 0) segments.push(segment);
+  return { points, segments };
 }
 
 function svgText(x, y, text, size = 20, fill = "#d8dee9", weight = 400) {
   return `<text x="${x}" y="${y}" fill="${fill}" font-size="${size}" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-weight="${weight}">${escape(text)}</text>`;
 }
 
-function panel(title, values, x, y, width, height, min = 0, max = 1) {
+function panel(
+  title,
+  values,
+  x,
+  y,
+  width,
+  height,
+  min = 0,
+  max = 1,
+  xLabels = [],
+) {
   const left = x + 52;
   const top = y + 50;
   const innerWidth = width - 72;
   const innerHeight = height - 82;
-  const safeMax = max === min ? min + 1 : max;
-  const points = values.map((value, index) => {
+  const series = plotSeries(values, min, max);
+  const toSvgPoint = ({ index, normalized }) => {
     const px =
       left +
       (values.length <= 1
         ? innerWidth / 2
         : (index / (values.length - 1)) * innerWidth);
-    const py =
-      top +
-      innerHeight -
-      (((value ?? min) - min) / (safeMax - min)) * innerHeight;
+    const py = top + innerHeight - normalized * innerHeight;
     return `${px},${py}`;
-  });
-  const line =
-    points.length > 0
-      ? `<polyline fill="none" stroke="#78a9ff" stroke-width="4" points="${points.join(" ")}"/>`
-      : "";
-  const dots = points
+  };
+  const line = series.segments
+    .map(
+      (segment) =>
+        `<polyline fill="none" stroke="#78a9ff" stroke-width="4" points="${segment.map(toSvgPoint).join(" ")}"/>`,
+    )
+    .join("");
+  const dots = series.points
     .map((point) => {
-      const [px, py] = point.split(",");
+      const [px, py] = toSvgPoint(point).split(",");
       return `<circle cx="${px}" cy="${py}" r="5" fill="#78a9ff"/>`;
     })
     .join("");
-  const labels = [min, (min + safeMax) / 2, safeMax]
+  const axisLabels = [min, (min + max) / 2, max]
     .map((value, index) =>
       svgText(
         x + 8,
@@ -68,12 +116,23 @@ function panel(title, values, x, y, width, height, min = 0, max = 1) {
       ),
     )
     .join("");
+  const stepLabels = xLabels
+    .map((label, index) => {
+      const labelX =
+        left +
+        (xLabels.length <= 1
+          ? innerWidth / 2
+          : (index / (xLabels.length - 1)) * innerWidth);
+      return svgText(labelX - 8, top + innerHeight + 23, label, 12, "#8b98aa");
+    })
+    .join("");
   return [
     `<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="14" fill="#151b26" stroke="#2d3748"/>`,
     svgText(x + 18, y + 30, title, 19, "#f0f4fa", 600),
     `<line x1="${left}" y1="${top + innerHeight}" x2="${left + innerWidth}" y2="${top + innerHeight}" stroke="#3b4657"/>`,
     `<line x1="${left}" y1="${top}" x2="${left}" y2="${top + innerHeight}" stroke="#3b4657"/>`,
-    labels,
+    axisLabels,
+    stepLabels,
     line,
     dots,
   ].join("");
@@ -132,8 +191,10 @@ export async function writeQualificationPlots({
     ["Coverage", ["coverage"], 0, 1],
     ["Invalid rate", ["invalidRate"], 0, 1],
   ];
+  const stepLabels = history.map((_, index) => `S${index}`);
   for (const [index, [title, path, min, max]] of metricSpecs.entries()) {
     const values = history.map((entry) => metricValue(entry.metrics, path));
+    const [axisMin, axisMax] = metricDomain(values, min, max);
     progress.push(
       panel(
         title,
@@ -142,8 +203,9 @@ export async function writeQualificationPlots({
         120 + Math.floor(index / 2) * 220,
         744,
         190,
-        min,
-        max,
+        axisMin,
+        axisMax,
+        stepLabels,
       ),
     );
   }
