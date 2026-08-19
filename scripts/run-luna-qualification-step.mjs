@@ -82,7 +82,7 @@ function safe(value, key = "") {
     return "[REDACTED]";
   if (typeof value === "string")
     return value.replaceAll(
-      /(?:sk|sess|rk)-[A-Za-z0-9_-]{12,}/gu,
+      /\b(?:sk|sess|rk)-(?:proj-)?[A-Za-z0-9]{20,}\b/gu,
       "[REDACTED]",
     );
   if (Array.isArray(value)) return value.map((entry) => safe(entry));
@@ -151,8 +151,11 @@ function loadChildTransport(modulePath) {
       const entry = pending.get(message.id);
       if (!entry) continue;
       pending.delete(message.id);
-      if (message.error) entry.reject(new Error(message.error));
-      else
+      if (message.error) {
+        const error = new Error(message.error);
+        error.attempts = message.attempts ?? [];
+        entry.reject(error);
+      } else
         entry.resolve({
           completion: message.result,
           attempts: message.attempts ?? [],
@@ -202,10 +205,15 @@ function recordingTransport(source) {
       async complete(request) {
         const call = { request, attempts: [], completion: null };
         calls.set(requestKey(request), call);
-        const response = await source.complete(request);
-        call.attempts = safe(response.attempts);
-        call.completion = safe(response.completion);
-        return response.completion;
+        try {
+          const response = await source.complete(request);
+          call.attempts = safe(response.attempts);
+          call.completion = safe(response.completion);
+          return response.completion;
+        } catch (error) {
+          call.attempts = safe(error?.attempts ?? []);
+          throw error;
+        }
       },
     },
   };
@@ -269,6 +277,105 @@ function metricTiming(call, started) {
   };
 }
 
+function metricAt(metrics, path) {
+  let value = metrics;
+  for (const key of path) value = value?.[key];
+  return typeof value?.value === "number" ? value.value : null;
+}
+
+function stateRate(metrics, state) {
+  const total = metrics?.total;
+  const count = metrics?.statusCounts?.[state];
+  return typeof total === "number" && total > 0 && typeof count === "number"
+    ? count / total
+    : null;
+}
+
+function compareMetric(candidate, accepted, path, direction, checks) {
+  const candidateValue = metricAt(candidate, path);
+  const acceptedValue = metricAt(accepted, path);
+  if (candidateValue === null && acceptedValue === null) return;
+  if (candidateValue === null || acceptedValue === null) {
+    checks.push({
+      path: path.join("."),
+      direction,
+      accepted: acceptedValue,
+      candidate: candidateValue,
+      comparable: false,
+      passed: false,
+      reason: "metric became measured or unmeasured",
+    });
+    return;
+  }
+  const difference = candidateValue - acceptedValue;
+  const improvement = direction === "higher" ? difference : -difference;
+  checks.push({
+    path: path.join("."),
+    direction,
+    accepted: acceptedValue,
+    candidate: candidateValue,
+    comparable: true,
+    passed: improvement >= -1e-12,
+    strictImprovement: improvement > 1e-6,
+  });
+}
+
+function compareAgainstAccepted(candidate, accepted) {
+  const checks = [];
+  const higher = [
+    ["macro", "qwk"],
+    ["macro", "pearson"],
+    ["macro", "exactAgreement"],
+    ["macro", "criticalRecall"],
+    ["macro", "criticalMcc"],
+    ["coverage"],
+    ["dimensions", "hard_constraint_violation", "exactAgreement"],
+  ];
+  const lower = [["macro", "mae"], ["macro", "signedBias"], ["invalidRate"]];
+  for (const path of higher)
+    compareMetric(candidate, accepted, path, "higher", checks);
+  for (const path of lower)
+    compareMetric(candidate, accepted, path, "lower", checks);
+
+  for (const state of ["invalid", "unavailable", "abstained"]) {
+    const candidateValue = stateRate(candidate, state);
+    const acceptedValue = stateRate(accepted, state);
+    if (candidateValue === null && acceptedValue === null) continue;
+    if (candidateValue === null || acceptedValue === null) {
+      checks.push({
+        path: `statusRates.${state}`,
+        direction: "lower",
+        accepted: acceptedValue,
+        candidate: candidateValue,
+        comparable: false,
+        passed: false,
+        reason: "status rate became measured or unmeasured",
+      });
+      continue;
+    }
+    const improvement = acceptedValue - candidateValue;
+    checks.push({
+      path: `statusRates.${state}`,
+      direction: "lower",
+      accepted: acceptedValue,
+      candidate: candidateValue,
+      comparable: true,
+      passed: improvement >= -1e-12,
+      strictImprovement: improvement > 1e-6,
+    });
+  }
+
+  const regressions = checks.filter((check) => !check.passed);
+  const strictImprovements = checks.filter((check) => check.strictImprovement);
+  return {
+    comparable: checks.every((check) => check.comparable),
+    passed: regressions.length === 0,
+    strictImprovement: strictImprovements.length > 0,
+    checks,
+    regressions,
+  };
+}
+
 async function updateIndex(path, entry) {
   const index = existsSync(path)
     ? await json(path)
@@ -311,6 +418,16 @@ async function main() {
   const indexPath = join(campaignRoot, "index.json");
   const existingIndex = existsSync(indexPath) ? await json(indexPath) : null;
   const parentStepId = existingIndex?.steps.at(-1)?.stepId ?? null;
+  const existingCampaign = existsSync(join(campaignRoot, "campaign.json"))
+    ? await json(join(campaignRoot, "campaign.json"))
+    : null;
+  const acceptedStepIdBefore = existingCampaign?.acceptedStepId ?? null;
+  const acceptedEntry = existingIndex?.steps.find(
+    (entry) => entry.stepId === acceptedStepIdBefore,
+  );
+  const acceptedMetrics = acceptedEntry
+    ? await json(join(campaignRoot, acceptedEntry.metricsPath))
+    : null;
 
   const promptDocument = options.promptPath
     ? await json(options.promptPath)
@@ -504,7 +621,26 @@ async function main() {
   const actualCalls = rows.filter((row) => row.attempts.length > 0).length;
   const completionState =
     actualCalls === routed.length ? "complete" : "incomplete";
-  const decision = completionState === "complete" ? "baseline" : "incomplete";
+  const comparison = acceptedMetrics
+    ? compareAgainstAccepted(
+        metrics,
+        acceptedMetrics.metrics ?? acceptedMetrics,
+      )
+    : null;
+  const decision =
+    completionState === "incomplete"
+      ? "incomplete"
+      : acceptedMetrics === null
+        ? "baseline"
+        : comparison?.comparable &&
+            comparison.passed &&
+            comparison.strictImprovement
+          ? "accepted"
+          : "rejected";
+  const acceptedStepIdAfter =
+    decision === "baseline" || decision === "accepted"
+      ? currentStepId
+      : acceptedStepIdBefore;
   await writeFile(
     join(stepRoot, "metrics.json"),
     `${JSON.stringify({ artifact_type: "qualification_metrics", evidenceState: "provisional", stepId: currentStepId, model: MODEL, corpusDigest: corpus.manifest.corpusDigest, labelDigest: labelManifest.labelDigest, promptDigest, metrics }, null, 2)}\n`,
@@ -512,7 +648,7 @@ async function main() {
   );
   await writeFile(
     join(stepRoot, "gate.json"),
-    `${JSON.stringify({ artifact_type: "hill_climbing_gate", evidenceState: "provisional", decision, candidateStepId: currentStepId, expectedCalls: routed.length, actualCalls, routing: Object.fromEntries(Object.entries(Object.groupBy(routed, (row) => row.dimension)).map(([key, rows]) => [key, rows.length])), summary: { coverage: metrics.coverage, invalidRate: metrics.invalidRate } }, null, 2)}\n`,
+    `${JSON.stringify({ artifact_type: "hill_climbing_gate", evidenceState: "provisional", decision, candidateStepId: currentStepId, acceptedStepIdBefore, acceptedStepIdAfter, expectedCalls: routed.length, actualCalls, routing: Object.fromEntries(Object.entries(Object.groupBy(routed, (row) => row.dimension)).map(([key, rows]) => [key, rows.length])), summary: { coverage: metrics.coverage, invalidRate: metrics.invalidRate }, comparison }, null, 2)}\n`,
     "utf8",
   );
   const index = await updateIndex(indexPath, {
@@ -534,7 +670,7 @@ async function main() {
     history,
     metrics,
   });
-  if (decision === "baseline")
+  if (decision === "baseline" || decision === "accepted")
     await writeFile(
       join(campaignRoot, "accepted-prompt.json"),
       `${JSON.stringify({ acceptedStepId: currentStepId, prompt: protocol, promptDigest, status: decision }, null, 2)}\n`,
@@ -542,7 +678,7 @@ async function main() {
     );
   await writeFile(
     join(campaignRoot, "campaign.json"),
-    `${JSON.stringify({ artifact_type: "qualification_campaign", campaignId: "luna_provisional_judge", status: "provisional", model: MODEL, corpusDigest: corpus.manifest.corpusDigest, labelDigest: labelManifest.labelDigest, acceptedStepId: decision === "baseline" ? currentStepId : null, stepCount: index.steps.length, latestStepId: currentStepId, latestDecision: decision, publicBenchmarkStatus: "not_active", publicBenchmarkUnchanged: true }, null, 2)}\n`,
+    `${JSON.stringify({ artifact_type: "qualification_campaign", campaignId: "luna_provisional_judge", status: "provisional", model: MODEL, corpusDigest: corpus.manifest.corpusDigest, labelDigest: labelManifest.labelDigest, acceptedStepId: acceptedStepIdAfter, stepCount: index.steps.length, latestStepId: currentStepId, latestDecision: decision, publicBenchmarkStatus: "not_active", publicBenchmarkUnchanged: true }, null, 2)}\n`,
     "utf8",
   );
   const finalManifest = await json(join(stepRoot, "manifest.json"));
