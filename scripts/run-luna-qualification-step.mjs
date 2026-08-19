@@ -182,6 +182,18 @@ function loadChildTransport(modulePath) {
   };
 }
 
+function requestKey(request) {
+  return stableDigest(request);
+}
+
+function renderedPromptDigest(request) {
+  return stableDigest({
+    kind: request.kind,
+    dimension: request.dimension,
+    prompt: request.prompt,
+  });
+}
+
 function recordingTransport(source) {
   const calls = new Map();
   return {
@@ -189,7 +201,7 @@ function recordingTransport(source) {
     transport: {
       async complete(request) {
         const call = { request, attempts: [], completion: null };
-        calls.set(request.promptDigest, call);
+        calls.set(requestKey(request), call);
         const response = await source.complete(request);
         call.attempts = safe(response.attempts);
         call.completion = safe(response.completion);
@@ -443,7 +455,7 @@ async function main() {
         };
       }
       const request = evaluation.request;
-      const call = request ? recording.calls.get(request.promptDigest) : null;
+      const call = request ? recording.calls.get(requestKey(request)) : null;
       const timing = metricTiming(call, started);
       const reference = referenceValue(label, dimension);
       const row = safe({
@@ -459,7 +471,7 @@ async function main() {
             ? evaluation.objective.artifact.digest
             : null,
         renderedPrompt: request?.prompt ?? null,
-        promptDigest: request?.promptDigest ?? null,
+        promptDigest: request ? renderedPromptDigest(request) : null,
         rawResponse: call?.completion ?? null,
         rawResponseDigest: call?.completion
           ? stableDigest(call.completion)
