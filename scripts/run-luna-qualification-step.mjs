@@ -112,7 +112,7 @@ function mapLimit(items, limit, worker) {
       const index = next;
       next += 1;
       if (index >= items.length) return;
-      results[index] = await worker(items[index], index);
+      results[index] = await worker(items[index]);
     }
   }
   return Promise.all(
