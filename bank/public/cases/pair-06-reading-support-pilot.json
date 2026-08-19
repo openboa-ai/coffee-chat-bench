@@ -1,0 +1,184 @@
+{
+  "release": "2026.8.19",
+  "caseId": "pair-06-reading-support-pilot",
+  "pairId": "pair-06",
+  "form": "professional_artifact",
+  "domain": "education_coaching",
+  "transferType": "near_transfer",
+  "taskArchetype": "recommendation",
+  "taskMode": "bounded",
+  "task": {
+    "instruction": "Write a recommendation on whether to introduce the new reading-support routine next term. Decide whether the current evidence warrants implementation or a further preimplementation study.",
+    "environment": {
+      "kind": "workspace",
+      "fixtureDigest": "sha256:d13e94be4550ad7049fd8e69c0fed783f1308da72e6c887bf4ce8e5830adc9d0",
+      "verifierDigest": "sha256:68822cc384955d4a113961ebad0ed3178f15327edcc35fac9136d070b2d861e7"
+    },
+    "deliverables": [
+      "an implementation recommendation",
+      "the evidential limitation",
+      "a learning or confirmation plan"
+    ],
+    "hardConstraints": [
+      "Use only claims supported by the supplied documents and prior records.",
+      "Cite the decision evidence with [doc-01] and [doc-05].",
+      "Core reading instruction and existing accessibility accommodations must continue for every learner.",
+      "Separate observed facts, interpretation, and recommendation."
+    ],
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 6000,
+      "requiredReferenceIds": ["doc-01", "doc-05"]
+    }
+  },
+  "documents": [
+    {
+      "documentId": "doc-01",
+      "documentType": "pilot_result",
+      "title": "Four-classroom reading routine pilot",
+      "authorRole": "learning research",
+      "recordedAt": "2026-06-08",
+      "content": "Seventy-two learners used ten-minute retrieval practice. Mean fluency gain was 6.1 points versus 3.8 in historical classes; assignment was not randomized.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-06-reading-support-pilot/doc-01",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-02",
+      "documentType": "library_hours",
+      "title": "Summer library hours",
+      "authorRole": "school office",
+      "recordedAt": "2026-06-01",
+      "content": "The library closes at 16:00 in July. The pilot decision concerns the autumn term.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-06-reading-support-pilot/doc-02",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-03",
+      "documentType": "teacher_capacity",
+      "title": "Autumn implementation capacity",
+      "authorRole": "instructional lead",
+      "recordedAt": "2026-06-10",
+      "content": "Six of twelve teachers can attend training before term. The routine can be stopped weekly and uses no graded assessment time.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-06-reading-support-pilot/doc-03",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-04",
+      "documentType": "selection_note",
+      "title": "Pilot class selection",
+      "authorRole": "program evaluator",
+      "recordedAt": "2026-06-09",
+      "content": "Pilot teachers volunteered and had lower staff turnover than the remaining schools. Baseline learner fluency was comparable.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-06-reading-support-pilot/doc-04",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-05",
+      "documentType": "safeguard",
+      "title": "Instruction and accommodation boundary",
+      "authorRole": "academic standards",
+      "recordedAt": "2026-06-11",
+      "content": "The routine may supplement but not replace core instruction. Captions, text-to-speech, and extended practice remain individually available.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-06-reading-support-pilot/doc-05",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "unconditioned": [],
+    "target_a": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A retailer is considering a new shelf layout after one store reports higher sales.\nShared facts [history-06-01-fact]: The comparison lacks matched foot traffic; moving shelves is reversible overnight; twenty stores could test it next month.\nDecision: Wait for a matched comparison from three stores before expanding.\nReasoning: The dispute is whether action should wait for attribution or become the means of learning."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A neighborhood program is considering text reminders for appointments.\nShared facts [history-06-02-fact]: A small pilot shows fewer no-shows; consent language was inconsistent; messages can be stopped immediately.\nMessage excerpt: Repeat the pilot with consistent consent before operational use."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: An engineering team is evaluating a caching change.\nShared facts [history-06-03-fact]: Synthetic tests show a 13% speedup; production traffic has a different request mix; canary rollback is automated.\nRetrospective: Build a representative replay before exposing production traffic."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "Situation: A literacy nonprofit is considering peer tutoring.\nShared facts [history-06-04-fact]: Two observational studies are favorable; tutor quality varies; the semester starts in two weeks.\nlog.decision=Train tutors and establish a matched baseline before assigning learners."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A newsroom is deciding whether to add context cards to breaking-news pages.\nShared facts [history-06-05-fact]: Reader interviews support the idea; click effects are unknown; cards can be removed without altering articles.\nDecision: Prototype and test comprehension before newsroom-wide adoption."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: A medical device lacks the legally required validation result.\nShared facts [history-06-06-fact]: Use in patients is prohibited until the specified validation succeeds.\nMessage excerpt: Do not deploy; complete the required validation protocol."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A public agency cannot verify an applicant's mandatory eligibility document.\nShared facts [history-06-07-fact]: The governing rule prohibits award without that document and provides a later reapplication path.\nRetrospective: Withhold the award and preserve the reapplication route."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "Situation: A farming cooperative is considering an unfamiliar cover crop.\nShared facts [history-06-08-fact]: Regional studies are mixed; a quarter-field trial is reversible after one season; seed ordering closes this week.\nlog.decision=Use the current crop until a local replicated trial resolves the soil concern."
+      }
+    ],
+    "target_b": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A retailer is considering a new shelf layout after one store reports higher sales.\nShared facts [history-06-01-fact]: The comparison lacks matched foot traffic; moving shelves is reversible overnight; twenty stores could test it next month.\nDecision: Run the layout in four varied stores with a preregistered rollback rule.\nReasoning: The dispute is whether action should wait for attribution or become the means of learning."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A neighborhood program is considering text reminders for appointments.\nShared facts [history-06-02-fact]: A small pilot shows fewer no-shows; consent language was inconsistent; messages can be stopped immediately.\nMessage excerpt: Launch a monitored opt-in cohort and compare it with the current process."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: An engineering team is evaluating a caching change.\nShared facts [history-06-03-fact]: Synthetic tests show a 13% speedup; production traffic has a different request mix; canary rollback is automated.\nRetrospective: Run a 2% production canary with latency and error abort thresholds."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "Situation: A literacy nonprofit is considering peer tutoring.\nShared facts [history-06-04-fact]: Two observational studies are favorable; tutor quality varies; the semester starts in two weeks.\nlog.decision=Start with two classrooms and use weekly reading probes to adapt the program."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A newsroom is deciding whether to add context cards to breaking-news pages.\nShared facts [history-06-05-fact]: Reader interviews support the idea; click effects are unknown; cards can be removed without altering articles.\nDecision: Deploy on one desk and learn from correction, comprehension, and workload data."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: A medical device lacks the legally required validation result.\nShared facts [history-06-06-fact]: Use in patients is prohibited until the specified validation succeeds.\nMessage excerpt: Do not deploy; complete the required validation protocol."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A public agency cannot verify an applicant's mandatory eligibility document.\nShared facts [history-06-07-fact]: The governing rule prohibits award without that document and provides a later reapplication path.\nRetrospective: Withhold the award and preserve the reapplication route."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "Situation: A farming cooperative is considering an unfamiliar cover crop.\nShared facts [history-06-08-fact]: Regional studies are mixed; a quarter-field trial is reversible after one season; seed ordering closes this week.\nlog.decision=Plant quarter-field trials on three soil types and publish the comparison plan."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": [
+      "synthetic://openboa-ai/coffee-chat-bench/pair-06-reading-support-pilot/doc-01",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-06-reading-support-pilot/doc-02",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-06-reading-support-pilot/doc-03",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-06-reading-support-pilot/doc-04",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-06-reading-support-pilot/doc-05"
+    ],
+    "scenarioId": "pair-06-reading-support-pilot"
+  },
+  "manifestDigest": "sha256:00a1807af5b6c96bc61e353bfafde720edad19e8950244dfd7b3a231c89d0c98"
+}

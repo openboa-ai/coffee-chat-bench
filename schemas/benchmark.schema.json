@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/openboa-ai/coffee-chat-bench/schema/2026-08-17",
-  "title": "Public judgment-history case",
+  "$id": "https://github.com/openboa-ai/coffee-chat-bench/schema/2026-08-19",
+  "title": "Public multi-document judgment-history case",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -14,19 +14,24 @@
     "taskArchetype",
     "taskMode",
     "task",
-    "evidence",
+    "documents",
     "contexts",
     "lineage",
     "manifestDigest"
   ],
   "properties": {
-    "release": { "const": "2026.8.17" },
+    "release": { "const": "2026.8.19" },
     "caseId": { "$ref": "#/$defs/text" },
     "pairId": { "$ref": "#/$defs/text" },
     "form": { "enum": ["dialogue", "professional_artifact"] },
     "domain": { "$ref": "#/$defs/text" },
     "transferType": {
-      "enum": ["near_transfer", "far_transfer", "boundary", "policy_conflict"]
+      "enum": [
+        "near_transfer",
+        "far_transfer",
+        "boundary_condition",
+        "cue_conflict"
+      ]
     },
     "taskArchetype": {
       "enum": [
@@ -40,7 +45,13 @@
     "task": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["instruction", "environment", "output"],
+      "required": [
+        "instruction",
+        "environment",
+        "deliverables",
+        "hardConstraints",
+        "output"
+      ],
       "properties": {
         "instruction": { "$ref": "#/$defs/text" },
         "environment": {
@@ -63,6 +74,18 @@
             }
           ]
         },
+        "deliverables": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/text" },
+          "uniqueItems": true
+        },
+        "hardConstraints": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/text" },
+          "uniqueItems": true
+        },
         "output": {
           "type": "object",
           "additionalProperties": false,
@@ -79,20 +102,11 @@
         }
       }
     },
-    "evidence": {
+    "documents": {
       "type": "array",
-      "minItems": 1,
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["id", "content", "source", "license"],
-        "properties": {
-          "id": { "$ref": "#/$defs/text" },
-          "content": { "$ref": "#/$defs/text" },
-          "source": { "$ref": "#/$defs/text" },
-          "license": { "const": "MIT" }
-        }
-      }
+      "minItems": 4,
+      "maxItems": 12,
+      "items": { "$ref": "#/$defs/document" }
     },
     "contexts": {
       "type": "object",
@@ -107,7 +121,7 @@
     "lineage": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["sourceIds", "templateId"],
+      "required": ["sourceIds", "scenarioId"],
       "properties": {
         "sourceIds": {
           "type": "array",
@@ -115,7 +129,7 @@
           "items": { "$ref": "#/$defs/text" },
           "uniqueItems": true
         },
-        "templateId": { "$ref": "#/$defs/text" }
+        "scenarioId": { "$ref": "#/$defs/text" }
       }
     },
     "manifestDigest": { "$ref": "#/$defs/digest" }
@@ -123,6 +137,30 @@
   "$defs": {
     "text": { "type": "string", "minLength": 1 },
     "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "documentId",
+        "documentType",
+        "title",
+        "authorRole",
+        "recordedAt",
+        "content",
+        "source",
+        "license"
+      ],
+      "properties": {
+        "documentId": { "$ref": "#/$defs/text" },
+        "documentType": { "$ref": "#/$defs/text" },
+        "title": { "$ref": "#/$defs/text" },
+        "authorRole": { "$ref": "#/$defs/text" },
+        "recordedAt": { "type": ["string", "null"] },
+        "content": { "$ref": "#/$defs/text" },
+        "source": { "$ref": "#/$defs/text" },
+        "license": { "const": "MIT" }
+      }
+    },
     "history": {
       "type": "array",
       "minItems": 8,

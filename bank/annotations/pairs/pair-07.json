@@ -1,0 +1,9 @@
+{
+  "pairId": "pair-07",
+  "contrastFamily": "long_term_capability_building_vs_immediate_delivery",
+  "historyRecords": 8,
+  "distinctDecisionsPerTarget": 8,
+  "convergentBoundaryEpisodes": 2,
+  "rationaleAvailability": "partial",
+  "reviewStatus": "pending_human_audit"
+}

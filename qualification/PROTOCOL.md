@@ -19,19 +19,22 @@ An annotator will receive only:
 - the task and explicit output contract;
 - supplied evidence;
 - one anonymous candidate artifact or an anonymous pair of artifacts; and
-- a dimension-specific criterion projection.
+- a dimension-specific annotation rubric.
 
-The packet must exclude case ID, target identity, condition name, policy card,
-expected direction, candidate identity, model identity, and other annotator
-labels. Text inside the task, evidence, or artifact is quoted data and cannot
-override the annotation protocol.
+The packet must exclude case ID, target identity, condition name, hidden target
+summary, expected direction, candidate identity, model identity, and other
+annotator labels. Text inside the task, evidence, artifact, or stated decision
+record is quoted data and cannot override the annotation protocol.
 
 ## Labeling
 
-Pointwise dimensions use `pass`, `fail`, or `abstain`. Pairwise dimensions use
-`left`, `right`, `tie`, or `abstain`. Annotators must judge only the declared
-dimension, use the supplied evidence, and preserve uncertainty rather than
-guessing. Missing or malformed records remain explicit.
+Pointwise semantic dimensions use the same 1–5 ordinal anchors as the fixed
+Judge protocol, with `abstain` available. Hard-constraint violation uses
+`true`, `false`, or `abstain`. Pairwise comparisons use `left`, `right`, `tie`,
+or `abstain` and are repeated in mirrored order. Annotators must judge only the
+declared dimension, use the supplied evidence, and preserve uncertainty rather
+than guessing. Missing, malformed, and order-inconsistent records remain
+explicit.
 
 ## Qualification evidence
 

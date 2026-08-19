@@ -1,0 +1,9 @@
+{
+  "pairId": "pair-05",
+  "contrastFamily": "robustness_and_resilience_margin_vs_expected_performance_optimization",
+  "historyRecords": 8,
+  "distinctDecisionsPerTarget": 8,
+  "convergentBoundaryEpisodes": 2,
+  "rationaleAvailability": "partial",
+  "reviewStatus": "pending_human_audit"
+}

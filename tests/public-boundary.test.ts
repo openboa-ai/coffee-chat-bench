@@ -4,7 +4,7 @@ import test from "node:test";
 import * as contracts from "@openboa-ai/coffee-chat-bench";
 import { bankCase } from "./fixtures.ts";
 
-test("the package exposes neutral agent and bank contracts, not judge or product internals", async () => {
+test("the package exposes the neutral evaluator and bank contracts, not product internals", async () => {
   for (const name of [
     "createCaseManifest",
     "parseCaseManifest",
@@ -12,8 +12,11 @@ test("the package exposes neutral agent and bank contracts, not judge or product
     "parseRunReceipt",
     "renderCase",
     "validateArtifact",
+    "validateCandidateSubmission",
     "validateBank",
-    "parseEvaluatorMaterial",
+    "getBenchmarkInput",
+    "evaluateSubmission",
+    "evaluateCaseFamily",
   ])
     assert.equal(
       typeof contracts[name as keyof typeof contracts],
@@ -21,14 +24,15 @@ test("the package exposes neutral agent and bank contracts, not judge or product
       name,
     );
   assert.equal("judgeOutputs" in contracts, false);
+  assert.equal("evaluateOutput" in contracts, false);
   assert.equal("createQualifiedJudgeConfiguration" in contracts, false);
   const { manifest } = await bankCase();
   const task = contracts.renderCase(manifest, {
-    trialId: "trial-boundary",
     condition: "target_a",
   });
   assert.doesNotMatch(
     JSON.stringify(task),
-    /pairId|condition|criterion|policy|evaluator/iu,
+    /"(?:pairId|condition|criterion|policy|evaluator)"\s*:/iu,
   );
+  assert.ok(task.documents.length >= 4);
 });

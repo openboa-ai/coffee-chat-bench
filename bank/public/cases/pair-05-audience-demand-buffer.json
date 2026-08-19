@@ -1,0 +1,184 @@
+{
+  "release": "2026.8.19",
+  "caseId": "pair-05-audience-demand-buffer",
+  "pairId": "pair-05",
+  "form": "professional_artifact",
+  "domain": "editorial_creative_strategy",
+  "transferType": "far_transfer",
+  "taskArchetype": "allocation_prioritization",
+  "taskMode": "open_ended",
+  "task": {
+    "instruction": "Allocate a six-episode documentary slate between the proven interview format and experimental visual essays. Account for performance variance and production resilience.",
+    "environment": {
+      "kind": "workspace",
+      "fixtureDigest": "sha256:bc9ae3f92477e736793cbb0af86d2fe7f2233cf10627a34ca43c55f6f85dd9ed",
+      "verifierDigest": "sha256:8a66a1e820b359db7632e9e966c8b778dc79ba440d725e64339bd6c302ef5cdb"
+    },
+    "deliverables": [
+      "an episode-format allocation",
+      "the demand and production risks",
+      "a revision trigger after release"
+    ],
+    "hardConstraints": [
+      "Use only claims supported by the supplied documents and prior records.",
+      "Cite the decision evidence with [doc-04] and [doc-02].",
+      "All six commissioned episodes must be deliverable before the licensing window closes on 30 November.",
+      "Separate observed facts, interpretation, and recommendation."
+    ],
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 6000,
+      "requiredReferenceIds": ["doc-04", "doc-02"]
+    }
+  },
+  "documents": [
+    {
+      "documentId": "doc-01",
+      "documentType": "creative_pitch",
+      "title": "Six visual essays pitch",
+      "authorRole": "creative director",
+      "recordedAt": "2026-06-16",
+      "content": "A unified visual season could establish a distinctive identity. The pitch assumes the specialist animation team is available for all six episodes.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-05-audience-demand-buffer/doc-01",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-02",
+      "documentType": "capacity_plan",
+      "title": "Production capacity and fallback",
+      "authorRole": "executive producer",
+      "recordedAt": "2026-06-18",
+      "content": "The animation team can guarantee two episodes. Interview crews can guarantee six. A visual essay can convert to an interview format before rough cut with a two-week cost.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-05-audience-demand-buffer/doc-02",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-03",
+      "documentType": "license_terms",
+      "title": "Archive licensing window",
+      "authorRole": "rights office",
+      "recordedAt": "2026-06-17",
+      "content": "Archive licenses expire 30 November and cannot be extended. Each format uses the same licensed material.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-05-audience-demand-buffer/doc-03",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-04",
+      "documentType": "performance_table",
+      "title": "Last season format performance",
+      "authorRole": "audience analytics",
+      "recordedAt": "2026-06-14",
+      "content": "Interview episodes averaged 410k completions with a 9% standard deviation. Two visual essays averaged 520k, but one reached 780k and one 260k.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-05-audience-demand-buffer/doc-04",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-05",
+      "documentType": "studio_inventory",
+      "title": "Studio chair inventory",
+      "authorRole": "production services",
+      "recordedAt": "2026-06-09",
+      "content": "The studio owns twelve black chairs and six gray chairs. Furniture choice does not constrain episode formats.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-05-audience-demand-buffer/doc-05",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "unconditioned": [],
+    "target_a": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A delivery cooperative is setting the number of spare bicycles.\nShared facts [history-05-01-fact]: Average breakdowns require two spares; rain weeks have required five; carrying each spare reduces daily delivery capacity.\nDecision: Keep five spares through the rainy quarter and review after the weather window.\nReasoning: The choices differ in where they hold protection against tail conditions."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A data team is assigning storage replicas across regions.\nShared facts [history-05-02-fact]: Two replicas meet the measured availability target; a third protects against a correlated regional outage at 18% more cost.\nMessage excerpt: Retain the third replica until the cross-region failover exercise succeeds."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: A greenhouse is choosing irrigation reserve capacity.\nShared facts [history-05-03-fact]: Normal demand uses 72% of the tank; one drought year reached 96%; a larger tank delays another efficiency project.\nRetrospective: Size for the drought observation and preserve a 5% operational margin."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "Situation: A call center is setting overnight staffing.\nShared facts [history-05-04-fact]: Median demand needs four staff; severe-weather spikes need eight; on-call coverage can arrive in forty minutes.\nlog.decision=Schedule six staff during the storm season and retain on-call escalation."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A community kitchen is deciding whether to reserve meals for late arrivals.\nShared facts [history-05-05-fact]: Most days use all meals by 7 p.m.; late-arrival need is irregular; leftovers can be safely redistributed next morning.\nDecision: Reserve ten meals until closing during the winter intake period."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: A chemical process exceeds its certified pressure range.\nShared facts [history-05-06-fact]: The safety case prohibits operation outside the range and no compensating control has been validated.\nMessage excerpt: Stop the process and return it to the certified operating envelope."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A blood bank detects an unverified refrigerator temperature excursion.\nShared facts [history-05-07-fact]: The release protocol requires quarantine until product viability is confirmed.\nRetrospective: Quarantine the affected units and obtain the required viability decision."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "Situation: A festival is choosing generator capacity for an outdoor stage.\nShared facts [history-05-08-fact]: Typical load is 64 kW; the headliner setup can reach 79 kW; rental options are 75 kW or 95 kW with a material cost difference.\nlog.decision=Rent 95 kW because the peak estimate and setup uncertainty exceed the smaller unit."
+      }
+    ],
+    "target_b": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A delivery cooperative is setting the number of spare bicycles.\nShared facts [history-05-01-fact]: Average breakdowns require two spares; rain weeks have required five; carrying each spare reduces daily delivery capacity.\nDecision: Keep three spares and contract same-day rentals for demand beyond the measured average.\nReasoning: The choices differ in where they hold protection against tail conditions."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A data team is assigning storage replicas across regions.\nShared facts [history-05-02-fact]: Two replicas meet the measured availability target; a third protects against a correlated regional outage at 18% more cost.\nMessage excerpt: Use two replicas and invest the released budget in faster recovery automation."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: A greenhouse is choosing irrigation reserve capacity.\nShared facts [history-05-03-fact]: Normal demand uses 72% of the tank; one drought year reached 96%; a larger tank delays another efficiency project.\nRetrospective: Keep the current tank and add soil sensors plus a contracted emergency supply."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "Situation: A call center is setting overnight staffing.\nShared facts [history-05-04-fact]: Median demand needs four staff; severe-weather spikes need eight; on-call coverage can arrive in forty minutes.\nlog.decision=Schedule four staff and use a measured queue threshold to activate on-call coverage."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A community kitchen is deciding whether to reserve meals for late arrivals.\nShared facts [history-05-05-fact]: Most days use all meals by 7 p.m.; late-arrival need is irregular; leftovers can be safely redistributed next morning.\nDecision: Reserve four meals and trigger same-day partner transfer when the waitlist exceeds that buffer."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: A chemical process exceeds its certified pressure range.\nShared facts [history-05-06-fact]: The safety case prohibits operation outside the range and no compensating control has been validated.\nMessage excerpt: Stop the process and return it to the certified operating envelope."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A blood bank detects an unverified refrigerator temperature excursion.\nShared facts [history-05-07-fact]: The release protocol requires quarantine until product viability is confirmed.\nRetrospective: Quarantine the affected units and obtain the required viability decision."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "Situation: A festival is choosing generator capacity for an outdoor stage.\nShared facts [history-05-08-fact]: Typical load is 64 kW; the headliner setup can reach 79 kW; rental options are 75 kW or 95 kW with a material cost difference.\nlog.decision=Rent 75 kW and remove the optional lighting bank if monitored load reaches 70 kW."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": [
+      "synthetic://openboa-ai/coffee-chat-bench/pair-05-audience-demand-buffer/doc-01",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-05-audience-demand-buffer/doc-02",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-05-audience-demand-buffer/doc-03",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-05-audience-demand-buffer/doc-04",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-05-audience-demand-buffer/doc-05"
+    ],
+    "scenarioId": "pair-05-audience-demand-buffer"
+  },
+  "manifestDigest": "sha256:4af7b16f2710581b83a68a532174c6a8f979a10b26ad7786560429aa739a5444"
+}

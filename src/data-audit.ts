@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { lstat, readdir, readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 import { RELEASE_ID, stableDigest } from "./contracts.ts";
@@ -15,6 +15,15 @@ const EXPECTED_DOMAINS = [
   "procurement_portfolio_allocation",
 ] as const;
 
+const EXPECTED_CENSUS = {
+  pairs: 8,
+  targets: 16,
+  historyRecordsPerTarget: 8,
+  caseFamilies: 32,
+  conditions: 3,
+  agentExecutions: 96,
+} as const;
+
 const LEGACY_MARKERS = [
   "release_a",
   "release_b",
@@ -22,11 +31,16 @@ const LEGACY_MARKERS = [
   "task_only",
   "diagnostic_target",
   "nondiagnostic_target",
+  "templateId",
+  "evaluatorPath",
+  "evaluatorDigest",
 ] as const;
 
 type SamplingPlan = {
   readonly release: string;
   readonly bankId: string;
+  readonly census: Record<string, number>;
+  readonly strata: Record<string, unknown>;
   readonly pairs: readonly {
     readonly pairId: string;
     readonly cases: readonly {
@@ -36,9 +50,10 @@ type SamplingPlan = {
       readonly form: string;
       readonly taskMode: string;
       readonly taskArchetype: string;
+      readonly documentCount: number;
+      readonly workspaceNoise: string;
     }[];
   }[];
-  readonly census: Record<string, number>;
 };
 
 export interface DataAuditReport {
@@ -47,16 +62,11 @@ export interface DataAuditReport {
   readonly checks: Readonly<Record<string, boolean>>;
   readonly census: Readonly<Record<string, number>>;
   readonly errors: readonly string[];
+  readonly warnings?: readonly string[];
 }
 
 async function readJson(path: string): Promise<unknown> {
   return JSON.parse(await readFile(path, "utf8")) as unknown;
-}
-
-function asPlan(value: unknown): SamplingPlan {
-  if (value === null || typeof value !== "object" || Array.isArray(value))
-    throw new TypeError("sampling plan must be an object");
-  return value as SamplingPlan;
 }
 
 function count(values: readonly string[]): Record<string, number> {
@@ -76,9 +86,90 @@ function check(
   if (!condition) errors.push(label);
 }
 
-function referenceIds(content: string): string[] {
-  return [...content.matchAll(/\[(history-[^\]]+)\]/gu)].map(
-    (match) => match[1]!,
+function planShape(value: unknown): SamplingPlan {
+  if (value === null || typeof value !== "object" || Array.isArray(value))
+    throw new TypeError("sampling plan must be an object");
+  return value as SamplingPlan;
+}
+
+function tokenCount(value: string): number {
+  return value.trim().split(/\s+/u).filter(Boolean).length;
+}
+
+function historyReferences(value: string): string[] {
+  return [...value.matchAll(/\[history-[^\]]+\]/gu)].map((match) => match[0]);
+}
+
+function forbiddenAnnotationKey(value: unknown): boolean {
+  if (Array.isArray(value)) return value.some(forbiddenAnnotationKey);
+  if (value === null || typeof value !== "object") return false;
+  return Object.entries(value).some(
+    ([key, nested]) =>
+      /expected|score|hidden|critical.?failure|golden|judge/iu.test(key) ||
+      forbiddenAnnotationKey(nested),
+  );
+}
+
+async function directoryNames(path: string): Promise<string[]> {
+  try {
+    return (await readdir(path)).sort();
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return [];
+    throw error;
+  }
+}
+
+async function auditAnnotations(
+  root: string,
+  bank: ValidatedBank,
+  errors: string[],
+  checks: Record<string, boolean>,
+) {
+  const pairFiles = await directoryNames(resolve(root, "annotations/pairs"));
+  const caseFiles = await directoryNames(resolve(root, "annotations/cases"));
+  check(pairFiles.length === 8, "annotations.pair-count", errors, checks);
+  check(caseFiles.length === 32, "annotations.case-count", errors, checks);
+  const expectedPairs = new Set(
+    bank.cases.map(({ entry }) => `${entry.pairId}.json`),
+  );
+  const expectedCases = new Set(
+    bank.cases.map(({ entry }) => `${entry.caseId}.json`),
+  );
+  check(
+    pairFiles.every((name) => expectedPairs.has(name)),
+    "annotations.pair-index",
+    errors,
+    checks,
+  );
+  check(
+    caseFiles.every((name) => expectedCases.has(name)),
+    "annotations.case-index",
+    errors,
+    checks,
+  );
+  const values = await Promise.all(
+    [
+      ...pairFiles.map((name) => resolve(root, "annotations/pairs", name)),
+      ...caseFiles.map((name) => resolve(root, "annotations/cases", name)),
+    ].map(readJson),
+  );
+  check(
+    values.every((value) => !forbiddenAnnotationKey(value)),
+    "annotations.no-reference-labels",
+    errors,
+    checks,
+  );
+  check(
+    values.every(
+      (value) =>
+        value !== null &&
+        typeof value === "object" &&
+        (value as Record<string, unknown>).reviewStatus ===
+          "pending_human_audit",
+    ),
+    "annotations.review-state",
+    errors,
+    checks,
   );
 }
 
@@ -88,6 +179,15 @@ function auditCases(
   checks: Record<string, boolean>,
 ) {
   const cases = bank.cases;
+  const domainCounts = count(cases.map(({ manifest }) => manifest.domain));
+  const transferCounts = count(
+    cases.map(({ manifest }) => manifest.transferType),
+  );
+  const formCounts = count(cases.map(({ manifest }) => manifest.form));
+  const modeCounts = count(cases.map(({ manifest }) => manifest.taskMode));
+  const archetypeCounts = count(
+    cases.map(({ manifest }) => manifest.taskArchetype),
+  );
   check(cases.length === 32, "census.caseFamilies", errors, checks);
   check(
     new Set(cases.map(({ entry }) => entry.pairId)).size === 8,
@@ -96,64 +196,44 @@ function auditCases(
     checks,
   );
   check(
-    cases.every(
-      ({ manifest, evaluator }) =>
-        manifest.contexts.unconditioned.length === 0 &&
-        manifest.contexts.target_a.length === 8 &&
-        manifest.contexts.target_b.length === 8,
-    ),
-    "history.cardinality",
-    errors,
-    checks,
-  );
-  const domainCounts = count(cases.map(({ manifest }) => manifest.domain));
-  check(
-    EXPECTED_DOMAINS.every((domain) => domainCounts[domain] === 4),
+    EXPECTED_DOMAINS.every((domain) => domainCounts[domain] === 4) &&
+      Object.values(domainCounts).every((value) => value === 4),
     "balance.domain",
     errors,
     checks,
   );
   check(
-    Object.values(domainCounts).every((value) => value === 4),
-    "balance.domain.no-extra",
-    errors,
-    checks,
-  );
-  check(
-    Object.values(
-      count(cases.map(({ manifest }) => manifest.transferType)),
-    ).every((value) => value === 8),
+    Object.values(transferCounts).every((value) => value === 8),
     "balance.transfer",
     errors,
     checks,
   );
   check(
-    Object.values(count(cases.map(({ manifest }) => manifest.form))).every(
-      (value) => value === 16,
-    ),
+    formCounts.dialogue === 16 && formCounts.professional_artifact === 16,
     "balance.form",
     errors,
     checks,
   );
   check(
-    Object.values(count(cases.map(({ manifest }) => manifest.taskMode))).every(
-      (value) => value === 16,
-    ),
+    modeCounts.bounded === 16 && modeCounts.open_ended === 16,
     "balance.taskMode",
     errors,
     checks,
   );
   check(
-    Object.values(
-      count(cases.map(({ manifest }) => manifest.taskArchetype)),
-    ).every((value) => value === 8),
+    archetypeCounts.recommendation === 8 &&
+      archetypeCounts.allocation_prioritization === 8 &&
+      archetypeCounts.design_threshold === 8 &&
+      archetypeCounts.critique_revision === 8,
     "balance.taskArchetype",
     errors,
     checks,
   );
-  for (const { entry, manifest, evaluator } of cases) {
+  for (const { entry, manifest } of cases) {
     const a = manifest.contexts.target_a;
     const b = manifest.contexts.target_b;
+    const documents = manifest.documents;
+    const documentSources = documents.map(({ source }) => source);
     check(
       manifest.caseId === entry.caseId &&
         manifest.pairId === entry.pairId &&
@@ -167,15 +247,27 @@ function auditCases(
       checks,
     );
     check(
-      evaluator.caseId === entry.caseId && evaluator.pairId === entry.pairId,
-      `binding.evaluator-entry.${entry.caseId}`,
+      manifest.contexts.unconditioned.length === 0 &&
+        a.length === 8 &&
+        b.length === 8,
+      `history.cardinality.${entry.caseId}`,
       errors,
       checks,
     );
     check(
       JSON.stringify(a.map(({ id, format }) => ({ id, format }))) ===
         JSON.stringify(b.map(({ id, format }) => ({ id, format }))),
-      `pair.history-shape.${entry.caseId}`,
+      `history.shape-parity.${entry.caseId}`,
+      errors,
+      checks,
+    );
+    check(
+      a.every(
+        (record, index) =>
+          JSON.stringify(historyReferences(record.content)) ===
+          JSON.stringify(historyReferences(b[index]?.content ?? "")),
+      ),
+      `history.reference-parity.${entry.caseId}`,
       errors,
       checks,
     );
@@ -183,127 +275,98 @@ function auditCases(
       Object.values(count(a.map(({ format }) => format))).every(
         (value) => value === 2,
       ),
-      `pair.history-format-balance.${entry.caseId}`,
+      `history.format-balance.${entry.caseId}`,
       errors,
       checks,
     );
-    check(
-      a.every(
-        (record, index) =>
-          JSON.stringify(referenceIds(record.content).sort()) ===
-          JSON.stringify(referenceIds(b[index]!.content).sort()),
-      ),
-      `pair.history-evidence-parity.${entry.caseId}`,
-      errors,
-      checks,
+    const aLength = a.reduce((total, item) => total + item.content.length, 0);
+    const bLength = b.reduce((total, item) => total + item.content.length, 0);
+    const aTokens = a.reduce(
+      (total, item) => total + tokenCount(item.content),
+      0,
     );
-    const aLength = a.reduce((n, item) => n + item.content.length, 0);
-    const bLength = b.reduce((n, item) => n + item.content.length, 0);
+    const bTokens = b.reduce(
+      (total, item) => total + tokenCount(item.content),
+      0,
+    );
     check(
       Math.abs(aLength - bLength) / Math.max(aLength, bLength) <= 0.1,
-      `pair.history-parity.${entry.caseId}`,
+      `history.length-parity.${entry.caseId}`,
       errors,
       checks,
     );
-    const tokenCount = (records: readonly { readonly content: string }[]) =>
-      records.reduce(
-        (total, item) => total + item.content.trim().split(/\s+/u).length,
-        0,
-      );
-    const aTokens = tokenCount(a);
-    const bTokens = tokenCount(b);
     check(
       Math.abs(aTokens - bTokens) / Math.max(aTokens, bTokens) <= 0.1,
-      `pair.history-token-parity.${entry.caseId}`,
+      `history.token-parity.${entry.caseId}`,
       errors,
       checks,
     );
     check(
       a.filter(({ content }) => content.includes("Reasoning:")).length <= 4 &&
         b.filter(({ content }) => content.includes("Reasoning:")).length <= 4,
-      `pair.partial-rationale-limit.${entry.caseId}`,
+      `history.rationale-limit.${entry.caseId}`,
+      errors,
+      checks,
+    );
+    const differingRecords = a.filter(
+      (record, index) => record.content !== b[index]?.content,
+    ).length;
+    check(
+      differingRecords >= 4 && differingRecords <= 6,
+      `history.diagnostic-difference.${entry.caseId}`,
       errors,
       checks,
     );
     check(
-      evaluator.historyRoles.length === 8 &&
-        evaluator.historyRoles.filter((role) => role === "diagnostic")
-          .length === 5 &&
-        evaluator.historyRoles.filter((role) => role === "boundary").length ===
-          2 &&
-        evaluator.historyRoles.filter((role) => role === "distractor")
-          .length === 1,
-      `pair.history-roles.${entry.caseId}`,
+      a.filter((record, index) => record.content === b[index]?.content)
+        .length >= 2,
+      `history.constraint-convergence.${entry.caseId}`,
       errors,
       checks,
     );
     check(
-      a.every(({ content }) => content === content.trim()) &&
-        b.every(({ content }) => content === content.trim()),
-      `pair.history-whitespace.${entry.caseId}`,
-      errors,
-      checks,
-    );
-    check(
-      a
-        .slice(0, 5)
-        .every((record, index) => record.content !== b[index]!.content),
-      `pair.diagnostic-discrimination.${entry.caseId}`,
-      errors,
-      checks,
-    );
-    check(
-      a
-        .slice(5, 7)
-        .every((record, index) => record.content === b[index + 5]!.content),
-      `pair.boundary-convergence.${entry.caseId}`,
-      errors,
-      checks,
-    );
-    check(
-      a[7]!.content === b[7]!.content,
-      `pair.distractor-convergence.${entry.caseId}`,
-      errors,
-      checks,
-    );
-    check(
-      evaluator.criterion.authority === "project_author_hypothesis" &&
-        evaluator.criterion.humanReviewed === false,
-      `criterion.provisional.${entry.caseId}`,
-      errors,
-      checks,
-    );
-    check(
-      manifest.evidence.every(
-        ({ source, license }) =>
-          source.startsWith(
-            "synthetic://openboa-ai/coffee-chat-bench/evidence/",
-          ) && license === "MIT",
-      ),
-      `provenance.synthetic.${entry.caseId}`,
-      errors,
-      checks,
-    );
-    const publicText = JSON.stringify(manifest).toLowerCase();
-    const policyCues = [
-      ...evaluator.policy.target_a.priorityCues,
-      ...evaluator.policy.target_b.priorityCues,
-    ].map((cue) => cue.toLowerCase());
-    check(
-      !publicText.match(
-        /"criterion"\s*:|diagnostic_target|nondiagnostic_target|judge_qualification|release_[ab]/iu,
-      ) &&
-        policyCues.every(
-          (cue) => !cue.includes("_") || !publicText.includes(cue),
+      documents.length >= 4 &&
+        documents.length <= 12 &&
+        new Set(documents.map(({ documentId }) => documentId)).size ===
+          documents.length &&
+        new Set(documentSources).size === documents.length &&
+        documents.every(
+          ({ source, license }) =>
+            source.startsWith("synthetic://") && license === "MIT",
         ),
-      `public.no-evaluator-leak.${entry.caseId}`,
+      `documents.integrity.${entry.caseId}`,
       errors,
       checks,
     );
     check(
-      evaluator.policy.target_a.priorityCues.length === 3 &&
-        evaluator.policy.target_b.priorityCues.length === 3,
-      `policy.cue-cardinality.${entry.caseId}`,
+      manifest.task.output.requiredReferenceIds.every((id) =>
+        documents.some((document) => document.documentId === id),
+      ) &&
+        manifest.lineage.sourceIds.length === documents.length &&
+        manifest.lineage.sourceIds.every((source) =>
+          documentSources.includes(source),
+        ),
+      `documents.references.${entry.caseId}`,
+      errors,
+      checks,
+    );
+    check(
+      manifest.task.deliverables.length >= 3 &&
+        manifest.task.hardConstraints.length >= 3 &&
+        manifest.task.output.requiredReferenceIds.every((id) =>
+          manifest.task.hardConstraints.some((constraint) =>
+            constraint.includes(`[${id}]`),
+          ),
+        ),
+      `task.contract.${entry.caseId}`,
+      errors,
+      checks,
+    );
+    check(
+      !JSON.stringify(manifest).match(
+        new RegExp(LEGACY_MARKERS.join("|"), "u"),
+      ),
+      `public.no-legacy-fields.${entry.caseId}`,
       errors,
       checks,
     );
@@ -312,18 +375,10 @@ function auditCases(
 
 export async function auditBank(root: string): Promise<DataAuditReport> {
   const bank = await validateBank(root);
-  const plan = asPlan(await readJson(resolve(root, "sampling-plan.json")));
+  const plan = planShape(await readJson(resolve(root, "sampling-plan.json")));
   const errors: string[] = [];
   const checks: Record<string, boolean> = {};
-  const evidenceSources = bank.cases.flatMap(({ manifest }) =>
-    manifest.evidence.map(({ source }) => source),
-  );
-  const planSemantic = {
-    release: plan.release,
-    bankId: plan.bankId,
-    pairs: plan.pairs,
-    census: plan.census,
-  };
+  const warnings: string[] = [];
   check(
     plan.release === RELEASE_ID &&
       plan.bankId === "public_judgment_history_bank",
@@ -332,81 +387,40 @@ export async function auditBank(root: string): Promise<DataAuditReport> {
     checks,
   );
   check(
-    JSON.stringify(plan.census) ===
-      JSON.stringify({
-        pairs: 8,
-        targets: 16,
-        historyRecordsPerTarget: 8,
-        caseFamilies: 32,
-        conditions: 3,
-        agentExecutions: 96,
-      }),
+    JSON.stringify(plan.census) === JSON.stringify(EXPECTED_CENSUS),
     "sampling.census",
     errors,
     checks,
   );
   check(
-    stableDigest(planSemantic) === bank.manifest.samplingPlanDigest,
+    stableDigest(plan) === bank.manifest.samplingPlanDigest,
     "binding.sampling-plan-digest",
-    errors,
-    checks,
-  );
-  check(
-    new Set(evidenceSources).size === evidenceSources.length,
-    "lineage.unique-evidence-sources",
     errors,
     checks,
   );
   check(plan.pairs.length === 8, "sampling.pairs", errors, checks);
   check(
-    plan.pairs.every((pair) => pair.cases.length === 4),
-    "sampling.cases-per-pair",
-    errors,
-    checks,
-  );
-  check(
-    new Set(plan.pairs.map((pair) => pair.pairId)).size === 8,
-    "sampling.unique-pairs",
-    errors,
-    checks,
-  );
-  check(
-    plan.pairs.every(
-      (pair) =>
-        new Set(pair.cases.map(({ transferType }) => transferType)).size ===
-          4 &&
-        Object.values(count(pair.cases.map(({ form }) => form))).every(
-          (value) => value === 2,
-        ) &&
-        Object.values(count(pair.cases.map(({ taskMode }) => taskMode))).every(
-          (value) => value === 2,
-        ),
-    ),
+    plan.pairs.every((pair) => {
+      const transfer = count(
+        pair.cases.map(({ transferType }) => transferType),
+      );
+      const forms = count(pair.cases.map(({ form }) => form));
+      const modes = count(pair.cases.map(({ taskMode }) => taskMode));
+      const archetypes = count(
+        pair.cases.map(({ taskArchetype }) => taskArchetype),
+      );
+      return (
+        pair.cases.length === 4 &&
+        Object.values(transfer).every((value) => value === 1) &&
+        forms.dialogue === 2 &&
+        forms.professional_artifact === 2 &&
+        modes.bounded === 2 &&
+        modes.open_ended === 2 &&
+        Object.values(archetypes).every((value) => value === 1) &&
+        pair.cases.every(({ caseId }) => caseId.startsWith(`${pair.pairId}-`))
+      );
+    }),
     "sampling.pair-cell-coverage",
-    errors,
-    checks,
-  );
-  check(
-    plan.pairs.every((pair) =>
-      pair.cases.every(({ caseId }) => caseId.startsWith(`${pair.pairId}-`)),
-    ),
-    "sampling.case-lineage",
-    errors,
-    checks,
-  );
-  check(
-    bank.manifest.cases.length === 32,
-    "binding.bank-census",
-    errors,
-    checks,
-  );
-  check(
-    bank.manifest.cases.every(
-      ({ casePath, evaluatorPath }) =>
-        casePath.startsWith("public/") &&
-        evaluatorPath.startsWith("evaluator/"),
-    ),
-    "boundary.paths",
     errors,
     checks,
   );
@@ -459,12 +473,32 @@ export async function auditBank(root: string): Promise<DataAuditReport> {
     checks,
   );
   check(
+    bank.manifest.cases.every(({ casePath }) =>
+      casePath.startsWith("public/cases/"),
+    ),
+    "boundary.public-paths-only",
+    errors,
+    checks,
+  );
+  try {
+    await lstat(resolve(root, "evaluator"));
+    check(false, "boundary.no-evaluator-directory", errors, checks);
+  } catch (error) {
+    check(
+      (error as NodeJS.ErrnoException).code === "ENOENT",
+      "boundary.no-evaluator-directory",
+      errors,
+      checks,
+    );
+  }
+  check(
     !JSON.stringify(bank).match(new RegExp(LEGACY_MARKERS.join("|"), "u")),
     "boundary.no-legacy-identifiers",
     errors,
     checks,
   );
   auditCases(bank, errors, checks);
+  await auditAnnotations(root, bank, errors, checks);
   const census = {
     pairs: new Set(bank.cases.map(({ entry }) => entry.pairId)).size,
     targets: 16,
@@ -473,11 +507,20 @@ export async function auditBank(root: string): Promise<DataAuditReport> {
     conditions: 3,
     agentExecutions: bank.cases.length * 3,
   };
+  const documentCount = bank.cases.reduce(
+    (total, { manifest }) => total + manifest.documents.length,
+    0,
+  );
+  if (documentCount < 160 || documentCount > 288)
+    warnings.push(
+      `document count is ${documentCount}; inspect the generated bundles`,
+    );
   return {
     status: errors.length === 0 ? "passed" : "failed",
     bankDigest: bank.manifest.bankDigest,
     checks,
     census,
     errors,
+    warnings,
   };
 }

@@ -2,7 +2,7 @@ import { stableDigest, type Digest } from "./digest.ts";
 
 export { canonicalJson, stableDigest, type Digest } from "./digest.ts";
 
-export const RELEASE_ID = "2026.8.17" as const;
+export const RELEASE_ID = "2026.8.19" as const;
 export const BENCHMARK_FORMS = ["dialogue", "professional_artifact"] as const;
 export const BENCHMARK_CONDITIONS = [
   "unconditioned",
@@ -12,8 +12,8 @@ export const BENCHMARK_CONDITIONS = [
 export const TRANSFER_TYPES = [
   "near_transfer",
   "far_transfer",
-  "boundary",
-  "policy_conflict",
+  "boundary_condition",
+  "cue_conflict",
 ] as const;
 export const TASK_ARCHETYPES = [
   "recommendation",
@@ -112,6 +112,17 @@ export interface HistoryRecord {
   readonly content: string;
 }
 
+export interface CaseDocument {
+  readonly documentId: string;
+  readonly documentType: string;
+  readonly title: string;
+  readonly authorRole: string;
+  readonly recordedAt: string | null;
+  readonly content: string;
+  readonly source: string;
+  readonly license: "MIT";
+}
+
 export interface CaseManifestSemantic {
   readonly release: typeof RELEASE_ID;
   readonly caseId: string;
@@ -130,24 +141,21 @@ export interface CaseManifestSemantic {
           readonly fixtureDigest: Digest;
           readonly verifierDigest: Digest;
         };
+    readonly deliverables: readonly string[];
+    readonly hardConstraints: readonly string[];
     readonly output: {
       readonly mediaType: "text/plain";
       readonly maxBytes: number;
       readonly requiredReferenceIds: readonly string[];
     };
   };
-  readonly evidence: readonly {
-    readonly id: string;
-    readonly content: string;
-    readonly source: string;
-    readonly license: "MIT";
-  }[];
+  readonly documents: readonly CaseDocument[];
   readonly contexts: Readonly<
     Record<BenchmarkCondition, readonly HistoryRecord[]>
   >;
   readonly lineage: {
     readonly sourceIds: readonly string[];
-    readonly templateId: string;
+    readonly scenarioId: string;
   };
 }
 
@@ -183,6 +191,36 @@ function parseHistory(
   return history;
 }
 
+function parseDocument(value: unknown, label: string): CaseDocument {
+  const parsed = record(value, label);
+  exact(
+    parsed,
+    [
+      "documentId",
+      "documentType",
+      "title",
+      "authorRole",
+      "recordedAt",
+      "content",
+      "source",
+      "license",
+    ],
+    label,
+  );
+  if (parsed.recordedAt !== null && typeof parsed.recordedAt !== "string")
+    throw new TypeError(`${label}.recordedAt must be a string or null`);
+  return {
+    documentId: string(parsed.documentId, `${label}.documentId`),
+    documentType: string(parsed.documentType, `${label}.documentType`),
+    title: string(parsed.title, `${label}.title`),
+    authorRole: string(parsed.authorRole, `${label}.authorRole`),
+    recordedAt: parsed.recordedAt as string | null,
+    content: string(parsed.content, `${label}.content`),
+    source: string(parsed.source, `${label}.source`),
+    license: literal(parsed.license, ["MIT"] as const, `${label}.license`),
+  };
+}
+
 function parseCaseSemantic(value: unknown): CaseManifestSemantic {
   const parsed = record(value, "case manifest semantic");
   exact(
@@ -197,14 +235,18 @@ function parseCaseSemantic(value: unknown): CaseManifestSemantic {
       "taskArchetype",
       "taskMode",
       "task",
-      "evidence",
+      "documents",
       "contexts",
       "lineage",
     ],
     "case manifest semantic",
   );
   const task = record(parsed.task, "case manifest.task");
-  exact(task, ["instruction", "environment", "output"], "case manifest.task");
+  exact(
+    task,
+    ["instruction", "environment", "deliverables", "hardConstraints", "output"],
+    "case manifest.task",
+  );
   const environment = record(
     task.environment,
     "case manifest.task.environment",
@@ -227,37 +269,27 @@ function parseCaseSemantic(value: unknown): CaseManifestSemantic {
     ["mediaType", "maxBytes", "requiredReferenceIds"],
     "case manifest.task.output",
   );
-  if (!Array.isArray(parsed.evidence))
-    throw new TypeError("case manifest.evidence must be an array");
-  const evidence = parsed.evidence.map((entry, index) => {
-    const item = record(entry, `case manifest.evidence[${index}]`);
-    exact(
-      item,
-      ["id", "content", "source", "license"],
-      `case manifest.evidence[${index}]`,
+  if (!Array.isArray(parsed.documents))
+    throw new TypeError("case manifest.documents must be an array");
+  const documents = parsed.documents.map((entry, index) =>
+    parseDocument(entry, `case manifest.documents[${index}]`),
+  );
+  if (documents.length < 4 || documents.length > 12)
+    throw new TypeError(
+      "case manifest.documents must contain 4 to 12 documents",
     );
-    return {
-      id: string(item.id, `case manifest.evidence[${index}].id`),
-      content: string(item.content, `case manifest.evidence[${index}].content`),
-      source: string(item.source, `case manifest.evidence[${index}].source`),
-      license: literal(
-        item.license,
-        ["MIT"] as const,
-        `case manifest.evidence[${index}].license`,
-      ),
-    };
-  });
-  if (evidence.length === 0)
-    throw new TypeError("case manifest.evidence must not be empty");
-  const evidenceIds = evidence.map(({ id }) => id);
-  if (new Set(evidenceIds).size !== evidenceIds.length)
-    throw new TypeError("case manifest evidence IDs must be unique");
+  const documentIds = documents.map(({ documentId }) => documentId);
+  if (new Set(documentIds).size !== documentIds.length)
+    throw new TypeError("case manifest document IDs must be unique");
+  const documentSources = documents.map(({ source }) => source);
+  if (new Set(documentSources).size !== documentSources.length)
+    throw new TypeError("case manifest document sources must be unique");
   const requiredReferenceIds = strings(
     output.requiredReferenceIds,
     "case manifest.task.output.requiredReferenceIds",
   );
-  if (requiredReferenceIds.some((id) => !evidenceIds.includes(id)))
-    throw new TypeError("required references must resolve to case evidence");
+  if (requiredReferenceIds.some((id) => !documentIds.includes(id)))
+    throw new TypeError("required references must resolve to case documents");
   const contexts = record(parsed.contexts, "case manifest.contexts");
   exact(contexts, BENCHMARK_CONDITIONS, "case manifest.contexts");
   const contextProjection = Object.fromEntries(
@@ -271,7 +303,7 @@ function parseCaseSemantic(value: unknown): CaseManifestSemantic {
     ]),
   ) as unknown as CaseManifestSemantic["contexts"];
   const lineage = record(parsed.lineage, "case manifest.lineage");
-  exact(lineage, ["sourceIds", "templateId"], "case manifest.lineage");
+  exact(lineage, ["sourceIds", "scenarioId"], "case manifest.lineage");
   return {
     release: literal(parsed.release, [RELEASE_ID], "case manifest.release"),
     caseId: string(parsed.caseId, "case manifest.caseId"),
@@ -305,6 +337,16 @@ function parseCaseSemantic(value: unknown): CaseManifestSemantic {
                 "case manifest.task.environment.verifierDigest",
               ),
             },
+      deliverables: strings(
+        task.deliverables,
+        "case manifest.task.deliverables",
+        true,
+      ),
+      hardConstraints: strings(
+        task.hardConstraints,
+        "case manifest.task.hardConstraints",
+        true,
+      ),
       output: {
         mediaType: literal(
           output.mediaType,
@@ -319,7 +361,7 @@ function parseCaseSemantic(value: unknown): CaseManifestSemantic {
         requiredReferenceIds,
       },
     },
-    evidence,
+    documents,
     contexts: contextProjection,
     lineage: {
       sourceIds: strings(
@@ -327,9 +369,9 @@ function parseCaseSemantic(value: unknown): CaseManifestSemantic {
         "case manifest.lineage.sourceIds",
         true,
       ),
-      templateId: string(
-        lineage.templateId,
-        "case manifest.lineage.templateId",
+      scenarioId: string(
+        lineage.scenarioId,
+        "case manifest.lineage.scenarioId",
       ),
     },
   };
@@ -356,7 +398,7 @@ export function parseCaseManifest(value: unknown): CaseManifest {
       "taskArchetype",
       "taskMode",
       "task",
-      "evidence",
+      "documents",
       "contexts",
       "lineage",
       "manifestDigest",

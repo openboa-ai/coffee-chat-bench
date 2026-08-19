@@ -1,0 +1,184 @@
+{
+  "release": "2026.8.19",
+  "caseId": "pair-08-statutory-policy-notice",
+  "pairId": "pair-08",
+  "form": "professional_artifact",
+  "domain": "organizational_design",
+  "transferType": "boundary_condition",
+  "taskArchetype": "design_threshold",
+  "taskMode": "bounded",
+  "task": {
+    "instruction": "Design an editorial rule for the employee policy notice and apply it to produce a compliant, readable version that preserves the legally required text.",
+    "environment": {
+      "kind": "workspace",
+      "fixtureDigest": "sha256:5722dee31c6ee0a24310fc0cae971ce6b54edd7e806524489a1463d3b83442d4",
+      "verifierDigest": "sha256:423fc5bf07b250dca6670cf373aa7f53c321382f91f1a9d40f57b9969d230490"
+    },
+    "deliverables": [
+      "an editorial boundary rule",
+      "a compliant notice",
+      "a separate plain-language explanation"
+    ],
+    "hardConstraints": [
+      "Use only claims supported by the supplied documents and prior records.",
+      "Cite the decision evidence with [doc-03] and [doc-05].",
+      "The statutory notice paragraph must appear verbatim and may not be shortened, paraphrased, or moved behind a link.",
+      "Separate observed facts, interpretation, and recommendation."
+    ],
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 6000,
+      "requiredReferenceIds": ["doc-03", "doc-05"]
+    }
+  },
+  "documents": [
+    {
+      "documentId": "doc-01",
+      "documentType": "distribution_plan",
+      "title": "Notice email distribution groups",
+      "authorRole": "people operations",
+      "recordedAt": "2026-07-12",
+      "content": "The email reaches 4,280 active workers. Distribution volume does not change required wording.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-08-statutory-policy-notice/doc-01",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-02",
+      "documentType": "simplified_draft",
+      "title": "Short employee notice draft",
+      "authorRole": "internal communications",
+      "recordedAt": "2026-07-14",
+      "content": "Your schedule may change when business needs require it. Talk to your manager if the new schedule creates difficulty.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-08-statutory-policy-notice/doc-02",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-03",
+      "documentType": "legal_text",
+      "title": "Required statutory paragraph",
+      "authorRole": "employment counsel",
+      "recordedAt": "2026-07-10",
+      "content": "Required text: 'A proposed material change to regular working hours will be notified in writing not fewer than 21 calendar days before taking effect, except where an emergency exemption defined by statute applies.'",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-08-statutory-policy-notice/doc-03",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-04",
+      "documentType": "reader_test",
+      "title": "Notice comprehension test",
+      "authorRole": "employee experience",
+      "recordedAt": "2026-07-13",
+      "content": "Readers understood the deadline when it appeared as a separate highlighted sentence. Legal terms required a short example, but links were rarely opened.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-08-statutory-policy-notice/doc-04",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-05",
+      "documentType": "communication_rule",
+      "title": "Required text and explanatory material",
+      "authorRole": "employment counsel",
+      "recordedAt": "2026-07-15",
+      "content": "The required paragraph must be verbatim and visible. A plain-language summary and examples may follow if they do not narrow the right.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-08-statutory-policy-notice/doc-05",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "unconditioned": [],
+    "target_a": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A museum is writing a label for a disputed artifact date.\nShared facts [history-08-01-fact]: The archive supports a date range; visitor testing favors a single year; the uncertainty is historically material.\nDecision: Lead with the supported range and explain why the date remains disputed.\nReasoning: Both communicate the record, but they prioritize epistemic prominence differently."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A health charity is adapting a technical report for a public campaign.\nShared facts [history-08-02-fact]: The report finds an association, not causation; audience testing shows that the term association is poorly understood.\nMessage excerpt: Keep the noncausal qualification in the headline and explain it plainly."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: A documentary team is editing a long interview.\nShared facts [history-08-03-fact]: The speaker's conclusion depends on a condition stated two minutes earlier; shorter cuts test better without it.\nRetrospective: Keep the condition adjacent to the conclusion even if the sequence is longer."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "Situation: A software team is rewriting release notes for nontechnical customers.\nShared facts [history-08-04-fact]: The engineering note distinguishes data loss from delayed synchronization; users mainly ask whether their work is safe.\nlog.decision=Preserve the distinction before summarizing the practical impact."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A public historian is adapting testimony for an exhibition.\nShared facts [history-08-05-fact]: The witness uses an outdated term that is important to the period; visitors may misread it as current institutional language.\nDecision: Quote the term with immediate historical context."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: A court-ordered notice has prescribed wording.\nShared facts [history-08-06-fact]: Changing the wording would make the notice legally defective; accessibility formatting may be added without changing text.\nMessage excerpt: Publish the prescribed wording with accessible formatting."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A medication warning must use regulator-approved language.\nShared facts [history-08-07-fact]: The approved warning is mandatory and additional explanation cannot contradict or obscure it.\nRetrospective: Use the approved warning and add a separate plain-language explanation."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "Situation: A science podcast is describing a study with a small, nonrepresentative sample.\nShared facts [history-08-08-fact]: The mechanism is interesting; the sample limits population claims; listeners disengage during long methodology sections.\nlog.decision=State the sample limit before discussing broader implications."
+      }
+    ],
+    "target_b": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A museum is writing a label for a disputed artifact date.\nShared facts [history-08-01-fact]: The archive supports a date range; visitor testing favors a single year; the uncertainty is historically material.\nDecision: Lead with the most likely year and place the supported range in the next sentence.\nReasoning: Both communicate the record, but they prioritize epistemic prominence differently."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A health charity is adapting a technical report for a public campaign.\nShared facts [history-08-02-fact]: The report finds an association, not causation; audience testing shows that the term association is poorly understood.\nMessage excerpt: Use an action-oriented headline and place the noncausal qualification in the opening paragraph."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: A documentary team is editing a long interview.\nShared facts [history-08-03-fact]: The speaker's conclusion depends on a condition stated two minutes earlier; shorter cuts test better without it.\nRetrospective: Move the condition into an on-screen card so the spoken sequence remains concise."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "Situation: A software team is rewriting release notes for nontechnical customers.\nShared facts [history-08-04-fact]: The engineering note distinguishes data loss from delayed synchronization; users mainly ask whether their work is safe.\nlog.decision=Open with the practical safety answer and link the technical distinction directly below it."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A public historian is adapting testimony for an exhibition.\nShared facts [history-08-05-fact]: The witness uses an outdated term that is important to the period; visitors may misread it as current institutional language.\nDecision: Paraphrase in the main label and provide the exact quotation in an accessible source panel."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: A court-ordered notice has prescribed wording.\nShared facts [history-08-06-fact]: Changing the wording would make the notice legally defective; accessibility formatting may be added without changing text.\nMessage excerpt: Publish the prescribed wording with accessible formatting."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A medication warning must use regulator-approved language.\nShared facts [history-08-07-fact]: The approved warning is mandatory and additional explanation cannot contradict or obscure it.\nRetrospective: Use the approved warning and add a separate plain-language explanation."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "Situation: A science podcast is describing a study with a small, nonrepresentative sample.\nShared facts [history-08-08-fact]: The mechanism is interesting; the sample limits population claims; listeners disengage during long methodology sections.\nlog.decision=Open with the mechanism, then state the sample limit before any population implication."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": [
+      "synthetic://openboa-ai/coffee-chat-bench/pair-08-statutory-policy-notice/doc-01",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-08-statutory-policy-notice/doc-02",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-08-statutory-policy-notice/doc-03",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-08-statutory-policy-notice/doc-04",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-08-statutory-policy-notice/doc-05"
+    ],
+    "scenarioId": "pair-08-statutory-policy-notice"
+  },
+  "manifestDigest": "sha256:0ca6589414af4217711e1e6c15a377481ff2d5752afd0f17e7b40d93850b3b0d"
+}

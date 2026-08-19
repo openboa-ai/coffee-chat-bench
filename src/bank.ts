@@ -63,15 +63,6 @@ function array(value: unknown, label: string): unknown[] {
   return value;
 }
 
-function strings(value: unknown, label: string): string[] {
-  const values = array(value, label).map((entry, index) =>
-    string(entry, `${label}[${index}]`),
-  );
-  if (new Set(values).size !== values.length)
-    throw new TypeError(`${label} must not contain duplicates`);
-  return values;
-}
-
 export interface BankCaseEntry {
   readonly caseId: string;
   readonly pairId: string;
@@ -81,9 +72,7 @@ export interface BankCaseEntry {
   readonly taskArchetype: TaskArchetype;
   readonly taskMode: TaskMode;
   readonly casePath: string;
-  readonly evaluatorPath: string;
   readonly manifestDigest: Digest;
-  readonly evaluatorDigest: Digest;
 }
 
 export interface BankManifestSemantic {
@@ -101,61 +90,9 @@ export type BankManifest = BankManifestSemantic & {
   readonly bankDigest: Digest;
 };
 
-export interface TargetPolicy {
-  readonly priorityCues: readonly [string, string, string];
-  readonly tieBreaker: string;
-}
-
-export interface SharedVeto {
-  readonly name: string;
-  readonly condition: string;
-  readonly requiredAction: string;
-}
-
-export interface CriterionSpec {
-  readonly authority: "project_author_hypothesis";
-  readonly humanReviewed: false;
-  readonly expectedDecisionFeatures: Readonly<{
-    readonly target_a: readonly string[];
-    readonly target_b: readonly string[];
-  }>;
-  readonly expectedReasoningFeatures: readonly string[];
-  readonly allowedAlternatives: readonly string[];
-  readonly taskPerformanceConditions: readonly string[];
-  readonly evidenceGroundingConditions: readonly string[];
-  readonly criticalFailures: readonly string[];
-}
-
-export interface EvaluatorMaterialSemantic {
-  readonly release: typeof RELEASE_ID;
-  readonly caseId: string;
-  readonly pairId: string;
-  readonly policy: {
-    readonly sharedVeto: SharedVeto;
-    readonly target_a: TargetPolicy;
-    readonly target_b: TargetPolicy;
-  };
-  readonly historyRoles: readonly [
-    string,
-    string,
-    string,
-    string,
-    string,
-    string,
-    string,
-    string,
-  ];
-  readonly criterion: CriterionSpec;
-}
-
-export type EvaluatorMaterial = EvaluatorMaterialSemantic & {
-  readonly evaluatorDigest: Digest;
-};
-
 export interface ValidatedBankCase {
   readonly entry: BankCaseEntry;
   readonly manifest: CaseManifest;
-  readonly evaluator: EvaluatorMaterial;
 }
 
 export interface ValidatedBank {
@@ -177,9 +114,7 @@ function parseEntry(value: unknown, index: number): BankCaseEntry {
       "taskArchetype",
       "taskMode",
       "casePath",
-      "evaluatorPath",
       "manifestDigest",
-      "evaluatorDigest",
     ],
     label,
   );
@@ -200,9 +135,7 @@ function parseEntry(value: unknown, index: number): BankCaseEntry {
     ),
     taskMode: literal(parsed.taskMode, TASK_MODES, `${label}.taskMode`),
     casePath: string(parsed.casePath, `${label}.casePath`),
-    evaluatorPath: string(parsed.evaluatorPath, `${label}.evaluatorPath`),
     manifestDigest: digest(parsed.manifestDigest, `${label}.manifestDigest`),
-    evaluatorDigest: digest(parsed.evaluatorDigest, `${label}.evaluatorDigest`),
   };
 }
 
@@ -227,11 +160,10 @@ function parseSemantic(value: unknown): BankManifestSemantic {
   );
   if (new Set(cases.map(({ caseId }) => caseId)).size !== cases.length)
     throw new TypeError("bank case IDs must be unique");
-  if (
-    new Set(cases.map(({ pairId }) => pairId)).size !== 8 &&
-    cases.length === 32
-  )
-    throw new TypeError("the complete bank must contain eight target pairs");
+  if (cases.length !== 32)
+    throw new TypeError("the public bank must contain exactly 32 cases");
+  if (new Set(cases.map(({ pairId }) => pairId)).size !== 8)
+    throw new TypeError("the public bank must contain exactly eight pairs");
   return {
     release: literal(parsed.release, [RELEASE_ID], "bank.release"),
     bankId: literal(
@@ -290,154 +222,6 @@ export function parseBankManifest(value: unknown): BankManifest {
   };
 }
 
-function parseTargetPolicy(value: unknown, label: string): TargetPolicy {
-  const parsed = record(value, label);
-  exact(parsed, ["priorityCues", "tieBreaker"], label);
-  const cues = strings(parsed.priorityCues, `${label}.priorityCues`);
-  if (cues.length !== 3)
-    throw new TypeError(
-      `${label}.priorityCues must contain exactly three cues`,
-    );
-  return {
-    priorityCues: cues as [string, string, string],
-    tieBreaker: string(parsed.tieBreaker, `${label}.tieBreaker`),
-  };
-}
-
-function parseEvaluator(value: unknown): EvaluatorMaterial {
-  const parsed = record(value, "evaluator material");
-  exact(
-    parsed,
-    [
-      "release",
-      "caseId",
-      "pairId",
-      "policy",
-      "historyRoles",
-      "criterion",
-      "evaluatorDigest",
-    ],
-    "evaluator material",
-  );
-  const policy = record(parsed.policy, "evaluator.policy");
-  exact(policy, ["sharedVeto", "target_a", "target_b"], "evaluator.policy");
-  const veto = record(policy.sharedVeto, "evaluator.policy.sharedVeto");
-  exact(
-    veto,
-    ["name", "condition", "requiredAction"],
-    "evaluator.policy.sharedVeto",
-  );
-  const criterion = record(parsed.criterion, "evaluator.criterion");
-  exact(
-    criterion,
-    [
-      "authority",
-      "humanReviewed",
-      "expectedDecisionFeatures",
-      "expectedReasoningFeatures",
-      "allowedAlternatives",
-      "taskPerformanceConditions",
-      "evidenceGroundingConditions",
-      "criticalFailures",
-    ],
-    "evaluator.criterion",
-  );
-  const decision = record(
-    criterion.expectedDecisionFeatures,
-    "evaluator.criterion.expectedDecisionFeatures",
-  );
-  exact(
-    decision,
-    ["target_a", "target_b"],
-    "evaluator.criterion.expectedDecisionFeatures",
-  );
-  const parsedCriterion: CriterionSpec = {
-    authority: literal(
-      criterion.authority,
-      ["project_author_hypothesis"] as const,
-      "evaluator.criterion.authority",
-    ),
-    humanReviewed:
-      criterion.humanReviewed === false
-        ? false
-        : (() => {
-            throw new TypeError(
-              "evaluator.criterion.humanReviewed must be false",
-            );
-          })(),
-    expectedDecisionFeatures: {
-      target_a: strings(
-        decision.target_a,
-        "evaluator.criterion.expectedDecisionFeatures.target_a",
-      ),
-      target_b: strings(
-        decision.target_b,
-        "evaluator.criterion.expectedDecisionFeatures.target_b",
-      ),
-    },
-    expectedReasoningFeatures: strings(
-      criterion.expectedReasoningFeatures,
-      "evaluator.criterion.expectedReasoningFeatures",
-    ),
-    allowedAlternatives: strings(
-      criterion.allowedAlternatives,
-      "evaluator.criterion.allowedAlternatives",
-    ),
-    taskPerformanceConditions: strings(
-      criterion.taskPerformanceConditions,
-      "evaluator.criterion.taskPerformanceConditions",
-    ),
-    evidenceGroundingConditions: strings(
-      criterion.evidenceGroundingConditions,
-      "evaluator.criterion.evidenceGroundingConditions",
-    ),
-    criticalFailures: strings(
-      criterion.criticalFailures,
-      "evaluator.criterion.criticalFailures",
-    ),
-  };
-  const historyRoles = array(parsed.historyRoles, "evaluator.historyRoles").map(
-    (entry, index) => string(entry, `evaluator.historyRoles[${index}]`),
-  );
-  if (historyRoles.length !== 8)
-    throw new TypeError("evaluator.historyRoles must contain eight roles");
-  const semantic: EvaluatorMaterialSemantic = {
-    release: literal(parsed.release, [RELEASE_ID], "evaluator.release"),
-    caseId: string(parsed.caseId, "evaluator.caseId"),
-    pairId: string(parsed.pairId, "evaluator.pairId"),
-    policy: {
-      sharedVeto: {
-        name: string(veto.name, "evaluator.policy.sharedVeto.name"),
-        condition: string(
-          veto.condition,
-          "evaluator.policy.sharedVeto.condition",
-        ),
-        requiredAction: string(
-          veto.requiredAction,
-          "evaluator.policy.sharedVeto.requiredAction",
-        ),
-      },
-      target_a: parseTargetPolicy(policy.target_a, "evaluator.policy.target_a"),
-      target_b: parseTargetPolicy(policy.target_b, "evaluator.policy.target_b"),
-    },
-    historyRoles:
-      historyRoles as unknown as EvaluatorMaterialSemantic["historyRoles"],
-    criterion: parsedCriterion,
-  };
-  return {
-    ...semantic,
-    evaluatorDigest:
-      digest(parsed.evaluatorDigest, "evaluator.evaluatorDigest") ===
-      stableDigest(semantic)
-        ? (parsed.evaluatorDigest as Digest)
-        : (() => {
-            throw new TypeError(
-              "evaluator.evaluatorDigest does not match its content",
-            );
-          })(),
-  };
-}
-
 function safePath(root: string, value: string, prefix: string): string {
   if (
     value.startsWith("/") ||
@@ -464,10 +248,6 @@ async function readJsonFile(path: string, label: string): Promise<unknown> {
   }
 }
 
-export function parseEvaluatorMaterial(value: unknown): EvaluatorMaterial {
-  return parseEvaluator(value);
-}
-
 export function parseValidatedBank(value: unknown): ValidatedBank {
   const parsed = record(value, "validated bank");
   exact(parsed, ["manifest", "cases"], "validated bank");
@@ -475,11 +255,7 @@ export function parseValidatedBank(value: unknown): ValidatedBank {
   const cases = array(parsed.cases, "validated bank.cases").map(
     (value, index) => {
       const item = record(value, `validated bank.cases[${index}]`);
-      exact(
-        item,
-        ["entry", "manifest", "evaluator"],
-        `validated bank.cases[${index}]`,
-      );
+      exact(item, ["entry", "manifest"], `validated bank.cases[${index}]`);
       const entry = parseEntry(item.entry, index);
       const declared = manifest.cases[index];
       if (!declared || JSON.stringify(entry) !== JSON.stringify(declared))
@@ -487,7 +263,6 @@ export function parseValidatedBank(value: unknown): ValidatedBank {
           `validated bank.cases[${index}].entry does not match the bank census`,
         );
       const caseManifest = parseCaseManifest(item.manifest);
-      const evaluator = parseEvaluator(item.evaluator);
       if (
         caseManifest.caseId !== entry.caseId ||
         caseManifest.pairId !== entry.pairId ||
@@ -496,21 +271,27 @@ export function parseValidatedBank(value: unknown): ValidatedBank {
         caseManifest.transferType !== entry.transferType ||
         caseManifest.taskArchetype !== entry.taskArchetype ||
         caseManifest.taskMode !== entry.taskMode ||
-        caseManifest.manifestDigest !== entry.manifestDigest ||
-        evaluator.caseId !== entry.caseId ||
-        evaluator.pairId !== entry.pairId ||
-        evaluator.evaluatorDigest !== entry.evaluatorDigest
+        caseManifest.manifestDigest !== entry.manifestDigest
       )
         throw new TypeError(
           `validated bank.cases[${index}] does not bind its index entry`,
         );
-      return { entry, manifest: caseManifest, evaluator };
+      return { entry, manifest: caseManifest };
     },
   );
+  if (cases.length !== manifest.cases.length)
+    throw new TypeError("validated bank case count does not match the census");
   return { manifest, cases };
 }
 
 export async function validateBank(root: string): Promise<ValidatedBank> {
+  try {
+    await lstat(resolve(root, "evaluator"));
+    throw new TypeError("public bank must not contain bank/evaluator");
+  } catch (error) {
+    if (error instanceof TypeError) throw error;
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+  }
   const manifest = parseBankManifest(
     await readJsonFile(resolve(root, "bank.json"), "bank.json"),
   );
@@ -521,10 +302,6 @@ export async function validateBank(root: string): Promise<ValidatedBank> {
       manifest: await readJsonFile(
         safePath(root, entry.casePath, "public"),
         entry.casePath,
-      ),
-      evaluator: await readJsonFile(
-        safePath(root, entry.evaluatorPath, "evaluator"),
-        entry.evaluatorPath,
       ),
     });
   }

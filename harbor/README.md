@@ -1,30 +1,43 @@
 # Harbor projection
 
-This directory owns one candidate-neutral projection from the validated public
-bank into Harbor tasks. It is not a provider, model, agent, judge, receipt, or
-report adapter.
+This directory projects the validated public bank into candidate-neutral Harbor
+tasks. It does not select or run an agent, call an AI judge, manage credentials,
+or create a performance report.
 
-The projector emits the current Harbor single-step task shape documented in
-[Task Structure](https://www.harborframework.com/docs/tasks): `task.toml` with
-external schema `1.4`, an instruction, a no-network pinned container, a
-declared `/workspace/answer.txt` artifact, a structural Oracle, and a structural
-verifier. The task's `tests/` directory contains its own copy of the pinned
-Dockerfile so Harbor's `environment_mode = "separate"` can build the verifier in
-a fresh container rather than reusing the candidate environment; that image
-copies only the verifier script into `/tests`. The verifier accepts only a
-bounded regular file and writes
-`/logs/verifier/reward.txt`; `1` means the response satisfies the objective
-byte, UTF-8, and reference contract. It is never semantic benchmark credit.
+The projector follows Harbor's documented task structure with external schema
+`1.4`. Every projected task contains:
 
-Run the projection with an absolute new output directory:
+- one candidate-visible instruction and selected history;
+- a pinned, no-network candidate environment;
+- `/workspace/input/` documents for workspace-form tasks;
+- `/workspace/artifact.txt`;
+- `/workspace/decision-record.json`; and
+- a separate structural verifier environment.
+
+The final artifact must satisfy the case's UTF-8, byte, and required-reference
+contract. The decision record must contain the declared fields and may cite
+only document or history IDs visible to that candidate condition. It is a
+stated rationale, not hidden chain-of-thought.
+
+The structural verifier writes `/logs/verifier/reward.txt`. A value of `1`
+means only that both files satisfy the objective submission contract. It is not
+semantic benchmark credit and cannot establish judgment alignment, task
+performance, evidence grounding, or activation.
+
+Run the projection into an absolute path that does not yet exist:
 
 ```sh
 node --experimental-strip-types harbor/project.ts bank /absolute/path/to/output
 ```
 
-The output contains 96 `task-<digest>` directories and one evaluator-side
-projection manifest. Verification reconstructs the expected projection from
-the validated bank instead of trusting that manifest as its own authority. No
-condition, policy, rubric, expected direction, system identity, or credential
-enters a task directory. The Eval repository owns installed-Harbor validation
-and all actual system execution.
+The output contains exactly 96 `task-<digest>` directories and one projection
+manifest. Verification reconstructs the expected bytes from the validated bank
+rather than trusting the generated manifest.
+
+No condition name, target identity, construction annotation, reference label,
+Judge rubric, provider credential, or candidate identity enters a task. The
+Eval repository owns installed-Harbor execution, isolation evidence, candidate
+receipts, and delivery of the resulting submission to this Bench evaluator.
+
+See [Harbor task documentation](https://www.harborframework.com/docs/tasks) for
+the external task format.

@@ -1,0 +1,180 @@
+{
+  "release": "2026.8.19",
+  "caseId": "pair-04-marketplace-ranking-review",
+  "pairId": "pair-04",
+  "form": "dialogue",
+  "domain": "product_service_operations",
+  "transferType": "cue_conflict",
+  "taskArchetype": "critique_revision",
+  "taskMode": "open_ended",
+  "task": {
+    "instruction": "Respond to the marketplace lead about a ranking proposal that improves completed orders but was designed without seller consultation. Critique it and propose a launch decision that addresses both measured utility and procedural legitimacy.",
+    "environment": { "kind": "conversation" },
+    "deliverables": [
+      "a critique",
+      "a launch or delay decision",
+      "a meaningful seller recourse mechanism"
+    ],
+    "hardConstraints": [
+      "Use only claims supported by the supplied documents and prior records.",
+      "Cite the decision evidence with [doc-01] and [doc-05].",
+      "Sponsored placement must remain labeled and sellers may not be penalized for declining the new fulfillment service.",
+      "Separate observed facts, interpretation, and recommendation."
+    ],
+    "output": {
+      "mediaType": "text/plain",
+      "maxBytes": 6000,
+      "requiredReferenceIds": ["doc-01", "doc-05"]
+    }
+  },
+  "documents": [
+    {
+      "documentId": "doc-01",
+      "documentType": "offline_result",
+      "title": "Ranking experiment readout",
+      "authorRole": "marketplace science",
+      "recordedAt": "2026-07-25",
+      "content": "The proposed ranker increases predicted completed orders by 6.8%. Gains concentrate among sellers using the platform fulfillment service; cancellation predictions improve across all sellers.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-04-marketplace-ranking-review/doc-01",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-02",
+      "documentType": "office_hours",
+      "title": "Seller support office hours",
+      "authorRole": "community operations",
+      "recordedAt": "2026-07-20",
+      "content": "Weekly office hours move from Tuesday to Thursday. This is not evidence about ranking effects.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-04-marketplace-ranking-review/doc-02",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-03",
+      "documentType": "seller_letter",
+      "title": "Independent seller coalition letter",
+      "authorRole": "seller coalition",
+      "recordedAt": "2026-07-26",
+      "content": "Sellers were not told fulfillment adoption would affect discovery. Small sellers request an explanation, an opt-out from the test, and impact data by seller size.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-04-marketplace-ranking-review/doc-03",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-04",
+      "documentType": "launch_window",
+      "title": "Quarter launch calendar",
+      "authorRole": "product operations",
+      "recordedAt": "2026-07-24",
+      "content": "A 10% traffic experiment can start 5 August. Missing that date delays full launch but does not affect current marketplace operation.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-04-marketplace-ranking-review/doc-04",
+      "license": "MIT"
+    },
+    {
+      "documentId": "doc-05",
+      "documentType": "platform_rules",
+      "title": "Ranking and sponsorship rules",
+      "authorRole": "trust policy",
+      "recordedAt": "2026-06-02",
+      "content": "Paid placement must be labeled. Declining fulfillment cannot itself reduce rank; predicted delivery reliability may be used if applied consistently and explained.",
+      "source": "synthetic://openboa-ai/coffee-chat-bench/pair-04-marketplace-ranking-review/doc-05",
+      "license": "MIT"
+    }
+  ],
+  "contexts": {
+    "unconditioned": [],
+    "target_a": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A city is assigning weekend street closures for community events.\nShared facts [history-04-01-fact]: Three districts apply; traffic modeling favors one route; two districts were excluded from the previous consultation.\nDecision: Run a short affected-district review before assigning the contested weekend.\nReasoning: Both choices are accountable but give different weight to participation before allocation."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A foundation must distribute translation support among partner groups.\nShared facts [history-04-02-fact]: Usage data favors two large partners; four small partners lack comparable tracking; the grant promises equitable access.\nMessage excerpt: Agree on an access floor with all partners before allocating the remainder."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: A company is choosing employee representatives for a workspace redesign.\nShared facts [history-04-03-fact]: A random panel takes three weeks; department heads can nominate a panel in three days; construction begins in five weeks.\nRetrospective: Delay nonstructural choices and recruit the random panel for decisions affecting daily use."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "Situation: A conservation program is selecting farms for limited soil testing.\nShared facts [history-04-04-fact]: Risk scoring identifies eight farms; local associations dispute two input variables; the testing season is short.\nlog.decision=Correct the disputed variables with association review before final selection."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A university allocates emergency housing after a residence fire.\nShared facts [history-04-05-fact]: Verified accessibility and dependent-care needs differ; affected students cannot wait for a campus-wide consultation.\nDecision: Use published need tiers with an immediate appeal desk staffed by student services."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: A flood response team assigns rescue boats during an active evacuation.\nShared facts [history-04-06-fact]: Dispatch data identifies trapped residents and safe routes; delay creates immediate physical danger.\nMessage excerpt: Dispatch by verified danger and capacity while logging every decision for later review."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A transit agency is choosing which bus shelters receive lighting upgrades.\nShared facts [history-04-07-fact]: Ridership favors downtown; harassment reports are concentrated at lower-ridership stops; the budget covers six sites.\nRetrospective: Include riders from the affected stops in setting the safety weighting before ranking all sites.\nReasoning: The consequence is distributed, but delay also leaves a documented safety burden in place."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "Situation: A professional association is revising its conference travel grants.\nShared facts [history-04-08-fact]: Past awards concentrate in three institutions; peer review predicts presentation quality; early-career members request a different criterion.\nlog.decision=Convene a member panel to set the weighting before opening applications."
+      }
+    ],
+    "target_b": [
+      {
+        "id": "record-01",
+        "format": "decision_note",
+        "content": "Situation: A city is assigning weekend street closures for community events.\nShared facts [history-04-01-fact]: Three districts apply; traffic modeling favors one route; two districts were excluded from the previous consultation.\nDecision: Assign the modeled route and publish the reasons and appeal window.\nReasoning: Both choices are accountable but give different weight to participation before allocation."
+      },
+      {
+        "id": "record-02",
+        "format": "message_excerpt",
+        "content": "Situation: A foundation must distribute translation support among partner groups.\nShared facts [history-04-02-fact]: Usage data favors two large partners; four small partners lack comparable tracking; the grant promises equitable access.\nMessage excerpt: Fund the two measured high-use partners first and reserve a transparent application pool for the rest."
+      },
+      {
+        "id": "record-03",
+        "format": "retrospective",
+        "content": "Situation: A company is choosing employee representatives for a workspace redesign.\nShared facts [history-04-03-fact]: A random panel takes three weeks; department heads can nominate a panel in three days; construction begins in five weeks.\nRetrospective: Use nominated representatives now and publish a two-week objection and correction process."
+      },
+      {
+        "id": "record-04",
+        "format": "structured_log",
+        "content": "Situation: A conservation program is selecting farms for limited soil testing.\nShared facts [history-04-04-fact]: Risk scoring identifies eight farms; local associations dispute two input variables; the testing season is short.\nlog.decision=Select the six uncontested highest-risk farms and reopen the remaining slots after variable review."
+      },
+      {
+        "id": "record-05",
+        "format": "decision_note",
+        "content": "Situation: A university allocates emergency housing after a residence fire.\nShared facts [history-04-05-fact]: Verified accessibility and dependent-care needs differ; affected students cannot wait for a campus-wide consultation.\nDecision: Use published need tiers with an immediate appeal desk staffed by student services."
+      },
+      {
+        "id": "record-06",
+        "format": "message_excerpt",
+        "content": "Situation: A flood response team assigns rescue boats during an active evacuation.\nShared facts [history-04-06-fact]: Dispatch data identifies trapped residents and safe routes; delay creates immediate physical danger.\nMessage excerpt: Dispatch by verified danger and capacity while logging every decision for later review."
+      },
+      {
+        "id": "record-07",
+        "format": "retrospective",
+        "content": "Situation: A transit agency is choosing which bus shelters receive lighting upgrades.\nShared facts [history-04-07-fact]: Ridership favors downtown; harassment reports are concentrated at lower-ridership stops; the budget covers six sites.\nRetrospective: Apply a published safety-and-use formula now and fund the six highest combined scores.\nReasoning: The consequence is distributed, but delay also leaves a documented safety burden in place."
+      },
+      {
+        "id": "record-08",
+        "format": "structured_log",
+        "content": "Situation: A professional association is revising its conference travel grants.\nShared facts [history-04-08-fact]: Past awards concentrate in three institutions; peer review predicts presentation quality; early-career members request a different criterion.\nlog.decision=Publish a blended score and run the cycle, with a scheduled criterion review using applicant outcomes."
+      }
+    ]
+  },
+  "lineage": {
+    "sourceIds": [
+      "synthetic://openboa-ai/coffee-chat-bench/pair-04-marketplace-ranking-review/doc-01",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-04-marketplace-ranking-review/doc-02",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-04-marketplace-ranking-review/doc-03",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-04-marketplace-ranking-review/doc-04",
+      "synthetic://openboa-ai/coffee-chat-bench/pair-04-marketplace-ranking-review/doc-05"
+    ],
+    "scenarioId": "pair-04-marketplace-ranking-review"
+  },
+  "manifestDigest": "sha256:807e3cc06de05fcf64db5e7ab4e54b1213e872074a9e97115fe9d25aff9ed9dd"
+}

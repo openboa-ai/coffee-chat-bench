@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 import { validateBank, type ValidatedBankCase } from "../src/bank.ts";
 
 export async function bankCase(
-  caseId = "pair-01-near_transfer",
+  caseId = "pair-01-missed-delivery-window",
 ): Promise<ValidatedBankCase> {
   const bank = await validateBank(resolve("bank"));
   const value = bank.cases.find(({ manifest }) => manifest.caseId === caseId);
@@ -12,7 +12,7 @@ export async function bankCase(
   return value;
 }
 
-export async function rawCase(caseId = "pair-01-near_transfer") {
+export async function rawCase(caseId = "pair-01-missed-delivery-window") {
   return JSON.parse(
     await readFile(resolve("bank/public/cases", `${caseId}.json`), "utf8"),
   ) as Record<string, unknown>;

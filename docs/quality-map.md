@@ -2,34 +2,38 @@
 
 ## Status
 
-The repository is `not_active`. Current checks cover contract consistency,
-public-bank construction, Harbor projection, provenance, and the inactive
-boundary. They do not establish semantic validity, human-grounded judge
-qualification, candidate performance, or activation.
+The repository is `not_active`. Current checks cover public-input contract
+consistency, document-bundle construction, Harbor projection, provenance, and
+the inactive boundary. They do not establish semantic validity, human-grounded
+judge qualification, candidate performance, or activation.
 
 ## Quality surfaces
 
-| Objective                   | Observable acceptance criterion                                                                    | Evidence tier                 | Gate                    |
-| --------------------------- | -------------------------------------------------------------------------------------------------- | ----------------------------- | ----------------------- |
-| Candidate independence      | No candidate, product, provider, or credential import                                              | contract/integration boundary | inactive check + tests  |
-| Fixed public bank           | 8 pairs, 16 targets, 32 cases, 3 conditions, 96 projections                                        | contract                      | `data:audit`            |
-| Matched histories           | Same record IDs, formats, evidence references, and ≤10% length difference for A/B                  | construction contract         | `data:audit`            |
-| Policy/evaluator separation | Rendered input contains only one selected history; hidden policy and criterion stay evaluator-only | behavior/acceptance           | render + Harbor tests   |
-| Case diversity              | Domain, form, transfer, task mode, and archetype cells match the sampling plan                     | contract                      | `data:audit`            |
-| Objective artifact contract | Byte limit, UTF-8, BOM, and required references are enforced                                       | contract/behavior             | artifact tests          |
-| Harbor projection           | Exactly 96 unique no-network tasks with structural verifier parity                                 | integration boundary          | Harbor projection tests |
-| Semantic measurement        | AI judge consumes the criterion contract and preserves explicit nonnumeric states                  | evaluation                    | next PR                 |
-| Human criterion             | Blinded human references support judge reliability and calibration                                 | validity                      | future study            |
-| Activation                  | Required validity evidence is present and scope-limited                                            | benchmark                     | future audit            |
+| Objective                     | Observable acceptance criterion                                                               | Evidence tier         | Gate                       |
+| ----------------------------- | --------------------------------------------------------------------------------------------- | --------------------- | -------------------------- |
+| Candidate independence        | No product, provider, credential, or candidate import                                         | contract/integration  | inactive checks + tests    |
+| One public bank               | 8 pairs, 16 targets, 32 cases, 3 conditions, 96 projections                                   | construction contract | `data:audit`               |
+| Self-contained inputs         | Every case has task, constraints, deliverables, 5 documents, and source binding               | contract              | `data:audit`               |
+| Realistic document context    | Each case has sufficient evidence, a natural distractor, and coherent constraints             | construction review   | direct review              |
+| Matched histories             | Same IDs, formats, facts, and <=10% A/B length/token difference                               | construction contract | `data:audit`               |
+| Candidate boundary            | Renderer exposes documents plus exactly one selected history and no annotations               | behavior/acceptance   | render + Harbor tests      |
+| Objective submission contract | Artifact bytes/references and stated-decision-record shape/source visibility are enforced     | contract/behavior     | artifact + evaluator tests |
+| Harbor projection             | Exactly 96 unique no-network tasks emit artifact plus decision record with verifier parity    | integration boundary  | Harbor tests               |
+| Pointwise measurement         | Dimension-specific calls isolate judgment, stated rationale, task, grounding, and constraints | evaluation            | evaluator scenarios        |
+| Pairwise measurement          | Four comparisons run in canonical and mirrored order; disagreement stays nonnumeric           | evaluation            | evaluator scenarios        |
+| Human criterion               | Blinded human references support judge reliability and calibration                            | validity              | future study               |
+| Activation                    | Required validity evidence exists and scope is explicit                                       | benchmark             | future audit               |
 
 ## Ownership
 
-- `coffee-chat-bench` owns cases, evaluator material, rendering, objective
-  contracts, and validity plans.
-- `coffee-chat-eval` owns adapters, provider/model/host execution, isolation,
-  receipts, and performance reports.
-- Product implementation tests do not award benchmark value or semantic policy
-  credit.
+- `coffee-chat-bench` owns public cases, human-audit construction sidecars,
+  rendering, objective contracts, and validity plans.
+- `coffee-chat-eval` owns adapters, agent/model/host execution, isolation,
+  receipts, Judge transport configuration, and performance reports.
+- `coffee-chat-bench` owns the provider-neutral Judge protocol, semantic
+  evaluation orchestration, parsing, and benchmark validity evidence.
+- Product implementation tests do not award benchmark value or semantic
+  judgment-alignment credit.
 
 ## Required verification
 

@@ -1,0 +1,501 @@
+{
+  "release": "2026.8.19",
+  "corpusId": "provisional_judge_qualification_corpus",
+  "constructionIntentCounts": {
+    "context_insensitive_judgment": 1,
+    "cue_omission": 3,
+    "grounding_weakness": 15,
+    "hard_constraint_breach": 16,
+    "integrated_control": 4,
+    "integrated_response": 18,
+    "material_task_omission": 20,
+    "mixed_borderline": 16,
+    "rationale_action_inconsistency": 17,
+    "rationale_underspecified": 14,
+    "target_insensitive_judgment": 14,
+    "target_policy_reversal": 2,
+    "unsupported_material_claim": 4
+  },
+  "familyVariants": [
+    {
+      "familyVariantId": "pair-01-missed-delivery-window--base",
+      "sourceCaseId": "pair-01-missed-delivery-window",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "integrated_response",
+        "target_a": "integrated_response",
+        "target_b": "target_insensitive_judgment"
+      }
+    },
+    {
+      "familyVariantId": "pair-01-governance-migration-sequence--base",
+      "sourceCaseId": "pair-01-governance-migration-sequence",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "grounding_weakness",
+        "target_a": "target_insensitive_judgment",
+        "target_b": "rationale_underspecified"
+      }
+    },
+    {
+      "familyVariantId": "pair-01-emergency-bypass-proposal--base",
+      "sourceCaseId": "pair-01-emergency-bypass-proposal",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "material_task_omission",
+        "target_a": "rationale_underspecified",
+        "target_b": "rationale_action_inconsistency"
+      }
+    },
+    {
+      "familyVariantId": "pair-07-certified-repair-deadline--stress-2",
+      "sourceCaseId": "pair-07-certified-repair-deadline",
+      "variant": "stress",
+      "constructionIntent": {
+        "unconditioned": "unsupported_material_claim",
+        "target_a": "hard_constraint_breach",
+        "target_b": "integrated_control"
+      }
+    },
+    {
+      "familyVariantId": "pair-01-fund-commitment-window--base",
+      "sourceCaseId": "pair-01-fund-commitment-window",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "mixed_borderline",
+        "target_a": "grounding_weakness",
+        "target_b": "material_task_omission"
+      }
+    },
+    {
+      "familyVariantId": "pair-02-observatory-instrument-platform--base",
+      "sourceCaseId": "pair-02-observatory-instrument-platform",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "integrated_response",
+        "target_a": "material_task_omission",
+        "target_b": "hard_constraint_breach"
+      }
+    },
+    {
+      "familyVariantId": "pair-02-learning-platform-contract--base",
+      "sourceCaseId": "pair-02-learning-platform-contract",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "grounding_weakness",
+        "target_a": "hard_constraint_breach",
+        "target_b": "mixed_borderline"
+      }
+    },
+    {
+      "familyVariantId": "pair-02-learning-platform-contract--stress",
+      "sourceCaseId": "pair-02-learning-platform-contract",
+      "variant": "stress",
+      "constructionIntent": {
+        "unconditioned": "material_task_omission",
+        "target_a": "mixed_borderline",
+        "target_b": "integrated_response"
+      }
+    },
+    {
+      "familyVariantId": "pair-02-irreversible-billing-cutover--base",
+      "sourceCaseId": "pair-02-irreversible-billing-cutover",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "hard_constraint_breach",
+        "target_a": "integrated_response",
+        "target_b": "target_insensitive_judgment"
+      }
+    },
+    {
+      "familyVariantId": "pair-02-river-monitoring-commitment--base",
+      "sourceCaseId": "pair-02-river-monitoring-commitment",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "mixed_borderline",
+        "target_a": "target_insensitive_judgment",
+        "target_b": "rationale_underspecified"
+      }
+    },
+    {
+      "familyVariantId": "pair-03-regional-intake-variants--base",
+      "sourceCaseId": "pair-03-regional-intake-variants",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "integrated_response",
+        "target_a": "rationale_underspecified",
+        "target_b": "rationale_action_inconsistency"
+      }
+    },
+    {
+      "familyVariantId": "pair-03-regional-intake-variants--stress",
+      "sourceCaseId": "pair-03-regional-intake-variants",
+      "variant": "stress",
+      "constructionIntent": {
+        "unconditioned": "grounding_weakness",
+        "target_a": "rationale_action_inconsistency",
+        "target_b": "grounding_weakness"
+      }
+    },
+    {
+      "familyVariantId": "pair-03-incident-command-handoffs--base",
+      "sourceCaseId": "pair-03-incident-command-handoffs",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "material_task_omission",
+        "target_a": "grounding_weakness",
+        "target_b": "material_task_omission"
+      }
+    },
+    {
+      "familyVariantId": "pair-03-statutory-vaccine-allocation--base",
+      "sourceCaseId": "pair-03-statutory-vaccine-allocation",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "hard_constraint_breach",
+        "target_a": "material_task_omission",
+        "target_b": "hard_constraint_breach"
+      }
+    },
+    {
+      "familyVariantId": "pair-03-exhibition-voice-system--base",
+      "sourceCaseId": "pair-03-exhibition-voice-system",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "mixed_borderline",
+        "target_a": "hard_constraint_breach",
+        "target_b": "mixed_borderline"
+      }
+    },
+    {
+      "familyVariantId": "pair-04-mobile-library-route--base",
+      "sourceCaseId": "pair-04-mobile-library-route",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "integrated_response",
+        "target_a": "mixed_borderline",
+        "target_b": "integrated_response"
+      }
+    },
+    {
+      "familyVariantId": "pair-04-seed-fund-selection--base",
+      "sourceCaseId": "pair-04-seed-fund-selection",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "grounding_weakness",
+        "target_a": "integrated_response",
+        "target_b": "target_insensitive_judgment"
+      }
+    },
+    {
+      "familyVariantId": "pair-04-accessibility-exam-rule--base",
+      "sourceCaseId": "pair-04-accessibility-exam-rule",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "material_task_omission",
+        "target_a": "target_insensitive_judgment",
+        "target_b": "rationale_underspecified"
+      }
+    },
+    {
+      "familyVariantId": "pair-04-marketplace-ranking-review--base",
+      "sourceCaseId": "pair-04-marketplace-ranking-review",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "hard_constraint_breach",
+        "target_a": "rationale_underspecified",
+        "target_b": "rationale_action_inconsistency"
+      }
+    },
+    {
+      "familyVariantId": "pair-04-marketplace-ranking-review--stress",
+      "sourceCaseId": "pair-04-marketplace-ranking-review",
+      "variant": "stress",
+      "constructionIntent": {
+        "unconditioned": "mixed_borderline",
+        "target_a": "rationale_action_inconsistency",
+        "target_b": "grounding_weakness"
+      }
+    },
+    {
+      "familyVariantId": "pair-05-release-capacity-margin--base",
+      "sourceCaseId": "pair-05-release-capacity-margin",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "integrated_response",
+        "target_a": "grounding_weakness",
+        "target_b": "material_task_omission"
+      }
+    },
+    {
+      "familyVariantId": "pair-05-audience-demand-buffer--base",
+      "sourceCaseId": "pair-05-audience-demand-buffer",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "grounding_weakness",
+        "target_a": "material_task_omission",
+        "target_b": "mixed_borderline"
+      }
+    },
+    {
+      "familyVariantId": "pair-05-mandatory-reserve-stock--base",
+      "sourceCaseId": "pair-05-mandatory-reserve-stock",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "material_task_omission",
+        "target_a": "mixed_borderline",
+        "target_b": "integrated_response"
+      }
+    },
+    {
+      "familyVariantId": "pair-05-lab-throughput-risk--base",
+      "sourceCaseId": "pair-05-lab-throughput-risk",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "hard_constraint_breach",
+        "target_a": "integrated_response",
+        "target_b": "target_insensitive_judgment"
+      }
+    },
+    {
+      "familyVariantId": "pair-05-lab-throughput-risk--stress",
+      "sourceCaseId": "pair-05-lab-throughput-risk",
+      "variant": "stress",
+      "constructionIntent": {
+        "unconditioned": "mixed_borderline",
+        "target_a": "target_insensitive_judgment",
+        "target_b": "rationale_underspecified"
+      }
+    },
+    {
+      "familyVariantId": "pair-06-reading-support-pilot--base",
+      "sourceCaseId": "pair-06-reading-support-pilot",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "integrated_response",
+        "target_a": "rationale_underspecified",
+        "target_b": "rationale_action_inconsistency"
+      }
+    },
+    {
+      "familyVariantId": "pair-06-live-search-layout--base",
+      "sourceCaseId": "pair-06-live-search-layout",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "grounding_weakness",
+        "target_a": "rationale_action_inconsistency",
+        "target_b": "grounding_weakness"
+      }
+    },
+    {
+      "familyVariantId": "pair-06-source-authentication-gate--base",
+      "sourceCaseId": "pair-06-source-authentication-gate",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "material_task_omission",
+        "target_a": "grounding_weakness",
+        "target_b": "material_task_omission"
+      }
+    },
+    {
+      "familyVariantId": "pair-06-source-authentication-gate--stress",
+      "sourceCaseId": "pair-06-source-authentication-gate",
+      "variant": "stress",
+      "constructionIntent": {
+        "unconditioned": "hard_constraint_breach",
+        "target_a": "material_task_omission",
+        "target_b": "mixed_borderline"
+      }
+    },
+    {
+      "familyVariantId": "pair-06-team-boundary-experiment--base",
+      "sourceCaseId": "pair-06-team-boundary-experiment",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "mixed_borderline",
+        "target_a": "mixed_borderline",
+        "target_b": "integrated_response"
+      }
+    },
+    {
+      "familyVariantId": "pair-07-editorial-research-capability--base",
+      "sourceCaseId": "pair-07-editorial-research-capability",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "integrated_response",
+        "target_a": "integrated_response",
+        "target_b": "target_insensitive_judgment"
+      }
+    },
+    {
+      "familyVariantId": "pair-07-community-grant-administration--base",
+      "sourceCaseId": "pair-07-community-grant-administration",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "grounding_weakness",
+        "target_a": "target_insensitive_judgment",
+        "target_b": "rationale_underspecified"
+      }
+    },
+    {
+      "familyVariantId": "pair-07-community-grant-administration--stress",
+      "sourceCaseId": "pair-07-community-grant-administration",
+      "variant": "stress",
+      "constructionIntent": {
+        "unconditioned": "material_task_omission",
+        "target_a": "rationale_underspecified",
+        "target_b": "rationale_action_inconsistency"
+      }
+    },
+    {
+      "familyVariantId": "pair-07-certified-repair-deadline--base",
+      "sourceCaseId": "pair-07-certified-repair-deadline",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "hard_constraint_breach",
+        "target_a": "rationale_action_inconsistency",
+        "target_b": "target_insensitive_judgment"
+      }
+    },
+    {
+      "familyVariantId": "pair-07-security-operations-handoff--base",
+      "sourceCaseId": "pair-07-security-operations-handoff",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "mixed_borderline",
+        "target_a": "target_insensitive_judgment",
+        "target_b": "rationale_underspecified"
+      }
+    },
+    {
+      "familyVariantId": "pair-08-portfolio-summary-language--base",
+      "sourceCaseId": "pair-08-portfolio-summary-language",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "integrated_response",
+        "target_a": "rationale_underspecified",
+        "target_b": "rationale_action_inconsistency"
+      }
+    },
+    {
+      "familyVariantId": "pair-08-portfolio-summary-language--stress",
+      "sourceCaseId": "pair-08-portfolio-summary-language",
+      "variant": "stress",
+      "constructionIntent": {
+        "unconditioned": "grounding_weakness",
+        "target_a": "rationale_action_inconsistency",
+        "target_b": "target_insensitive_judgment"
+      }
+    },
+    {
+      "familyVariantId": "pair-08-research-briefing-order--base",
+      "sourceCaseId": "pair-08-research-briefing-order",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "material_task_omission",
+        "target_a": "target_insensitive_judgment",
+        "target_b": "rationale_underspecified"
+      }
+    },
+    {
+      "familyVariantId": "pair-08-statutory-policy-notice--base",
+      "sourceCaseId": "pair-08-statutory-policy-notice",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "hard_constraint_breach",
+        "target_a": "rationale_underspecified",
+        "target_b": "rationale_action_inconsistency"
+      }
+    },
+    {
+      "familyVariantId": "pair-08-coaching-progress-message--base",
+      "sourceCaseId": "pair-08-coaching-progress-message",
+      "variant": "base",
+      "constructionIntent": {
+        "unconditioned": "mixed_borderline",
+        "target_a": "rationale_action_inconsistency",
+        "target_b": "integrated_response"
+      }
+    },
+    {
+      "familyVariantId": "pair-01-fund-commitment-window--stress-2",
+      "sourceCaseId": "pair-01-fund-commitment-window",
+      "variant": "stress",
+      "constructionIntent": {
+        "unconditioned": "material_task_omission",
+        "target_a": "cue_omission",
+        "target_b": "integrated_control"
+      }
+    },
+    {
+      "familyVariantId": "pair-02-river-monitoring-commitment--stress-2",
+      "sourceCaseId": "pair-02-river-monitoring-commitment",
+      "variant": "stress",
+      "constructionIntent": {
+        "unconditioned": "unsupported_material_claim",
+        "target_a": "rationale_action_inconsistency",
+        "target_b": "target_policy_reversal"
+      }
+    },
+    {
+      "familyVariantId": "pair-03-incident-command-handoffs--stress-2",
+      "sourceCaseId": "pair-03-incident-command-handoffs",
+      "variant": "stress",
+      "constructionIntent": {
+        "unconditioned": "material_task_omission",
+        "target_a": "hard_constraint_breach",
+        "target_b": "rationale_action_inconsistency"
+      }
+    },
+    {
+      "familyVariantId": "pair-04-accessibility-exam-rule--stress-2",
+      "sourceCaseId": "pair-04-accessibility-exam-rule",
+      "variant": "stress",
+      "constructionIntent": {
+        "unconditioned": "unsupported_material_claim",
+        "target_a": "hard_constraint_breach",
+        "target_b": "integrated_control"
+      }
+    },
+    {
+      "familyVariantId": "pair-05-release-capacity-margin--stress-2",
+      "sourceCaseId": "pair-05-release-capacity-margin",
+      "variant": "stress",
+      "constructionIntent": {
+        "unconditioned": "material_task_omission",
+        "target_a": "target_policy_reversal",
+        "target_b": "cue_omission"
+      }
+    },
+    {
+      "familyVariantId": "pair-06-live-search-layout--stress-2",
+      "sourceCaseId": "pair-06-live-search-layout",
+      "variant": "stress",
+      "constructionIntent": {
+        "unconditioned": "unsupported_material_claim",
+        "target_a": "rationale_action_inconsistency",
+        "target_b": "hard_constraint_breach"
+      }
+    },
+    {
+      "familyVariantId": "pair-07-editorial-research-capability--stress-2",
+      "sourceCaseId": "pair-07-editorial-research-capability",
+      "variant": "stress",
+      "constructionIntent": {
+        "unconditioned": "hard_constraint_breach",
+        "target_a": "context_insensitive_judgment",
+        "target_b": "integrated_control"
+      }
+    },
+    {
+      "familyVariantId": "pair-08-statutory-policy-notice--stress-2",
+      "sourceCaseId": "pair-08-statutory-policy-notice",
+      "variant": "stress",
+      "constructionIntent": {
+        "unconditioned": "material_task_omission",
+        "target_a": "cue_omission",
+        "target_b": "rationale_action_inconsistency"
+      }
+    }
+  ]
+}

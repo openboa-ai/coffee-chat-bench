@@ -34,7 +34,6 @@ test("the public bank exposes one three-condition judgment-history contract", as
 test("rendering a condition gives an agent only the selected history", async () => {
   const { manifest } = await bankCase();
   const task = renderCase(manifest, {
-    trialId: "trial-public-history",
     condition: "target_a",
   });
   const visible = JSON.stringify(task);
@@ -50,7 +49,6 @@ test("rendering a condition gives an agent only the selected history", async () 
   );
   assert.equal(
     renderCase(manifest, {
-      trialId: "trial-unconditioned",
       condition: "unconditioned",
     }).context.length,
     0,

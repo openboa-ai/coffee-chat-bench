@@ -1,0 +1,17 @@
+{
+  "release": "2026.8.19",
+  "corpusId": "provisional_judge_qualification_corpus",
+  "sourceCorpusDigest": "sha256:71b9249538efe90b23f84c9568897784ed6b39376228b55e30e5b02eba9456ab",
+  "referenceLabelsPath": "reference-labels.jsonl",
+  "referenceLabelsDigest": "sha256:b7fb331371a94933312c8fc3a5f18622ae6f937470dc47be1882ee85c8277563",
+  "distributionPath": "label-distribution.json",
+  "distributionDigest": "sha256:1eb322cb1f89fec554704ad099208d9b65351f2a47dca5a816bcb8680e99aa6c",
+  "authority": "model_authored_draft",
+  "reviewState": "pending_project_owner_review",
+  "census": {
+    "pointwise": 144,
+    "pairwise": 0,
+    "total": 144
+  },
+  "manifestDigest": "sha256:d0a5fa083b23f808e746f4833837c1462aa6495dea796b0a99990b430bd0de0e"
+}
