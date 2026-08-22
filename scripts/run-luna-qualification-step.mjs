@@ -18,6 +18,16 @@ import { evaluateAbsoluteGate } from "./qualification-gates.mjs";
 import { computeQualificationMetrics } from "./qualification-metrics.mjs";
 import { writeQualificationPlots } from "./qualification-plots.mjs";
 import {
+  campaignIsCompatible,
+  metricsBelongToCampaign,
+} from "./qualification-campaign-integrity.mjs";
+import {
+  allowlistedCompletionEvidence,
+  allowlistedEvaluationResult,
+  allowlistedTransportAttempts,
+  summarizeTransportMetrics,
+} from "./qualification-transport-evidence.mjs";
+import {
   JUDGE_PROMPT_DIMENSIONS,
   normalizeJudgePromptDocument,
 } from "./judge-prompt-bundle.mjs";
@@ -119,25 +129,6 @@ async function jsonLines(path) {
         });
       }
     });
-}
-
-function safe(value, key = "") {
-  if (/(?:authorization|api[_-]?key|secret|password|cookie)/iu.test(key))
-    return "[REDACTED]";
-  if (typeof value === "string")
-    return value.replaceAll(
-      /\b(?:sk|sess|rk)-(?:proj-)?[A-Za-z0-9]{20,}\b/gu,
-      "[REDACTED]",
-    );
-  if (Array.isArray(value)) return value.map((entry) => safe(entry));
-  if (value && typeof value === "object")
-    return Object.fromEntries(
-      Object.entries(value).map(([entryKey, entryValue]) => [
-        entryKey,
-        safe(entryValue, entryKey),
-      ]),
-    );
-  return value;
 }
 
 function compactTimestamp(date = new Date()) {
@@ -251,11 +242,11 @@ function recordingTransport(source) {
         calls.set(requestKey(request), call);
         try {
           const response = await source.complete(request);
-          call.attempts = safe(response.attempts);
-          call.completion = safe(response.completion);
+          call.attempts = allowlistedTransportAttempts(response.attempts);
+          call.completion = allowlistedCompletionEvidence(response.completion);
           return response.completion;
         } catch (error) {
-          call.attempts = safe(error?.attempts ?? []);
+          call.attempts = allowlistedTransportAttempts(error?.attempts ?? []);
           throw error;
         }
       },
@@ -279,17 +270,9 @@ function referenceValue(label, dimension) {
 }
 
 function metricTiming(call, started) {
-  const attempts = call?.attempts ?? [];
-  const latency = attempts.reduce(
-    (sum, attempt) =>
-      sum + (typeof attempt.latencyMs === "number" ? attempt.latencyMs : 0),
-    0,
-  );
-  const usage = attempts.at(-1)?.usage ?? call?.completion?.metadata?.usage;
-  return {
-    latencyMs: latency || Date.now() - started,
-    outputTokens: usage?.output_tokens ?? usage?.outputTokens ?? null,
-  };
+  return summarizeTransportMetrics(call, {
+    wallClockLatencyMs: Date.now() - started,
+  });
 }
 
 async function updateIndex(path, entry) {
@@ -347,13 +330,13 @@ async function loadMiniPlan(path, fullPlan, corpus, labelManifest) {
   return plan;
 }
 
-async function historyWithMetrics(campaignRoot, steps, measurementPlanDigest) {
+async function historyWithMetrics(campaignRoot, steps, expectedEvidence) {
   const history = [];
   for (const entry of steps) {
     const metricsPath = join(campaignRoot, entry.metricsPath);
     if (!existsSync(metricsPath)) continue;
     const metrics = await json(metricsPath);
-    if (metrics.measurementPlanDigest !== measurementPlanDigest) continue;
+    if (!metricsBelongToCampaign(metrics, expectedEvidence)) continue;
     history.push({
       stepId: entry.stepId,
       fullIterationNumber:
@@ -441,6 +424,7 @@ async function main() {
     );
   const protocolsByDimension = promptBundle.protocolsByDimension;
   const gatePolicy = await json(join(qualificationRoot, "gate-policy.json"));
+  const gatePolicyDigest = stableDigest(gatePolicy);
   const readiness = await buildQualificationReadiness(options.root);
   if (readiness.status !== "ready_for_new_baseline")
     throw new TypeError(
@@ -513,12 +497,18 @@ async function main() {
   const previousFullMatrixHistory = await historyWithMetrics(
     campaignRoot,
     fullSteps,
-    measurementPlan.planDigest,
+    {
+      measurementPlanDigest: measurementPlan.planDigest,
+      gatePolicyId: gatePolicy.policyId,
+      gatePolicyDigest,
+    },
   );
   const isFirstFullMatrixRun = previousFullMatrixHistory.length === 0;
-  const compatibleCampaign =
-    existingCampaign?.measurementPlanDigest === measurementPlan.planDigest &&
-    existingCampaign?.gatePolicyId === gatePolicy.policyId;
+  const compatibleCampaign = campaignIsCompatible(existingCampaign, {
+    measurementPlanDigest: measurementPlan.planDigest,
+    gatePolicyId: gatePolicy.policyId,
+    gatePolicyDigest,
+  });
   const acceptedStepIdBefore = compatibleCampaign
     ? (existingCampaign?.acceptedStepId ?? null)
     : null;
@@ -553,7 +543,7 @@ async function main() {
         routingPlanDigest,
         routingPlanPath: miniPlan ? "routing-plan.json" : null,
         gatePolicyId: gatePolicy.policyId,
-        gatePolicyDigest: stableDigest(gatePolicy),
+        gatePolicyDigest,
         campaignPolicyId: campaignPolicy.policyId,
         campaignPolicyDigest: stableDigest(campaignPolicy),
         fullIterationBudget: campaignPolicy.fullIterationBudget,
@@ -659,7 +649,8 @@ async function main() {
       const call = request ? recording.calls.get(requestKey(request)) : null;
       const timing = metricTiming(call, started);
       const reference = referenceValue(label, dimension);
-      const row = safe({
+      const persistedResult = allowlistedEvaluationResult(evaluation.result);
+      const row = {
         exampleId: submission.exampleId,
         familyVariantId: submission.familyVariantId,
         sourceCaseId: submission.sourceCaseId,
@@ -683,16 +674,16 @@ async function main() {
           ? stableDigest(call.completion)
           : null,
         attempts: call?.attempts ?? [],
-        result: evaluation.result,
+        result: persistedResult,
         referenceLabel: reference,
         labelAuthority: label.authority,
         labelReviewState: label.reviewState,
         latencyMs: timing.latencyMs,
         outputTokens: timing.outputTokens,
         evidenceState: "provisional",
-        provenance: evaluation.result.provenance ?? null,
+        provenance: persistedResult.provenance ?? null,
         measuredAt: new Date().toISOString(),
-      });
+      };
       observations.push({
         exampleId: submission.exampleId,
         dimension,
@@ -731,12 +722,12 @@ async function main() {
       : acceptedStepIdBefore;
   await writeFile(
     join(stepRoot, "metrics.json"),
-    `${JSON.stringify({ artifact_type: "qualification_metrics", evidenceState: "provisional", stepId: currentStepId, runKind: options.kind, model: MODEL, corpusDigest: corpus.manifest.corpusDigest, labelDigest: labelManifest.referenceLabelsDigest, measurementPlanDigest: measurementPlan.planDigest, routingPlanDigest, gatePolicyId: gatePolicy.policyId, campaignPolicyId: campaignPolicy.policyId, promptMode: promptBundle.mode, promptBundleId: promptBundle.bundleId, promptBundleDigest, promptDigests: promptBundle.promptDigests, changedDimensions: options.changedDimensions, promptDigest: promptBundleDigest, metrics }, null, 2)}\n`,
+    `${JSON.stringify({ artifact_type: "qualification_metrics", evidenceState: "provisional", stepId: currentStepId, runKind: options.kind, model: MODEL, corpusDigest: corpus.manifest.corpusDigest, labelDigest: labelManifest.referenceLabelsDigest, measurementPlanDigest: measurementPlan.planDigest, routingPlanDigest, gatePolicyId: gatePolicy.policyId, gatePolicyDigest, campaignPolicyId: campaignPolicy.policyId, promptMode: promptBundle.mode, promptBundleId: promptBundle.bundleId, promptBundleDigest, promptDigests: promptBundle.promptDigests, changedDimensions: options.changedDimensions, promptDigest: promptBundleDigest, metrics }, null, 2)}\n`,
     "utf8",
   );
   await writeFile(
     join(stepRoot, "gate.json"),
-    `${JSON.stringify({ artifact_type: "hill_climbing_gate", evidenceState: "provisional", decision, scope: options.kind === "mini" ? "diagnostic_only" : "full_iteration", gate, candidateStepId: currentStepId, acceptedStepIdBefore, acceptedStepIdAfter, expectedCalls: routed.length, actualCalls, measurementPlanDigest: measurementPlan.planDigest, routingPlanDigest, gatePolicyId: gatePolicy.policyId, campaignPolicyId: campaignPolicy.policyId, fullIterationNumber, miniBatchNumber, parentFullStepId: latestFull, promptMode: promptBundle.mode, promptBundleId: promptBundle.bundleId, promptBundleDigest, promptDigests: promptBundle.promptDigests, changedDimensions: options.changedDimensions, routing: Object.fromEntries(Object.entries(Object.groupBy(routed, (row) => row.dimension)).map(([key, rows]) => [key, rows.length])), summary: { coverage: metrics.coverage, invalidRate: metrics.invalidRate } }, null, 2)}\n`,
+    `${JSON.stringify({ artifact_type: "hill_climbing_gate", evidenceState: "provisional", decision, scope: options.kind === "mini" ? "diagnostic_only" : "full_iteration", gate, candidateStepId: currentStepId, acceptedStepIdBefore, acceptedStepIdAfter, expectedCalls: routed.length, actualCalls, measurementPlanDigest: measurementPlan.planDigest, routingPlanDigest, gatePolicyId: gatePolicy.policyId, gatePolicyDigest, campaignPolicyId: campaignPolicy.policyId, fullIterationNumber, miniBatchNumber, parentFullStepId: latestFull, promptMode: promptBundle.mode, promptBundleId: promptBundle.bundleId, promptBundleDigest, promptDigests: promptBundle.promptDigests, changedDimensions: options.changedDimensions, routing: Object.fromEntries(Object.entries(Object.groupBy(routed, (row) => row.dimension)).map(([key, rows]) => [key, rows.length])), summary: { coverage: metrics.coverage, invalidRate: metrics.invalidRate } }, null, 2)}\n`,
     "utf8",
   );
   const index = await updateIndex(
@@ -758,6 +749,7 @@ async function main() {
       measurementPlanDigest: measurementPlan.planDigest,
       routingPlanDigest,
       gatePolicyId: gatePolicy.policyId,
+      gatePolicyDigest,
       campaignPolicyId: campaignPolicy.policyId,
       metricsPath: `${options.kind === "mini" ? "mini" : "steps"}/${currentStepId}/metrics.json`,
       manifestPath: `${options.kind === "mini" ? "mini" : "steps"}/${currentStepId}/manifest.json`,
@@ -769,7 +761,11 @@ async function main() {
   const history = await historyWithMetrics(
     campaignRoot,
     fullSteps.concat(options.kind === "full" ? [index.steps.at(-1)] : []),
-    measurementPlan.planDigest,
+    {
+      measurementPlanDigest: measurementPlan.planDigest,
+      gatePolicyId: gatePolicy.policyId,
+      gatePolicyDigest,
+    },
   );
   await writeQualificationPlots({
     stepDirectory: stepRoot,
@@ -786,14 +782,14 @@ async function main() {
   )
     await writeFile(
       join(campaignRoot, "accepted-prompt.json"),
-      `${JSON.stringify({ acceptedStepId: currentStepId, prompt: promptBundle.document, promptMode: promptBundle.mode, promptBundleId: promptBundle.bundleId, promptBundleDigest, promptDigests: promptBundle.promptDigests, status: decision }, null, 2)}\n`,
+      `${JSON.stringify({ acceptedStepId: currentStepId, prompt: promptBundle.document, promptMode: promptBundle.mode, promptBundleId: promptBundle.bundleId, promptBundleDigest, promptDigests: promptBundle.promptDigests, gatePolicyId: gatePolicy.policyId, gatePolicyDigest, status: decision }, null, 2)}\n`,
       "utf8",
     );
   const miniIndexAfter = options.kind === "mini" ? index : existingMiniIndex;
   const latestFullAfter = options.kind === "full" ? currentStepId : latestFull;
   await writeFile(
     join(campaignRoot, "campaign.json"),
-    `${JSON.stringify({ artifact_type: "qualification_campaign", campaignId: "luna_provisional_judge", status: "provisional", model: MODEL, corpusDigest: corpus.manifest.corpusDigest, labelDigest: labelManifest.referenceLabelsDigest, measurementPlanDigest: measurementPlan.planDigest, gatePolicyId: gatePolicy.policyId, campaignPolicyId: campaignPolicy.policyId, campaignPolicyDigest: stableDigest(campaignPolicy), fullIterationBudget: campaignPolicy.fullIterationBudget, baselineCountsAgainstBudget: campaignPolicy.baselineCountsAgainstBudget, fullIterationsUsed: budgetUsed(options.kind === "full" ? index.steps : fullSteps), miniBatchLimitBetweenFull: campaignPolicy.miniBatchLimitBetweenFull, miniBatchesSinceLatestFull: miniBatchesSinceFull(miniIndexAfter.steps ?? [], latestFullAfter), acceptedStepId: acceptedStepIdAfter, fullStepCount: history.length, miniStepCount: miniIndexAfter.steps?.length ?? 0, latestFullStepId: latestFullAfter, latestStepId: currentStepId, latestRunKind: options.kind, latestDecision: decision, latestPromptMode: promptBundle.mode, latestPromptBundleId: promptBundle.bundleId, latestPromptBundleDigest: promptBundleDigest, latestPromptDigests: promptBundle.promptDigests, progressSeries: campaignPolicy.progressSeries, publicBenchmarkStatus: "not_active", publicBenchmarkUnchanged: true }, null, 2)}\n`,
+    `${JSON.stringify({ artifact_type: "qualification_campaign", campaignId: "luna_provisional_judge", status: "provisional", model: MODEL, corpusDigest: corpus.manifest.corpusDigest, labelDigest: labelManifest.referenceLabelsDigest, measurementPlanDigest: measurementPlan.planDigest, gatePolicyId: gatePolicy.policyId, gatePolicyDigest, campaignPolicyId: campaignPolicy.policyId, campaignPolicyDigest: stableDigest(campaignPolicy), fullIterationBudget: campaignPolicy.fullIterationBudget, baselineCountsAgainstBudget: campaignPolicy.baselineCountsAgainstBudget, fullIterationsUsed: budgetUsed(options.kind === "full" ? index.steps : fullSteps), miniBatchLimitBetweenFull: campaignPolicy.miniBatchLimitBetweenFull, miniBatchesSinceLatestFull: miniBatchesSinceFull(miniIndexAfter.steps ?? [], latestFullAfter), acceptedStepId: acceptedStepIdAfter, fullStepCount: history.length, miniStepCount: miniIndexAfter.steps?.length ?? 0, latestFullStepId: latestFullAfter, latestStepId: currentStepId, latestRunKind: options.kind, latestDecision: decision, latestPromptMode: promptBundle.mode, latestPromptBundleId: promptBundle.bundleId, latestPromptBundleDigest: promptBundleDigest, latestPromptDigests: promptBundle.promptDigests, progressSeries: campaignPolicy.progressSeries, publicBenchmarkStatus: "not_active", publicBenchmarkUnchanged: true }, null, 2)}\n`,
     "utf8",
   );
   const finalManifest = await json(join(stepRoot, "manifest.json"));

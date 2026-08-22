@@ -12,6 +12,14 @@ function average(values) {
     : scalar(values.reduce((sum, value) => sum + value, 0) / values.length);
 }
 
+function completeOutputTokenAverage(rows) {
+  const values = rows.map((row) => row.outputTokens);
+  return rows.length > 0 &&
+    values.every((value) => typeof value === "number" && Number.isFinite(value))
+    ? average(values)
+    : scalar(null, "missing output token usage for one or more routed calls");
+}
+
 function pearson(reference, prediction) {
   if (reference.length < 2) return scalar(null, "fewer than two observations");
   const meanReference = reference.reduce((a, b) => a + b, 0) / reference.length;
@@ -165,11 +173,7 @@ function numericBlock(rows, referenceSelector, predictionSelector) {
         .map((row) => row.latencyMs)
         .filter((value) => typeof value === "number"),
     ),
-    meanOutputTokens: average(
-      rows
-        .map((row) => row.outputTokens)
-        .filter((value) => typeof value === "number"),
-    ),
+    meanOutputTokens: completeOutputTokenAverage(rows),
   };
 }
 
@@ -251,11 +255,7 @@ function booleanBlock(rows) {
         .map((row) => row.latencyMs)
         .filter((value) => typeof value === "number"),
     ),
-    meanOutputTokens: average(
-      rows
-        .map((row) => row.outputTokens)
-        .filter((value) => typeof value === "number"),
-    ),
+    meanOutputTokens: completeOutputTokenAverage(rows),
   };
 }
 
@@ -350,10 +350,6 @@ export function computeQualificationMetrics(rows) {
         .map((row) => row.latencyMs)
         .filter((value) => typeof value === "number"),
     ),
-    meanOutputTokens: average(
-      rows
-        .map((row) => row.outputTokens)
-        .filter((value) => typeof value === "number"),
-    ),
+    meanOutputTokens: completeOutputTokenAverage(rows),
   };
 }

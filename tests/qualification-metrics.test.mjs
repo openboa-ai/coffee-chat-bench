@@ -90,3 +90,27 @@ test("macro ordinal metrics include all seven independently measured Judges", ()
   assert.equal(metrics.macro.exactAgreement.value, 1);
   assert.equal(metrics.macro.mae.value, 0);
 });
+
+test("output-token efficiency is nonnumeric when any routed call lacks usage", () => {
+  const metrics = computeQualificationMetrics([
+    {
+      dimension: "task_performance",
+      reference: { score: 4 },
+      result: measured(4),
+      outputTokens: 120,
+    },
+    {
+      dimension: "task_performance",
+      reference: { score: 3 },
+      result: measured(3),
+      outputTokens: null,
+    },
+  ]);
+
+  assert.equal(metrics.meanOutputTokens.value, null);
+  assert.match(metrics.meanOutputTokens.reason, /missing output token usage/u);
+  assert.equal(
+    metrics.dimensions.task_performance.meanOutputTokens.value,
+    null,
+  );
+});
