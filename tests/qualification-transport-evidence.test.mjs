@@ -57,6 +57,31 @@ test("transport evidence persists only explicitly allowed non-secret fields", ()
   assert.doesNotMatch(JSON.stringify(attempts), /secret|providerSpecific/u);
 });
 
+test("transport evidence rejects negative metrics and fractional token counts", () => {
+  const attempts = allowlistedTransportAttempts([
+    {
+      attempt: -1,
+      status: -500,
+      latencyMs: -20,
+      requestId: "req_invalid_metrics",
+      usage: {
+        input_tokens: 10.5,
+        output_tokens: -4,
+        total_tokens: 12,
+        input_tokens_details: { cached_tokens: -2 },
+        output_tokens_details: { reasoning_tokens: 3.5 },
+      },
+    },
+  ]);
+
+  assert.deepEqual(attempts, [
+    {
+      requestId: "req_invalid_metrics",
+      usage: { total_tokens: 12 },
+    },
+  ]);
+});
+
 test("completion and provenance drop unknown provider metadata", () => {
   const completion = allowlistedCompletionEvidence({
     raw: '{"score":4,"rationale":"supported"}',

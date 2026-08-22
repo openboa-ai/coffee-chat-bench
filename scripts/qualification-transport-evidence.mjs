@@ -1,12 +1,17 @@
-function finiteNumber(value) {
-  return typeof value === "number" && Number.isFinite(value) ? value : null;
+function nonnegativeNumber(value, integer = false) {
+  return typeof value === "number" &&
+    Number.isFinite(value) &&
+    value >= 0 &&
+    (!integer || Number.isInteger(value))
+    ? value
+    : null;
 }
 
-function allowedNumberFields(value, names) {
+function allowedNumberFields(value, names, integer = false) {
   if (!value || typeof value !== "object") return undefined;
   const result = {};
   for (const name of names) {
-    const number = finiteNumber(value[name]);
+    const number = nonnegativeNumber(value[name], integer);
     if (number !== null) result[name] = number;
   }
   return Object.keys(result).length > 0 ? result : undefined;
@@ -14,21 +19,28 @@ function allowedNumberFields(value, names) {
 
 function allowlistedUsage(value) {
   if (!value || typeof value !== "object") return undefined;
-  const usage = allowedNumberFields(value, [
-    "input_tokens",
-    "output_tokens",
-    "total_tokens",
-    "inputTokens",
-    "outputTokens",
-    "totalTokens",
-  ]);
-  const inputDetails = allowedNumberFields(value.input_tokens_details, [
-    "cached_tokens",
-    "cache_write_tokens",
-  ]);
-  const outputDetails = allowedNumberFields(value.output_tokens_details, [
-    "reasoning_tokens",
-  ]);
+  const usage = allowedNumberFields(
+    value,
+    [
+      "input_tokens",
+      "output_tokens",
+      "total_tokens",
+      "inputTokens",
+      "outputTokens",
+      "totalTokens",
+    ],
+    true,
+  );
+  const inputDetails = allowedNumberFields(
+    value.input_tokens_details,
+    ["cached_tokens", "cache_write_tokens"],
+    true,
+  );
+  const outputDetails = allowedNumberFields(
+    value.output_tokens_details,
+    ["reasoning_tokens"],
+    true,
+  );
   const result = usage ?? {};
   if (inputDetails) result.input_tokens_details = inputDetails;
   if (outputDetails) result.output_tokens_details = outputDetails;
@@ -50,9 +62,9 @@ export function allowlistedTransportAttempts(value) {
   return value.map((attempt) => {
     if (!attempt || typeof attempt !== "object") return {};
     const result = {};
-    const attemptNumber = finiteNumber(attempt.attempt);
-    const status = finiteNumber(attempt.status);
-    const latencyMs = finiteNumber(attempt.latencyMs);
+    const attemptNumber = nonnegativeNumber(attempt.attempt, true);
+    const status = nonnegativeNumber(attempt.status, true);
+    const latencyMs = nonnegativeNumber(attempt.latencyMs);
     if (attemptNumber !== null) result.attempt = attemptNumber;
     if (status !== null) result.status = status;
     if (latencyMs !== null) result.latencyMs = latencyMs;
@@ -110,13 +122,22 @@ export function allowlistedEvaluationResult(value) {
     )
       result.score = value.score;
     else if (value.score && typeof value.score === "object") {
-      const score = allowedNumberFields(value.score, [
-        "cueUtilization",
-        "cueWeighting",
-        "contextSensitivity",
-        "actionConsistency",
-      ]);
-      if (score) result.score = score;
+      const score = Object.fromEntries(
+        [
+          "cueUtilization",
+          "cueWeighting",
+          "contextSensitivity",
+          "actionConsistency",
+        ]
+          .filter(
+            (name) =>
+              Number.isInteger(value.score[name]) &&
+              value.score[name] >= 1 &&
+              value.score[name] <= 5,
+          )
+          .map((name) => [name, value.score[name]]),
+      );
+      if (Object.keys(score).length > 0) result.score = score;
     }
     if (typeof value.detected === "boolean") result.detected = value.detected;
     if (typeof value.rationale === "string") result.rationale = value.rationale;
@@ -127,13 +148,13 @@ export function allowlistedEvaluationResult(value) {
     invalid: "Judge response invalid",
     abstained: "Judge abstained",
   };
-  if (value.state in causes)
+  if (Object.hasOwn(causes, value.state))
     return { state: value.state, cause: causes[value.state], provenance };
   const reasons = {
     not_applicable: "No target-relative criterion applies",
     unmeasured: "No measurement was produced",
   };
-  if (value.state in reasons)
+  if (Object.hasOwn(reasons, value.state))
     return { state: value.state, reason: reasons[value.state], provenance };
   return {
     state: "invalid",
