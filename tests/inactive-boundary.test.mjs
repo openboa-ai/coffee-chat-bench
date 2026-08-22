@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
 import {
   cpSync,
+  existsSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
@@ -9,7 +10,7 @@ import {
   symlinkSync,
   writeFileSync,
 } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
 
@@ -57,6 +58,10 @@ const experimentalRootFixtures = [
   ["tests/experimental-contract.mjs", "export {}\n"],
   ["tests/fixtures/experimental-case.json", "{}\n"],
 ];
+const immutableCampaignHistoryRoots = [
+  "qualification/hill-climbing/mini",
+  "qualification/hill-climbing/steps",
+];
 function check(repository) {
   return spawnSync(
     process.execPath,
@@ -73,8 +78,16 @@ function fixture() {
   const repository = join(directory, "repository");
   cpSync(root, repository, {
     recursive: true,
-    filter: (path) =>
-      ![".git", "node_modules"].includes(path.split("/").at(-1)),
+    filter: (path) => {
+      if ([".git", "node_modules"].includes(path.split("/").at(-1)))
+        return false;
+      const repositoryPath = relative(root, path).replaceAll("\\", "/");
+      return !immutableCampaignHistoryRoots.some(
+        (campaignRoot) =>
+          repositoryPath === campaignRoot ||
+          repositoryPath.startsWith(`${campaignRoot}/`),
+      );
+    },
   });
   symlinkSync(
     join(root, "node_modules"),
@@ -93,12 +106,22 @@ function withFixture(assertion) {
     rmSync(temp.directory, { force: true, recursive: true });
   }
 }
-test("accepts the declared not_active repository boundary", () => {
+test("mutation fixtures exclude immutable campaign step history", () => {
   withFixture((repository) => {
-    const result = check(repository);
-    assert.equal(result.status, 0, result.stderr || result.stdout);
-    assert.match(result.stdout, /"repository_status":"not_active"/u);
+    assert.equal(
+      existsSync(join(repository, "qualification", "hill-climbing", "steps")),
+      false,
+    );
+    assert.equal(
+      existsSync(join(repository, "qualification", "hill-climbing", "mini")),
+      false,
+    );
   });
+});
+test("accepts the declared not_active repository boundary", () => {
+  const result = check(root);
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(result.stdout, /"repository_status":"not_active"/u);
 });
 
 test("accepts each declared experimental root while not_active", () => {

@@ -13,10 +13,10 @@ test("progress metrics are read from the persisted metrics document", () => {
     0.397,
   );
   assert.equal(
-    plots.metricValue(
-      { metrics: { macro: { adjacentLevelAccuracy: { value: null } } } },
-      ["macro", "adjacentLevelAccuracy"],
-    ),
+    plots.metricValue({ metrics: { macro: { spearman: { value: null } } } }, [
+      "macro",
+      "spearman",
+    ]),
     null,
   );
 });

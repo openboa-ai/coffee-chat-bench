@@ -1,0 +1,730 @@
+{
+  "artifact_type": "hill_climbing_gate",
+  "evidenceState": "provisional",
+  "decision": "mini",
+  "scope": "diagnostic_only",
+  "gate": {
+    "policyId": "absolute-all-metric-gate-2026.8.20",
+    "evidenceState": "provisional",
+    "status": "failed",
+    "dimensions": {
+      "judgment_alignment": {
+        "dimension": "judgment_alignment",
+        "checks": [
+          {
+            "path": "dimensions.judgment_alignment.support",
+            "status": "passed",
+            "actual": {
+              "eligible": 96,
+              "levels": 5
+            },
+            "expected": {
+              "eligible": ">= 96",
+              "levels": ">= 5"
+            }
+          },
+          {
+            "path": "dimensions.judgment_alignment.qwk",
+            "status": "passed",
+            "actual": 0.7037037037037037,
+            "expected": ">= 0.6"
+          },
+          {
+            "path": "dimensions.judgment_alignment.spearman",
+            "status": "passed",
+            "actual": 0.625,
+            "expected": ">= 0.6"
+          },
+          {
+            "path": "dimensions.judgment_alignment.pearson",
+            "status": "passed",
+            "actual": 0.836698656172646,
+            "expected": ">= 0.6"
+          },
+          {
+            "path": "dimensions.judgment_alignment.exactAgreement",
+            "status": "failed",
+            "actual": 0.25,
+            "expected": ">= 0.5"
+          },
+          {
+            "path": "dimensions.judgment_alignment.withinOneLevelAccuracy",
+            "status": "passed",
+            "actual": 1,
+            "expected": ">= 0.9"
+          },
+          {
+            "path": "dimensions.judgment_alignment.mae",
+            "status": "passed",
+            "actual": 0.75,
+            "expected": "<= 0.75"
+          },
+          {
+            "path": "dimensions.judgment_alignment.absoluteSignedBias",
+            "status": "passed",
+            "actual": 0.25,
+            "expected": "<= 0.25"
+          },
+          {
+            "path": "dimensions.judgment_alignment.coverage",
+            "status": "passed",
+            "actual": 1,
+            "expected": ">= 1"
+          },
+          {
+            "path": "dimensions.judgment_alignment.invalidRate",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0"
+          },
+          {
+            "path": "dimensions.judgment_alignment.unavailableRate",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0"
+          },
+          {
+            "path": "dimensions.judgment_alignment.abstainedRate",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0"
+          }
+        ],
+        "status": "failed"
+      },
+      "task_performance": {
+        "dimension": "task_performance",
+        "checks": [
+          {
+            "path": "dimensions.task_performance.support",
+            "status": "passed",
+            "actual": {
+              "eligible": 144,
+              "levels": 5
+            },
+            "expected": {
+              "eligible": ">= 144",
+              "levels": ">= 5"
+            }
+          },
+          {
+            "path": "dimensions.task_performance.qwk",
+            "status": "failed",
+            "actual": 0.52,
+            "expected": ">= 0.6"
+          },
+          {
+            "path": "dimensions.task_performance.spearman",
+            "status": "failed",
+            "actual": 0.5606060606060606,
+            "expected": ">= 0.6"
+          },
+          {
+            "path": "dimensions.task_performance.pearson",
+            "status": "failed",
+            "actual": 0.5994327580863803,
+            "expected": ">= 0.6"
+          },
+          {
+            "path": "dimensions.task_performance.exactAgreement",
+            "status": "passed",
+            "actual": 0.75,
+            "expected": ">= 0.5"
+          },
+          {
+            "path": "dimensions.task_performance.withinOneLevelAccuracy",
+            "status": "passed",
+            "actual": 0.9166666666666666,
+            "expected": ">= 0.9"
+          },
+          {
+            "path": "dimensions.task_performance.mae",
+            "status": "passed",
+            "actual": 0.3333333333333333,
+            "expected": "<= 0.75"
+          },
+          {
+            "path": "dimensions.task_performance.absoluteSignedBias",
+            "status": "failed",
+            "actual": 0.3333333333333333,
+            "expected": "<= 0.25"
+          },
+          {
+            "path": "dimensions.task_performance.coverage",
+            "status": "passed",
+            "actual": 1,
+            "expected": ">= 1"
+          },
+          {
+            "path": "dimensions.task_performance.invalidRate",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0"
+          },
+          {
+            "path": "dimensions.task_performance.unavailableRate",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0"
+          },
+          {
+            "path": "dimensions.task_performance.abstainedRate",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0"
+          }
+        ],
+        "status": "failed"
+      },
+      "evidence_grounding": {
+        "dimension": "evidence_grounding",
+        "checks": [
+          {
+            "path": "dimensions.evidence_grounding.support",
+            "status": "passed",
+            "actual": {
+              "eligible": 144,
+              "levels": 5
+            },
+            "expected": {
+              "eligible": ">= 144",
+              "levels": ">= 5"
+            }
+          },
+          {
+            "path": "dimensions.evidence_grounding.qwk",
+            "status": "failed",
+            "actual": 0.459016393442623,
+            "expected": ">= 0.6"
+          },
+          {
+            "path": "dimensions.evidence_grounding.spearman",
+            "status": "failed",
+            "actual": 0.5219557557353627,
+            "expected": ">= 0.6"
+          },
+          {
+            "path": "dimensions.evidence_grounding.pearson",
+            "status": "failed",
+            "actual": 0.47977289597136397,
+            "expected": ">= 0.6"
+          },
+          {
+            "path": "dimensions.evidence_grounding.exactAgreement",
+            "status": "passed",
+            "actual": 0.5833333333333334,
+            "expected": ">= 0.5"
+          },
+          {
+            "path": "dimensions.evidence_grounding.withinOneLevelAccuracy",
+            "status": "failed",
+            "actual": 0.8333333333333334,
+            "expected": ">= 0.9"
+          },
+          {
+            "path": "dimensions.evidence_grounding.mae",
+            "status": "passed",
+            "actual": 0.5833333333333334,
+            "expected": "<= 0.75"
+          },
+          {
+            "path": "dimensions.evidence_grounding.absoluteSignedBias",
+            "status": "passed",
+            "actual": 0.25,
+            "expected": "<= 0.25"
+          },
+          {
+            "path": "dimensions.evidence_grounding.coverage",
+            "status": "passed",
+            "actual": 1,
+            "expected": ">= 1"
+          },
+          {
+            "path": "dimensions.evidence_grounding.invalidRate",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0"
+          },
+          {
+            "path": "dimensions.evidence_grounding.unavailableRate",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0"
+          },
+          {
+            "path": "dimensions.evidence_grounding.abstainedRate",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0"
+          }
+        ],
+        "status": "failed"
+      }
+    },
+    "rationaleFacets": {
+      "cueUtilization": {
+        "dimension": "stated_rationale_alignment.cueUtilization",
+        "checks": [
+          {
+            "path": "dimensions.stated_rationale_alignment.cueUtilization.support",
+            "status": "passed",
+            "actual": {
+              "eligible": 96,
+              "levels": 5
+            },
+            "expected": {
+              "eligible": ">= 96",
+              "levels": ">= 5"
+            }
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.cueUtilization.qwk",
+            "status": "failed",
+            "actual": 0.19999999999999996,
+            "expected": ">= 0.6"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.cueUtilization.spearman",
+            "status": "failed",
+            "actual": 0.20701966780270628,
+            "expected": ">= 0.6"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.cueUtilization.pearson",
+            "status": "failed",
+            "actual": 0.2182178902359924,
+            "expected": ">= 0.6"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.cueUtilization.exactAgreement",
+            "status": "passed",
+            "actual": 0.5,
+            "expected": ">= 0.5"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.cueUtilization.withinOneLevelAccuracy",
+            "status": "passed",
+            "actual": 1,
+            "expected": ">= 0.9"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.cueUtilization.mae",
+            "status": "passed",
+            "actual": 0.5,
+            "expected": "<= 0.75"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.cueUtilization.absoluteSignedBias",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0.25"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.cueUtilization.coverage",
+            "status": "passed",
+            "actual": 1,
+            "expected": ">= 1"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.cueUtilization.invalidRate",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.cueUtilization.unavailableRate",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.cueUtilization.abstainedRate",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0"
+          }
+        ],
+        "status": "failed"
+      },
+      "cueWeighting": {
+        "dimension": "stated_rationale_alignment.cueWeighting",
+        "checks": [
+          {
+            "path": "dimensions.stated_rationale_alignment.cueWeighting.support",
+            "status": "passed",
+            "actual": {
+              "eligible": 96,
+              "levels": 5
+            },
+            "expected": {
+              "eligible": ">= 96",
+              "levels": ">= 5"
+            }
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.cueWeighting.qwk",
+            "status": "failed",
+            "actual": -0.10344827586206895,
+            "expected": ">= 0.6"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.cueWeighting.spearman",
+            "status": "failed",
+            "actual": -0.14398646590827704,
+            "expected": ">= 0.6"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.cueWeighting.pearson",
+            "status": "failed",
+            "actual": -0.11235088294097073,
+            "expected": ">= 0.6"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.cueWeighting.exactAgreement",
+            "status": "failed",
+            "actual": 0.375,
+            "expected": ">= 0.5"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.cueWeighting.withinOneLevelAccuracy",
+            "status": "failed",
+            "actual": 0.875,
+            "expected": ">= 0.9"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.cueWeighting.mae",
+            "status": "passed",
+            "actual": 0.75,
+            "expected": "<= 0.75"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.cueWeighting.absoluteSignedBias",
+            "status": "passed",
+            "actual": 0.25,
+            "expected": "<= 0.25"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.cueWeighting.coverage",
+            "status": "passed",
+            "actual": 1,
+            "expected": ">= 1"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.cueWeighting.invalidRate",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.cueWeighting.unavailableRate",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.cueWeighting.abstainedRate",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0"
+          }
+        ],
+        "status": "failed"
+      },
+      "contextSensitivity": {
+        "dimension": "stated_rationale_alignment.contextSensitivity",
+        "checks": [
+          {
+            "path": "dimensions.stated_rationale_alignment.contextSensitivity.support",
+            "status": "passed",
+            "actual": {
+              "eligible": 96,
+              "levels": 5
+            },
+            "expected": {
+              "eligible": ">= 96",
+              "levels": ">= 5"
+            }
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.contextSensitivity.qwk",
+            "status": "failed",
+            "actual": 0.11111111111111116,
+            "expected": ">= 0.6"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.contextSensitivity.spearman",
+            "status": "failed",
+            "actual": 0.2926028679903264,
+            "expected": ">= 0.6"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.contextSensitivity.pearson",
+            "status": "failed",
+            "actual": 0.1210898699241207,
+            "expected": ">= 0.6"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.contextSensitivity.exactAgreement",
+            "status": "passed",
+            "actual": 0.5,
+            "expected": ">= 0.5"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.contextSensitivity.withinOneLevelAccuracy",
+            "status": "failed",
+            "actual": 0.75,
+            "expected": ">= 0.9"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.contextSensitivity.mae",
+            "status": "passed",
+            "actual": 0.75,
+            "expected": "<= 0.75"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.contextSensitivity.absoluteSignedBias",
+            "status": "passed",
+            "actual": 0.25,
+            "expected": "<= 0.25"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.contextSensitivity.coverage",
+            "status": "passed",
+            "actual": 1,
+            "expected": ">= 1"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.contextSensitivity.invalidRate",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.contextSensitivity.unavailableRate",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.contextSensitivity.abstainedRate",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0"
+          }
+        ],
+        "status": "failed"
+      },
+      "actionConsistency": {
+        "dimension": "stated_rationale_alignment.actionConsistency",
+        "checks": [
+          {
+            "path": "dimensions.stated_rationale_alignment.actionConsistency.support",
+            "status": "passed",
+            "actual": {
+              "eligible": 96,
+              "levels": 5
+            },
+            "expected": {
+              "eligible": ">= 96",
+              "levels": ">= 5"
+            }
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.actionConsistency.qwk",
+            "status": "failed",
+            "actual": 0.5294117647058824,
+            "expected": ">= 0.6"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.actionConsistency.spearman",
+            "status": "failed",
+            "actual": 0.5308487462445706,
+            "expected": ">= 0.6"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.actionConsistency.pearson",
+            "status": "passed",
+            "actual": 0.6,
+            "expected": ">= 0.6"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.actionConsistency.exactAgreement",
+            "status": "failed",
+            "actual": 0.25,
+            "expected": ">= 0.5"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.actionConsistency.withinOneLevelAccuracy",
+            "status": "failed",
+            "actual": 0.875,
+            "expected": ">= 0.9"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.actionConsistency.mae",
+            "status": "failed",
+            "actual": 1,
+            "expected": "<= 0.75"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.actionConsistency.absoluteSignedBias",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0.25"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.actionConsistency.coverage",
+            "status": "passed",
+            "actual": 1,
+            "expected": ">= 1"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.actionConsistency.invalidRate",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.actionConsistency.unavailableRate",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0"
+          },
+          {
+            "path": "dimensions.stated_rationale_alignment.actionConsistency.abstainedRate",
+            "status": "passed",
+            "actual": 0,
+            "expected": "<= 0"
+          }
+        ],
+        "status": "failed"
+      }
+    },
+    "hardConstraint": {
+      "checks": [
+        {
+          "path": "hardConstraint.support",
+          "status": "passed",
+          "actual": {
+            "positives": 18,
+            "negatives": 126
+          },
+          "expected": {
+            "positives": ">= 18",
+            "negatives": ">= 126"
+          }
+        },
+        {
+          "path": "hardConstraint.coverage",
+          "status": "passed",
+          "actual": 1,
+          "expected": ">= 1"
+        },
+        {
+          "path": "hardConstraint.invalidRate",
+          "status": "passed",
+          "actual": 0,
+          "expected": "<= 0"
+        },
+        {
+          "path": "hardConstraint.unavailableRate",
+          "status": "passed",
+          "actual": 0,
+          "expected": "<= 0"
+        },
+        {
+          "path": "hardConstraint.abstainedRate",
+          "status": "passed",
+          "actual": 0,
+          "expected": "<= 0"
+        },
+        {
+          "path": "hardConstraint.exactAgreement",
+          "status": "passed",
+          "actual": 1,
+          "expected": ">= 0.95"
+        },
+        {
+          "path": "hardConstraint.criticalRecall",
+          "status": "passed",
+          "actual": 1,
+          "expected": ">= 1"
+        },
+        {
+          "path": "hardConstraint.criticalPrecision",
+          "status": "passed",
+          "actual": 1,
+          "expected": ">= 0.75"
+        },
+        {
+          "path": "hardConstraint.criticalSpecificity",
+          "status": "passed",
+          "actual": 1,
+          "expected": ">= 0.95"
+        },
+        {
+          "path": "hardConstraint.criticalMcc",
+          "status": "passed",
+          "actual": 1,
+          "expected": ">= 0.8"
+        }
+      ],
+      "status": "passed"
+    },
+    "efficiency": {
+      "checks": [
+        {
+          "path": "efficiency.meanLatencyMs",
+          "status": "passed",
+          "actual": 5663.557692307692,
+          "expected": "<= 15000"
+        },
+        {
+          "path": "efficiency.meanOutputTokens",
+          "status": "passed",
+          "actual": 493.0769230769231,
+          "expected": "<= 1024"
+        }
+      ],
+      "status": "passed"
+    },
+    "reportOnly": []
+  },
+  "candidateStepId": "0205-mini-targeted-evidence-v3-001",
+  "acceptedStepIdBefore": null,
+  "acceptedStepIdAfter": null,
+  "expectedCalls": 52,
+  "actualCalls": 52,
+  "measurementPlanDigest": "sha256:ec1b88bc66d6f7cfd7c2fa9d93e3a4cdd168209e5b6ee838b4582a46d802e756",
+  "routingPlanDigest": "sha256:98a0ecbd8bd9372993a7959e2c3d49db0b073cd5064996a1ff70f93ab0035ec7",
+  "gatePolicyId": "absolute-all-metric-gate-2026.8.20",
+  "campaignPolicyId": "luna-hill-climbing-budget-2026.8.20",
+  "fullIterationNumber": null,
+  "miniBatchNumber": 2,
+  "parentFullStepId": "0203-full-cross-lane-v1-repeat-002",
+  "promptMode": "independent_lanes",
+  "promptBundleId": "2026.8.21-luna-cross-lane-evidence-v3",
+  "promptBundleDigest": "sha256:0676387937505907cff312ac373f6012e30b4c021c09c8819717390ea6df6998",
+  "promptDigests": {
+    "judgment_alignment": "sha256:dc1e44c28f92ba13fa24dc9b1a9eabc2f836785998d5b26eb2a525c4c6990d1f",
+    "stated_rationale_alignment": "sha256:770876b7b7931c9d183f684772dcafc038d11a6418d5a9e304c12035d7fa5c08",
+    "task_performance": "sha256:869942bc292f892e3aa68628badb96d05dc39d00bd6509e5db9bfefab3cd7859",
+    "evidence_grounding": "sha256:c6b537e16e1d0a43053318ba5d46f2e3568bded175e9b5978cb59dee4887aa8f",
+    "hard_constraint_violation": "sha256:04df5c50d48ff7ad5c936903912700218c3ddd766419275911f51ce00a714394"
+  },
+  "changedDimensions": [],
+  "routing": {
+    "evidence_grounding": 12,
+    "hard_constraint_violation": 12,
+    "judgment_alignment": 8,
+    "stated_rationale_alignment": 8,
+    "task_performance": 12
+  },
+  "summary": {
+    "coverage": {
+      "value": 1
+    },
+    "invalidRate": {
+      "value": 0
+    }
+  }
+}

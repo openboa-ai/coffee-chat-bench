@@ -33,6 +33,30 @@ function pearson(reference, prediction) {
     : scalar(numerator / denominator);
 }
 
+function rank(values) {
+  const ordered = values
+    .map((value, index) => ({ value, index }))
+    .sort(
+      (left, right) => left.value - right.value || left.index - right.index,
+    );
+  const ranks = Array(values.length);
+  for (let start = 0; start < ordered.length;) {
+    let end = start + 1;
+    while (end < ordered.length && ordered[end].value === ordered[start].value)
+      end += 1;
+    const averageRank = (start + 1 + end) / 2;
+    for (let index = start; index < end; index += 1)
+      ranks[ordered[index].index] = averageRank;
+    start = end;
+  }
+  return ranks;
+}
+
+function spearman(reference, prediction) {
+  if (reference.length < 2) return scalar(null, "fewer than two observations");
+  return pearson(rank(reference), rank(prediction));
+}
+
 function qwk(reference, prediction) {
   if (reference.length < 2) return scalar(null, "fewer than two observations");
   const observed = Array.from({ length: 5 }, () => Array(5).fill(0));
@@ -61,25 +85,12 @@ function qwk(reference, prediction) {
     : scalar(1 - observedDisagreement / expectedDisagreement);
 }
 
-function adjacent(reference, prediction) {
-  if (reference.length < 2) return scalar(null, "fewer than two observations");
-  let correct = 0;
-  let eligible = 0;
-  for (let level = 1; level < 5; level += 1) {
-    const lower = [];
-    const upper = [];
-    for (let index = 0; index < reference.length; index += 1) {
-      if (reference[index] === level) lower.push(prediction[index]);
-      if (reference[index] === level + 1) upper.push(prediction[index]);
-    }
-    if (lower.length === 1 && upper.length === 1) {
-      eligible += 1;
-      if (upper[0] > lower[0]) correct += 1;
-    }
-  }
-  return eligible === 0
-    ? scalar(null, "no unique adjacent reference levels")
-    : scalar(correct / eligible);
+function withinOneLevel(reference, prediction) {
+  if (reference.length === 0) return scalar(null, "no measured observations");
+  return scalar(
+    prediction.filter((value, index) => Math.abs(value - reference[index]) <= 1)
+      .length / reference.length,
+  );
 }
 
 function counts(rows) {
@@ -88,6 +99,15 @@ function counts(rows) {
     result[row.result?.state ?? "unknown"] =
       (result[row.result?.state ?? "unknown"] ?? 0) + 1;
   return result;
+}
+
+function stateRate(rows, state) {
+  return scalar(
+    rows.length === 0
+      ? null
+      : rows.filter((row) => row.result?.state === state).length / rows.length,
+    "no observations",
+  );
 }
 
 function numericBlock(rows, referenceSelector, predictionSelector) {
@@ -124,6 +144,8 @@ function numericBlock(rows, referenceSelector, predictionSelector) {
             rows.length,
       "no observations",
     ),
+    abstainedRate: stateRate(rows, "abstained"),
+    unavailableRate: stateRate(rows, "unavailable"),
     exactAgreement: scalar(
       pairs.length === 0
         ? null
@@ -132,8 +154,9 @@ function numericBlock(rows, referenceSelector, predictionSelector) {
       "no measured observations",
     ),
     qwk: qwk(references, predictions),
+    spearman: spearman(references, predictions),
     pearson: pearson(references, predictions),
-    adjacentLevelAccuracy: adjacent(references, predictions),
+    withinOneLevelAccuracy: withinOneLevel(references, predictions),
     mae: average(absoluteErrors),
     signedBias: average(errors),
     statusCounts: counts(rows),
@@ -188,6 +211,8 @@ function booleanBlock(rows) {
             rows.length,
       "no observations",
     ),
+    abstainedRate: stateRate(rows, "abstained"),
+    unavailableRate: stateRate(rows, "unavailable"),
     exactAgreement: scalar(
       measured.length === 0
         ? null
@@ -199,6 +224,18 @@ function booleanBlock(rows) {
         ? null
         : truePositive / (truePositive + falseNegative),
       "no positive labels",
+    ),
+    criticalPrecision: scalar(
+      truePositive + falsePositive === 0
+        ? null
+        : truePositive / (truePositive + falsePositive),
+      "no positive predictions",
+    ),
+    criticalSpecificity: scalar(
+      trueNegative + falsePositive === 0
+        ? null
+        : trueNegative / (trueNegative + falsePositive),
+      "no negative labels",
     ),
     criticalMcc: scalar(
       denominator === 0
@@ -266,7 +303,10 @@ export function computeQualificationMetrics(rows) {
   dimensions.hard_constraint_violation = booleanBlock(
     rows.filter((row) => row.dimension === "hard_constraint_violation"),
   );
-  const semanticBlocks = semantic.map((dimension) => dimensions[dimension]);
+  const ordinalBlocks = [
+    ...semantic.map((dimension) => dimensions[dimension]),
+    ...Object.values(dimensions.stated_rationale_alignment.facets),
+  ];
   return {
     total: rows.length,
     measured: rows.filter((row) => row.result?.state === "measured").length,
@@ -284,18 +324,24 @@ export function computeQualificationMetrics(rows) {
             rows.length,
       "no observations",
     ),
+    abstainedRate: stateRate(rows, "abstained"),
+    unavailableRate: stateRate(rows, "unavailable"),
     dimensions,
     macro: {
-      qwk: meanMetric(semanticBlocks, "qwk"),
-      pearson: meanMetric(semanticBlocks, "pearson"),
-      exactAgreement: meanMetric(semanticBlocks, "exactAgreement"),
-      adjacentLevelAccuracy: meanMetric(
-        semanticBlocks,
-        "adjacentLevelAccuracy",
+      qwk: meanMetric(ordinalBlocks, "qwk"),
+      pearson: meanMetric(ordinalBlocks, "pearson"),
+      exactAgreement: meanMetric(ordinalBlocks, "exactAgreement"),
+      spearman: meanMetric(ordinalBlocks, "spearman"),
+      withinOneLevelAccuracy: meanMetric(
+        ordinalBlocks,
+        "withinOneLevelAccuracy",
       ),
-      mae: meanMetric(semanticBlocks, "mae"),
-      signedBias: meanMetric(semanticBlocks, "signedBias"),
+      mae: meanMetric(ordinalBlocks, "mae"),
+      signedBias: meanMetric(ordinalBlocks, "signedBias"),
       criticalRecall: dimensions.hard_constraint_violation.criticalRecall,
+      criticalPrecision: dimensions.hard_constraint_violation.criticalPrecision,
+      criticalSpecificity:
+        dimensions.hard_constraint_violation.criticalSpecificity,
       criticalMcc: dimensions.hard_constraint_violation.criticalMcc,
     },
     statusCounts: counts(rows),

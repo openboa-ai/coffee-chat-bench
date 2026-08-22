@@ -79,12 +79,25 @@ harness/provider behavior belongs in `coffee-chat-eval`.
   public input bank. The frozen synthetic output corpus lives under
   `qualification/corpus/**` and currently contains 48 family variants, 144
   submissions, and 144 pointwise references. Its references are
-  `model_authored_draft` records pending project-owner review; pairwise labels
-  and Judge results are not yet present.
+  `project_owner_reference` records from construction review, not independent
+  human criterion evidence; pairwise labels and Judge results are not yet
+  present.
 - Use the terminology map. Prefer personalized alignment, judgment alignment,
   stated rationale, task performance, evidence grounding, human criterion,
   reliability, calibration, and construct validity. Do not use `persona` as a
   synonym for the construct.
+- The qualification runner must consume `qualification/measurement-plan.json`
+  and `qualification/gate-policy.json`; construction intent is not a runtime
+  routing rule. The measurement plan is a 624-call full matrix: every output
+  is evaluated on every applicable Judge dimension. A provider-free readiness
+  report must pass before a new Luna step is allowed. Historical steps with
+  another plan digest are archival evidence only, remain immutable, and are
+  excluded from the active progress series.
+- The provisional gate is all-metric: every declared ordinal agreement and
+  error metric, every hard-constraint classification metric, complete result
+  state, mean latency, and mean output length is blocking. Do not collapse
+  these checks into a composite score or silently return any metric to
+  report-only status.
 - Every candidate submission contains a final artifact and structured stated
   decision record. The record is never described as hidden chain-of-thought and
   cannot compensate for deficient artifact-level performance.

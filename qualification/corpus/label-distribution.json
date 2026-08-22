@@ -1,9 +1,9 @@
 {
   "release": "2026.8.19",
   "corpusId": "provisional_judge_qualification_corpus",
-  "status": "draft_labels_mapped",
-  "authority": "model_authored_draft",
-  "reviewState": "pending_project_owner_review",
+  "status": "project_owner_reviewed",
+  "authority": "project_owner_reference",
+  "reviewState": "project_owner_reviewed",
   "records": {
     "pointwise": 144,
     "pairwise": 0,

@@ -1,0 +1,12 @@
+{
+  "artifact_type": "luna_hill_climbing_campaign_policy",
+  "policyId": "luna-hill-climbing-budget-2026.8.20",
+  "model": "gpt-5.6-luna",
+  "fullIterationBudget": 100,
+  "baselineCountsAgainstBudget": false,
+  "miniBatchLimitBetweenFull": 4,
+  "fullMeasurementCalls": 624,
+  "progressSeries": "full_iteration_only",
+  "stepWriteMode": "write_once",
+  "publicBenchmarkStatus": "not_active"
+}

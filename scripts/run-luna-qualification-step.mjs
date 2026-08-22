@@ -13,25 +13,42 @@ import {
 import { validateBank } from "../src/bank.ts";
 import { stableDigest } from "../src/contracts.ts";
 import { validateQualificationCorpus } from "../src/qualification.ts";
+import { buildQualificationReadiness } from "./qualification-readiness.mjs";
+import { evaluateAbsoluteGate } from "./qualification-gates.mjs";
 import { computeQualificationMetrics } from "./qualification-metrics.mjs";
 import { writeQualificationPlots } from "./qualification-plots.mjs";
+import {
+  JUDGE_PROMPT_DIMENSIONS,
+  normalizeJudgePromptDocument,
+} from "./judge-prompt-bundle.mjs";
+import {
+  assertFullIterationAvailable,
+  assertMiniBatchAvailable,
+  budgetUsed,
+  latestFullStepId,
+  miniBatchesSinceFull,
+} from "./hill-climbing-policy.mjs";
 
 const ROOT = resolve(import.meta.dirname, "..");
 const MODEL = "gpt-5.6-luna";
 const MAX_CONCURRENCY = 4;
-const DEFAULT_MAX_OUTPUT_TOKENS = 256;
+const DEFAULT_MAX_OUTPUT_TOKENS = 2_048;
 
 function usage() {
   throw new TypeError(
-    "usage: run-luna-qualification-step.mjs --transport <module> [--step-id <id>] [--prompt <json>] [--hypothesis <text>] [--root <path>]",
+    "usage: run-luna-qualification-step.mjs --transport <module> [--kind full|mini] [--mini-plan <json>] [--step-id <id>] [--prompt <json>] [--prompt-bundle <json>] [--changed-dimension <dimension>] [--hypothesis <text>] [--root <path>]",
   );
 }
 
 function parseArgs(args) {
   const parsed = {
     transport: null,
+    kind: "full",
+    miniPlanPath: null,
     stepId: null,
     promptPath: null,
+    promptBundlePath: null,
+    changedDimensions: [],
     hypothesis: "baseline prompt; no prior hill-climbing hypothesis",
     root: ROOT,
     reasoningEffort: "low",
@@ -41,8 +58,15 @@ function parseArgs(args) {
     const flag = args[index];
     const value = args[index + 1];
     if (flag === "--transport" && value) parsed.transport = resolve(value);
+    else if (flag === "--kind" && value) parsed.kind = value;
+    else if (flag === "--mini-plan" && value)
+      parsed.miniPlanPath = resolve(value);
     else if (flag === "--step-id" && value) parsed.stepId = value;
     else if (flag === "--prompt" && value) parsed.promptPath = resolve(value);
+    else if (flag === "--prompt-bundle" && value)
+      parsed.promptBundlePath = resolve(value);
+    else if (flag === "--changed-dimension" && value)
+      parsed.changedDimensions.push(value);
     else if (flag === "--hypothesis" && value) parsed.hypothesis = value;
     else if (flag === "--root" && value) parsed.root = resolve(value);
     else if (flag === "--reasoning-effort" && value)
@@ -53,8 +77,28 @@ function parseArgs(args) {
     index += 1;
   }
   if (!parsed.transport) usage();
-  if (!Number.isInteger(parsed.maxOutputTokens) || parsed.maxOutputTokens < 1)
-    throw new TypeError("--max-output-tokens must be a positive integer");
+  if (!new Set(["full", "mini"]).has(parsed.kind))
+    throw new TypeError("--kind must be full or mini");
+  if (parsed.kind === "mini" && !parsed.miniPlanPath)
+    throw new TypeError("--mini-plan is required for --kind mini");
+  if (parsed.kind === "full" && parsed.miniPlanPath)
+    throw new TypeError("--mini-plan is only valid for --kind mini");
+  if (parsed.promptPath && parsed.promptBundlePath)
+    throw new TypeError("use either --prompt or --prompt-bundle, not both");
+  for (const dimension of parsed.changedDimensions)
+    if (!JUDGE_PROMPT_DIMENSIONS.includes(dimension))
+      throw new TypeError(
+        `--changed-dimension must be one of ${JUDGE_PROMPT_DIMENSIONS.join(", ")}`,
+      );
+  parsed.changedDimensions = [...new Set(parsed.changedDimensions)];
+  if (
+    !Number.isInteger(parsed.maxOutputTokens) ||
+    parsed.maxOutputTokens < 1 ||
+    parsed.maxOutputTokens > DEFAULT_MAX_OUTPUT_TOKENS
+  )
+    throw new TypeError(
+      `--max-output-tokens must be between 1 and ${DEFAULT_MAX_OUTPUT_TOKENS}`,
+    );
   return parsed;
 }
 
@@ -228,35 +272,6 @@ function labelForDimension(label, dimension) {
   return label.hardConstraintViolation;
 }
 
-function routeDimension(intent, condition) {
-  if (intent === "hard_constraint_breach") return "hard_constraint_violation";
-  if (intent === "material_task_omission") return "task_performance";
-  if (
-    intent === "grounding_weakness" ||
-    intent === "unsupported_material_claim"
-  )
-    return "evidence_grounding";
-  if (
-    intent === "rationale_action_inconsistency" ||
-    intent === "rationale_underspecified"
-  )
-    return condition === "unconditioned"
-      ? "task_performance"
-      : "stated_rationale_alignment";
-  if (
-    intent === "context_insensitive_judgment" ||
-    intent === "cue_omission" ||
-    intent === "target_insensitive_judgment" ||
-    intent === "target_policy_reversal"
-  )
-    return condition === "unconditioned"
-      ? "task_performance"
-      : "judgment_alignment";
-  return condition === "unconditioned"
-    ? "task_performance"
-    : "judgment_alignment";
-}
-
 function referenceValue(label, dimension) {
   const value = labelForDimension(label, dimension);
   if (dimension === "hard_constraint_violation") return value.detected;
@@ -277,105 +292,6 @@ function metricTiming(call, started) {
   };
 }
 
-function metricAt(metrics, path) {
-  let value = metrics;
-  for (const key of path) value = value?.[key];
-  return typeof value?.value === "number" ? value.value : null;
-}
-
-function stateRate(metrics, state) {
-  const total = metrics?.total;
-  const count = metrics?.statusCounts?.[state];
-  return typeof total === "number" && total > 0 && typeof count === "number"
-    ? count / total
-    : null;
-}
-
-function compareMetric(candidate, accepted, path, direction, checks) {
-  const candidateValue = metricAt(candidate, path);
-  const acceptedValue = metricAt(accepted, path);
-  if (candidateValue === null && acceptedValue === null) return;
-  if (candidateValue === null || acceptedValue === null) {
-    checks.push({
-      path: path.join("."),
-      direction,
-      accepted: acceptedValue,
-      candidate: candidateValue,
-      comparable: false,
-      passed: false,
-      reason: "metric became measured or unmeasured",
-    });
-    return;
-  }
-  const difference = candidateValue - acceptedValue;
-  const improvement = direction === "higher" ? difference : -difference;
-  checks.push({
-    path: path.join("."),
-    direction,
-    accepted: acceptedValue,
-    candidate: candidateValue,
-    comparable: true,
-    passed: improvement >= -1e-12,
-    strictImprovement: improvement > 1e-6,
-  });
-}
-
-function compareAgainstAccepted(candidate, accepted) {
-  const checks = [];
-  const higher = [
-    ["macro", "qwk"],
-    ["macro", "pearson"],
-    ["macro", "exactAgreement"],
-    ["macro", "criticalRecall"],
-    ["macro", "criticalMcc"],
-    ["coverage"],
-    ["dimensions", "hard_constraint_violation", "exactAgreement"],
-  ];
-  const lower = [["macro", "mae"], ["macro", "signedBias"], ["invalidRate"]];
-  for (const path of higher)
-    compareMetric(candidate, accepted, path, "higher", checks);
-  for (const path of lower)
-    compareMetric(candidate, accepted, path, "lower", checks);
-
-  for (const state of ["invalid", "unavailable", "abstained"]) {
-    const candidateValue = stateRate(candidate, state);
-    const acceptedValue = stateRate(accepted, state);
-    if (candidateValue === null && acceptedValue === null) continue;
-    if (candidateValue === null || acceptedValue === null) {
-      checks.push({
-        path: `statusRates.${state}`,
-        direction: "lower",
-        accepted: acceptedValue,
-        candidate: candidateValue,
-        comparable: false,
-        passed: false,
-        reason: "status rate became measured or unmeasured",
-      });
-      continue;
-    }
-    const improvement = acceptedValue - candidateValue;
-    checks.push({
-      path: `statusRates.${state}`,
-      direction: "lower",
-      accepted: acceptedValue,
-      candidate: candidateValue,
-      comparable: true,
-      passed: improvement >= -1e-12,
-      strictImprovement: improvement > 1e-6,
-    });
-  }
-
-  const regressions = checks.filter((check) => !check.passed);
-  const strictImprovements = checks.filter((check) => check.strictImprovement);
-  return {
-    comparable: checks.every((check) => check.comparable),
-    passed: regressions.length === 0,
-    strictImprovement: strictImprovements.length > 0,
-    checks,
-    regressions,
-  };
-}
-
 async function updateIndex(path, entry) {
   const index = existsSync(path)
     ? await json(path)
@@ -391,16 +307,62 @@ async function updateIndex(path, entry) {
   return index;
 }
 
-async function historyWithMetrics(campaignRoot, steps) {
-  return Promise.all(
-    steps.map(async (entry) => {
-      const metricsPath = join(campaignRoot, entry.metricsPath);
-      return {
-        stepId: entry.stepId,
-        metrics: existsSync(metricsPath) ? await json(metricsPath) : null,
-      };
-    }),
+function routeKey(entry) {
+  return `${entry.exampleId}\u0000${entry.dimension}`;
+}
+
+async function loadMiniPlan(path, fullPlan, corpus, labelManifest) {
+  const plan = await json(path);
+  if (plan.artifact_type !== "qualification_mini_measurement_plan")
+    throw new TypeError("mini plan has an invalid artifact_type");
+  if (plan.sourcePlanDigest !== fullPlan.planDigest)
+    throw new TypeError("mini plan sourcePlanDigest does not match full plan");
+  if (plan.corpusDigest !== corpus.manifest.corpusDigest)
+    throw new TypeError("mini plan corpus digest does not match corpus");
+  if (plan.labelDigest !== labelManifest.referenceLabelsDigest)
+    throw new TypeError("mini plan label digest does not match labels");
+  const { planDigest, ...miniPlanSemantic } = plan;
+  if (planDigest !== stableDigest(miniPlanSemantic))
+    throw new TypeError("mini plan digest does not match its content");
+  if (!Array.isArray(plan.entries) || plan.entries.length === 0)
+    throw new TypeError("mini plan must contain at least one entry");
+  const fullEntries = new Map(
+    fullPlan.entries.map((entry) => [routeKey(entry), entry]),
   );
+  const seen = new Set();
+  for (const entry of plan.entries) {
+    const key = routeKey(entry);
+    if (seen.has(key)) throw new TypeError(`mini plan repeats ${key}`);
+    seen.add(key);
+    const fullEntry = fullEntries.get(key);
+    if (!fullEntry)
+      throw new TypeError(`mini plan contains an unknown route ${key}`);
+    if (entry.condition !== fullEntry.condition)
+      throw new TypeError(`mini plan condition mismatch for ${key}`);
+  }
+  if (plan.entries.length >= fullPlan.entries.length)
+    throw new TypeError(
+      "mini plan must be smaller than the full measurement plan",
+    );
+  return plan;
+}
+
+async function historyWithMetrics(campaignRoot, steps, measurementPlanDigest) {
+  const history = [];
+  for (const entry of steps) {
+    const metricsPath = join(campaignRoot, entry.metricsPath);
+    if (!existsSync(metricsPath)) continue;
+    const metrics = await json(metricsPath);
+    if (metrics.measurementPlanDigest !== measurementPlanDigest) continue;
+    history.push({
+      stepId: entry.stepId,
+      fullIterationNumber:
+        entry.fullIterationNumber ??
+        (entry.gateDecision === "baseline" ? 0 : null),
+      metrics,
+    });
+  }
+  return history;
 }
 
 async function main() {
@@ -409,30 +371,81 @@ async function main() {
   const corpusRoot = join(qualificationRoot, "corpus");
   const campaignRoot = join(qualificationRoot, "hill-climbing");
   const stepsRoot = join(campaignRoot, "steps");
+  const miniRoot = join(campaignRoot, "mini");
   const currentStepId = stepId(options.stepId);
-  const stepRoot = join(stepsRoot, currentStepId);
-  if (existsSync(stepRoot))
+  const stepRoot = join(
+    options.kind === "mini" ? miniRoot : stepsRoot,
+    currentStepId,
+  );
+  if (
+    existsSync(stepRoot) ||
+    existsSync(join(stepsRoot, currentStepId)) ||
+    existsSync(join(miniRoot, currentStepId))
+  )
     throw new TypeError(`refusing to overwrite existing step ${currentStepId}`);
-  await mkdir(stepRoot, { recursive: true });
   await mkdir(campaignRoot, { recursive: true });
   const indexPath = join(campaignRoot, "index.json");
+  const miniIndexPath = join(campaignRoot, "mini-index.json");
   const existingIndex = existsSync(indexPath) ? await json(indexPath) : null;
-  const parentStepId = existingIndex?.steps.at(-1)?.stepId ?? null;
+  const existingMiniIndex = existsSync(miniIndexPath)
+    ? await json(miniIndexPath)
+    : { artifact_type: "qualification_mini_step_index", steps: [] };
   const existingCampaign = existsSync(join(campaignRoot, "campaign.json"))
     ? await json(join(campaignRoot, "campaign.json"))
     : null;
-  const acceptedStepIdBefore = existingCampaign?.acceptedStepId ?? null;
-  const acceptedEntry = existingIndex?.steps.find(
-    (entry) => entry.stepId === acceptedStepIdBefore,
-  );
-  const acceptedMetrics = acceptedEntry
-    ? await json(join(campaignRoot, acceptedEntry.metricsPath))
-    : null;
+  const campaignPolicy = await json(join(campaignRoot, "campaign-policy.json"));
+  if (
+    campaignPolicy.model !== MODEL ||
+    campaignPolicy.fullMeasurementCalls !== 624 ||
+    campaignPolicy.fullIterationBudget !== 100 ||
+    campaignPolicy.miniBatchLimitBetweenFull !== 4
+  )
+    throw new TypeError(
+      "campaign policy does not match the fixed Luna campaign",
+    );
 
-  const promptDocument = options.promptPath
-    ? await json(options.promptPath)
-    : await json(join(qualificationRoot, "baseline-prompt.json"));
-  const protocol = promptDocument.protocol ?? promptDocument;
+  const fullSteps = existingIndex?.steps ?? [];
+  const miniSteps = existingMiniIndex.steps ?? [];
+  const latestFull = latestFullStepId(fullSteps);
+  let fullIterationNumber = null;
+  let miniBatchNumber = null;
+  let parentStepId = latestFull;
+  if (options.kind === "full") {
+    const allowance = assertFullIterationAvailable(fullSteps, campaignPolicy);
+    fullIterationNumber = allowance.used + 1;
+  } else {
+    if (!latestFull)
+      throw new TypeError(
+        "a completed full step is required before a mini batch",
+      );
+    const allowance = assertMiniBatchAvailable(
+      miniSteps,
+      latestFull,
+      campaignPolicy,
+    );
+    miniBatchNumber = allowance.used + 1;
+  }
+
+  const promptSourcePath =
+    options.promptBundlePath ??
+    options.promptPath ??
+    join(qualificationRoot, "baseline-prompt.json");
+  const promptDocument = await json(promptSourcePath);
+  const promptBundle = normalizeJudgePromptDocument(promptDocument);
+  if (
+    options.changedDimensions.length > 0 &&
+    promptBundle.mode !== "independent_lanes"
+  )
+    throw new TypeError(
+      "--changed-dimension requires an independent_lanes prompt bundle",
+    );
+  const protocolsByDimension = promptBundle.protocolsByDimension;
+  const gatePolicy = await json(join(qualificationRoot, "gate-policy.json"));
+  const readiness = await buildQualificationReadiness(options.root);
+  if (readiness.status !== "ready_for_new_baseline")
+    throw new TypeError(
+      `qualification readiness is ${readiness.status}; run was not started`,
+    );
   const bank = await validateBank(join(options.root, "bank"));
   const corpus = await validateQualificationCorpus(
     corpusRoot,
@@ -445,37 +458,71 @@ async function main() {
   );
   if (labels.size !== corpus.submissions.length)
     throw new TypeError("reference label and submission census differ");
-  const construction = await json(join(corpusRoot, "construction-plan.json"));
-  const familyById = new Map(
-    construction.familyVariants.map((family) => [
-      family.familyVariantId,
-      family,
-    ]),
-  );
-  const casesById = new Map(
-    bank.cases.map((entry) => [entry.entry.caseId, entry]),
-  );
-  const routed = corpus.submissions.map((submission) => {
-    const family = familyById.get(submission.familyVariantId);
-    if (!family)
-      throw new TypeError(
-        `missing construction family ${submission.familyVariantId}`,
-      );
-    const dimension = routeDimension(
-      family.constructionIntent[submission.condition],
-      submission.condition,
-    );
-    return {
-      submission,
-      family,
-      dimension,
-      label: labels.get(submission.exampleId),
-    };
-  });
-  const promptDigest = stableDigest(protocol);
   const labelManifest = await json(
     join(corpusRoot, "reference-labels-manifest.json"),
   );
+  const measurementPlan = await json(
+    join(qualificationRoot, "measurement-plan.json"),
+  );
+  if (measurementPlan.corpusDigest !== corpus.manifest.corpusDigest)
+    throw new TypeError("measurement plan corpus digest does not match corpus");
+  const submissionById = new Map(
+    corpus.submissions.map((submission) => [submission.exampleId, submission]),
+  );
+  if (measurementPlan.labelDigest !== labelManifest.referenceLabelsDigest)
+    throw new TypeError(
+      "measurement plan label digest does not match manifest",
+    );
+  const miniPlan =
+    options.kind === "mini"
+      ? await loadMiniPlan(
+          options.miniPlanPath,
+          measurementPlan,
+          corpus,
+          labelManifest,
+        )
+      : null;
+  const routingPlan = miniPlan ?? measurementPlan;
+  const routingPlanDigest = miniPlan
+    ? miniPlan.planDigest
+    : measurementPlan.planDigest;
+  const casesById = new Map(
+    bank.cases.map((entry) => [entry.entry.caseId, entry]),
+  );
+  const routed = routingPlan.entries.map((entry) => {
+    const submission = submissionById.get(entry.exampleId);
+    const label = labels.get(entry.exampleId);
+    if (!submission || !label)
+      throw new TypeError(
+        `measurement plan has an unknown example ${entry.exampleId}`,
+      );
+    if (submission.condition !== entry.condition)
+      throw new TypeError(
+        `measurement plan condition mismatch for ${entry.exampleId}`,
+      );
+    return {
+      submission,
+      dimension: entry.dimension,
+      label,
+    };
+  });
+  if (options.kind === "full" && routed.length !== 624)
+    throw new TypeError("measurement plan must route exactly 624 calls");
+  if (options.kind === "mini" && routed.length >= 624)
+    throw new TypeError("mini plan must route fewer than 624 calls");
+  const previousFullMatrixHistory = await historyWithMetrics(
+    campaignRoot,
+    fullSteps,
+    measurementPlan.planDigest,
+  );
+  const isFirstFullMatrixRun = previousFullMatrixHistory.length === 0;
+  const compatibleCampaign =
+    existingCampaign?.measurementPlanDigest === measurementPlan.planDigest &&
+    existingCampaign?.gatePolicyId === gatePolicy.policyId;
+  const acceptedStepIdBefore = compatibleCampaign
+    ? (existingCampaign?.acceptedStepId ?? null)
+    : null;
+  const promptBundleDigest = promptBundle.bundleDigest;
   const judgeConfiguration = {
     model: MODEL,
     tools: [],
@@ -487,6 +534,7 @@ async function main() {
     transport: "injected",
   };
   const judgeConfigurationDigest = stableDigest(judgeConfiguration);
+  await mkdir(stepRoot, { recursive: true });
   await writeFile(
     join(stepRoot, "manifest.json"),
     `${JSON.stringify(
@@ -496,14 +544,35 @@ async function main() {
         parentStepId,
         hypothesis: options.hypothesis,
         completionState: "running",
+        runKind: options.kind,
         evidenceState: "provisional",
         model: MODEL,
         corpusDigest: corpus.manifest.corpusDigest,
-        labelDigest: labelManifest.labelDigest,
-        promptDigest,
+        labelDigest: labelManifest.referenceLabelsDigest,
+        measurementPlanDigest: measurementPlan.planDigest,
+        routingPlanDigest,
+        routingPlanPath: miniPlan ? "routing-plan.json" : null,
+        gatePolicyId: gatePolicy.policyId,
+        gatePolicyDigest: stableDigest(gatePolicy),
+        campaignPolicyId: campaignPolicy.policyId,
+        campaignPolicyDigest: stableDigest(campaignPolicy),
+        fullIterationBudget: campaignPolicy.fullIterationBudget,
+        baselineCountsAgainstBudget: campaignPolicy.baselineCountsAgainstBudget,
+        miniBatchLimitBetweenFull: campaignPolicy.miniBatchLimitBetweenFull,
+        fullIterationNumber,
+        miniBatchNumber,
+        parentFullStepId: latestFull,
+        readinessDigest: readiness.readinessDigest,
+        promptMode: promptBundle.mode,
+        promptBundleId: promptBundle.bundleId,
+        promptBundleDigest,
+        promptDigests: promptBundle.promptDigests,
+        changedDimensions: options.changedDimensions,
+        promptSourcePath,
+        promptDigest: promptBundleDigest,
         judgeConfiguration,
         judgeConfigurationDigest,
-        corpusCensus: routed.length,
+        submissionCensus: corpus.submissions.length,
         plannedCalls: routed.length,
         routing: Object.fromEntries(
           Object.entries(Object.groupBy(routed, (row) => row.dimension)).map(
@@ -519,12 +588,25 @@ async function main() {
   );
   await writeFile(
     join(stepRoot, "prompt.json"),
-    `${JSON.stringify({ protocol, promptDigest }, null, 2)}\n`,
+    `${JSON.stringify(promptBundle.document, null, 2)}\n`,
     "utf8",
   );
+  if (miniPlan)
+    await writeFile(
+      join(stepRoot, "routing-plan.json"),
+      `${JSON.stringify(miniPlan, null, 2)}\n`,
+      "utf8",
+    );
+  const labelsForStep = miniPlan
+    ? [
+        ...new Map(
+          routed.map((row) => [row.submission.exampleId, row.label]),
+        ).values(),
+      ]
+    : [...labels.values()];
   await writeFile(
     join(stepRoot, "reference-labels.json"),
-    `${JSON.stringify([...labels.values()], null, 2)}\n`,
+    `${JSON.stringify(labelsForStep, null, 2)}\n`,
     "utf8",
   );
   const evaluationsPath = join(stepRoot, "evaluations.jsonl");
@@ -538,6 +620,8 @@ async function main() {
     MAX_CONCURRENCY,
     async ({ submission, dimension, label }) => {
       const started = Date.now();
+      const protocol = protocolsByDimension[dimension];
+      const promptDigest = promptBundle.promptDigests[dimension];
       const source = casesById.get(submission.sourceCaseId);
       if (!source)
         throw new TypeError(`missing source case ${submission.sourceCaseId}`);
@@ -581,6 +665,10 @@ async function main() {
         sourceCaseId: submission.sourceCaseId,
         condition: submission.condition,
         dimension,
+        promptLane: dimension,
+        promptBundleDigest,
+        protocolId: protocol.protocolId,
+        protocolDigest: promptDigest,
         artifact: submission.candidateSubmission.artifact,
         decisionRecord: submission.candidateSubmission.decisionRecord,
         artifactDigest:
@@ -589,6 +677,7 @@ async function main() {
             : null,
         renderedPrompt: request?.prompt ?? null,
         promptDigest: request ? renderedPromptDigest(request) : null,
+        callIssued: Boolean(request),
         rawResponse: call?.completion ?? null,
         rawResponseDigest: call?.completion
           ? stableDigest(call.completion)
@@ -618,77 +707,103 @@ async function main() {
   );
   child.close();
   const metrics = computeQualificationMetrics(observations);
-  const actualCalls = rows.filter((row) => row.attempts.length > 0).length;
+  const actualCalls = rows.filter((row) => row.callIssued === true).length;
   const completionState =
     actualCalls === routed.length ? "complete" : "incomplete";
-  const comparison = acceptedMetrics
-    ? compareAgainstAccepted(
-        metrics,
-        acceptedMetrics.metrics ?? acceptedMetrics,
-      )
-    : null;
+  const gate = evaluateAbsoluteGate({ metrics, readiness, policy: gatePolicy });
   const decision =
     completionState === "incomplete"
       ? "incomplete"
-      : acceptedMetrics === null
-        ? "baseline"
-        : comparison?.comparable &&
-            comparison.passed &&
-            comparison.strictImprovement
-          ? "accepted"
-          : "rejected";
+      : options.kind === "mini"
+        ? "mini"
+        : isFirstFullMatrixRun
+          ? "baseline"
+          : gate.status === "passed"
+            ? "accepted"
+            : gate.status === "not_ready"
+              ? "not_ready"
+              : "rejected";
   const acceptedStepIdAfter =
-    decision === "baseline" || decision === "accepted"
+    options.kind === "full" &&
+    completionState === "complete" &&
+    gate.status === "passed"
       ? currentStepId
       : acceptedStepIdBefore;
   await writeFile(
     join(stepRoot, "metrics.json"),
-    `${JSON.stringify({ artifact_type: "qualification_metrics", evidenceState: "provisional", stepId: currentStepId, model: MODEL, corpusDigest: corpus.manifest.corpusDigest, labelDigest: labelManifest.labelDigest, promptDigest, metrics }, null, 2)}\n`,
+    `${JSON.stringify({ artifact_type: "qualification_metrics", evidenceState: "provisional", stepId: currentStepId, runKind: options.kind, model: MODEL, corpusDigest: corpus.manifest.corpusDigest, labelDigest: labelManifest.referenceLabelsDigest, measurementPlanDigest: measurementPlan.planDigest, routingPlanDigest, gatePolicyId: gatePolicy.policyId, campaignPolicyId: campaignPolicy.policyId, promptMode: promptBundle.mode, promptBundleId: promptBundle.bundleId, promptBundleDigest, promptDigests: promptBundle.promptDigests, changedDimensions: options.changedDimensions, promptDigest: promptBundleDigest, metrics }, null, 2)}\n`,
     "utf8",
   );
   await writeFile(
     join(stepRoot, "gate.json"),
-    `${JSON.stringify({ artifact_type: "hill_climbing_gate", evidenceState: "provisional", decision, candidateStepId: currentStepId, acceptedStepIdBefore, acceptedStepIdAfter, expectedCalls: routed.length, actualCalls, routing: Object.fromEntries(Object.entries(Object.groupBy(routed, (row) => row.dimension)).map(([key, rows]) => [key, rows.length])), summary: { coverage: metrics.coverage, invalidRate: metrics.invalidRate }, comparison }, null, 2)}\n`,
+    `${JSON.stringify({ artifact_type: "hill_climbing_gate", evidenceState: "provisional", decision, scope: options.kind === "mini" ? "diagnostic_only" : "full_iteration", gate, candidateStepId: currentStepId, acceptedStepIdBefore, acceptedStepIdAfter, expectedCalls: routed.length, actualCalls, measurementPlanDigest: measurementPlan.planDigest, routingPlanDigest, gatePolicyId: gatePolicy.policyId, campaignPolicyId: campaignPolicy.policyId, fullIterationNumber, miniBatchNumber, parentFullStepId: latestFull, promptMode: promptBundle.mode, promptBundleId: promptBundle.bundleId, promptBundleDigest, promptDigests: promptBundle.promptDigests, changedDimensions: options.changedDimensions, routing: Object.fromEntries(Object.entries(Object.groupBy(routed, (row) => row.dimension)).map(([key, rows]) => [key, rows.length])), summary: { coverage: metrics.coverage, invalidRate: metrics.invalidRate } }, null, 2)}\n`,
     "utf8",
   );
-  const index = await updateIndex(indexPath, {
-    stepId: currentStepId,
-    parentStepId,
-    hypothesis: options.hypothesis,
-    promptDigest,
-    metricsPath: `steps/${currentStepId}/metrics.json`,
-    manifestPath: `steps/${currentStepId}/manifest.json`,
-    gatePath: `steps/${currentStepId}/gate.json`,
-    gateDecision: decision,
-    completionState,
-  });
-  const history = await historyWithMetrics(campaignRoot, index.steps);
+  const index = await updateIndex(
+    options.kind === "mini" ? miniIndexPath : indexPath,
+    {
+      runKind: options.kind,
+      stepId: currentStepId,
+      parentStepId,
+      parentFullStepId: latestFull,
+      fullIterationNumber,
+      miniBatchNumber,
+      hypothesis: options.hypothesis,
+      promptMode: promptBundle.mode,
+      promptBundleId: promptBundle.bundleId,
+      promptBundleDigest,
+      promptDigests: promptBundle.promptDigests,
+      changedDimensions: options.changedDimensions,
+      promptDigest: promptBundleDigest,
+      measurementPlanDigest: measurementPlan.planDigest,
+      routingPlanDigest,
+      gatePolicyId: gatePolicy.policyId,
+      campaignPolicyId: campaignPolicy.policyId,
+      metricsPath: `${options.kind === "mini" ? "mini" : "steps"}/${currentStepId}/metrics.json`,
+      manifestPath: `${options.kind === "mini" ? "mini" : "steps"}/${currentStepId}/manifest.json`,
+      gatePath: `${options.kind === "mini" ? "mini" : "steps"}/${currentStepId}/gate.json`,
+      gateDecision: decision,
+      completionState,
+    },
+  );
+  const history = await historyWithMetrics(
+    campaignRoot,
+    fullSteps.concat(options.kind === "full" ? [index.steps.at(-1)] : []),
+    measurementPlan.planDigest,
+  );
   await writeQualificationPlots({
     stepDirectory: stepRoot,
     campaignDirectory: campaignRoot,
     stepId: currentStepId,
     history,
     metrics,
+    writeProgress: options.kind === "full",
   });
-  if (decision === "baseline" || decision === "accepted")
+  if (
+    options.kind === "full" &&
+    completionState === "complete" &&
+    gate.status === "passed"
+  )
     await writeFile(
       join(campaignRoot, "accepted-prompt.json"),
-      `${JSON.stringify({ acceptedStepId: currentStepId, prompt: protocol, promptDigest, status: decision }, null, 2)}\n`,
+      `${JSON.stringify({ acceptedStepId: currentStepId, prompt: promptBundle.document, promptMode: promptBundle.mode, promptBundleId: promptBundle.bundleId, promptBundleDigest, promptDigests: promptBundle.promptDigests, status: decision }, null, 2)}\n`,
       "utf8",
     );
+  const miniIndexAfter = options.kind === "mini" ? index : existingMiniIndex;
+  const latestFullAfter = options.kind === "full" ? currentStepId : latestFull;
   await writeFile(
     join(campaignRoot, "campaign.json"),
-    `${JSON.stringify({ artifact_type: "qualification_campaign", campaignId: "luna_provisional_judge", status: "provisional", model: MODEL, corpusDigest: corpus.manifest.corpusDigest, labelDigest: labelManifest.labelDigest, acceptedStepId: acceptedStepIdAfter, stepCount: index.steps.length, latestStepId: currentStepId, latestDecision: decision, publicBenchmarkStatus: "not_active", publicBenchmarkUnchanged: true }, null, 2)}\n`,
+    `${JSON.stringify({ artifact_type: "qualification_campaign", campaignId: "luna_provisional_judge", status: "provisional", model: MODEL, corpusDigest: corpus.manifest.corpusDigest, labelDigest: labelManifest.referenceLabelsDigest, measurementPlanDigest: measurementPlan.planDigest, gatePolicyId: gatePolicy.policyId, campaignPolicyId: campaignPolicy.policyId, campaignPolicyDigest: stableDigest(campaignPolicy), fullIterationBudget: campaignPolicy.fullIterationBudget, baselineCountsAgainstBudget: campaignPolicy.baselineCountsAgainstBudget, fullIterationsUsed: budgetUsed(options.kind === "full" ? index.steps : fullSteps), miniBatchLimitBetweenFull: campaignPolicy.miniBatchLimitBetweenFull, miniBatchesSinceLatestFull: miniBatchesSinceFull(miniIndexAfter.steps ?? [], latestFullAfter), acceptedStepId: acceptedStepIdAfter, fullStepCount: history.length, miniStepCount: miniIndexAfter.steps?.length ?? 0, latestFullStepId: latestFullAfter, latestStepId: currentStepId, latestRunKind: options.kind, latestDecision: decision, latestPromptMode: promptBundle.mode, latestPromptBundleId: promptBundle.bundleId, latestPromptBundleDigest: promptBundleDigest, latestPromptDigests: promptBundle.promptDigests, progressSeries: campaignPolicy.progressSeries, publicBenchmarkStatus: "not_active", publicBenchmarkUnchanged: true }, null, 2)}\n`,
     "utf8",
   );
   const finalManifest = await json(join(stepRoot, "manifest.json"));
   await writeFile(
     join(stepRoot, "manifest.json"),
-    `${JSON.stringify({ ...finalManifest, completionState, completedAt: new Date().toISOString(), actualCalls, apiAttempts: rows.reduce((sum, row) => sum + row.attempts.length, 0), gateDecision: decision, metricsPath: `steps/${currentStepId}/metrics.json`, evaluationsPath: `steps/${currentStepId}/evaluations.jsonl`, gatePath: `steps/${currentStepId}/gate.json` }, null, 2)}\n`,
+    `${JSON.stringify({ ...finalManifest, completionState, completedAt: new Date().toISOString(), actualCalls, apiAttempts: rows.reduce((sum, row) => sum + row.attempts.length, 0), gateDecision: decision, metricsPath: `${options.kind === "mini" ? "mini" : "steps"}/${currentStepId}/metrics.json`, evaluationsPath: `${options.kind === "mini" ? "mini" : "steps"}/${currentStepId}/evaluations.jsonl`, gatePath: `${options.kind === "mini" ? "mini" : "steps"}/${currentStepId}/gate.json` }, null, 2)}\n`,
     "utf8",
   );
   process.stdout.write(
-    `${JSON.stringify({ stepId: currentStepId, decision, actualCalls, plannedCalls: routed.length, statusCounts: metrics.statusCounts, macro: metrics.macro, progressPath: join(campaignRoot, "progress.png"), stepDirectory: stepRoot })}\n`,
+    `${JSON.stringify({ stepId: currentStepId, runKind: options.kind, fullIterationNumber, miniBatchNumber, decision, actualCalls, plannedCalls: routed.length, statusCounts: metrics.statusCounts, macro: metrics.macro, progressPath: join(campaignRoot, "progress.png"), stepDirectory: stepRoot })}\n`,
   );
 }
 

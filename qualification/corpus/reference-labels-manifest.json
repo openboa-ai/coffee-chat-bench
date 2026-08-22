@@ -3,15 +3,15 @@
   "corpusId": "provisional_judge_qualification_corpus",
   "sourceCorpusDigest": "sha256:71b9249538efe90b23f84c9568897784ed6b39376228b55e30e5b02eba9456ab",
   "referenceLabelsPath": "reference-labels.jsonl",
-  "referenceLabelsDigest": "sha256:b7fb331371a94933312c8fc3a5f18622ae6f937470dc47be1882ee85c8277563",
+  "referenceLabelsDigest": "sha256:7fa57f689f2a372655a9c9583400ba7cc0b4009b74adce197e672a71e26e71dc",
   "distributionPath": "label-distribution.json",
-  "distributionDigest": "sha256:1eb322cb1f89fec554704ad099208d9b65351f2a47dca5a816bcb8680e99aa6c",
-  "authority": "model_authored_draft",
-  "reviewState": "pending_project_owner_review",
+  "distributionDigest": "sha256:17c09beecc3179c9ef54db679bfa9053ddf538af7fc125de7ab3477ff363353c",
+  "authority": "project_owner_reference",
+  "reviewState": "project_owner_reviewed",
   "census": {
     "pointwise": 144,
     "pairwise": 0,
     "total": 144
   },
-  "manifestDigest": "sha256:d0a5fa083b23f808e746f4833837c1462aa6495dea796b0a99990b430bd0de0e"
+  "manifestDigest": "sha256:d938d3ca240f99602d3518aec7310941db9e7ecefd5c94a73a43d634b6d8eba3"
 }

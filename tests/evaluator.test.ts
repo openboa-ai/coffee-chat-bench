@@ -157,6 +157,22 @@ test("target-conditioned evaluation uses independent dimensions and limits decis
       "hard_constraint_violation",
     ],
   );
+  assert.equal(new Set(transport.calls.map(({ prompt }) => prompt)).size, 5);
+  for (const call of transport.calls) {
+    for (const otherDimension of [
+      "judgment_alignment",
+      "stated_rationale_alignment",
+      "task_performance",
+      "evidence_grounding",
+      "hard_constraint_violation",
+    ] as const) {
+      if (otherDimension !== call.dimension)
+        assert.doesNotMatch(
+          call.prompt,
+          new RegExp(`Dimension: ${otherDimension}`, "u"),
+        );
+    }
+  }
   assert.equal(evaluation.judgmentAlignment.state, "measured");
   assert.equal(evaluation.statedRationaleAlignment.state, "measured");
   assert.equal(evaluation.taskPerformance.state, "measured");
