@@ -25,6 +25,7 @@ import {
   allowlistedCompletionEvidence,
   allowlistedEvaluationResult,
   allowlistedTransportAttempts,
+  summarizeTransportMetrics,
 } from "./qualification-transport-evidence.mjs";
 import {
   JUDGE_PROMPT_DIMENSIONS,
@@ -269,17 +270,9 @@ function referenceValue(label, dimension) {
 }
 
 function metricTiming(call, started) {
-  const attempts = call?.attempts ?? [];
-  const latency = attempts.reduce(
-    (sum, attempt) =>
-      sum + (typeof attempt.latencyMs === "number" ? attempt.latencyMs : 0),
-    0,
-  );
-  const usage = attempts.at(-1)?.usage ?? call?.completion?.metadata?.usage;
-  return {
-    latencyMs: latency || Date.now() - started,
-    outputTokens: usage?.output_tokens ?? usage?.outputTokens ?? null,
-  };
+  return summarizeTransportMetrics(call, {
+    wallClockLatencyMs: Date.now() - started,
+  });
 }
 
 async function updateIndex(path, entry) {

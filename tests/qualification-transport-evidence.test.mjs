@@ -6,6 +6,7 @@ import {
   allowlistedEvaluationResult,
   allowlistedJudgeProvenance,
   allowlistedTransportAttempts,
+  summarizeTransportMetrics,
 } from "../scripts/qualification-transport-evidence.mjs";
 
 test("transport evidence persists only explicitly allowed non-secret fields", () => {
@@ -80,6 +81,44 @@ test("transport evidence rejects negative metrics and fractional token counts", 
       usage: { total_tokens: 12 },
     },
   ]);
+});
+
+test("transport metrics use wall-clock latency when any retry latency is missing", () => {
+  const attempts = allowlistedTransportAttempts([
+    { attempt: 1, latencyMs: -20_000 },
+    {
+      attempt: 2,
+      latencyMs: 1,
+      usage: { output_tokens: 8 },
+    },
+  ]);
+
+  assert.deepEqual(
+    summarizeTransportMetrics(
+      { attempts, completion: null },
+      { wallClockLatencyMs: 25_000 },
+    ),
+    { latencyMs: 25_000, outputTokens: 8 },
+  );
+});
+
+test("transport metrics sum complete retry latency evidence", () => {
+  const attempts = allowlistedTransportAttempts([
+    { attempt: 1, latencyMs: 120 },
+    {
+      attempt: 2,
+      latencyMs: 80,
+      usage: { output_tokens: 8 },
+    },
+  ]);
+
+  assert.deepEqual(
+    summarizeTransportMetrics(
+      { attempts, completion: null },
+      { wallClockLatencyMs: 25_000 },
+    ),
+    { latencyMs: 200, outputTokens: 8 },
+  );
 });
 
 test("completion and provenance drop unknown provider metadata", () => {

@@ -76,6 +76,22 @@ export function allowlistedTransportAttempts(value) {
   });
 }
 
+export function summarizeTransportMetrics(call, { wallClockLatencyMs }) {
+  const attempts = Array.isArray(call?.attempts) ? call.attempts : [];
+  const hasCompleteAttemptLatency =
+    attempts.length > 0 &&
+    attempts.every((attempt) => nonnegativeNumber(attempt?.latencyMs) !== null);
+  const latencyMs = hasCompleteAttemptLatency
+    ? attempts.reduce((sum, attempt) => sum + attempt.latencyMs, 0)
+    : nonnegativeNumber(wallClockLatencyMs);
+  const usage = attempts.at(-1)?.usage ?? call?.completion?.metadata?.usage;
+  const outputTokens = nonnegativeNumber(
+    usage?.output_tokens ?? usage?.outputTokens,
+    true,
+  );
+  return { latencyMs, outputTokens };
+}
+
 export function allowlistedCompletionEvidence(value) {
   if (!value || typeof value !== "object") return null;
   const result = {};
