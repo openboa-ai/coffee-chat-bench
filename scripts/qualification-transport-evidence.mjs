@@ -99,9 +99,45 @@ export function allowlistedJudgeProvenance(value) {
 
 export function allowlistedEvaluationResult(value) {
   if (!value || typeof value !== "object") return value;
-  const { provenance, ...result } = value;
+  const provenance = allowlistedJudgeProvenance(value.provenance);
+  if (value.state === "measured") {
+    const result = { state: "measured" };
+    if (
+      typeof value.score === "number" &&
+      Number.isInteger(value.score) &&
+      value.score >= 1 &&
+      value.score <= 5
+    )
+      result.score = value.score;
+    else if (value.score && typeof value.score === "object") {
+      const score = allowedNumberFields(value.score, [
+        "cueUtilization",
+        "cueWeighting",
+        "contextSensitivity",
+        "actionConsistency",
+      ]);
+      if (score) result.score = score;
+    }
+    if (typeof value.detected === "boolean") result.detected = value.detected;
+    if (typeof value.rationale === "string") result.rationale = value.rationale;
+    return { ...result, provenance };
+  }
+  const causes = {
+    unavailable: "Judge transport unavailable",
+    invalid: "Judge response invalid",
+    abstained: "Judge abstained",
+  };
+  if (value.state in causes)
+    return { state: value.state, cause: causes[value.state], provenance };
+  const reasons = {
+    not_applicable: "No target-relative criterion applies",
+    unmeasured: "No measurement was produced",
+  };
+  if (value.state in reasons)
+    return { state: value.state, reason: reasons[value.state], provenance };
   return {
-    ...result,
-    provenance: allowlistedJudgeProvenance(provenance),
+    state: "invalid",
+    cause: "Judge result state invalid",
+    provenance,
   };
 }

@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   allowlistedCompletionEvidence,
+  allowlistedEvaluationResult,
   allowlistedJudgeProvenance,
   allowlistedTransportAttempts,
 } from "../scripts/qualification-transport-evidence.mjs";
@@ -109,4 +110,54 @@ test("completion and provenance drop unknown provider metadata", () => {
     JSON.stringify({ completion, provenance }),
     /must-not-persist|futureCredentialField|region/u,
   );
+});
+
+test("persisted failure results never retain provider error text or unknown fields", () => {
+  const result = allowlistedEvaluationResult({
+    state: "unavailable",
+    cause: "Authorization: Bearer unknown-credential-format",
+    accessToken: "must-not-persist",
+    provenance: {
+      protocolDigest: "sha256:protocol",
+      transportMetadata: { accessToken: "must-not-persist" },
+    },
+  });
+
+  assert.deepEqual(result, {
+    state: "unavailable",
+    cause: "Judge transport unavailable",
+    provenance: { protocolDigest: "sha256:protocol" },
+  });
+  assert.doesNotMatch(
+    JSON.stringify(result),
+    /unknown-credential-format|accessToken|must-not-persist/u,
+  );
+});
+
+test("persisted measured results retain only the score contract", () => {
+  const result = allowlistedEvaluationResult({
+    state: "measured",
+    score: {
+      cueUtilization: 4,
+      cueWeighting: 3,
+      contextSensitivity: 5,
+      actionConsistency: 4,
+      accessToken: "must-not-persist",
+    },
+    rationale: "The action follows the stated cue ordering.",
+    providerSpecific: "drop-me",
+    provenance: { protocolDigest: "sha256:protocol" },
+  });
+
+  assert.deepEqual(result, {
+    state: "measured",
+    score: {
+      cueUtilization: 4,
+      cueWeighting: 3,
+      contextSensitivity: 5,
+      actionConsistency: 4,
+    },
+    rationale: "The action follows the stated cue ordering.",
+    provenance: { protocolDigest: "sha256:protocol" },
+  });
 });
