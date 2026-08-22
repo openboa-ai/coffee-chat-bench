@@ -134,6 +134,9 @@ export async function buildQualificationReadiness(root = ".") {
     join(root, "qualification/corpus/reference-labels.jsonl"),
   );
   const labelsById = new Map(labels.map((label) => [label.exampleId, label]));
+  const submissionsById = new Map(
+    corpus.submissions.map((submission) => [submission.exampleId, submission]),
+  );
   const checks = [];
 
   checks.push(
@@ -168,6 +171,78 @@ export async function buildQualificationReadiness(root = ".") {
       : fail(
           "labels.provenance",
           "labels are not in the reviewed project-owner state",
+        ),
+  );
+  const { manifestDigest, ...labelManifestSemantic } = labelManifest;
+  checks.push(
+    manifestDigest === stableDigest(labelManifestSemantic)
+      ? pass("labels.manifestDigest", "label manifest matches its content")
+      : fail(
+          "labels.manifestDigest",
+          "label manifest digest does not match its content",
+        ),
+  );
+  checks.push(
+    labelManifest.referenceLabelsDigest === stableDigest(labels)
+      ? pass(
+          "labels.contentDigest",
+          "reference labels match the reviewed digest",
+        )
+      : fail(
+          "labels.contentDigest",
+          "reference label bytes do not match the reviewed digest",
+        ),
+  );
+  const labelRowsBound =
+    labels.length === corpus.submissions.length &&
+    labelsById.size === labels.length &&
+    labels.every((label) => {
+      const submission = submissionsById.get(label.exampleId);
+      return (
+        submission &&
+        label.kind === "pointwise_reference" &&
+        label.authority === "project_owner_reference" &&
+        label.reviewState === "project_owner_reviewed" &&
+        label.familyVariantId === submission.familyVariantId &&
+        label.sourceCaseId === submission.sourceCaseId &&
+        label.condition === submission.condition &&
+        label.submissionDigest === submission.submissionDigest
+      );
+    });
+  checks.push(
+    labelRowsBound
+      ? pass(
+          "labels.rowBindings",
+          "every reference row is bound to its reviewed submission",
+        )
+      : fail(
+          "labels.rowBindings",
+          "reference rows are not bound one-to-one to reviewed submissions",
+        ),
+  );
+
+  const { planDigest, ...planSemantic } = plan;
+  checks.push(
+    planDigest === stableDigest(planSemantic)
+      ? pass(
+          "measurementPlan.contentDigest",
+          "full measurement plan matches its self-digest",
+        )
+      : fail(
+          "measurementPlan.contentDigest",
+          "full measurement plan digest does not match its content",
+        ),
+  );
+  checks.push(
+    plan.corpusDigest === corpus.manifest.corpusDigest &&
+      plan.labelDigest === labelManifest.referenceLabelsDigest
+      ? pass(
+          "measurementPlan.provenance",
+          "measurement plan is bound to the corpus and reviewed labels",
+        )
+      : fail(
+          "measurementPlan.provenance",
+          "measurement plan provenance does not match corpus and labels",
         ),
   );
 

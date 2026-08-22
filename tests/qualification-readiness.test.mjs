@@ -1,7 +1,56 @@
 import assert from "node:assert/strict";
+import {
+  cpSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
 
+import { stableDigest } from "../src/contracts.ts";
 import { buildQualificationReadiness } from "../scripts/qualification-readiness.mjs";
+
+function readinessFixture() {
+  const root = mkdtempSync(join(tmpdir(), "coffee-chat-bench-readiness-"));
+  mkdirSync(join(root, "qualification"), { recursive: true });
+  cpSync("bank", join(root, "bank"), { recursive: true });
+  cpSync("qualification/corpus", join(root, "qualification/corpus"), {
+    recursive: true,
+  });
+  for (const name of ["measurement-plan.json", "gate-policy.json"])
+    cpSync(join("qualification", name), join(root, "qualification", name));
+  return root;
+}
+
+function readJson(path) {
+  return JSON.parse(readFileSync(path, "utf8"));
+}
+
+function writeJson(path, value) {
+  writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+}
+
+function readLabels(root) {
+  return readFileSync(
+    join(root, "qualification/corpus/reference-labels.jsonl"),
+    "utf8",
+  )
+    .split(/\r?\n/u)
+    .filter(Boolean)
+    .map((line) => JSON.parse(line));
+}
+
+function writeLabels(root, labels) {
+  writeFileSync(
+    join(root, "qualification/corpus/reference-labels.jsonl"),
+    `${labels.map((label) => JSON.stringify(label)).join("\n")}\n`,
+    "utf8",
+  );
+}
 
 test("qualification readiness has balanced hard controls and supported semantic dimensions", async () => {
   const report = await buildQualificationReadiness(".");
@@ -85,4 +134,47 @@ test("qualification readiness is provider-free and records the statistical polic
   });
   assert.match(report.readinessDigest, /^sha256:[0-9a-f]{64}$/u);
   assert.match(report.nextAction, /did not call a provider/u);
+});
+
+test("qualification readiness blocks tampered label and measurement evidence", async () => {
+  const root = readinessFixture();
+  try {
+    const labels = readLabels(root);
+    labels[0].submissionDigest = `sha256:${"0".repeat(64)}`;
+    writeLabels(root, labels);
+    const manifestPath = join(
+      root,
+      "qualification/corpus/reference-labels-manifest.json",
+    );
+    const manifest = readJson(manifestPath);
+    manifest.referenceLabelsDigest = stableDigest(labels);
+    const { manifestDigest: _oldDigest, ...manifestSemantic } = manifest;
+    manifest.manifestDigest = stableDigest(manifestSemantic);
+    manifest.unreviewedMutation = true;
+    writeJson(manifestPath, manifest);
+
+    labels[1].taskPerformance.rationale += " Altered after review.";
+    writeLabels(root, labels);
+    const planPath = join(root, "qualification/measurement-plan.json");
+    const plan = readJson(planPath);
+    plan.planId = `${plan.planId}-altered`;
+    writeJson(planPath, plan);
+
+    const report = await buildQualificationReadiness(root);
+
+    assert.equal(report.status, "blocked");
+    for (const path of [
+      "labels.manifestDigest",
+      "labels.contentDigest",
+      "labels.rowBindings",
+      "measurementPlan.contentDigest",
+    ])
+      assert.equal(
+        report.checks.find((entry) => entry.path === path)?.status,
+        "failed",
+        `${path} should reject tampered evidence`,
+      );
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });
