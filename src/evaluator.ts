@@ -538,9 +538,10 @@ function pointwiseResult(
 
 /**
  * Evaluate exactly one pointwise dimension for a candidate submission.
- * Qualification and hill-climbing use this narrow path so one example maps
- * to one judge call; the full case-family API remains responsible for the
- * complete product evaluation and mirrored pairwise comparisons.
+ * Qualification and hill-climbing use this narrow path so one
+ * example-dimension row maps to one Judge call; the full case-family API
+ * remains responsible for the complete product evaluation and mirrored
+ * pairwise comparisons.
  */
 export async function evaluatePointwise(input: {
   readonly benchmarkInput: BenchmarkInput;

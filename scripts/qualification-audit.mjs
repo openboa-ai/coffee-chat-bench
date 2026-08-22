@@ -51,7 +51,8 @@ for (const label of referenceLabels) {
     );
   if (
     label.kind !== "pointwise_reference" ||
-    label.authority !== "model_authored_draft"
+    label.authority !== "project_owner_reference" ||
+    label.reviewState !== "project_owner_reviewed"
   )
     throw new Error(
       `${label.exampleId} has an unsupported label authority or kind`,

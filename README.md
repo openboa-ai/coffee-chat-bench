@@ -130,13 +130,16 @@ Repository status: `not_active`.
 
 The current implementation establishes an inspectable input bank, evaluator
 contract, and frozen 144-submission synthetic Judge-development corpus. The
-corpus has 48 family variants and 144 pointwise `model_authored_draft`
-references pending project-owner review. It has no pairwise reference labels or
-Judge results yet. The 24 added stress submissions and the 13 rewritten
-submissions are bound to the same public case manifests; construction intent is
-kept in a sidecar and is not part of Judge-facing input. These drafts do not
-establish construct validity, human agreement, AI-judge reliability, population
-validity, agent performance, an active benchmark score, or a leaderboard.
+corpus has 48 family variants and 144 pointwise `project_owner_reference`
+records from project-owner construction review. It has no pairwise reference
+labels or qualified human criterion. A Luna-only provisional hill-climbing
+campaign has been completed against this frozen corpus; its detailed result is
+recorded in [Provisional AI Judge Hill-Climbing Results](qualification/HILL-CLIMBING-RESULTS.md).
+The 24 added stress submissions and the 13 rewritten submissions are bound to
+the same public case manifests; construction intent is kept in a sidecar and
+is not part of Judge-facing input. These records do not establish construct
+validity, human agreement, AI-judge reliability, population validity, agent
+performance, an active benchmark score, or a leaderboard.
 
 This does not establish benchmark validity, authentic-human transfer,
 population validity, or product performance.
@@ -147,6 +150,17 @@ measurement is usable for development but not yet validated against a genuine
 human criterion. Future blinded human annotation is required to assess and
 calibrate judge agreement. Project-owner data review is construction QA, not
 independent human criterion evidence.
+
+The qualification campaign binds one fixed 624-call full-matrix measurement
+plan and an all-metric gate policy covering ordinal agreement, binary
+hard-constraint detection, result completeness, latency, and output length.
+The 100 budgeted Full iterations and 181 indexed diagnostic mini records are
+closed and preserved. No Full iteration passed the all-metric gate, so no
+prompt was accepted. Historical Luna steps made under earlier routing plans
+remain immutable evidence and are not mixed into the current full-matrix
+progress series. The compact campaign metadata is tracked in Git; repeated raw
+prompts, responses, attempts, labels, and plots are preserved in immutable
+Release assets bound by the [campaign evidence manifest](qualification/hill-climbing/evidence-manifest.json).
 
 ## Repository ownership
 
@@ -192,6 +206,7 @@ These checks do not call a provider, run a candidate, or activate a benchmark.
 - [Validity evidence plan](docs/validity/validity-argument-and-evidence-plan.md)
 - [Harbor projection](harbor/README.md)
 - [Judge qualification data](qualification/README.md)
+- [Provisional AI Judge hill-climbing results](qualification/HILL-CLIMBING-RESULTS.md)
 
 ## Research basis
 

@@ -1,0 +1,541 @@
+{
+  "artifact_type": "qualification_metrics",
+  "evidenceState": "provisional",
+  "stepId": "0170-mini-hybrid-temperature-zero-001",
+  "runKind": "mini",
+  "model": "gpt-5.6-luna",
+  "corpusDigest": "sha256:71b9249538efe90b23f84c9568897784ed6b39376228b55e30e5b02eba9456ab",
+  "labelDigest": "sha256:7fa57f689f2a372655a9c9583400ba7cc0b4009b74adce197e672a71e26e71dc",
+  "measurementPlanDigest": "sha256:ec1b88bc66d6f7cfd7c2fa9d93e3a4cdd168209e5b6ee838b4582a46d802e756",
+  "routingPlanDigest": "sha256:d8b59c591bbfe4cb9d15218f0e821e940e97cd316f32a4bf0fa37ef3575ae02a",
+  "gatePolicyId": "absolute-all-metric-gate-2026.8.20",
+  "campaignPolicyId": "luna-hill-climbing-budget-2026.8.20",
+  "promptMode": "independent_lanes",
+  "promptBundleId": "2026.8.21-luna-rationale-facet-hybrid",
+  "promptBundleDigest": "sha256:5d75a55c4f36894df22fec3975794e95fc61cadb793994b138cb7ae8c2ea4462",
+  "promptDigests": {
+    "judgment_alignment": "sha256:dc1e44c28f92ba13fa24dc9b1a9eabc2f836785998d5b26eb2a525c4c6990d1f",
+    "stated_rationale_alignment": "sha256:543ca4c1d08a85a29a539288766b4edb7d8fad9d8a93c63d0d398c314a22557c",
+    "task_performance": "sha256:869942bc292f892e3aa68628badb96d05dc39d00bd6509e5db9bfefab3cd7859",
+    "evidence_grounding": "sha256:d07a0ea0e62108be288b239a61d0e03d8146dc1ed07748ea3bfdc61b8f918474",
+    "hard_constraint_violation": "sha256:8b62a32354c3b0bddee0320b36bdf24efe4304f731b6a72f1486da26bc5d15bd"
+  },
+  "changedDimensions": [],
+  "promptDigest": "sha256:5d75a55c4f36894df22fec3975794e95fc61cadb793994b138cb7ae8c2ea4462",
+  "metrics": {
+    "total": 52,
+    "measured": 0,
+    "coverage": {
+      "value": 0
+    },
+    "invalidRate": {
+      "value": 0
+    },
+    "abstainedRate": {
+      "value": 0
+    },
+    "unavailableRate": {
+      "value": 1
+    },
+    "dimensions": {
+      "judgment_alignment": {
+        "total": 8,
+        "eligible": 8,
+        "measured": 0,
+        "coverage": {
+          "value": 0
+        },
+        "invalidRate": {
+          "value": 0
+        },
+        "abstainedRate": {
+          "value": 0
+        },
+        "unavailableRate": {
+          "value": 1
+        },
+        "exactAgreement": {
+          "value": null,
+          "reason": "no measured observations"
+        },
+        "qwk": {
+          "value": null,
+          "reason": "fewer than two observations"
+        },
+        "spearman": {
+          "value": null,
+          "reason": "fewer than two observations"
+        },
+        "pearson": {
+          "value": null,
+          "reason": "fewer than two observations"
+        },
+        "withinOneLevelAccuracy": {
+          "value": null,
+          "reason": "no measured observations"
+        },
+        "mae": {
+          "value": null,
+          "reason": "no measured observations"
+        },
+        "signedBias": {
+          "value": null,
+          "reason": "no measured observations"
+        },
+        "statusCounts": {
+          "unavailable": 8
+        },
+        "meanLatencyMs": {
+          "value": 631.375
+        },
+        "meanOutputTokens": {
+          "value": null,
+          "reason": "no measured observations"
+        }
+      },
+      "task_performance": {
+        "total": 12,
+        "eligible": 12,
+        "measured": 0,
+        "coverage": {
+          "value": 0
+        },
+        "invalidRate": {
+          "value": 0
+        },
+        "abstainedRate": {
+          "value": 0
+        },
+        "unavailableRate": {
+          "value": 1
+        },
+        "exactAgreement": {
+          "value": null,
+          "reason": "no measured observations"
+        },
+        "qwk": {
+          "value": null,
+          "reason": "fewer than two observations"
+        },
+        "spearman": {
+          "value": null,
+          "reason": "fewer than two observations"
+        },
+        "pearson": {
+          "value": null,
+          "reason": "fewer than two observations"
+        },
+        "withinOneLevelAccuracy": {
+          "value": null,
+          "reason": "no measured observations"
+        },
+        "mae": {
+          "value": null,
+          "reason": "no measured observations"
+        },
+        "signedBias": {
+          "value": null,
+          "reason": "no measured observations"
+        },
+        "statusCounts": {
+          "unavailable": 12
+        },
+        "meanLatencyMs": {
+          "value": 721.4166666666666
+        },
+        "meanOutputTokens": {
+          "value": null,
+          "reason": "no measured observations"
+        }
+      },
+      "evidence_grounding": {
+        "total": 12,
+        "eligible": 12,
+        "measured": 0,
+        "coverage": {
+          "value": 0
+        },
+        "invalidRate": {
+          "value": 0
+        },
+        "abstainedRate": {
+          "value": 0
+        },
+        "unavailableRate": {
+          "value": 1
+        },
+        "exactAgreement": {
+          "value": null,
+          "reason": "no measured observations"
+        },
+        "qwk": {
+          "value": null,
+          "reason": "fewer than two observations"
+        },
+        "spearman": {
+          "value": null,
+          "reason": "fewer than two observations"
+        },
+        "pearson": {
+          "value": null,
+          "reason": "fewer than two observations"
+        },
+        "withinOneLevelAccuracy": {
+          "value": null,
+          "reason": "no measured observations"
+        },
+        "mae": {
+          "value": null,
+          "reason": "no measured observations"
+        },
+        "signedBias": {
+          "value": null,
+          "reason": "no measured observations"
+        },
+        "statusCounts": {
+          "unavailable": 12
+        },
+        "meanLatencyMs": {
+          "value": 798.1666666666666
+        },
+        "meanOutputTokens": {
+          "value": null,
+          "reason": "no measured observations"
+        }
+      },
+      "stated_rationale_alignment": {
+        "facets": {
+          "cueUtilization": {
+            "total": 8,
+            "eligible": 8,
+            "measured": 0,
+            "coverage": {
+              "value": 0
+            },
+            "invalidRate": {
+              "value": 0
+            },
+            "abstainedRate": {
+              "value": 0
+            },
+            "unavailableRate": {
+              "value": 1
+            },
+            "exactAgreement": {
+              "value": null,
+              "reason": "no measured observations"
+            },
+            "qwk": {
+              "value": null,
+              "reason": "fewer than two observations"
+            },
+            "spearman": {
+              "value": null,
+              "reason": "fewer than two observations"
+            },
+            "pearson": {
+              "value": null,
+              "reason": "fewer than two observations"
+            },
+            "withinOneLevelAccuracy": {
+              "value": null,
+              "reason": "no measured observations"
+            },
+            "mae": {
+              "value": null,
+              "reason": "no measured observations"
+            },
+            "signedBias": {
+              "value": null,
+              "reason": "no measured observations"
+            },
+            "statusCounts": {
+              "unavailable": 8
+            },
+            "meanLatencyMs": {
+              "value": 638.75
+            },
+            "meanOutputTokens": {
+              "value": null,
+              "reason": "no measured observations"
+            }
+          },
+          "cueWeighting": {
+            "total": 8,
+            "eligible": 8,
+            "measured": 0,
+            "coverage": {
+              "value": 0
+            },
+            "invalidRate": {
+              "value": 0
+            },
+            "abstainedRate": {
+              "value": 0
+            },
+            "unavailableRate": {
+              "value": 1
+            },
+            "exactAgreement": {
+              "value": null,
+              "reason": "no measured observations"
+            },
+            "qwk": {
+              "value": null,
+              "reason": "fewer than two observations"
+            },
+            "spearman": {
+              "value": null,
+              "reason": "fewer than two observations"
+            },
+            "pearson": {
+              "value": null,
+              "reason": "fewer than two observations"
+            },
+            "withinOneLevelAccuracy": {
+              "value": null,
+              "reason": "no measured observations"
+            },
+            "mae": {
+              "value": null,
+              "reason": "no measured observations"
+            },
+            "signedBias": {
+              "value": null,
+              "reason": "no measured observations"
+            },
+            "statusCounts": {
+              "unavailable": 8
+            },
+            "meanLatencyMs": {
+              "value": 638.75
+            },
+            "meanOutputTokens": {
+              "value": null,
+              "reason": "no measured observations"
+            }
+          },
+          "contextSensitivity": {
+            "total": 8,
+            "eligible": 8,
+            "measured": 0,
+            "coverage": {
+              "value": 0
+            },
+            "invalidRate": {
+              "value": 0
+            },
+            "abstainedRate": {
+              "value": 0
+            },
+            "unavailableRate": {
+              "value": 1
+            },
+            "exactAgreement": {
+              "value": null,
+              "reason": "no measured observations"
+            },
+            "qwk": {
+              "value": null,
+              "reason": "fewer than two observations"
+            },
+            "spearman": {
+              "value": null,
+              "reason": "fewer than two observations"
+            },
+            "pearson": {
+              "value": null,
+              "reason": "fewer than two observations"
+            },
+            "withinOneLevelAccuracy": {
+              "value": null,
+              "reason": "no measured observations"
+            },
+            "mae": {
+              "value": null,
+              "reason": "no measured observations"
+            },
+            "signedBias": {
+              "value": null,
+              "reason": "no measured observations"
+            },
+            "statusCounts": {
+              "unavailable": 8
+            },
+            "meanLatencyMs": {
+              "value": 638.75
+            },
+            "meanOutputTokens": {
+              "value": null,
+              "reason": "no measured observations"
+            }
+          },
+          "actionConsistency": {
+            "total": 8,
+            "eligible": 8,
+            "measured": 0,
+            "coverage": {
+              "value": 0
+            },
+            "invalidRate": {
+              "value": 0
+            },
+            "abstainedRate": {
+              "value": 0
+            },
+            "unavailableRate": {
+              "value": 1
+            },
+            "exactAgreement": {
+              "value": null,
+              "reason": "no measured observations"
+            },
+            "qwk": {
+              "value": null,
+              "reason": "fewer than two observations"
+            },
+            "spearman": {
+              "value": null,
+              "reason": "fewer than two observations"
+            },
+            "pearson": {
+              "value": null,
+              "reason": "fewer than two observations"
+            },
+            "withinOneLevelAccuracy": {
+              "value": null,
+              "reason": "no measured observations"
+            },
+            "mae": {
+              "value": null,
+              "reason": "no measured observations"
+            },
+            "signedBias": {
+              "value": null,
+              "reason": "no measured observations"
+            },
+            "statusCounts": {
+              "unavailable": 8
+            },
+            "meanLatencyMs": {
+              "value": 638.75
+            },
+            "meanOutputTokens": {
+              "value": null,
+              "reason": "no measured observations"
+            }
+          }
+        }
+      },
+      "hard_constraint_violation": {
+        "total": 12,
+        "eligible": 12,
+        "measured": 0,
+        "coverage": {
+          "value": 0
+        },
+        "invalidRate": {
+          "value": 0
+        },
+        "abstainedRate": {
+          "value": 0
+        },
+        "unavailableRate": {
+          "value": 1
+        },
+        "exactAgreement": {
+          "value": null,
+          "reason": "no measured observations"
+        },
+        "criticalRecall": {
+          "value": null,
+          "reason": "no positive labels"
+        },
+        "criticalPrecision": {
+          "value": null,
+          "reason": "no positive predictions"
+        },
+        "criticalSpecificity": {
+          "value": null,
+          "reason": "no negative labels"
+        },
+        "criticalMcc": {
+          "value": null,
+          "reason": "confusion matrix has no variance"
+        },
+        "confusion": {
+          "truePositive": 0,
+          "trueNegative": 0,
+          "falsePositive": 0,
+          "falseNegative": 0
+        },
+        "statusCounts": {
+          "unavailable": 12
+        },
+        "meanLatencyMs": {
+          "value": 562.5833333333334
+        },
+        "meanOutputTokens": {
+          "value": null,
+          "reason": "no measured observations"
+        }
+      }
+    },
+    "macro": {
+      "qwk": {
+        "value": null,
+        "reason": "no measured observations"
+      },
+      "pearson": {
+        "value": null,
+        "reason": "no measured observations"
+      },
+      "exactAgreement": {
+        "value": null,
+        "reason": "no measured observations"
+      },
+      "spearman": {
+        "value": null,
+        "reason": "no measured observations"
+      },
+      "withinOneLevelAccuracy": {
+        "value": null,
+        "reason": "no measured observations"
+      },
+      "mae": {
+        "value": null,
+        "reason": "no measured observations"
+      },
+      "signedBias": {
+        "value": null,
+        "reason": "no measured observations"
+      },
+      "criticalRecall": {
+        "value": null,
+        "reason": "no positive labels"
+      },
+      "criticalPrecision": {
+        "value": null,
+        "reason": "no positive predictions"
+      },
+      "criticalSpecificity": {
+        "value": null,
+        "reason": "no negative labels"
+      },
+      "criticalMcc": {
+        "value": null,
+        "reason": "confusion matrix has no variance"
+      }
+    },
+    "statusCounts": {
+      "unavailable": 52
+    },
+    "meanLatencyMs": {
+      "value": 675.9038461538462
+    },
+    "meanOutputTokens": {
+      "value": null,
+      "reason": "no measured observations"
+    }
+  }
+}

@@ -72,8 +72,8 @@ test("pointwise references map once to every frozen submission without entering 
     const submission = byExample.get(label.exampleId);
     assert.ok(submission, `unknown label example ${label.exampleId}`);
     assert.equal(label.kind, "pointwise_reference");
-    assert.equal(label.authority, "model_authored_draft");
-    assert.equal(label.reviewState, "pending_project_owner_review");
+    assert.equal(label.authority, "project_owner_reference");
+    assert.equal(label.reviewState, "project_owner_reviewed");
     assert.equal(label.submissionDigest, submission.submissionDigest);
     assert.equal(label.condition, submission.condition);
     const targetRelative = submission.condition !== "unconditioned";
@@ -94,6 +94,7 @@ test("pointwise references map once to every frozen submission without entering 
       }
     }
     if (label.statedRationaleAlignment.state === "measured") {
+      const facetRationales: string[] = [];
       for (const facet of [
         "cueUtilization",
         "cueWeighting",
@@ -104,7 +105,11 @@ test("pointwise references map once to every frozen submission without entering 
         assert.equal(reference.state, "measured");
         assert.ok(reference.score >= 1 && reference.score <= 5);
         assert.match(reference.confidence, /^(high|medium|low)$/u);
+        assert.ok(reference.rationale.length > 0);
+        assert.doesNotMatch(reference.rationale, /construction\s+intent/iu);
+        facetRationales.push(reference.rationale);
       }
+      assert.equal(new Set(facetRationales).size, 4);
     }
     assert.equal(label.hardConstraintViolation.state, "measured");
     assert.equal(typeof label.hardConstraintViolation.detected, "boolean");

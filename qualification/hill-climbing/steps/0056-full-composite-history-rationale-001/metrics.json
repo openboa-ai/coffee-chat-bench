@@ -1,0 +1,456 @@
+{
+  "artifact_type": "qualification_metrics",
+  "evidenceState": "provisional",
+  "stepId": "0056-full-composite-history-rationale-001",
+  "runKind": "full",
+  "model": "gpt-5.6-luna",
+  "corpusDigest": "sha256:71b9249538efe90b23f84c9568897784ed6b39376228b55e30e5b02eba9456ab",
+  "labelDigest": "sha256:7fa57f689f2a372655a9c9583400ba7cc0b4009b74adce197e672a71e26e71dc",
+  "measurementPlanDigest": "sha256:ec1b88bc66d6f7cfd7c2fa9d93e3a4cdd168209e5b6ee838b4582a46d802e756",
+  "routingPlanDigest": "sha256:ec1b88bc66d6f7cfd7c2fa9d93e3a4cdd168209e5b6ee838b4582a46d802e756",
+  "gatePolicyId": "absolute-all-metric-gate-2026.8.20",
+  "campaignPolicyId": "luna-hill-climbing-budget-2026.8.20",
+  "promptDigest": "sha256:da082cf169f043e34d0337ea01185142cbeb3561ce3b2a036144224bf8161127",
+  "metrics": {
+    "total": 624,
+    "measured": 624,
+    "coverage": {
+      "value": 1
+    },
+    "invalidRate": {
+      "value": 0
+    },
+    "abstainedRate": {
+      "value": 0
+    },
+    "unavailableRate": {
+      "value": 0
+    },
+    "dimensions": {
+      "judgment_alignment": {
+        "total": 96,
+        "eligible": 96,
+        "measured": 96,
+        "coverage": {
+          "value": 1
+        },
+        "invalidRate": {
+          "value": 0
+        },
+        "abstainedRate": {
+          "value": 0
+        },
+        "unavailableRate": {
+          "value": 0
+        },
+        "exactAgreement": {
+          "value": 0.4166666666666667
+        },
+        "qwk": {
+          "value": 0.5321100917431192
+        },
+        "spearman": {
+          "value": 0.5532129541414118
+        },
+        "pearson": {
+          "value": 0.5484246775236469
+        },
+        "withinOneLevelAccuracy": {
+          "value": 0.7604166666666666
+        },
+        "mae": {
+          "value": 0.9166666666666666
+        },
+        "signedBias": {
+          "value": 0.3333333333333333
+        },
+        "statusCounts": {
+          "measured": 96
+        },
+        "meanLatencyMs": {
+          "value": 5404.4375
+        },
+        "meanOutputTokens": {
+          "value": 322.1666666666667
+        }
+      },
+      "task_performance": {
+        "total": 144,
+        "eligible": 144,
+        "measured": 144,
+        "coverage": {
+          "value": 1
+        },
+        "invalidRate": {
+          "value": 0
+        },
+        "abstainedRate": {
+          "value": 0
+        },
+        "unavailableRate": {
+          "value": 0
+        },
+        "exactAgreement": {
+          "value": 0.4166666666666667
+        },
+        "qwk": {
+          "value": 0.595886647303556
+        },
+        "spearman": {
+          "value": 0.5862769893948131
+        },
+        "pearson": {
+          "value": 0.5997329946601461
+        },
+        "withinOneLevelAccuracy": {
+          "value": 0.875
+        },
+        "mae": {
+          "value": 0.7152777777777778
+        },
+        "signedBias": {
+          "value": -0.0625
+        },
+        "statusCounts": {
+          "measured": 144
+        },
+        "meanLatencyMs": {
+          "value": 5699.631944444444
+        },
+        "meanOutputTokens": {
+          "value": 374.43055555555554
+        }
+      },
+      "evidence_grounding": {
+        "total": 144,
+        "eligible": 144,
+        "measured": 144,
+        "coverage": {
+          "value": 1
+        },
+        "invalidRate": {
+          "value": 0
+        },
+        "abstainedRate": {
+          "value": 0
+        },
+        "unavailableRate": {
+          "value": 0
+        },
+        "exactAgreement": {
+          "value": 0.3611111111111111
+        },
+        "qwk": {
+          "value": 0.34197130957889865
+        },
+        "spearman": {
+          "value": 0.3005583228975696
+        },
+        "pearson": {
+          "value": 0.35818715560182735
+        },
+        "withinOneLevelAccuracy": {
+          "value": 0.8472222222222222
+        },
+        "mae": {
+          "value": 0.7916666666666666
+        },
+        "signedBias": {
+          "value": 0.041666666666666664
+        },
+        "statusCounts": {
+          "measured": 144
+        },
+        "meanLatencyMs": {
+          "value": 5679.541666666667
+        },
+        "meanOutputTokens": {
+          "value": 380.5138888888889
+        }
+      },
+      "stated_rationale_alignment": {
+        "facets": {
+          "cueUtilization": {
+            "total": 96,
+            "eligible": 96,
+            "measured": 96,
+            "coverage": {
+              "value": 1
+            },
+            "invalidRate": {
+              "value": 0
+            },
+            "abstainedRate": {
+              "value": 0
+            },
+            "unavailableRate": {
+              "value": 0
+            },
+            "exactAgreement": {
+              "value": 0.3541666666666667
+            },
+            "qwk": {
+              "value": 0.4580152671755725
+            },
+            "spearman": {
+              "value": 0.5251388064833695
+            },
+            "pearson": {
+              "value": 0.5174144437021906
+            },
+            "withinOneLevelAccuracy": {
+              "value": 0.875
+            },
+            "mae": {
+              "value": 0.8541666666666666
+            },
+            "signedBias": {
+              "value": -0.5416666666666666
+            },
+            "statusCounts": {
+              "measured": 96
+            },
+            "meanLatencyMs": {
+              "value": 5462.010416666667
+            },
+            "meanOutputTokens": {
+              "value": 370.2708333333333
+            }
+          },
+          "cueWeighting": {
+            "total": 96,
+            "eligible": 96,
+            "measured": 96,
+            "coverage": {
+              "value": 1
+            },
+            "invalidRate": {
+              "value": 0
+            },
+            "abstainedRate": {
+              "value": 0
+            },
+            "unavailableRate": {
+              "value": 0
+            },
+            "exactAgreement": {
+              "value": 0.34375
+            },
+            "qwk": {
+              "value": 0.3284671532846716
+            },
+            "spearman": {
+              "value": 0.38720604449779944
+            },
+            "pearson": {
+              "value": 0.3727580181821553
+            },
+            "withinOneLevelAccuracy": {
+              "value": 0.7916666666666666
+            },
+            "mae": {
+              "value": 0.8958333333333334
+            },
+            "signedBias": {
+              "value": -0.2708333333333333
+            },
+            "statusCounts": {
+              "measured": 96
+            },
+            "meanLatencyMs": {
+              "value": 5462.010416666667
+            },
+            "meanOutputTokens": {
+              "value": 370.2708333333333
+            }
+          },
+          "contextSensitivity": {
+            "total": 96,
+            "eligible": 96,
+            "measured": 96,
+            "coverage": {
+              "value": 1
+            },
+            "invalidRate": {
+              "value": 0
+            },
+            "abstainedRate": {
+              "value": 0
+            },
+            "unavailableRate": {
+              "value": 0
+            },
+            "exactAgreement": {
+              "value": 0.2708333333333333
+            },
+            "qwk": {
+              "value": 0.3002760905577029
+            },
+            "spearman": {
+              "value": 0.3265835507957801
+            },
+            "pearson": {
+              "value": 0.33401742355434116
+            },
+            "withinOneLevelAccuracy": {
+              "value": 0.8020833333333334
+            },
+            "mae": {
+              "value": 0.9375
+            },
+            "signedBias": {
+              "value": 0.3333333333333333
+            },
+            "statusCounts": {
+              "measured": 96
+            },
+            "meanLatencyMs": {
+              "value": 5462.010416666667
+            },
+            "meanOutputTokens": {
+              "value": 370.2708333333333
+            }
+          },
+          "actionConsistency": {
+            "total": 96,
+            "eligible": 96,
+            "measured": 96,
+            "coverage": {
+              "value": 1
+            },
+            "invalidRate": {
+              "value": 0
+            },
+            "abstainedRate": {
+              "value": 0
+            },
+            "unavailableRate": {
+              "value": 0
+            },
+            "exactAgreement": {
+              "value": 0.2916666666666667
+            },
+            "qwk": {
+              "value": 0.5141586707231454
+            },
+            "spearman": {
+              "value": 0.4857657978457296
+            },
+            "pearson": {
+              "value": 0.6790126278872445
+            },
+            "withinOneLevelAccuracy": {
+              "value": 0.8125
+            },
+            "mae": {
+              "value": 0.9895833333333334
+            },
+            "signedBias": {
+              "value": 0.9479166666666666
+            },
+            "statusCounts": {
+              "measured": 96
+            },
+            "meanLatencyMs": {
+              "value": 5462.010416666667
+            },
+            "meanOutputTokens": {
+              "value": 370.2708333333333
+            }
+          }
+        }
+      },
+      "hard_constraint_violation": {
+        "total": 144,
+        "eligible": 144,
+        "measured": 144,
+        "coverage": {
+          "value": 1
+        },
+        "invalidRate": {
+          "value": 0
+        },
+        "abstainedRate": {
+          "value": 0
+        },
+        "unavailableRate": {
+          "value": 0
+        },
+        "exactAgreement": {
+          "value": 0.9722222222222222
+        },
+        "criticalRecall": {
+          "value": 0.9444444444444444
+        },
+        "criticalPrecision": {
+          "value": 0.85
+        },
+        "criticalSpecificity": {
+          "value": 0.9761904761904762
+        },
+        "criticalMcc": {
+          "value": 0.8804062740424287
+        },
+        "confusion": {
+          "truePositive": 17,
+          "trueNegative": 123,
+          "falsePositive": 3,
+          "falseNegative": 1
+        },
+        "statusCounts": {
+          "measured": 144
+        },
+        "meanLatencyMs": {
+          "value": 3042.6388888888887
+        },
+        "meanOutputTokens": {
+          "value": 171.50694444444446
+        }
+      }
+    },
+    "macro": {
+      "qwk": {
+        "value": 0.43869789005238086
+      },
+      "pearson": {
+        "value": 0.4870781915873646
+      },
+      "exactAgreement": {
+        "value": 0.3506944444444445
+      },
+      "spearman": {
+        "value": 0.4521060665794962
+      },
+      "withinOneLevelAccuracy": {
+        "value": 0.8234126984126984
+      },
+      "mae": {
+        "value": 0.8715277777777777
+      },
+      "signedBias": {
+        "value": 0.11160714285714286
+      },
+      "criticalRecall": {
+        "value": 0.9444444444444444
+      },
+      "criticalPrecision": {
+        "value": 0.85
+      },
+      "criticalSpecificity": {
+        "value": 0.9761904761904762
+      },
+      "criticalMcc": {
+        "value": 0.8804062740424287
+      }
+    },
+    "statusCounts": {
+      "measured": 624
+    },
+    "meanLatencyMs": {
+      "value": 4999.871794871795
+    },
+    "meanOutputTokens": {
+      "value": 320.3253205128205
+    }
+  }
+}
