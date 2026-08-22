@@ -134,9 +134,6 @@ export async function buildQualificationReadiness(root = ".") {
     join(root, "qualification/corpus/reference-labels.jsonl"),
   );
   const labelsById = new Map(labels.map((label) => [label.exampleId, label]));
-  const submissionsById = new Map(
-    corpus.submissions.map((submission) => [submission.exampleId, submission]),
-  );
   const checks = [];
 
   checks.push(
