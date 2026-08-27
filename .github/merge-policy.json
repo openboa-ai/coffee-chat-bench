@@ -26,6 +26,7 @@
     "/.gitleaks.toml",
     "/AGENTS.md",
     "/CODEOWNERS",
+    "/README.md",
     "/SECURITY.md",
     "/.npmrc",
     "/npm-shrinkwrap.json",

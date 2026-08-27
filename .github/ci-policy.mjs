@@ -1,16 +1,36 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const root = resolve(process.env.CI_POLICY_ROOT ?? ".");
 const TRUSTED_CONTROL_SHA = "f33da6bbcdfebd0693ff7673d750f369629e000e";
 const readJson = (path) => JSON.parse(readFileSync(resolve(root, path), "utf8"));
+const trackedFiles = execFileSync("git", ["-C", root, "ls-files", "-z"], {
+  encoding: "utf8",
+})
+  .split("\0")
+  .filter(Boolean);
+function trackedEntries(directory = ".") {
+  const prefix = directory === "." ? "" : `${directory.replace(/\/$/u, "")}/`;
+  const entries = new Set();
+  for (const file of trackedFiles) {
+    if (!file.startsWith(prefix)) continue;
+    const remainder = file.slice(prefix.length);
+    if (!remainder) continue;
+    entries.add(remainder.split("/")[0]);
+  }
+  return [...entries].sort();
+}
+function checkoutEntries(directory = ".") {
+  const entries = trackedEntries(directory);
+  if (directory === ".") entries.push(".git");
+  return entries.sort();
+}
 assert.equal(existsSync(resolve(root, ".npmrc")), false);
 assert.equal(existsSync(resolve(root, "npm-shrinkwrap.json")), false);
 assert.deepEqual(
-  readdirSync(resolve(root, ".github/workflows"))
-    .filter((name) => /\.ya?ml$/u.test(name))
-    .sort(),
+  readdirSync(resolve(root, ".github/workflows")).sort(),
   ["trusted.yml"],
 );
 assert.equal(
@@ -36,7 +56,7 @@ jobs:
 `,
   "trusted wrapper must remain exact",
 );
-assert.deepEqual(readdirSync(root).sort(), [
+assert.deepEqual(checkoutEntries(), [
   ".git",
   ".gitattributes",
   ".githooks",
@@ -56,6 +76,7 @@ assert.deepEqual(readdirSync(root).sort(), [
 
 assert.deepEqual(readJson("package.json"), {
   name: "@openboa-ai/coffee-chat-bench",
+  version: "0.0.0",
   private: true,
   type: "module",
   scripts: { verify: "node .github/ci-policy.mjs" },
@@ -137,6 +158,7 @@ assert.deepEqual(readJson(".github/merge-policy.json"), {
     "/.gitleaks.toml",
     "/AGENTS.md",
     "/CODEOWNERS",
+    "/README.md",
     "/SECURITY.md",
     "/.npmrc",
     "/npm-shrinkwrap.json",
@@ -180,10 +202,19 @@ const expectedDirectoryEntries = new Map([
   ["evals/triggering/perspective-application", [".gitkeep"]],
 ]);
 for (const [directory, entries] of expectedDirectoryEntries) {
-  assert.deepEqual(readdirSync(resolve(root, directory)).sort(), entries, directory);
+  assert.deepEqual(trackedEntries(directory), entries, directory);
+  for (const entry of entries) {
+    if (entry === ".gitkeep") {
+      assert.equal(
+        readFileSync(resolve(root, directory, entry), "utf8"),
+        "",
+        `${directory}/${entry} must remain empty`,
+      );
+    }
+  }
 }
 for (const directory of ["graders", "research"]) {
-  assert.deepEqual(readdirSync(resolve(root, directory)).sort(), ["README.md"], directory);
+  assert.deepEqual(trackedEntries(directory), ["README.md"], directory);
 }
 
 assert.equal(
