@@ -348,7 +348,7 @@ const trustedWorkflowSource = readFileSync(
   resolve(workflowRoot, "trusted.yml"),
   "utf8",
 );
-const trustedControlSha = "1195ad3068c8b4441aa53c1dd5595e2875c0df99";
+const trustedControlSha = "d6d8b73b4c1da5f57daa46d32a9f253cd0ef6a4a";
 const expectedTrustedWorkflow = `name: OpenBoa Coffee trusted gate
 
 on:
