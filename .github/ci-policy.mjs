@@ -144,5 +144,10 @@ for (const directory of forbidden) {
   assert.equal(existsSync(resolve(root, directory)), false, directory);
 }
 
-assert.match(readFileSync(resolve(root, "README.md"), "utf8"), /Ground Truth/u);
+const readme = readFileSync(resolve(root, "README.md"), "utf8");
+assert.match(readme, /Ground Truth/u);
+assert.match(readme, /Each future case uses the same envelope:/u);
+for (const marker of ["prompt/", "input/", "expected-output/"]) {
+  assert.match(readme, new RegExp(`\\b${marker.replace("/", "\\/")}`, "u"), marker);
+}
 console.log("Coffee Chat Bench structure and policy passed.");
