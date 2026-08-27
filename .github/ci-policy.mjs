@@ -81,6 +81,34 @@ assert.deepEqual(readdirSync(resolve(root, ".github")).sort(), [
 ]);
 assert.deepEqual(readdirSync(resolve(root, ".githooks")).sort(), ["pre-commit"]);
 
+assert.equal(
+  readFileSync(resolve(root, "CODEOWNERS"), "utf8"),
+  `# No wildcard owner: ordinary paths may become eligible for strong-CI auto-merge.
+/.github/** @openboa-ai/security-maintainers
+/.githooks/** @openboa-ai/security-maintainers
+/.gitleaks* @openboa-ai/security-maintainers
+/AGENTS.md @openboa-ai/security-maintainers
+/CODEOWNERS @openboa-ai/security-maintainers
+/LICENSE @openboa
+/README.md @openboa
+/.npmrc @openboa-ai/security-maintainers
+/npm-shrinkwrap.json @openboa-ai/security-maintainers
+/package.json @openboa-ai/security-maintainers
+/package-lock.json @openboa-ai/security-maintainers
+/prettier.config.mjs @openboa-ai/security-maintainers
+/SECURITY.md @openboa-ai/security-maintainers
+/evals/** @openboa-ai/security-maintainers
+/graders/** @openboa-ai/security-maintainers
+/research/** @openboa-ai/security-maintainers
+`,
+  "CODEOWNERS must preserve the benchmark ownership routes",
+);
+assert.match(
+  readFileSync(resolve(root, "SECURITY.md"), "utf8"),
+  /security@openboa\.ai/u,
+  "SECURITY.md must provide a private reporting channel",
+);
+
 assert.deepEqual(readJson(".github/merge-policy.json"), {
   repository_role: "bench",
   merge_method: "squash",

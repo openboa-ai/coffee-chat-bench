@@ -10,5 +10,6 @@ credentials, or publish content. Candidate execution and all provider
 interactions occur in coffee-chat-eval.
 
 Do not commit secrets, private Origins or Beans, candidate outputs, Judge
-responses, or execution traces here. Report security issues privately to the
-repository maintainers.
+responses, or execution traces here. Report security issues privately to
+`security@openboa.ai`; do not disclose vulnerability details in a public
+issue.
