@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 
 const root = resolve(process.env.CI_POLICY_ROOT ?? ".");
@@ -101,6 +101,68 @@ assert.deepEqual(readdirSync(resolve(root, ".github")).sort(), [
   "workflows",
 ]);
 assert.deepEqual(readdirSync(resolve(root, ".githooks")).sort(), ["pre-commit"]);
+const expectedHook = [
+  "#!/bin/sh",
+  "set -eu",
+  "",
+  "scanner=${GITLEAKS_BIN:-gitleaks}",
+  'if ! command -v "$scanner" >/dev/null 2>&1; then',
+  "  printf '%s\\n' 'Gitleaks is required; install Gitleaks before committing.' >&2",
+  "  exit 1",
+  "fi",
+  "",
+  "if [ -e .gitleaks.toml ] || [ -e .gitleaksignore ]; then",
+  "  printf '%s\\n' 'Repository-local Gitleaks controls are not permitted.' >&2",
+  "  exit 1",
+  "fi",
+  "unset GITLEAKS_CONFIG GITLEAKS_CONFIG_TOML",
+  '"$scanner" git --pre-commit --staged --gitleaks-ignore-path /dev/null \\',
+  "  --ignore-gitleaks-allow --redact --no-banner .",
+  'staged_dir="$(mktemp -d)"',
+  `trap 'rm -rf "$staged_dir"' EXIT HUP INT TERM`,
+  'git checkout-index --all --prefix="$staged_dir/"',
+  '"$scanner" dir --gitleaks-ignore-path /dev/null --ignore-gitleaks-allow \\',
+  '  --redact --no-banner "$staged_dir"',
+  "",
+].join("\n");
+assert.equal(readFileSync(resolve(root, ".githooks/pre-commit"), "utf8"), expectedHook);
+assert.notEqual(statSync(resolve(root, ".githooks/pre-commit")).mode & 0o111, 0);
+assert.equal(
+  readFileSync(resolve(root, ".gitignore"), "utf8"),
+  `# Local credentials
+/.superpowers/
+.env
+.env.*
+!.env.example
+credentials.json
+secrets.json
+*.private.pem
+private-key.pem
+*.private.key
+private.key
+private-key.key
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+tls.key
+server.key
+server-key.pem
+*-private-key.pem
+*-private-key.key
+privkey*.pem
+*.p12
+*.pfx
+*.jks
+node_modules/
+coverage/
+dist/
+*.tsbuildinfo
+__pycache__/
+*.pyc
+`,
+  ".gitignore must preserve the credential and local-artifact ignore contract",
+);
 
 assert.equal(
   readFileSync(resolve(root, "CODEOWNERS"), "utf8"),
