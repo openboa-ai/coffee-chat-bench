@@ -26,20 +26,15 @@
     "/.gitleaks.toml",
     "/AGENTS.md",
     "/CODEOWNERS",
+    "/README.md",
     "/SECURITY.md",
     "/.npmrc",
     "/npm-shrinkwrap.json",
     "/package.json",
     "/package-lock.json",
     "/prettier.config.mjs",
-    "/bank/**",
-    "/docs/**",
-    "/docs/validity/**",
-    "/harbor/**",
-    "/qualification/**",
-    "/scripts/check-inactive-boundary.mjs",
-    "/schemas/**",
-    "/src/**",
-    "/tests/**"
+    "/evals/**",
+    "/graders/**",
+    "/research/**"
   ]
 }

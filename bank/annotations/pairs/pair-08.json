@@ -1,9 +1,0 @@
-{
-  "pairId": "pair-08",
-  "contrastFamily": "source_fidelity_vs_audience_utility",
-  "historyRecords": 8,
-  "distinctDecisionsPerTarget": 8,
-  "convergentBoundaryEpisodes": 2,
-  "rationaleAvailability": "partial",
-  "reviewStatus": "pending_human_audit"
-}

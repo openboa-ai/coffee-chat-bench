@@ -1,9 +1,0 @@
-{
-  "pairId": "pair-02",
-  "contrastFamily": "reversibility_and_option_value_vs_benefits_of_commitment",
-  "historyRecords": 8,
-  "distinctDecisionsPerTarget": 8,
-  "convergentBoundaryEpisodes": 2,
-  "rationaleAvailability": "partial",
-  "reviewStatus": "pending_human_audit"
-}

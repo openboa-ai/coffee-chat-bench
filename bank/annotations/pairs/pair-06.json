@@ -1,9 +1,0 @@
-{
-  "pairId": "pair-06",
-  "contrastFamily": "evidential_threshold_vs_action_based_learning",
-  "historyRecords": 8,
-  "distinctDecisionsPerTarget": 8,
-  "convergentBoundaryEpisodes": 2,
-  "rationaleAvailability": "partial",
-  "reviewStatus": "pending_human_audit"
-}

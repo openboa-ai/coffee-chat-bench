@@ -12,14 +12,6 @@
 /package-lock.json @openboa-ai/security-maintainers
 /prettier.config.mjs @openboa-ai/security-maintainers
 /SECURITY.md @openboa-ai/security-maintainers
-/bank/** @openboa-ai/security-maintainers
-/docs/** @openboa-ai/security-maintainers
-/docs/validity/** @openboa-ai/security-maintainers
-/harbor/** @openboa-ai/security-maintainers
-/qualification/** @openboa-ai/security-maintainers
-/schemas/** @openboa-ai/security-maintainers
-/src/** @openboa-ai/security-maintainers
-/scripts/** @openboa
-/scripts/check-inactive-boundary.mjs @openboa-ai/security-maintainers
-/tests/** @openboa-ai/security-maintainers
-/docs/quality-map.md @openboa
+/evals/** @openboa-ai/security-maintainers
+/graders/** @openboa-ai/security-maintainers
+/research/** @openboa-ai/security-maintainers
