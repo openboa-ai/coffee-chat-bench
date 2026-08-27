@@ -3,6 +3,8 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const root = resolve(process.env.CI_POLICY_ROOT ?? ".");
+const TRUSTED_CONTROL_SHA = "d6d8b73b4c1da5f57daa46d32a9f253cd0ef6a4a";
+const readJson = (path) => JSON.parse(readFileSync(resolve(root, path), "utf8"));
 assert.equal(existsSync(resolve(root, ".npmrc")), false);
 assert.equal(existsSync(resolve(root, "npm-shrinkwrap.json")), false);
 assert.deepEqual(
@@ -11,6 +13,86 @@ assert.deepEqual(
     .sort(),
   ["trusted.yml"],
 );
+assert.equal(
+  readFileSync(resolve(root, ".github/workflows/trusted.yml"), "utf8"),
+  `name: OpenBoa Coffee trusted gate
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions: {}
+
+jobs:
+  trusted:
+    name: OpenBoa Coffee trusted required
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    uses: openboa-ai/.github/.github/workflows/coffee-trusted-gate.yml@${TRUSTED_CONTROL_SHA}
+    with:
+      control_sha: ${TRUSTED_CONTROL_SHA}
+`,
+  "trusted wrapper must remain exact",
+);
+assert.deepEqual(readdirSync(root).sort(), [
+  ".git",
+  ".gitattributes",
+  ".githooks",
+  ".github",
+  ".gitignore",
+  "AGENTS.md",
+  "CODEOWNERS",
+  "LICENSE",
+  "README.md",
+  "SECURITY.md",
+  "evals",
+  "graders",
+  "package-lock.json",
+  "package.json",
+  "research",
+]);
+
+assert.deepEqual(readJson(".github/merge-policy.json"), {
+  repository_role: "bench",
+  merge_method: "squash",
+  auto_merge: "github-native",
+  merge_queue: false,
+  required_events: ["pull_request"],
+  eligible_author_associations: ["OWNER", "MEMBER"],
+  eligible_bot_logins: ["dependabot[bot]"],
+  required_approvals: 0,
+  required_checks: [
+    {
+      context: "OpenBoa Coffee trusted required / OpenBoa Coffee trusted required",
+      integration_id: 15368,
+    },
+  ],
+  sensitive_review: {
+    enforcement: "github_environment",
+    environment: "coffee-security",
+    required_approvals: 1,
+    prevent_self_review: false,
+  },
+  protected_paths: [
+    "/.github/**",
+    "/.githooks/**",
+    "/.gitleaksignore",
+    "/.gitleaks.toml",
+    "/AGENTS.md",
+    "/CODEOWNERS",
+    "/SECURITY.md",
+    "/.npmrc",
+    "/npm-shrinkwrap.json",
+    "/package.json",
+    "/package-lock.json",
+    "/prettier.config.mjs",
+    "/evals/**",
+    "/graders/**",
+    "/research/**",
+  ],
+});
 
 const expectedFiles = [
   "README.md",
@@ -22,19 +104,31 @@ for (const file of expectedFiles) {
   assert.equal(existsSync(resolve(root, file)), true, file);
 }
 
-const expectedDirectories = [
-  "evals/output-quality/perspective-capture",
-  "evals/output-quality/perspective-application/human-understanding",
-  "evals/output-quality/perspective-application/agent-judgment-action",
-  "evals/triggering/perspective-capture",
-  "evals/triggering/perspective-application",
-];
-for (const directory of expectedDirectories) {
-  assert.deepEqual(
-    readdirSync(resolve(root, directory)).sort(),
+const expectedDirectoryEntries = new Map([
+  ["evals", ["README.md", "output-quality", "triggering"]],
+  ["evals/output-quality", ["perspective-application", "perspective-capture"]],
+  [
+    "evals/output-quality/perspective-application",
+    ["agent-judgment-action", "human-understanding"],
+  ],
+  ["evals/output-quality/perspective-capture", [".gitkeep"]],
+  [
+    "evals/output-quality/perspective-application/human-understanding",
     [".gitkeep"],
-    directory,
-  );
+  ],
+  [
+    "evals/output-quality/perspective-application/agent-judgment-action",
+    [".gitkeep"],
+  ],
+  ["evals/triggering", ["perspective-application", "perspective-capture"]],
+  ["evals/triggering/perspective-capture", [".gitkeep"]],
+  ["evals/triggering/perspective-application", [".gitkeep"]],
+]);
+for (const [directory, entries] of expectedDirectoryEntries) {
+  assert.deepEqual(readdirSync(resolve(root, directory)).sort(), entries, directory);
+}
+for (const directory of ["graders", "research"]) {
+  assert.deepEqual(readdirSync(resolve(root, directory)).sort(), ["README.md"], directory);
 }
 
 const forbidden = [
