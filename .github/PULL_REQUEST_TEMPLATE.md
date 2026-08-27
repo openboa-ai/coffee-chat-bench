@@ -1,24 +1,20 @@
 ## Scope
 
-Describe the repository-owned boundary and why it belongs here.
+Describe the benchmark-owned boundary and why the change belongs here.
 
 ## Evidence
 
-- [ ] `node scripts/check-inactive-boundary.mjs --root .`
-- [ ] `node --test tests/inactive-boundary.test.mjs`
-- [ ] The inactive status remains explicit unless this is an approved activation
-      change.
-
-- [ ] `npm run format:check`
-- [ ] `npm run typecheck`
-- [ ] `npm test`
-- [ ] `npm run ci:policy`
+- [ ] `npm run verify`
+- [ ] `git diff --check`
+- [ ] No candidate execution, private data, or Product behavior was added.
+- [ ] Benchmark activation and human validity are not claimed from structure
+      checks alone.
 
 ## Merge lifecycle
 
 - [ ] I marked the applicable Sensitive path status below.
   - [ ] No sensitive path changed.
-  - [ ] Sensitive path changed: explain the governance, judge, workflow, or
-        Harbor boundary affected.
+  - [ ] Sensitive path changed: explain the governance, Ground Truth, Judge, or
+        workflow boundary affected.
 - [ ] GitHub-native squash auto-merge is enabled only after required checks
       pass. The external ruleset decides whether human review is required.

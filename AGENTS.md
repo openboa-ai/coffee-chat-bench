@@ -1,147 +1,53 @@
 # Coffee Chat Bench repository rules
 
-This repository owns one candidate-independent public benchmark bank for agent
-systems. Its status is `not_active`. The repository name is not a candidate
-requirement and the bank must not import Coffee Chat product internals.
+This repository owns the candidate-independent benchmark definition for
+Coffee Chat. It owns cases, criteria, user-reviewed Ground Truth, graders, and
+research notes. It never executes a candidate.
 
-## Inactive boundary
+## Construct boundary
 
-- This repository does not provide an active benchmark, measured results, a
-  leaderboard, or Product-specific credit.
-- Passing tests proves contract and construction consistency only. It does not
-  establish construct validity, human criterion validity, population validity,
-  agent performance, or activation.
-- The candidate class is an agent system: harness, configured model, host,
-  tools, adaptation, and execution policy. A direct one-shot language-model
-  completion is out of scope.
-- The research area is personalized alignment. The fixed operational estimand
-  is target-conditioned judgment alignment: infer a context-dependent judgment
-  pattern from eight records, apply it to a held-out task, distinguish matched
-  targets, and preserve task performance and evidence grounding.
-- The bank does not model a real person, a global personality trait, authentic
-  human preferences, or Coffee Chat product behavior.
-- Deterministic checks may validate objective contracts, facts, constraints,
-  provenance, state, paths, and arithmetic. They must not award open-ended
-  judgment alignment or task performance.
-- The AI judge is the required semantic measurement layer. `provisional` means
-  it can run for development before human criterion collection; `qualified`
-  means the declared human-grounded evidence has been met. Human annotation is
-  required for later reliability and calibration evidence, not for defining the
-  judge interface.
-- Missing, invalid, unavailable, skipped, abstained, or judge-disagreeing
-  evidence remains nonnumeric and must not become zero or success.
+- The only public candidate interface is prompt + input -> output.
+- Perspective capture measures Roast's source-to-confirmed-perspective
+  capability. Perspective application measures Brew's application capability.
+- Human Understanding and Agent Judgment / Action are separate Brew surfaces.
+- Triggering is a separate evaluation from output quality.
+- Product vocabulary is explanatory; the benchmark must remain candidate- and
+  host-independent.
+- Ground Truth is user-reviewed semantic criteria and accepted outcomes, not a
+  single reference response or an AI-generated label.
+- The benchmark does not model a real person, hidden personality, or universal
+  human preference.
+- Matched counterfactual cases can vary the confirmed Bean while holding facts
+  constant; they are not an additional with/without-Skill arm.
 
-## Data and ownership boundaries
+## Data boundary
 
-- There is one externally selectable `public benchmark bank`.
-- The fixed bank has 8 matched target pairs, 16 synthetic targets, 32 case
-  families, three conditions per family, and 96 candidate projections.
-- Candidate-visible, self-contained manifests live under `bank/public/**`.
-- Human-audit construction annotations live under `bank/annotations/**`; they
-  are not rendered to candidates and are not an evaluator answer key.
-- There is no `bank/evaluator/**` directory in the public bank.
-- `bank/sampling-plan.json` is the canonical sampling matrix and
-  `bank/bank.json` binds its digest to the 32 cases.
-- `coffee-chat-eval` owns adapters, provider/model/host execution, Harbor
-  orchestration, isolation evidence, and performance reports. This repository
-  owns candidate-independent cases, rendering, objective artifact contracts,
-  provider-neutral Judge requests/parsing, submission evaluation, and benchmark
-  validity evidence plans. It does not generate candidate output or execute an
-  agent.
-- `coffee-chat-bench` may use `persona` only when discussing source terminology
-  in related work; it is not a product or benchmark identity claim.
+- Case material belongs under evals/ and uses prompt/, input/, and
+  expected-output/ boundaries.
+- Generated candidate output, traces, timing, grading, human feedback, and
+  Judge transport belong to coffee-chat-eval.
+- Personal Origins and Beans do not belong in the public benchmark repository.
+- Keep missing, unavailable, abstained, and disagreement states explicit.
+- Budget, host, model, and provider credentials are execution concerns, not
+  benchmark fields.
+- Keep development, validation, and sealed splits separate by owner, source,
+  and task family when the case set is populated.
 
-## Benchmark-work gate
+## Change workflow
 
-Before changing the case bank, criterion, rendering, evaluator boundary,
-Harbor projection, or validity language, read:
+- Freeze the benchmark and qualified Judge while changing a Product Skill.
+- Preserve unrelated work and Git history. Do not create legacy, archive, or v2
+  directories.
+- Substantive changes use a non-default branch, focused verification, and a
+  pull request. Any public case or policy change requires the applicable human
+  gate.
+- Keep the trusted pull_request_target wrapper and central OpenBoa policy
+  boundary intact. Do not add candidate imports, credentials, dynamic loaders,
+  or write-token automation.
 
-- `docs/benchmark-design.md`;
-- `docs/implementation-plan.md`;
-- `docs/terminology.md`;
-- `docs/validity/validity-argument-and-evidence-plan.md`;
-- `docs/validity/related-work-and-discriminant-validity.md`.
+## Verification
 
-Every benchmark change must define, measure, falsify, or validate a
-candidate-independent construct. Product behavior belongs in product tests;
-harness/provider behavior belongs in `coffee-chat-eval`.
-
-## Construction and contract rules
-
-- Keep the public surface to the single bank; do not reintroduce development,
-  pilot, release, holdout, or judge-qualification datasets.
-- Keep one case's task and document bundle fixed across its three conditions. Render
-  exactly one condition to a candidate.
-- Keep target histories matched in situation, evidence IDs, format positions,
-  and length. Do not expose construction labels, target identity, reference
-  labels, or held-out answers through candidate-visible text or IDs.
-- Keep qualification outputs, reference labels, and Judge results out of the
-  public input bank. The frozen synthetic output corpus lives under
-  `qualification/corpus/**` and currently contains 48 family variants, 144
-  submissions, and 144 pointwise references. Its references are
-  `project_owner_reference` records from construction review, not independent
-  human criterion evidence; pairwise labels and Judge results are not yet
-  present.
-- Use the terminology map. Prefer personalized alignment, judgment alignment,
-  stated rationale, task performance, evidence grounding, human criterion,
-  reliability, calibration, and construct validity. Do not use `persona` as a
-  synonym for the construct.
-- The qualification runner must consume `qualification/measurement-plan.json`
-  and `qualification/gate-policy.json`; construction intent is not a runtime
-  routing rule. The measurement plan is a 624-call full matrix: every output
-  is evaluated on every applicable Judge dimension. A provider-free readiness
-  report must pass before a new Luna step is allowed. Historical steps with
-  another plan digest are archival evidence only, remain immutable, and are
-  excluded from the active progress series.
-- The provisional gate is all-metric: every declared ordinal agreement and
-  error metric, every hard-constraint classification metric, complete result
-  state, mean latency, and mean output length is blocking. Do not collapse
-  these checks into a composite score or silently return any metric to
-  report-only status.
-- Every candidate submission contains a final artifact and structured stated
-  decision record. The record is never described as hidden chain-of-thought and
-  cannot compensate for deficient artifact-level performance.
-- Keep pointwise dimensions independent. Keep family evidence as four mirrored
-  pairwise comparisons; order inconsistency remains nonnumeric. Do not restore
-  an arbitrary `transferred` threshold or universal composite score.
-- `npm run data:audit` is the authoritative construction gate. Its JSON output
-  must remain inspectable.
-- Harbor projection must remain candidate-neutral, no-network, and exactly 96
-  tasks. Structural reward is not a semantic benchmark result.
-- Do not add candidate imports, provider credentials, dynamic loaders, or
-  product-specific adapters to this repository.
-
-## Change and security rules
-
-- Every substantive change uses a pull request and GitHub-native squash
-  auto-merge. Before enabling auto-merge, run `npm run format:check`,
-  `npm run typecheck`, `npm run check:inactive`, `npm test`, and
-  `npm run ci:policy`.
-- Treat `AGENTS.md`, `CODEOWNERS`, `.github/**`, `package.json`,
-  `package-lock.json`, `tests/**`, `src/**`, `harbor/**`, canonical digests,
-  annotation data, and inactive-state logic as sensitive paths. The exact
-  repository policy is in `.github/merge-policy.json`.
-- Do not create custom write-token merge automation or bypass protected review
-  environments.
-- On an author-controlled checkout, run
-  `node .github/policy-bootstrap.mjs && npm ci --ignore-scripts --prefix
-.github/policy-parser` before `npm test` or `npm run ci:policy`.
-- Reject root `.npmrc`, parser `.npmrc`, and `npm-shrinkwrap.json` as competing
-  install authorities.
-- Preserve explicit failure states. Never weaken an inactive check to imply
-  activation.
-
-## Required verification
-
-```bash
-npm run data:audit
-npm run format:check
-npm run typecheck
-npm run check:inactive
-npm test
-npm run ci:policy
-git diff --check
-```
-
-Run `node scripts/check-inactive-boundary.mjs --root .` and
-`node --test tests/inactive-boundary.test.mjs` for changed surfaces.
+Verify the directory skeleton, case envelope documentation, empty public data
+boundary, README consistency, and git diff --check. Do not claim benchmark
+activation, construct validity, human criterion validity, or Product
+performance from structural checks.

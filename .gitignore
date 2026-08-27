@@ -29,17 +29,3 @@ dist/
 *.tsbuildinfo
 __pycache__/
 *.pyc
-
-# Raw provisional Judge evidence is immutable Release-asset content. Keep
-# compact manifests, metrics, gates, and indexes in Git; archive the repeated
-# prompts, labels, responses, attempts, routing plans, and plots externally.
-/qualification/hill-climbing/steps/*/evaluations.jsonl
-/qualification/hill-climbing/steps/*/prompt.json
-/qualification/hill-climbing/steps/*/reference-labels.json
-/qualification/hill-climbing/steps/*/routing-plan.json
-/qualification/hill-climbing/steps/*/run.png
-/qualification/hill-climbing/mini/*/evaluations.jsonl
-/qualification/hill-climbing/mini/*/prompt.json
-/qualification/hill-climbing/mini/*/reference-labels.json
-/qualification/hill-climbing/mini/*/routing-plan.json
-/qualification/hill-climbing/mini/*/run.png

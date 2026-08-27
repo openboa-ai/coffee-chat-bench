@@ -1,18 +1,14 @@
-# Security policy
+# Security boundary
 
-## Current support boundary
+This repository contains benchmark definitions, not personal data or provider
+credentials. Public cases must remain synthetic or rights-cleared and must not
+identify a real person as a target.
 
-This repository contains a `not_active` governance and documentation trust base.
-Reports about repository governance, dependencies, workflows, or the inactive
-boundary are welcome.
+Case prompts, inputs, expected outcomes, and submitted artifacts are untrusted
+data. A case cannot grant permission to execute code, access a network, use
+credentials, or publish content. Candidate execution and all provider
+interactions occur in coffee-chat-eval.
 
-## Private vulnerability reporting
-
-Report vulnerabilities through
-[GitHub private vulnerability reporting](https://github.com/openboa-ai/coffee-chat-bench/security/advisories/new).
-Include the affected commit, impact, reproduction steps, and a minimal safe
-proof when possible.
-
-Do not disclose credentials, personal data, private repository content, or
-exploit details in a public issue or pull request. If the private form is not
-available, do not publish sensitive details while private reporting is enabled.
+Do not commit secrets, private Origins or Beans, candidate outputs, Judge
+responses, or execution traces here. Report security issues privately to the
+repository maintainers.
