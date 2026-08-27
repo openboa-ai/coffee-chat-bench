@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, lstatSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 
 const root = resolve(process.env.CI_POLICY_ROOT ?? ".");
@@ -79,7 +79,10 @@ assert.deepEqual(readJson("package.json"), {
   version: "0.0.0",
   private: true,
   type: "module",
-  scripts: { verify: "node .github/ci-policy.mjs" },
+  scripts: {
+    "hooks:install": "git config core.hooksPath .githooks",
+    verify: "node .github/ci-policy.mjs",
+  },
 });
 assert.deepEqual(readJson("package-lock.json"), {
   name: "@openboa-ai/coffee-chat-bench",
@@ -267,8 +270,12 @@ for (const [directory, entries] of expectedDirectoryEntries) {
   assert.deepEqual(trackedEntries(directory), entries, directory);
   for (const entry of entries) {
     if (entry === ".gitkeep") {
+      const placeholderPath = resolve(root, directory, entry);
+      const placeholder = lstatSync(placeholderPath);
+      assert.equal(placeholder.isSymbolicLink(), false, `${directory}/${entry} must not be a symlink`);
+      assert.equal(placeholder.isFile(), true, `${directory}/${entry} must be a regular file`);
       assert.equal(
-        readFileSync(resolve(root, directory, entry), "utf8"),
+        readFileSync(placeholderPath, "utf8"),
         "",
         `${directory}/${entry} must remain empty`,
       );

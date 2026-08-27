@@ -132,7 +132,8 @@ trace, timing, grading, and human feedback belong to coffee-chat-eval.
 ## Evaluation rules
 
 - Compare with-skill and without-skill under the same prompt and input.
-- For Brew, use the same confirmed Bean in both arms.
+- For Brew, use the same byte-identical, explicitly confirmed Bean and context
+  in both arms; a Roast candidate or drifted Bean invalidates the comparison.
 - Keep Roast, Brew, Human Understanding, Agent Judgment / Action, and
   triggering results separate.
 - Use deterministic assertions for observable constraints and human-calibrated
@@ -158,6 +159,12 @@ compliance, and successful Origin -> confirmed Bean -> Coffee flow.
 This repository owns cases, criteria, Ground Truth, graders, and research
 records. It does not execute candidates, store Coffee, store private Beans,
 own host credentials, or report Product performance by itself.
+
+## Local security hook
+
+After cloning, run `npm run hooks:install` to configure Git to use the committed
+`.githooks/pre-commit` guard. This local hook supplements, but does not
+replace, the trusted central checks.
 
 ## Status
 
