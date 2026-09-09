@@ -5,6 +5,6 @@
   "type": "module",
   "scripts": {
     "hooks:install": "git config core.hooksPath .githooks",
-    "verify": "node .github/ci-policy.mjs"
+    "verify": "node --test .github/verify.test.mjs && node .github/verify.mjs"
   }
 }

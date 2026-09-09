@@ -1,17 +1,17 @@
 # No wildcard owner: ordinary paths may become eligible for strong-CI auto-merge.
-/.github/** @openboa-ai/security-maintainers
-/.githooks/** @openboa-ai/security-maintainers
-/.gitleaks* @openboa-ai/security-maintainers
-/AGENTS.md @openboa-ai/security-maintainers
-/CODEOWNERS @openboa-ai/security-maintainers
-/LICENSE @openboa
-/README.md @openboa
-/.npmrc @openboa-ai/security-maintainers
-/npm-shrinkwrap.json @openboa-ai/security-maintainers
-/package.json @openboa-ai/security-maintainers
-/package-lock.json @openboa-ai/security-maintainers
-/prettier.config.mjs @openboa-ai/security-maintainers
-/SECURITY.md @openboa-ai/security-maintainers
-/evals/** @openboa-ai/security-maintainers
-/graders/** @openboa-ai/security-maintainers
-/research/** @openboa-ai/security-maintainers
+/.github/** @openboa-ai/security-maintainers @SonSangjoon
+/.githooks/** @openboa-ai/security-maintainers @SonSangjoon
+/.gitleaks* @openboa-ai/security-maintainers @SonSangjoon
+/AGENTS.md @openboa-ai/security-maintainers @SonSangjoon
+/CODEOWNERS @openboa-ai/security-maintainers @SonSangjoon
+/LICENSE @openboa @SonSangjoon
+/README.md @openboa @SonSangjoon
+/.npmrc @openboa-ai/security-maintainers @SonSangjoon
+/npm-shrinkwrap.json @openboa-ai/security-maintainers @SonSangjoon
+/package.json @openboa-ai/security-maintainers @SonSangjoon
+/package-lock.json @openboa-ai/security-maintainers @SonSangjoon
+/prettier.config.mjs @openboa-ai/security-maintainers @SonSangjoon
+/SECURITY.md @openboa-ai/security-maintainers @SonSangjoon
+/evals/** @openboa-ai/security-maintainers @SonSangjoon
+/graders/** @openboa-ai/security-maintainers @SonSangjoon
+/research/** @openboa-ai/security-maintainers @SonSangjoon
