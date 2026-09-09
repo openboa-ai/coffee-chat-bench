@@ -9,6 +9,22 @@ const trackedFiles = execFileSync("git", ["-C", root, "ls-files", "-z"], {
 })
   .split("\0")
   .filter(Boolean);
+// Infrastructure directories are not an escape hatch for Product/data artifacts.
+// Central controls validate security semantics; this repository owns its layout.
+assert.deepEqual(
+  trackedFiles.filter((path) => path.startsWith(".github/") || path.startsWith(".githooks/")).sort(),
+  [
+    ".githooks/pre-commit",
+    ".github/PULL_REQUEST_TEMPLATE.md",
+    ".github/dependabot.yml",
+    ".github/merge-policy.json",
+    ".github/verify.mjs",
+    ".github/verify.test.mjs",
+    ".github/workflows/trusted.yml",
+  ],
+  "unexpected or missing infrastructure file",
+);
+
 function trackedEntries(directory = ".") {
   const prefix = directory === "." ? "" : `${directory.replace(/\/$/u, "")}/`;
   const entries = new Set();
