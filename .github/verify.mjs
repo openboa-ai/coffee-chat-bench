@@ -9,104 +9,40 @@ const trackedFiles = execFileSync("git", ["-C", root, "ls-files", "-z"], {
 })
   .split("\0")
   .filter(Boolean);
-// Infrastructure directories are not an escape hatch for Product/data artifacts.
-// Central controls validate security semantics; this repository owns its layout.
-assert.deepEqual(
-  trackedFiles.filter((path) => path.startsWith(".github/") || path.startsWith(".githooks/")).sort(),
-  [
-    ".githooks/pre-commit",
-    ".github/PULL_REQUEST_TEMPLATE.md",
-    ".github/dependabot.yml",
-    ".github/merge-policy.json",
-    ".github/verify.mjs",
-    ".github/verify.test.mjs",
-    ".github/workflows/trusted.yml",
-  ],
-  "unexpected or missing infrastructure file",
-);
-
-function trackedEntries(directory = ".") {
-  const prefix = directory === "." ? "" : `${directory.replace(/\/$/u, "")}/`;
-  const entries = new Set();
-  for (const file of trackedFiles) {
-    if (!file.startsWith(prefix)) continue;
-    const remainder = file.slice(prefix.length);
-    if (!remainder) continue;
-    entries.add(remainder.split("/")[0]);
-  }
-  return [...entries].sort();
-}
-function checkoutEntries(directory = ".") {
-  const entries = trackedEntries(directory);
-  if (directory === ".") entries.push(".git");
-  return entries.sort();
-}
-assert.deepEqual(checkoutEntries(), [
-  ".git",
+// Compare complete paths: a same-named directory is not an allowed file.
+// This is the published repository layout, not central security policy.
+assert.deepEqual(trackedFiles.slice().sort(), [
   ".gitattributes",
-  ".githooks",
-  ".github",
+  ".githooks/pre-commit",
+  ".github/PULL_REQUEST_TEMPLATE.md",
+  ".github/dependabot.yml",
+  ".github/merge-policy.json",
+  ".github/verify.mjs",
+  ".github/verify.test.mjs",
+  ".github/workflows/trusted.yml",
   ".gitignore",
   "AGENTS.md",
   "CODEOWNERS",
   "LICENSE",
   "README.md",
   "SECURITY.md",
-  "evals",
-  "graders",
+  "evals/README.md",
+  "evals/output-quality/perspective-application/agent-judgment-action/.gitkeep",
+  "evals/output-quality/perspective-application/human-understanding/.gitkeep",
+  "evals/output-quality/perspective-capture/.gitkeep",
+  "evals/triggering/perspective-application/.gitkeep",
+  "evals/triggering/perspective-capture/.gitkeep",
+  "graders/README.md",
   "package-lock.json",
   "package.json",
-  "research",
-]);
-
-const expectedFiles = [
-  "README.md",
-  "evals/README.md",
-  "graders/README.md",
-  "research/README.md",
-];
-for (const file of expectedFiles) {
-  assert.equal(existsSync(resolve(root, file)), true, file);
+  "research/README.md"
+], "unexpected or missing repository file");
+for (const path of trackedFiles) {
+  assert.equal(lstatSync(resolve(root, path)).isFile(), true, `${path}: regular file required`);
 }
 
-const expectedDirectoryEntries = new Map([
-  ["evals", ["README.md", "output-quality", "triggering"]],
-  ["evals/output-quality", ["perspective-application", "perspective-capture"]],
-  [
-    "evals/output-quality/perspective-application",
-    ["agent-judgment-action", "human-understanding"],
-  ],
-  ["evals/output-quality/perspective-capture", [".gitkeep"]],
-  [
-    "evals/output-quality/perspective-application/human-understanding",
-    [".gitkeep"],
-  ],
-  [
-    "evals/output-quality/perspective-application/agent-judgment-action",
-    [".gitkeep"],
-  ],
-  ["evals/triggering", ["perspective-application", "perspective-capture"]],
-  ["evals/triggering/perspective-capture", [".gitkeep"]],
-  ["evals/triggering/perspective-application", [".gitkeep"]],
-]);
-for (const [directory, entries] of expectedDirectoryEntries) {
-  assert.deepEqual(trackedEntries(directory), entries, directory);
-  for (const entry of entries) {
-    if (entry === ".gitkeep") {
-      const placeholderPath = resolve(root, directory, entry);
-      const placeholder = lstatSync(placeholderPath);
-      assert.equal(placeholder.isSymbolicLink(), false, `${directory}/${entry} must not be a symlink`);
-      assert.equal(placeholder.isFile(), true, `${directory}/${entry} must be a regular file`);
-      assert.equal(
-        readFileSync(placeholderPath, "utf8"),
-        "",
-        `${directory}/${entry} must remain empty`,
-      );
-    }
-  }
-}
-for (const directory of ["graders", "research"]) {
-  assert.deepEqual(trackedEntries(directory), ["README.md"], directory);
+for (const path of trackedFiles.filter((path) => path.endsWith("/.gitkeep"))) {
+  assert.equal(readFileSync(resolve(root, path), "utf8"), "", `${path} must remain empty`);
 }
 
 const forbidden = [
