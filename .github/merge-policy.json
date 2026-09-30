@@ -3,9 +3,16 @@
   "merge_method": "squash",
   "auto_merge": "github-native",
   "merge_queue": false,
-  "required_events": ["pull_request"],
-  "eligible_author_associations": ["OWNER", "MEMBER"],
-  "eligible_bot_logins": ["dependabot[bot]"],
+  "required_events": [
+    "pull_request"
+  ],
+  "eligible_author_associations": [
+    "OWNER",
+    "MEMBER"
+  ],
+  "eligible_bot_logins": [
+    "dependabot[bot]"
+  ],
   "required_approvals": 0,
   "required_checks": [
     {
@@ -35,6 +42,9 @@
     "/prettier.config.mjs",
     "/evals/**",
     "/graders/**",
-    "/research/**"
-  ]
+    "/research/**",
+    "/.gitignore",
+    "/.gitattributes"
+  ],
+  "required_code_owner_reviews": 1
 }
